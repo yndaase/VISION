@@ -65,23 +65,23 @@ function handleLogout() {
 // ─── 2FA State Helpers ────────────────────────────────
 function is2FAEnabled(email) {
   const user = getUsers().find(u => u.email === email);
-  return user ? !!user.twoFactorEnabled : false;
+  return user ? !!user.twoFAEnabled : false;
 }
 function toggle2FA(email, enabled) {
   const users = getUsers();
   const idx = users.findIndex(u => u.email === email);
   if (idx !== -1) {
-    users[idx].twoFactorEnabled = enabled;
+    users[idx].twoFAEnabled = enabled;
     saveUsers(users);
     
     // Update session
     const session = getSession();
     if (session && session.email === email) {
-      session.twoFactorEnabled = enabled;
+      session.twoFAEnabled = enabled;
       setSession(session);
     }
     
-    // Update UI status
+    // Update UI status (if standard elements exist)
     updateSecurityStatusUI(enabled);
   }
 }
@@ -99,7 +99,15 @@ function updateSecurityStatusUI(enabled) {
   }
 }
 
-// ─── Settings Modal Logic ────────────────────────────
+function handle2FAToggle() {
+  const session = getSession();
+  if (!session) return;
+  
+  const current = is2FAEnabled(session.email);
+  toggle2FA(session.email, !current);
+}
+
+// ─── Settings Modal Logic (Standard Site) ────────────
 function openSettings() {
   const session = getSession();
   if (!session) return;
@@ -130,14 +138,6 @@ function closeSettings() {
     modal.classList.remove('visible');
     setTimeout(() => modal.style.display = 'none', 300);
   }
-}
-
-function handle2FAToggle() {
-  const session = getSession();
-  if (!session) return;
-  
-  const current = is2FAEnabled(session.email);
-  toggle2FA(session.email, !current);
 }
 
 // ─── Google Sign-In callback (GIS) ───────────────────
@@ -200,7 +200,7 @@ function handleLogin(e) {
   }
 
   // DEEP 2FA INTEGRATION: Check if 2FA is enabled
-  if (user.twoFactorEnabled) {
+  if (user.twoFAEnabled) {
     // Generate code and store for login session
     const code = Math.floor(100000 + Math.random() * 900000).toString();
     saveResetCode(email, code); // reuse reset code store (10-min TTL)
@@ -314,49 +314,7 @@ function continueAsGuest() {
   goToDashboard();
 }
 
-// ─── Shared Settings Modal ───────────────────────────
-function openSettings() {
-  const session = getSession();
-  if (!session) return;
-  const modal     = document.getElementById('settingsModal');
-  const nameEl    = document.getElementById('settingsName');
-  const emailEl   = document.getElementById('settingsEmail');
-  const avatarEl  = document.getElementById('settingsAvatar');
-  const tfaToggle = document.getElementById('tfaToggle');
-  const secStatus = document.getElementById('securityStatus');
-  if (nameEl)    nameEl.textContent = session.name || 'Student';
-  if (emailEl)   emailEl.textContent = session.email || '';
-  if (avatarEl)  avatarEl.textContent = session.name ? session.name.charAt(0).toUpperCase() : 'S';
-  const enabled = is2FAEnabled(session.email);
-  if (tfaToggle) tfaToggle.classList.toggle('active', enabled);
-  if (secStatus) {
-    secStatus.innerHTML = enabled 
-      ? '<span class="status-secure">🛡️ Level 2 Protected (2FA Active)</span>'
-      : '<span class="status-warn">⚠️ Level 1 Protected (Password Only)</span>';
-  }
-  if (modal) modal.classList.add('active');
-}
-
-function closeSettings() {
-  const modal = document.getElementById('settingsModal');
-  if (modal) modal.classList.remove('active');
-}
-
-function handle2FAToggle() {
-  const session = getSession();
-  if (!session) return;
-  const tfaToggle = document.getElementById('tfaToggle');
-  const secStatus = document.getElementById('securityStatus');
-  const enabled = tfaToggle && tfaToggle.classList.contains('active');
-  const newState = !enabled;
-  if (tfaToggle) tfaToggle.classList.toggle('active', newState);
-  toggle2FA(session.email, newState);
-  if (secStatus) {
-    secStatus.innerHTML = newState 
-      ? '<span class="status-secure">🛡️ Level 2 Protected (2FA Active)</span>'
-      : '<span class="status-warn">⚠️ Level 1 Protected (Password Only)</span>';
-  }
-}
+// (Second copy of settings functions removed for unification)
 
 // Global click handler for modal backdrop
 window.addEventListener('click', (e) => {
