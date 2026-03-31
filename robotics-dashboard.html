@@ -901,7 +901,7 @@
               <input type="password" class="settings-input" id="setConfirmPass" placeholder="Repeat new passphrase" />
             </div>
             
-            <button class="settings-btn" onclick="changePassword()">
+            <button class="settings-btn" onclick="unifiedChangePassword()">
               Update Passphrase <span>→</span>
             </button>
             <p id="passChangeMsg" style="font-size:0.85rem; margin-top:0.75rem; text-align: center; display:none;"></p>
@@ -921,7 +921,7 @@
                 <p style="font-size:0.8rem; color:#64748b; margin:0; margin-top:4px;">Require email code on login.</p>
               </div>
               <label class="toggle-switch">
-                <input type="checkbox" id="toggle2FACheck" onchange="toggle2FA(this.checked)" />
+                <input type="checkbox" id="toggle2FACheck" onchange="unifiedToggle2FA(this.checked)" />
                 <span class="toggle-track"></span>
               </label>
             </div>
@@ -1298,60 +1298,7 @@
       }).join('');
     }
 
-    // ── Change Password ───────────────────────────────
-    function changePassword() {
-      const session = getSession();
-      const msg = document.getElementById('passChangeMsg');
-      const curr = document.getElementById('setCurrentPass').value;
-      const newP = document.getElementById('setNewPass').value;
-      const conf = document.getElementById('setConfirmPass').value;
-
-      function showMsg(text, ok) {
-        msg.style.display = 'block';
-        msg.textContent = text;
-        msg.style.color = ok ? '#4ade80' : '#f87171';
-        msg.style.background = ok ? 'rgba(34,197,94,0.08)' : 'rgba(248,113,113,0.08)';
-      }
-
-      if (!session) return showMsg('Not authenticated.', false);
-      if (!curr) return showMsg('Enter your current passphrase.', false);
-      if (newP.length < 6) return showMsg('New passphrase must be at least 6 characters.', false);
-      if (newP !== conf) return showMsg('Passphrases do not match.', false);
-
-      const users = getUsers();
-      const idx = users.findIndex(u => u.email === session.email);
-      if (idx === -1) return showMsg('Account not found.', false);
-      if (users[idx].hash !== simpleHash(curr)) return showMsg('Current passphrase is incorrect.', false);
-
-      users[idx].hash = simpleHash(newP);
-      saveUsers(users);
-      showMsg('✓ Passphrase updated successfully! Please log in again.', true);
-      ['setCurrentPass','setNewPass','setConfirmPass'].forEach(id => document.getElementById(id).value = '');
-      setTimeout(() => { handleLogout(); }, 2500);
-    }
-
-    // ── 2FA Toggle ────────────────────────────────────
-    function toggle2FA(enabled) {
-      const session = getSession();
-      const msg = document.getElementById('twoFAMsg');
-      const users = getUsers();
-      const idx = users.findIndex(u => u.email === session.email);
-      if (idx === -1) return;
-
-      users[idx].twoFAEnabled = enabled;
-      saveUsers(users);
-
-      msg.style.display = 'block';
-      if (enabled) {
-        msg.textContent = '🔐 Two-Factor Authentication is now ENABLED. You\'ll receive a code via email on every login.';
-        msg.style.color = '#4ade80';
-        msg.style.background = 'rgba(34,197,94,0.08)';
-      } else {
-        msg.textContent = '🔓 Two-Factor Authentication is now DISABLED.';
-        msg.style.color = '#f87171';
-        msg.style.background = 'rgba(248,113,113,0.08)';
-      }
-    }
+    // (Local 2FA and Password logic removed; using unified functions in auth.js)
 
     function showSection(id, btn) {
       const target = document.getElementById(id);

@@ -87,8 +87,10 @@ function toggle2FA(email, enabled) {
 }
 
 function updateSecurityStatusUI(enabled) {
+  // 1. Standard Dashboard Elements
   const statusEl = document.getElementById('securityStatus');
   const toggleEl = document.getElementById('tfaToggle');
+  
   if (statusEl) {
     statusEl.innerHTML = enabled 
       ? '<span class="status-secure">🛡️ Level 2 Protected (2FA Active)</span>' 
@@ -97,6 +99,70 @@ function updateSecurityStatusUI(enabled) {
   if (toggleEl) {
     toggleEl.classList.toggle('active', enabled);
   }
+
+  // 2. Robotics Dashboard Elements
+  const robMsgEl = document.getElementById('twoFAMsg');
+  const robCheckEl = document.getElementById('toggle2FACheck');
+  
+  if (robMsgEl) {
+    robMsgEl.style.display = 'block';
+    if (enabled) {
+      robMsgEl.textContent = '🔐 Two-Factor Authentication is now ENABLED. You\'ll receive a code via email on every login.';
+      robMsgEl.style.color = '#4ade80';
+      robMsgEl.style.background = 'rgba(34,197,94,0.08)';
+    } else {
+      robMsgEl.textContent = '🔓 Two-Factor Authentication is now DISABLED.';
+      robMsgEl.style.color = '#f87171';
+      robMsgEl.style.background = 'rgba(248,113,113,0.08)';
+    }
+  }
+  if (robCheckEl) {
+    robCheckEl.checked = enabled;
+  }
+}
+
+// ─── Shared Logic ────────────────────────────────────
+function unifiedToggle2FA(enabled) {
+  const session = getSession();
+  if (!session) return;
+  toggle2FA(session.email, enabled);
+}
+
+function unifiedChangePassword() {
+  const session = getSession();
+  const msg = document.getElementById('passChangeMsg');
+  const curr = document.getElementById('setCurrentPass')?.value;
+  const newP = document.getElementById('setNewPass')?.value;
+  const conf = document.getElementById('setConfirmPass')?.value;
+
+  function showMsg(text, ok) {
+    if (!msg) { alert(text); return; }
+    msg.style.display = 'block';
+    msg.textContent = text;
+    msg.style.color = ok ? '#4ade80' : '#f87171';
+    msg.style.background = ok ? 'rgba(34,197,94,0.08)' : 'rgba(248,113,113,0.08)';
+  }
+
+  if (!session) return showMsg('Not authenticated.', false);
+  if (!curr) return showMsg('Enter your current password.', false);
+  if (!newP || newP.length < 6) return showMsg('New password must be at least 6 characters.', false);
+  if (newP !== conf) return showMsg('Passwords do not match.', false);
+
+  const users = getUsers();
+  const idx = users.findIndex(u => u.email === session.email);
+  if (idx === -1) return showMsg('Account not found.', false);
+  if (users[idx].hash !== simpleHash(curr)) return showMsg('Current password is incorrect.', false);
+
+  users[idx].hash = simpleHash(newP);
+  saveUsers(users);
+  
+  showMsg('✓ Password updated successfully! Please log in again.', true);
+  ['setCurrentPass','setNewPass','setConfirmPass'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = '';
+  });
+  
+  setTimeout(() => { handleLogout(); }, 2500);
 }
 
 function handle2FAToggle() {
