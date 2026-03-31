@@ -275,37 +275,21 @@ function handleLogin(e) {
     const hiddenEl = document.getElementById('2faEmailHidden');
     if (hiddenEl) hiddenEl.value = email;
     
-    // Attempt EmailJS send
-    const fallbackBox = document.getElementById('2faCodeFallback');
-    try {
-      if (typeof emailjs !== 'undefined') {
-        const sendBtn = document.getElementById('loginSubmit');
-        if (sendBtn) sendBtn.innerHTML = '<span>Verifying Identity...</span>';
-        
-        emailjs.send('service_gvml18u', 'template_sl92tvj', {
-          to_name: user.name || email.split('@')[0],
-          to_email: email,
-          reset_code: code 
-        }).then(() => {
-          switchTab('2fa');
-        }).catch(err => {
-          console.error('EmailJS 2FA failed:', err);
-          if (fallbackBox) {
-            fallbackBox.textContent = 'Identity Code: ' + code;
-            fallbackBox.style.display = 'block';
-          }
-          switchTab('2fa');
-        });
-      } else {
-        throw new Error('EmailJS not loaded');
-      }
-    } catch(err) {
-      if (fallbackBox) {
-        fallbackBox.textContent = 'Identity Code: ' + code;
-        fallbackBox.style.display = 'block';
-      }
+    // ─── NEW: Secure API-based 2FA sending ──────
+    const sendBtn = document.getElementById('loginSubmit');
+    if (sendBtn) sendBtn.innerHTML = '<span>Verifying Identity...</span>';
+    
+    sendEmailCode(user.email, code, '2fa', user.name).then(sent => {
+      if (sendBtn) sendBtn.innerHTML = '<span>Sign In</span>';
       switchTab('2fa');
-    }
+      if (!sent) {
+        const fallbackBox = document.getElementById('2faCodeFallback');
+        if (fallbackBox) {
+          fallbackBox.textContent = 'Identity Code: ' + code;
+          fallbackBox.style.display = 'block';
+        }
+      }
+    });
     return;
   }
 
@@ -509,9 +493,20 @@ function showAuthSuccess(msg) {
   setTimeout(() => toast.classList.remove('toast-visible'), 3000);
 }
 
-// ─── EmailJS Setup & Forgot Password Logic ────────────
-if (typeof emailjs !== 'undefined') {
-  try { emailjs.init({ publicKey: "wK_ysK2NxQ7BwK_zJ" }); } catch(e) {}
+// ─── Unified Email Sending (Backend API) ─────────────
+async function sendEmailCode(email, code, type = 'reset', name = '') {
+  try {
+    const response = await fetch('/api/send-code', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, code, type, name })
+    });
+    const result = await response.json();
+    return !!result.success;
+  } catch (err) {
+    console.error('Send code failed:', err);
+    return false;
+  }
 }
 
 // Reset code store with 10-min TTL
@@ -573,31 +568,23 @@ async function handleForgotPassword(e) {
   if (btnText) btnText.textContent = 'Sending...';
   if (btnArrow) btnArrow.style.display = 'none';
   if (submitBtn) submitBtn.disabled = true;
-  let emailSent = false;
-  try {
-    if (typeof emailjs !== 'undefined') {
-      await emailjs.send('service_gvml18u', 'template_sl92tvj', {
-        to_name: user.name || email.split('@')[0],
-        to_email: email,
-        reset_code: code
-      });
-      emailSent = true;
-    }
-  } catch (err) {
-    console.warn('EmailJS send failed:', err);
-  } finally {
-    if (btnText) btnText.textContent = 'Send Recovery Code';
-    if (btnArrow) btnArrow.style.display = 'inline';
-    if (submitBtn) submitBtn.disabled = false;
-  }
+  const sent = await sendEmailCode(email, code, 'reset', user.name);
+  
+  if (btnText) btnText.textContent = 'Send Recovery Code';
+  if (btnArrow) btnArrow.style.display = 'inline';
+  if (submitBtn) submitBtn.disabled = false;
+
   switchTab('reset');
-  if (emailSent) {
+  
+  if (sent) {
     showAuthSuccess('Reset code sent to ' + email + '! Check your inbox.');
   } else {
-    // Fallback: show code on-screen when email cannot be sent
-    showAuthSuccess('Email service unavailable — use the code below.');
+    showAuthSuccess('Email service busy — use the code below.');
     const fallback = document.getElementById('resetCodeFallback');
-    if (fallback) { fallback.textContent = 'Your code: ' + code; fallback.style.display = 'block'; }
+    if (fallback) {
+      fallback.textContent = 'Your code: ' + code;
+      fallback.style.display = 'block';
+    }
   }
 }
 

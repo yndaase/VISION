@@ -991,10 +991,6 @@
   <script src="auth.js"></script>
   <script>
     // ── EmailJS Config ──────────────────────────────────
-    const EMAILJS_SERVICE = 'service_gvml18u';
-    const EMAILJS_TEMPLATE = 'template_sl92tvj';
-    const EMAILJS_KEY = 'wK_ysK2NxQ7BwK_zJ';
-
     // ── Role accounts seed ───────────────────────────────
     const SEED_VERSION = 'v3-joel-2026';  // bumped: forces name refresh
     const ROLE_ACCOUNTS = [
@@ -1064,8 +1060,6 @@
     }
 
     function initDashboard() {
-      // Wrap emailjs so a loading failure doesn't kill the whole init
-      try { emailjs.init(EMAILJS_KEY); } catch(e) { console.warn('EmailJS init:', e); }
       seedRoleAccounts();
       if (document.readyState === 'complete') { initMeetClient(); }
       else { window.addEventListener('load', initMeetClient); }
