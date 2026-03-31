@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+  <script defer src="/_vercel/insights/script.js"></script>
+  <script>window.si = window.si || function () { (window.siq = window.siq || []).push(arguments); };</script>
+  <script defer src="/_vercel/speed-insights/script.js"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sign In | Vision Education · 2026 WASSCE Prep</title>
+  <meta name="description" content="Sign in to access WASSCE exam practice for Ghana SHS students across all WAEC subjects." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="login.css" />
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+</head>
+<body class="login-page">
+
+  <!-- Animated background -->
+  <div class="login-bg">
+    <span class="bg-orb bg-orb-1"></span>
+    <span class="bg-orb bg-orb-2"></span>
+    <span class="bg-orb bg-orb-3"></span>
+    <div class="bg-grid"></div>
+  </div>
+
+  <!-- Split layout -->
+  <div class="login-layout">
+
+    <!-- ── LEFT PANEL (branding) ── -->
+    <aside class="login-left" aria-hidden="true">
+      <div class="left-content">
+        <div class="brand-logo-lg"> Vision <span class="brand-accent" style="color: var(--primary);">Education</span> </div>
+        <h2 class="left-hero">Official 2026<br/>WASSCE Prep</h2>
+        <p class="left-sub">Authorized curriculum standards, expert-reviewed logic, and high-performance exam simulations.</p>
+
+        <div class="left-subjects">
+          <div class="subject-pill">📐 Core Mathematics</div>
+          <div class="subject-pill">🖋️ Section B Specialist</div>
+          <div class="subject-pill">🛡️ Secure Authentication</div>
+        </div>
+
+        <div class="left-stats">
+          <div class="left-stat">
+            <span class="left-stat-num">V2.0</span>
+            <span class="left-stat-lbl">Platform</span>
+          </div>
+          <div class="left-stat">
+            <span class="left-stat-num">AI</span>
+            <span class="left-stat-lbl">Feedback</span>
+          </div>
+          <div class="left-stat">
+            <span class="left-stat-num">🔒</span>
+            <span class="left-stat-lbl">Synced</span>
+          </div>
+        </div>
+
+        <!-- Visionary Info Card -->
+        <div class="about-card" style="padding: 1.5rem; border-radius: var(--radius-lg); background: rgba(99, 102, 241, 0.05); border: 1px solid rgba(99, 102, 241, 0.1); margin-top: 2rem; backdrop-filter: blur(10px);">
+          <div class="about-header" style="display:flex; align-items:center; gap: 12px; margin-bottom: 1rem;">
+             <div class="about-avatar" style="background: var(--indigo); color: white;">YN</div>
+             <div>
+               <h3 style="margin:0; font-size:1rem;">Yaw Ndaase Mensuoh</h3>
+               <p style="margin:0; font-size:0.75rem; color:var(--text-secondary);">Founder · St. Augustine's STEM</p>
+             </div>
+          </div>
+          <p style="font-size: 0.82rem; line-height:1.6; color:var(--text-secondary);">"Our mission is to democratize high-quality academic prep using modern technology and rigorous curriculum standards."</p>
+        </div>
+      </div>
+    </aside>
+
+    <!-- ── RIGHT PANEL (auth card) ── -->
+    <main class="login-right">
+      <div class="auth-card-page" id="authCard">
+
+
+        <!-- V4 Specialized Portals (Robotics) -->
+        <div class="robotics-nav-wrap">
+          <a href="robotics-login.html" class="robotics-portal-btn">
+            <span class="rob-icon">🤖</span>
+            <div class="rob-text">
+              <span class="rob-label">ENGINEERING DIVISION</span>
+              <span class="rob-title">Augusco Robotics</span>
+            </div>
+            <span class="rob-arrow">→</span>
+          </a>
+        </div>
+
+        <!-- Heading -->
+        <div class="auth-heading" id="authHeading">
+          <h2 id="authTitle">Welcome back</h2>
+          <p id="authSubtitle">Sign in to continue your WASSCE prep journey.</p>
+        </div>
+
+        <!-- Google Sign-In -->
+        <div class="google-btn-wrap" style="position: relative;">
+          <!-- 1. Our Custom Designed Button (matches theme perfectly) -->
+          <div class="google-custom-btn">
+            <svg class="google-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+              <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+              <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
+              <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+            </svg>
+            Continue with Google
+          </div>
+          
+          <!-- 2. Official Google Button (Invisible Overlay) -->
+          <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; overflow: hidden; opacity: 0; z-index: 10;">
+            <div id="g_id_onload"
+                 data-client_id="378999569796-v8bj9miq61sggvpea5sbslc24dr9t71s.apps.googleusercontent.com"
+                 data-context="signin"
+                 data-ux_mode="popup"
+                 data-callback="handleGoogleCredential"
+                 data-auto_prompt="false">
+            </div>
+            <div class="g_id_signin"
+                 data-type="standard"
+                 data-shape="rectangular"
+                 data-theme="outline"
+                 data-text="continue_with"
+                 data-size="large"
+                 data-logo_alignment="left"
+                 data-width="400">
+            </div>
+          </div>
+        </div>
+
+        <div class="auth-divider"><span>or continue with email</span></div>
+
+        <!-- Tabs -->
+        <div class="auth-tabs" role="tablist">
+          <button class="auth-tab auth-tab-active" id="tabLogin" role="tab"
+                  onclick="switchTab('login')">Sign In</button>
+          <button class="auth-tab" id="tabSignup" role="tab"
+                  onclick="switchTab('signup')">Create Account</button>
+        </div>
+
+        <!-- ── LOGIN FORM ── -->
+        <form class="auth-form form-active" id="loginForm" autocomplete="on"
+              onsubmit="handleLogin(event)" novalidate>
+
+          <div class="field-group">
+            <label class="field-label" for="loginEmail">Email Address</label>
+            <div class="input-wrap">
+              <span class="input-icon">✉</span>
+              <input class="auth-input" id="loginEmail" type="email"
+                     placeholder="yourname@school.edu.gh"
+                     autocomplete="email" required />
+            </div>
+            <span class="field-error" id="errLoginEmail"></span>
+          </div>
+
+          <div class="field-group">
+            <label class="field-label" for="loginPass">
+              Password
+              <a class="forgot-link" href="#" onclick="switchTab('forgot'); return false;" tabindex="-1">Forgot password?</a>
+            </label>
+            <div class="input-wrap">
+              <span class="input-icon">🔒</span>
+              <input class="auth-input" id="loginPass" type="password"
+                     placeholder="••••••••"
+                     autocomplete="current-password" required />
+              <button type="button" class="eye-btn" onclick="toggleVisibility('loginPass', this)"
+                      aria-label="Toggle password">👁</button>
+            </div>
+            <span class="field-error" id="errLoginPass"></span>
+          </div>
+
+          <span class="field-error general-error" id="errLoginGeneral"></span>
+
+          <button type="submit" class="auth-submit-btn" id="loginSubmit">
+            <span>Sign In</span>
+            <span class="btn-arrow">→</span>
+          </button>
+        </form>
+
+        <!-- ── SIGNUP FORM ── -->
+        <form class="auth-form" id="signupForm" autocomplete="on"
+              onsubmit="handleSignup(event)" novalidate>
+
+          <div class="field-group">
+            <label class="field-label" for="signupName">Full Name</label>
+            <div class="input-wrap">
+              <span class="input-icon">👤</span>
+              <input class="auth-input" id="signupName" type="text"
+                     placeholder="Kofi Mensah"
+                     autocomplete="name" required />
+            </div>
+            <span class="field-error" id="errSignupName"></span>
+          </div>
+
+          <div class="field-group">
+            <label class="field-label" for="signupEmail">Email Address</label>
+            <div class="input-wrap">
+              <span class="input-icon">✉</span>
+              <input class="auth-input" id="signupEmail" type="email"
+                     placeholder="yourname@school.edu.gh"
+                     autocomplete="email" required />
+            </div>
+            <span class="field-error" id="errSignupEmail"></span>
+          </div>
+
+          <div class="field-group">
+            <label class="field-label" for="signupPass">Password</label>
+            <div class="input-wrap">
+              <span class="input-icon">🔒</span>
+              <input class="auth-input" id="signupPass" type="password"
+                     placeholder="At least 6 characters"
+                     autocomplete="new-password" required
+                     oninput="checkPasswordStrength(this.value)" />
+              <button type="button" class="eye-btn" onclick="toggleVisibility('signupPass', this)"
+                      aria-label="Toggle password">👁</button>
+            </div>
+            <div class="step-icon">🛡️</div>
+              <div>
+                <div class="step-title" style="color: var(--primary);">Authorized Council Standards</div>
+                <div class="step-msg">Questions verified by Ghana Education Specialists.</div>
+              </div>
+            <div class="strength-meter">
+              <div class="strength-track"><div class="strength-bar" id="strengthBar"></div></div>
+              <span class="strength-label" id="strengthLabel"></span>
+            </div>
+            <span class="field-error" id="errSignupPass"></span>
+          </div>
+
+          <div class="field-group">
+            <label class="field-label" for="signupConfirm">Confirm Password</label>
+            <div class="input-wrap">
+              <span class="input-icon">🔒</span>
+              <input class="auth-input" id="signupConfirm" type="password"
+                     placeholder="Repeat password"
+                     autocomplete="new-password" required />
+              <button type="button" class="eye-btn" onclick="toggleVisibility('signupConfirm', this)"
+                      aria-label="Toggle password">👁</button>
+            </div>
+            <span class="field-error" id="errSignupConfirm"></span>
+          </div>
+
+          <button type="submit" class="auth-submit-btn" id="signupSubmit">
+            <span>Create Account</span>
+            <span class="btn-arrow">→</span>
+          </button>
+        </form>
+
+        <!-- ── FORGOT PASSWORD FORM ── -->
+        <form class="auth-form" id="forgotForm" autocomplete="off" onsubmit="handleForgotPassword(event)" novalidate>
+          <p style="font-size:0.85rem; color:var(--text-secondary); margin-bottom:10px;">Enter your email to receive a 6-digit password reset code.</p>
+          <div class="field-group">
+            <label class="field-label" for="forgotEmail">Email Address</label>
+            <div class="input-wrap">
+              <span class="input-icon">✉</span>
+              <input class="auth-input" id="forgotEmail" type="email" placeholder="yourname@school.edu.gh" required />
+            </div>
+            <span class="field-error" id="errForgotEmail"></span>
+          </div>
+          <button type="submit" class="auth-submit-btn" id="forgotSubmit">
+            <span id="forgotBtnText">Send Reset Code</span>
+            <span class="btn-arrow" id="forgotBtnArrow">→</span>
+          </button>
+          <div style="text-align:center; margin-top:10px;">
+            <a href="#" class="forgot-link" onclick="switchTab('login'); return false;">Back to Sign In</a>
+          </div>
+        </form>
+
+        <!-- ── RESET PASSWORD FORM ── -->
+        <form class="auth-form" id="resetForm" autocomplete="off" onsubmit="handleResetPassword(event)" novalidate>
+          <p style="font-size:0.85rem; color:var(--text-secondary); margin-bottom:10px;">We've sent a 6-digit code to your email. Enter it below.</p>
+          <input type="hidden" id="resetEmailHidden" />
+          <div class="field-group">
+            <label class="field-label" for="resetCode">6-Digit Code</label>
+            <div class="input-wrap">
+              <span class="input-icon">🔑</span>
+              <input class="auth-input" id="resetCode" type="text" placeholder="123456" maxlength="6" required style="letter-spacing:4px; font-family:monospace;" />
+            </div>
+            <span class="field-error" id="errResetCode"></span>
+          </div>
+          <div class="field-group">
+            <label class="field-label" for="resetPass">New Password</label>
+            <div class="input-wrap">
+              <span class="input-icon">🔒</span>
+              <input class="auth-input" id="resetPass" type="password" placeholder="At least 6 characters" required oninput="checkPasswordStrength(this.value)" />
+              <button type="button" class="eye-btn" onclick="toggleVisibility('resetPass', this)" aria-label="Toggle password">👁</button>
+            </div>
+            <span class="field-error" id="errResetPass"></span>
+          </div>
+          <button type="submit" class="auth-submit-btn" id="resetSubmit">
+            <span>Update Password</span>
+            <span class="btn-arrow">→</span>
+          </button>
+        </form>
+
+        <!-- ── 2FA VERIFICATION FORM ── -->
+        <form class="auth-form" id="2faForm" autocomplete="off" onsubmit="handle2FAVerification(event)" novalidate>
+          <p style="font-size:0.85rem; color:var(--text-secondary); margin-bottom:15px;">
+            A secondary security code has been sent to your registered email for identity verification.
+          </p>
+          <div id="2faCodeFallback" style="display:none; background:rgba(96,165,250,0.1); border:1px solid rgba(96,165,250,0.3); border-radius:10px; padding:0.75rem 1rem; margin-bottom:1rem; font-family:monospace; font-size:1.1rem; font-weight:700; color:#60a5fa; text-align:center; letter-spacing:4px;"></div>
+          <input type="hidden" id="2faEmailHidden" />
+          <div class="field-group">
+            <label class="field-label" for="2faCodeInput">6-Digit Identity Code</label>
+            <div class="input-wrap">
+              <span class="input-icon">🛡️</span>
+              <input class="auth-input" id="2faCodeInput" type="text" placeholder="######" maxlength="6" required style="letter-spacing:8px; font-family:monospace; text-align:center; font-size:1.2rem;" />
+            </div>
+            <span class="field-error" id="err2FACode"></span>
+          </div>
+          <button type="submit" class="auth-submit-btn" id="2faSubmit">
+            <span>Verify Identity</span>
+            <span class="btn-arrow">→</span>
+          </button>
+          <div style="text-align:center; margin-top:15px;">
+            <a href="#" class="forgot-link" onclick="switchTab('login'); return false;">Cancel & Return</a>
+          </div>
+        </form>
+
+        <!-- Guest -->
+        <div class="auth-divider" style="margin-top:1rem;"><span>or</span></div>
+        <button class="guest-btn" onclick="continueAsGuest()">Continue as Guest</button>
+
+        <!-- Disclaimer -->
+        <p class="auth-disclaimer">
+          🔒 Your data stays in your browser only. No server, no tracking.
+        </p>
+
+        <!-- Success toast -->
+        <div class="auth-success-toast" id="authSuccessToast"></div>
+
+      </div><!-- /auth-card-page -->
+    </main>
+
+  </div><!-- /login-layout -->
+
+  <script src="auth.js"></script>
+</body>
+</html>

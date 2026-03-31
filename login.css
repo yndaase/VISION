@@ -1,0 +1,483 @@
+/* =====================================================
+   LOGIN PAGE — Styles
+   Split-panel layout, left branding, right auth card
+   ===================================================== */
+
+/* ─── Page layout ─── */
+.login-page {
+  min-height: 100vh;
+  overflow-x: hidden;
+  overflow-y: auto;
+  position: relative;
+  background: var(--bg-dark);
+}
+
+.login-bg {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background: var(--bg-dark);
+}
+.bg-orb { display: none; }
+
+.bg-grid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+  background-size: 60px 60px;
+}
+
+/* ─── Split layout ─── */
+.login-layout {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  min-height: 100vh;
+}
+
+/* ─── LEFT PANEL ─── */
+.login-left {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem 2.5rem;
+  border-right: 1px solid var(--border);
+  background: var(--bg-dark);
+}
+@media (max-width: 900px) {
+  /* Stack the layout vertically */
+  .login-layout {
+    flex-direction: column !important;
+    min-height: 100vh !important;
+    overflow-y: auto !important;
+  }
+
+  /* Collapse the left panel into a compact mobile header */
+  .login-left {
+    flex: none !important;
+    padding: 2rem 1.5rem 1.5rem !important;
+    border-right: none !important;
+    border-bottom: 1px solid var(--border) !important;
+    backdrop-filter: none !important;
+    background: rgba(10,13,20,0.6) !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+
+  /* Center and condense branding */
+  .left-content {
+    text-align: center !important;
+    margin: 0 auto !important;
+    max-width: 100% !important;
+    width: 100% !important;
+  }
+
+  /* Hide desktop-only decorative content */
+  .left-subjects,
+  .left-stats,
+  .left-quote,
+  .about-card {
+    display: none !important;
+  }
+
+  /* Compact the logo */
+  .brand-logo-lg {
+    font-size: 2.5rem !important;
+    margin-bottom: 0.5rem !important;
+  }
+
+  /* Smaller title on mobile */
+  .brand-name-lg {
+    font-size: 1.9rem !important;
+  }
+
+  /* Shorter tagline */
+  .brand-tagline {
+    font-size: 0.9rem !important;
+    margin-bottom: 0 !important;
+  }
+
+  /* KEEP the Robotics access card visible & compact */
+  .robotics-access {
+    display: block !important;
+    margin-top: 1rem !important;
+    padding: 1rem 1.25rem !important;
+    text-align: left !important;
+  }
+
+  /* Make right panel fill the remaining space */
+  .login-right {
+    flex: 1 !important;
+    padding: 1.5rem 1.25rem 2rem !important;
+    align-items: flex-start !important;
+    overflow-y: visible !important;
+  }
+
+  /* Auth card full-width */
+  .auth-card-page {
+    max-width: 100% !important;
+    width: 100% !important;
+  }
+
+  /* Bigger touch targets for tabs */
+  .auth-tab {
+    padding: 0.75rem 1rem !important;
+    font-size: 0.9rem !important;
+  }
+
+  /* Larger input fields */
+  .auth-input {
+    padding: 0.875rem 1rem !important;
+    font-size: 1rem !important;
+  }
+
+  /* Full-width submit button */
+  .auth-submit-btn {
+    width: 100% !important;
+    padding: 1rem !important;
+    font-size: 1rem !important;
+  }
+}
+
+.left-content {
+  max-width: 420px;
+  animation: fadeInUp 0.7s ease both;
+}
+
+.brand-logo-lg {
+  font-size: 3.5rem;
+  margin-bottom: 1rem;
+  display: block;
+  filter: drop-shadow(0 0 24px rgba(251,191,36,0.4));
+  animation: floatGently 4s ease-in-out infinite;
+}
+@keyframes floatGently {
+  0%,100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+.brand-name-lg {
+  font-size: 2.8rem;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  margin-bottom: 0.75rem;
+  color: var(--text-primary);
+  line-height: 1;
+}
+.brand-accent {
+  background: linear-gradient(135deg, #fbbf24, #f97316);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.brand-tagline {
+  font-size: 1.05rem;
+  color: var(--text-secondary);
+  line-height: 1.65;
+  margin-bottom: 2.5rem;
+}
+
+/* Subject pills */
+.left-subjects {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 2.5rem;
+}
+.subject-pill {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid var(--border);
+  border-radius: 100px;
+  padding: 6px 14px;
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+  transition: all 0.2s;
+  animation: fadeInUp 0.5s ease both;
+}
+.subject-pill:hover {
+  border-color: rgba(251,191,36,0.35);
+  color: var(--gold);
+  background: rgba(251,191,36,0.06);
+}
+
+/* Left stats */
+.left-stats {
+  display: flex;
+  gap: 2rem;
+  margin-bottom: 2.5rem;
+  padding: 1.25rem 1.5rem;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+}
+.left-stat { display: flex; flex-direction: column; align-items: center; gap: 2px; }
+.left-stat-num { font-size: 1.6rem; font-weight: 800; color: var(--gold); line-height: 1; }
+.left-stat-lbl { font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.08em; }
+
+/* Quote */
+.left-quote {
+  border-left: 3px solid rgba(251,191,36,0.4);
+  padding-left: 1rem;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  font-style: italic;
+  line-height: 1.7;
+}
+.left-quote cite {
+  display: block;
+  margin-top: 6px;
+  font-size: 0.78rem;
+  color: var(--gold);
+  font-style: normal;
+  font-weight: 600;
+}
+
+/* ─── RIGHT PANEL ─── */
+.login-right {
+  flex: 0 0 480px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 2.5rem;
+  overflow-y: auto;
+}
+@media (max-width: 900px) {
+  .login-right { flex: 1; padding: 1.5rem; }
+}
+
+/* Auth card (page version) */
+.auth-card-page {
+  width: 100%;
+  max-width: 400px;
+  position: relative;
+  animation: authCardIn 0.5s cubic-bezier(0.34,1.56,0.64,1) both;
+}
+
+/* Mobile brand */
+.mobile-brand {
+  display: none;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 1.5rem;
+  font-size: 1.4rem;
+  font-weight: 800;
+}
+.mobile-brand-icon { font-size: 1.8rem; }
+.mobile-brand-name { letter-spacing: -0.02em; }
+@media (max-width: 900px) { .mobile-brand { display: flex; } }
+
+/* ─── Specialized Portals (Robotics) ─── */
+.robotics-nav-wrap {
+  margin-bottom: 2rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid var(--border);
+}
+.robotics-portal-btn {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  background: rgba(16, 185, 129, 0.05); /* Soft emerald from Robotics theme */
+  border: 1px solid rgba(16, 185, 129, 0.2);
+  border-radius: var(--radius-md);
+  padding: 0.75rem 1rem;
+  text-decoration: none;
+  transition: all 0.2s;
+  position: relative;
+  overflow: hidden;
+}
+.robotics-portal-btn:hover {
+  background: rgba(16, 185, 129, 0.1);
+  border-color: #10b981;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.15);
+}
+.robotics-portal-btn::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; width: 3px; height: 100%;
+  background: #10b981;
+}
+.rob-icon { font-size: 1.5rem; }
+.rob-text { flex: 1; text-align: left; }
+.rob-label { display: block; font-size: 0.6rem; font-weight: 800; color: #10b981; letter-spacing: 0.12em; margin-bottom: 2px; }
+.rob-title { display: block; font-size: 0.9rem; font-weight: 700; color: var(--text-primary); }
+.rob-arrow { color: #10b981; font-weight: 800; transition: transform 0.2s; }
+.robotics-portal-btn:hover .rob-arrow { transform: translateX(4px); }
+
+/* ─── Heading ─── */
+.auth-heading { margin-bottom: 2.25rem; }
+.auth-heading h2 { font-size: 1.75rem; font-weight: 800; letter-spacing: -0.02em; margin-bottom: 4px; }
+.auth-heading p { font-size: 0.9rem; color: var(--text-secondary); }
+
+/* ─── Google button wrapper ─── */
+.google-steps-list li {
+  margin-bottom: 0.5rem;
+}
+.google-steps-list li:last-child {
+  margin-bottom: 0;
+}
+.social-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  background: var(--bg-card-hover);
+  border: 1px solid var(--border-bright);
+  color: var(--text-primary);
+  padding: 14px;
+  border-radius: var(--radius-sm);
+  font-family: var(--font-main);
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.social-btn:hover {
+  background: var(--bg-card);
+  border-color: var(--primary);
+}
+
+/* Guest Button Styling */
+.guest-btn {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1.5px solid rgba(255, 255, 255, 0.1);
+  color: var(--text-secondary);
+  padding: 12px;
+  border-radius: var(--radius-md);
+  font-family: var(--font-main);
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 0.5rem;
+  transition: all 0.2s;
+}
+
+.guest-btn:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.2);
+  color: var(--text-primary);
+}
+
+@media (max-width: 900px) {
+  .guest-btn {
+    width: 100% !important;
+    text-align: center !important;
+  }
+}
+
+.google-btn-wrap {
+  margin-bottom: 0;
+}
+.google-custom-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 12px 1rem;
+  background: rgba(255,255,255,0.06);
+  border: 1.5px solid rgba(255,255,255,0.14);
+  border-radius: var(--radius-md);
+  color: var(--text-primary);
+  font-family: var(--font-main);
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s, transform 0.15s;
+}
+.google-btn-wrap:hover .google-custom-btn {
+  background: rgba(255,255,255,0.09);
+  border-color: rgba(255,255,255,0.25);
+  transform: translateY(-1px);
+}
+.google-btn-wrap:active .google-custom-btn { transform: scale(0.99); }
+.google-icon { width: 20px; height: 20px; flex-shrink: 0; }
+.google-icon { width: 20px; height: 20px; flex-shrink: 0; }
+
+/* ─── Tabs (page version — smaller) ─── */
+.auth-card-page .auth-tabs {
+  margin-bottom: 1.25rem;
+}
+
+/* ─── Submit button (full width on page) ─── */
+.auth-card-page .auth-submit-btn {
+  width: 100%;
+}
+
+/* ─── Success toast (bottom of card) ─── */
+.auth-card-page .auth-success-toast {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: -80px;
+}
+.auth-card-page .auth-success-toast.toast-visible {
+  bottom: 24px;
+}
+
+/* ─── Responsive tweaks ─── */
+@media (max-width: 480px) {
+  .login-right { padding: 1rem; }
+  .auth-heading h2 { font-size: 1.4rem; }
+}
+
+/* ─── Google setup notice ─── */
+.google-setup-notice {
+  margin-top: 10px;
+  padding: 10px 14px;
+  background: rgba(251,191,36,0.08);
+  border: 1px solid rgba(251,191,36,0.3);
+  border-radius: var(--radius-sm);
+  font-size: 0.82rem;
+  color: var(--gold);
+  line-height: 1.5;
+}
+.google-setup-notice a {
+  color: var(--gold);
+  font-weight: 700;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.google-steps {
+  margin-top: 10px;
+  padding: 14px 16px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  font-size: 0.82rem;
+  animation: fadeInUp 0.3s ease;
+}
+.step-title {
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 10px;
+}
+.step-list {
+  color: var(--text-secondary);
+  padding-left: 1.2rem;
+  line-height: 2;
+}
+.step-list li { margin-bottom: 2px; }
+.step-list a {
+  color: var(--gold);
+  text-decoration: underline;
+}
+.step-list code {
+  background: rgba(255,255,255,0.08);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 1px 6px;
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  color: var(--text-primary);
+}
+

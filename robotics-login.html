@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+  <script defer src="/_vercel/insights/script.js"></script>
+  <script>window.si = window.si || function () { (window.siq = window.siq || []).push(arguments); };</script>
+  <script defer src="/_vercel/speed-insights/script.js"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Robotics Login | Vision Education</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="login.css" />
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+  <script>
+    // ── Seed official role accounts before login ──────────────────
+    // This runs BEFORE auth.js so accounts exist when the user logs in.
+    (function seedRoboticsAccounts() {
+      const AUTH_KEY    = 'waec_users';
+      const SEED_VER    = 'v2-joel';
+      const SEED_VK_KEY = 'rolesSeedVersion';
+
+      // Re-seed if the version changed
+      if (localStorage.getItem(SEED_VK_KEY) === SEED_VER) return;
+
+      function hash(str) {
+        let h = 0;
+        for (let i = 0; i < str.length; i++) { h = ((h << 5) - h) + str.charCodeAt(i); h |= 0; }
+        return h.toString(16);
+      }
+
+      const ROLES = [
+        { name: 'Joel Yevu Nicholas',      email: 'joelyevu@visionedu.online', hash: hash('Joel1234'),     provider: 'email', roboticsRole: 'President',          avatar: '#fbbf24' },
+        { name: 'Vice President',           email: 'vp@augusco.team',           hash: hash('Augusco2026!'), provider: 'email', roboticsRole: 'Vice President',      avatar: '#60a5fa' },
+        { name: 'Public Relations Officer', email: 'pro@augusco.team',          hash: hash('Augusco2026!'), provider: 'email', roboticsRole: 'PRO',                 avatar: '#a78bfa' },
+      ];
+
+      const users = JSON.parse(localStorage.getItem(AUTH_KEY) || '[]');
+      ROLES.forEach(ra => {
+        const idx = users.findIndex(u => u.email === ra.email || u.roboticsRole === ra.roboticsRole);
+        if (idx === -1) users.push({ ...ra, createdAt: Date.now() });
+        else            users[idx] = { ...users[idx], ...ra }; // force-update name/email/hash
+      });
+      localStorage.setItem(AUTH_KEY, JSON.stringify(users));
+      localStorage.setItem(SEED_VK_KEY, SEED_VER);
+    })();
+  </script>
+  <style>
+    body { background: var(--bg-dark); }
+    
+    /* Robotics theme overrides - Professional Engineering */
+    .login-left {
+      background: var(--bg-dark);
+      border-right: 1px solid var(--border);
+    }
+    
+    .auth-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-accent);
+      box-shadow: var(--shadow-premium);
+      padding: 2.5rem 2rem;
+      border-radius: var(--radius-lg);
+    }
+    
+    .auth-tab-active {
+      color: var(--primary) !important;
+      border-bottom-color: var(--primary) !important;
+    }
+    
+    .auth-submit-btn {
+      background: var(--primary);
+      color: #fff;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+    
+    .auth-submit-btn:hover:not(:disabled) {
+      background: #92400e;
+      box-shadow: 0 8px 24px rgba(180, 83, 9, 0.35);
+    }
+
+    .auth-input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px var(--primary-dim);
+    }
+
+    .forgot-link { color: #4ade80; }
+    .forgot-link:hover { color: #22c55e; }
+
+    .google-custom-btn {
+      border-color: rgba(34, 197, 94, 0.3);
+      background: rgba(255, 255, 255, 0.03);
+    }
+    .google-custom-btn:hover {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: #22c55e;
+    }
+
+    .auth-divider span { background: #111827; }
+    .auth-divider::before { background: rgba(34, 197, 94, 0.2); }
+
+    .brand-accent { color: #4ade80; }
+  </style>
+</head>
+<body class="login-page">
+
+  <!-- Background Orbs -->
+  <div class="login-bg">
+    <span class="bg-orb orb-1" style="background:#16a34a; opacity: 0.2;"></span>
+    <span class="bg-orb orb-2" style="background:#0ea5e9; opacity: 0.1;"></span>
+  </div>
+
+  <div class="login-layout">
+    
+    <!-- Left Branding Panel -->
+    <aside class="login-left">
+        <div class="left-content">
+          <div class="brand-logo-lg"> Vision <span class="brand-accent" style="color: var(--primary);">Robotics</span> </div>
+          <h2 class="left-hero">Engineering <br/>Operations</h2>
+          <p class="left-sub">Authorized hardware division portal for St. Augustine's College Robotics. Restricted access for verified systems architects.</p>
+          
+          <div class="left-subjects">
+            <div class="subject-pill" style="border-color: var(--border-accent); color: var(--primary);">⚙️ Hardware Systems</div>
+            <div class="subject-pill" style="border-color: var(--border-accent); color: var(--primary);">🛰️ Telemetry</div>
+            <div class="subject-pill" style="border-color: var(--border-accent); color: var(--primary);">🤖 Mechatronics</div>
+          </div>
+          
+          <div style="margin-top:2.5rem; background:rgba(0,0,0,0.3); border:1px solid rgba(34,197,94,0.25); border-radius:14px; padding:1.25rem 1.5rem;">
+            <p style="color:#4ade80; font-size:0.72rem; font-weight:700; letter-spacing:0.1em; margin:0 0 0.25rem;">ACCESS RESTRICTED</p>
+            <p style="color:#cbd5e1; font-size:0.82rem; margin:0; line-height:1.6;">This portal is for authorised Augusco SHS Robotics team members only. Contact the President or PRO to request access.</p>
+          </div>
+          
+        </div>
+      </aside>
+
+    <!-- Right Interaction Panel -->
+    <main class="login-right">
+      <div class="auth-card-page" id="authCard">
+        
+        <div class="auth-card">
+          
+          <div class="auth-heading" id="authHeading">
+            <h2 id="authTitle">AUGUSCO Robotics</h2>
+            <p id="authSubtitle">Sign in to access your team portal.</p>
+          </div>
+
+          <!-- Google Sign-In -->
+          <div class="google-btn-wrap" style="position: relative;">
+            <div class="google-custom-btn">
+              <svg class="google-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+                <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+                <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
+                <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+              </svg>
+              Continue with Google
+            </div>
+            <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; overflow: hidden; opacity: 0; z-index: 10;">
+              <div id="g_id_onload"
+                   data-client_id="378999569796-v8bj9miq61sggvpea5sbslc24dr9t71s.apps.googleusercontent.com"
+                   data-context="signin"
+                   data-ux_mode="popup"
+                   data-callback="handleGoogleCredential"
+                   data-auto_prompt="false">
+              </div>
+              <div class="g_id_signin"
+                   data-type="standard"
+                   data-shape="rectangular"
+                   data-theme="outline"
+                   data-text="continue_with"
+                   data-size="large"
+                   data-logo_alignment="left"
+                   data-width="400">
+              </div>
+            </div>
+          </div>
+
+          <div class="auth-divider"><span>or team ID</span></div>
+
+          <!-- Tabs -->
+          <div class="auth-tabs" role="tablist">
+            <button class="auth-tab auth-tab-active" id="tabLogin" role="tab" onclick="switchTab('login')">Team Login</button>
+            <button class="auth-tab" id="tabSignup" role="tab" onclick="switchTab('signup')">Enroll Member</button>
+          </div>
+
+          <!-- ── LOGIN FORM ── -->
+          <form class="auth-form form-active" id="loginForm" autocomplete="on" onsubmit="handleLogin(event)" novalidate>
+            <div class="field-group">
+              <label class="field-label" for="loginEmail">Team Email</label>
+              <div class="input-wrap">
+                <span class="input-icon">✉</span>
+                <input class="auth-input" id="loginEmail" type="email" placeholder="member@augusco.team" required />
+              </div>
+              <span class="field-error" id="errLoginEmail"></span>
+            </div>
+            <div class="field-group">
+              <label class="field-label" for="loginPass">
+                Passphrase
+                <a class="forgot-link" href="#" onclick="switchTab('forgot'); return false;" tabindex="-1">Forgot?</a>
+              </label>
+              <div class="input-wrap">
+                <span class="input-icon">🔒</span>
+                <input class="auth-input" id="loginPass" type="password" placeholder="••••••••" required />
+                <button type="button" class="eye-btn" onclick="toggleVisibility('loginPass', this)">👁</button>
+              </div>
+              <span class="field-error" id="errLoginPass"></span>
+            </div>
+            <button type="submit" class="auth-submit-btn" id="loginSubmit">
+              <span>Authenticate Sequence</span>
+              <span class="btn-arrow">→</span>
+            </button>
+          </form>
+
+          <!-- ── SIGNUP FORM ── -->
+          <form class="auth-form" id="signupForm" autocomplete="on" onsubmit="handleSignup(event)" novalidate>
+            <div class="field-group">
+              <label class="field-label" for="signupName">Engineer Name</label>
+              <div class="input-wrap">
+                <span class="input-icon">👤</span>
+                <input class="auth-input" id="signupName" type="text" placeholder="Full Name" required />
+              </div>
+              <span class="field-error" id="errSignupName"></span>
+            </div>
+            <div class="field-group">
+              <label class="field-label" for="signupEmail">Team Email</label>
+              <div class="input-wrap">
+                <span class="input-icon">✉</span>
+                <input class="auth-input" id="signupEmail" type="email" placeholder="member@augusco.team" required />
+              </div>
+              <span class="field-error" id="errSignupEmail"></span>
+            </div>
+            <div class="field-group">
+              <label class="field-label" for="signupPass">Security Passphrase</label>
+              <div class="input-wrap">
+                <span class="input-icon">🔒</span>
+                <input class="auth-input" id="signupPass" type="password" placeholder="At least 6 characters" required oninput="checkPasswordStrength(this.value)" />
+                <button type="button" class="eye-btn" onclick="toggleVisibility('signupPass', this)">👁</button>
+              </div>
+              <div class="strength-meter">
+                <div class="strength-track"><div class="strength-bar" id="strengthBar"></div></div>
+                <span class="strength-label" id="strengthLabel"></span>
+              </div>
+              <span class="field-error" id="errSignupPass"></span>
+            </div>
+            <div class="field-group">
+              <label class="field-label" for="signupConfirm">Confirm Passphrase</label>
+              <div class="input-wrap">
+                <span class="input-icon">🔒</span>
+                <input class="auth-input" id="signupConfirm" type="password" required />
+                <button type="button" class="eye-btn" onclick="toggleVisibility('signupConfirm', this)">👁</button>
+              </div>
+              <span class="field-error" id="errSignupConfirm"></span>
+            </div>
+            <button type="submit" class="auth-submit-btn" id="signupSubmit">
+              <span>Enroll Member</span>
+              <span class="btn-arrow">→</span>
+            </button>
+          </form>
+
+          <!-- ── FORGOT PASSWORD FORM ── -->
+          <form class="auth-form" id="forgotForm" autocomplete="off" onsubmit="handleForgotPassword(event)" novalidate>
+            <p style="font-size:0.85rem; color:var(--text-secondary); margin-bottom:10px;">Security recovery: Enter email to receive a 6-digit access code.</p>
+            <div class="field-group">
+              <label class="field-label" for="forgotEmail">Team Email</label>
+              <div class="input-wrap">
+                <span class="input-icon">✉</span>
+                <input class="auth-input" id="forgotEmail" type="email" required />
+              </div>
+              <span class="field-error" id="errForgotEmail"></span>
+            </div>
+            <button type="submit" class="auth-submit-btn" id="forgotSubmit">
+              <span id="forgotBtnText">Send Recovery Code</span>
+              <span class="btn-arrow" id="forgotBtnArrow">→</span>
+            </button>
+            <div style="text-align:center; margin-top:10px;">
+              <a href="#" class="forgot-link" onclick="switchTab('login'); return false;">Return to Login</a>
+            </div>
+          </form>
+
+          <!-- ── 2FA VERIFICATION FORM ── -->
+          <form class="auth-form" id="2faForm" autocomplete="off" onsubmit="handle2FAVerification(event)" novalidate>
+            <p style="font-size:0.85rem; color:var(--text-secondary); margin-bottom:15px;">
+              A secondary security code has been sent to your registered team email for identity verification.
+            </p>
+            <div id="2faCodeFallback" style="display:none; background:rgba(96,165,250,0.1); border:1px solid rgba(96,165,250,0.3); border-radius:10px; padding:0.75rem 1rem; margin-bottom:1rem; font-family:monospace; font-size:1.1rem; font-weight:700; color:#60a5fa; text-align:center; letter-spacing:4px;"></div>
+            <input type="hidden" id="2faEmailHidden" />
+            <div class="field-group">
+              <label class="field-label" for="2faCodeInput">6-Digit Identity Code</label>
+              <div class="input-wrap">
+                <span class="input-icon">🛡️</span>
+                <input class="auth-input" id="2faCodeInput" type="text" placeholder="######" maxlength="6" required style="letter-spacing:8px; font-family:monospace; text-align:center; font-size:1.2rem;" />
+              </div>
+              <span class="field-error" id="err2FACode"></span>
+            </div>
+            <button type="submit" class="auth-submit-btn" id="2faSubmit">
+              <span>Verify Identity</span>
+              <span class="btn-arrow">→</span>
+            </button>
+            <div style="text-align:center; margin-top:15px;">
+              <a href="#" class="forgot-link" onclick="switchTab('login'); return false;">Cancel & Return</a>
+            </div>
+          </form>
+
+          <!-- ── RESET PASSWORD FORM ── -->
+          <form class="auth-form" id="resetForm" autocomplete="off" onsubmit="handleResetPassword(event)" novalidate>
+            <p style="font-size:0.85rem; color:var(--text-secondary); margin-bottom:10px;">
+              Enter the 6-digit code sent to <span id="resetEmailDisplay" style="color:#4ade80; font-weight:700;">...</span>, then set a new password.
+            </p>
+            <div id="resetCodeFallback" style="display:none; background:rgba(34,197,94,0.1); border:1px solid rgba(34,197,94,0.3); border-radius:10px; padding:0.75rem 1rem; margin-bottom:1rem; font-family:monospace; font-size:1.1rem; font-weight:700; color:#4ade80; text-align:center; letter-spacing:4px;"></div>
+            <input type="hidden" id="resetEmailHidden" />
+            <div class="field-group">
+              <label class="field-label" for="resetCode">Recovery Code</label>
+              <div class="input-wrap">
+                <span class="input-icon">🔑</span>
+                <input class="auth-input" id="resetCode" type="text" placeholder="123456" maxlength="6" required style="letter-spacing:4px; font-family:monospace;" />
+              </div>
+              <span class="field-error" id="errResetCode"></span>
+            </div>
+            <div class="field-group">
+              <label class="field-label" for="resetPass">New Passphrase</label>
+              <div class="input-wrap">
+                <span class="input-icon">🔒</span>
+                <input class="auth-input" id="resetPass" type="password" required oninput="checkPasswordStrength(this.value)" />
+                <button type="button" class="eye-btn" onclick="toggleVisibility('resetPass', this)">👁</button>
+              </div>
+              <div class="strength-meter">
+                <div class="strength-track"><div class="strength-bar" id="strengthBarReset"></div></div>
+                <span class="strength-label" id="strengthLabelReset"></span>
+              </div>
+              <span class="field-error" id="errResetPass"></span>
+            </div>
+            <button type="submit" class="auth-submit-btn" id="resetSubmit">
+              <span>Set New Passphrase</span>
+              <span class="btn-arrow">→</span>
+            </button>
+            <div style="text-align:center; margin-top:10px;">
+              <a href="#" class="forgot-link" onclick="switchTab('login'); return false;">Back to Login</a>
+            </div>
+          </form>
+
+          <!-- Guest -->
+          <div class="auth-divider" style="margin-top:1rem;"><span>or</span></div>
+          <button class="guest-btn" onclick="continueAsGuest()" style="color:#4ade80;">Terminal Guest Access</button>
+
+        </div>
+      </div>
+    </main>
+
+  </div>
+
+  <div id="authSuccessToast" class="auth-toast success"></div>
+  <script src="auth.js"></script>
+</body>
+</html>

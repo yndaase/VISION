@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Analytics | Vision Education · 2026 WASSCE</title>
+  <meta name="description" content="Track your WASSCE readiness and subject mastery." />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="dashboard.css" />
+  <link rel="stylesheet" href="analytics.css" />
+</head>
+<body class="analytics-page">
+
+  <!-- ── NAVBAR ── -->
+  <nav class="dash-nav" id="dashNav">
+    <div class="dash-nav-inner">
+      <a class="dash-logo" href="dashboard.html">
+        <span class="dash-logo-icon">📐</span>
+        <span class="dash-logo-text">Vision <span class="brand-accent">Education</span></span>
+      </a>
+
+      <div class="dash-nav-right">
+        <span class="nav-badge">2026 WASSCE</span>
+        <div class="nav-user-chip" id="navUserChip">
+          <div class="nav-avatar" id="navAvatar">K</div>
+          <span class="nav-username" id="navUsername">Student</span>
+        </div>
+        <button class="nav-logout-btn" id="navLogoutBtn" onclick="handleLogout()" title="Log out">
+          <span>Log out</span>
+          <span>↩</span>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ── ANALYTICS CONTENT ── -->
+  <main class="analytics-container">
+    <header class="analytics-header">
+      <div>
+        <h1 class="analytics-title">Performance Analytics</h1>
+        <p class="analytics-subtitle">Aggregated data from your recent WASSCE mock simulations and practice sets.</p>
+      </div>
+      <div>
+        <a href="dashboard.html" class="return-dash-btn">
+          <span>←</span> Return to Dashboard
+        </a>
+      </div>
+    </header>
+
+    <!-- Top Stats -->
+    <div class="top-stats-grid">
+      <div class="stat-card" style="border-top: 3px solid var(--primary);">
+        <p class="stat-val" id="totalMocks">4</p>
+        <p class="stat-label">Proctored Mocks Taken</p>
+      </div>
+      <div class="stat-card" style="border-top: 3px solid #10b981;">
+        <p class="stat-val" id="avgAccuracy">78%</p>
+        <p class="stat-label">Global Accuracy Rate</p>
+      </div>
+      <div class="stat-card" style="border-top: 3px solid #f59e0b;">
+        <p class="stat-val" id="theoryScore">B2</p>
+        <p class="stat-label">Aggregated Theory Grade</p>
+      </div>
+      <div class="stat-card" style="border-top: 3px solid #8b5cf6;">
+        <p class="stat-val" id="totalQuestions">142</p>
+        <p class="stat-label">Total Questions Solved</p>
+      </div>
+    </div>
+
+    <!-- Layout Data -->
+    <div class="analytics-layout">
+      
+      <!-- Left Column: Master Matrix -->
+      <section class="detail-card">
+        <div class="detail-card-header">
+          <span>📊 Subject Matrix Mastery</span>
+        </div>
+        
+        <div class="subject-matrix-row">
+          <div class="matrix-name">
+            <span class="matrix-icon" style="color:#f59e0b;">📐</span>
+            Core Mathematics
+          </div>
+          <div class="matrix-score excellent">84%</div>
+        </div>
+        
+        <div class="subject-matrix-row">
+          <div class="matrix-name">
+            <span class="matrix-icon" style="color:#60a5fa;">📖</span>
+            English Language
+          </div>
+          <div class="matrix-score excellent">76%</div>
+        </div>
+
+        <div class="subject-matrix-row">
+          <div class="matrix-name">
+            <span class="matrix-icon" style="color:#10b981;">🧬</span>
+            Integrated Science
+          </div>
+          <div class="matrix-score needs-work">42%</div>
+        </div>
+
+        <div class="subject-matrix-row">
+          <div class="matrix-name">
+            <span class="matrix-icon" style="color:#a78bfa;">🌍</span>
+            Social Studies
+          </div>
+          <div class="matrix-score average">65%</div>
+        </div>
+      </section>
+
+      <!-- Right Column: Weak Topics AI -->
+      <aside class="detail-card">
+        <div class="detail-card-header">
+          <span>🤖 AI Diagnostic Flags</span>
+        </div>
+        
+        <div class="weak-topics-list">
+          <div class="weak-topic-item">
+            <p class="weak-topic-title">Vector Geometry</p>
+            <p class="weak-topic-desc">You are consistently missing resolving coplanar vectors in Section B theory. Review resolving components.</p>
+          </div>
+          <div class="weak-topic-item">
+            <p class="weak-topic-title">Genetics Crosses</p>
+            <p class="weak-topic-desc">Science: Difficulty interpreting dihybrid Punnett squares. 20% accuracy in recent mocks.</p>
+          </div>
+          <div class="weak-topic-item" style="border-left-color: #fbbf24; background: rgba(251, 191, 36, 0.05);">
+            <p class="weak-topic-title" style="color: #fcd34d;">Commercial Arithmetic</p>
+            <p class="weak-topic-desc">You are averaging 2.5 minutes per commercial math MCQ. This is slowing down your overall pace.</p>
+          </div>
+        </div>
+      </aside>
+      
+    </div>
+  </main>
+
+  <!-- Dummy local auth check -->
+  <script>
+    function handleLogout() {
+      window.location.href = 'login.html';
+    }
+  </script>
+</body>
+</html>
