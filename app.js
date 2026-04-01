@@ -37,10 +37,9 @@ function getDailyQuestions(subject, mode = 'objective') {
   return shuffled; // Return the whole shuffled pool
 }
 
-// Initial load
-QUESTIONS = getDailyQuestions(currentSubjectStr, currentMode);
-const DISPLAY_COUNT = 15; // How many to show in the "Set"
-let activeQuestions = QUESTIONS.slice(0, DISPLAY_COUNT);
+// Display constants
+const DISPLAY_COUNT = 15;
+let activeQuestions = [];
 
 // ─── Mode Management (V4) ───────────────────────────
 function setMode(mode) {
@@ -544,7 +543,12 @@ function initNavUserChip() {
   if (navUsername) navUsername.textContent = session.name.split(' ')[0];
   
   const heroHeading = document.querySelector('.hero h1');
-  const subjectTitles = { maths: "Core Maths", cs: "Computer Science", english: "English Language" };
+  const subjectTitles = { 
+    maths: "Core Maths", 
+    cs: "Computer Science", 
+    science: "Integrated Science",
+    english: "English Language" 
+  };
   const titleText = subjectTitles[currentSubjectStr] || "WAEC Prep";
   
   if (heroHeading) {
@@ -555,6 +559,11 @@ function initNavUserChip() {
 document.addEventListener('DOMContentLoaded', () => {
   const session = checkAuth();
   if (!session) return;
+  
+  // Safe Initialization
+  QUESTIONS = getDailyQuestions(currentSubjectStr, currentMode);
+  activeQuestions = QUESTIONS.slice(0, DISPLAY_COUNT);
+  
   initNavUserChip();
   renderAll();
 });

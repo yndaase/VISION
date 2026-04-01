@@ -11,6 +11,7 @@
   <link rel="stylesheet" href="style.css" />
   <link rel="stylesheet" href="theme.css" />
   <script src="theme.js"></script>
+  <script src="auth.js"></script>
   <script src="materials.js"></script>
   <style>
     :root {
@@ -176,13 +177,12 @@
     .audit-action { font-weight: 700; color: var(--admin-primary); width: 100px; flex-shrink: 0; }
 
     /* Toast */
-    .admin-toast {
-      position: fixed; bottom: 2rem; right: 2rem; padding: 1rem 1.5rem; background: var(--admin-card-dark);
-      border: 1px solid var(--admin-primary); border-radius: 12px; font-weight: 700; z-index: 9999;
-      transform: translateY(100px); opacity: 0; transition: all 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28);
-      display: flex; align-items: center; gap: 10px; color: #fff;
-    }
     .admin-toast.show { transform: translateY(0); opacity: 1; }
+
+    /* Modal */
+    .modal-overlay { position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.7); backdrop-filter: blur(4px); display: none; align-items: center; justify-content: center; z-index: 1000; }
+    .modal-overlay.visible { display: flex; }
+    .modal-card { background: var(--bg-card); border: 1px solid var(--border-accent); border-radius: 24px; width: 100%; max-width: 500px; padding: 2.5rem; position: relative; }
 
     @media (max-width: 1024px) {
       .admin-sidebar { width: 80px; padding: 2rem 0.5rem; }
@@ -293,15 +293,52 @@
         <div id="matDisplay"></div>
       </section>
 
-      <!-- ── USERS & BROADCASTS Placeholder ── -->
+      <!-- ── USERS & BROADCASTS ── -->
       <section class="admin-section" id="sec-users">
         <div class="admin-page-header">
-          <h2 style="font-size: 1.5rem; font-weight: 800;">👥 Learner Directory</h2>
+          <h2 style="font-size: 1.5rem; font-weight: 800;">👥 User Directory & Roles</h2>
+          <p style="color: var(--text-muted); font-size: 0.85rem;">Create new accounts and manage access roles (Student, PRO, Admin).</p>
         </div>
+
+        <div class="admin-card" style="margin-bottom: 2rem;">
+          <div class="admin-card-header"><span class="admin-card-title">Create New Account</span></div>
+          <div class="admin-card-body" style="padding: 2rem;">
+            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px;">
+              <div class="admin-field">
+                <label class="admin-label">Full Name</label>
+                <input class="admin-input" id="newUserName" placeholder="Full Name">
+              </div>
+              <div class="admin-field">
+                <label class="admin-label">Email Address</label>
+                <input class="admin-input" id="newUserEmail" placeholder="email@visionedu.online">
+              </div>
+              <div class="admin-field">
+                <label class="admin-label">Initial Password</label>
+                <input class="admin-input" type="password" id="newUserPass" placeholder="••••••••">
+              </div>
+            </div>
+            <div style="display: flex; align-items: flex-end; gap: 15px; margin-top: 10px;">
+              <div class="admin-field" style="margin-bottom:0; flex: 1;">
+                <label class="admin-label">Assign Role</label>
+                <select class="admin-input" id="newUserRole">
+                  <option value="student">Student (Standard)</option>
+                  <option value="pro">PRO (Premium Access)</option>
+                  <option value="admin">Admin (System Control)</option>
+                </select>
+              </div>
+              <button class="act-btn act-primary" onclick="createUser()" style="height: 48px; padding: 0 30px;">Create Account ✓</button>
+            </div>
+          </div>
+        </div>
+
         <div class="admin-card">
-          <div class="admin-card-body" style="padding:1.5rem;">
-            <table class="admin-table" id="allUsersTable">
-              <thead><tr><th>User</th><th>Email</th><th>Role</th><th>Joined</th></tr></thead>
+          <div class="admin-card-header">
+            <span class="admin-card-title">All Registered Users</span>
+            <input type="text" placeholder="Search learners..." id="userSearch" oninput="renderUsers()" style="background:var(--bg-input); border:1px solid var(--border); padding:8px 15px; border-radius:10px; color:var(--text-primary); font-size:0.85rem; width:250px;">
+          </div>
+          <div class="admin-card-body" style="padding:0; overflow-x:auto;">
+            <table class="admin-table">
+              <thead><tr><th>Learner</th><th>Email</th><th>Role Access</th><th>Action</th></tr></thead>
               <tbody id="allUsersTbody"></tbody>
             </table>
           </div>
@@ -333,16 +370,49 @@
 
 <div class="admin-toast" id="toast"></div>
 
+<!-- ── MODAL: NEW MATERIAL ── -->
+<div class="modal-overlay" id="matModal">
+  <div class="modal-card">
+    <div style="font-size:1.25rem; font-weight:800; margin-bottom:1.5rem; display:flex; align-items:center; gap:10px;">
+      <span>📥</span> Add Learning Material
+    </div>
+    <div class="admin-field">
+      <label class="admin-label">Subject</label>
+      <select class="admin-input" id="matSubject">
+        <script>
+          document.write(SUBJECTS_META.map(s => `<option value="${s.id}">${s.icon} ${s.name}</option>`).join(''));
+        </script>
+      </select>
+    </div>
+    <div class="admin-field">
+      <label class="admin-label">Title / Description</label>
+      <input class="admin-input" id="matTitle" placeholder="e.g. 2026 Core Maths Revision Guide">
+    </div>
+    <div class="admin-field">
+      <label class="admin-label">Material Type</label>
+      <select class="admin-input" id="matType">
+        <option value="PDF">📄 PDF Document</option>
+        <option value="VIDEO">🎬 Video Lesson</option>
+        <option value="DOC">📝 Word/Doc</option>
+        <option value="SLIDE">📊 Presentation</option>
+        <option value="LINK">🔗 External Link</option>
+      </select>
+    </div>
+    <div class="admin-field">
+      <label class="admin-label">Google Drive / Resource URL</label>
+      <input class="admin-input" id="matUrl" placeholder="https://drive.google.com/...">
+    </div>
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:2rem;">
+      <button class="act-btn act-ghost" onclick="closeMatModal()">Cancel</button>
+      <button class="act-btn act-primary" onclick="saveNewMaterial()" style="padding:12px;">Save Entry</button>
+    </div>
+  </div>
+</div>
+
 <script>
   // ─── SECURITY ENGINE ───
-  const SESSION_KEY = 'vision_admin_at';
+  const ADMIN_SESSION_KEY = 'vision_admin_at';
   
-  async function sha256(str) {
-    const buf = new TextEncoder().encode(str);
-    const hash = await crypto.subtle.digest('SHA-256', buf);
-    return Array.from(new Uint8Array(hash)).map(b => b.toString(16).padStart(2, '0')).join('');
-  }
-
   function logAction(action) {
     const logs = JSON.parse(localStorage.getItem('vision_audit_log') || '[]');
     logs.unshift({ action, time: new Date().toISOString() });
@@ -352,33 +422,33 @@
 
   // ─── AUTH ───
   async function adminInit() {
-    const users = JSON.parse(localStorage.getItem('waec_users') || '[]');
+    const users = getUsers();
     const adminEmail = 'admin@visionedu.online';
     const admin = users.find(u => u.email === adminEmail);
     const expectedHash = await sha256('VisionAdmin2026!');
 
     if (!admin) {
-      users.push({ name: 'System Admin', email: adminEmail, hash: expectedHash, role: 'admin', createdAt: Date.now() });
-      localStorage.setItem('waec_users', JSON.stringify(users));
+      users.push({ name: 'System Admin', email: adminEmail, hash: expectedHash, role: 'admin', createdAt: Date.now(), provider: 'email' });
+      saveUsers(users);
     } else if (admin.hash.length < 60) { // Old hash detection
       admin.hash = expectedHash;
       admin.role = 'admin';
-      localStorage.setItem('waec_users', JSON.stringify(users));
+      saveUsers(users);
     }
 
-    const session = sessionStorage.getItem(SESSION_KEY);
+    const session = sessionStorage.getItem(ADMIN_SESSION_KEY);
     if (session) showDash();
   }
 
   document.getElementById('loginBtn').onclick = async () => {
-    const email = document.getElementById('adminEmail').value.trim();
+    const email = document.getElementById('adminEmail').value.trim().toLowerCase();
     const pass  = document.getElementById('adminPass').value;
     const hash  = await sha256(pass);
-    const users = JSON.parse(localStorage.getItem('waec_users') || '[]');
+    const users = getUsers();
     const user  = users.find(u => u.email === email && u.hash === hash && u.role === 'admin');
 
     if (user) {
-      sessionStorage.setItem(SESSION_KEY, Date.now());
+      sessionStorage.setItem(ADMIN_SESSION_KEY, Date.now());
       logAction('LOGON_SUCCESS');
       showDash();
     } else {
@@ -388,7 +458,7 @@
   };
 
   document.getElementById('logoutBtn').onclick = () => {
-    sessionStorage.removeItem(SESSION_KEY);
+    sessionStorage.removeItem(ADMIN_SESSION_KEY);
     location.reload();
   };
 
@@ -412,7 +482,7 @@
 
   // ─── CONTENT RENDERING ───
   function renderStats() {
-    const users = JSON.parse(localStorage.getItem('waec_users') || '[]');
+    const users = getUsers();
     const mats  = getMaterials();
     const grid = document.getElementById('statsGrid');
     
@@ -452,7 +522,7 @@
     
     const subjects = {};
     SUBJECTS_META.forEach(s => subjects[s.id] = []);
-    mats.forEach(m => subjects[m.subject].push(m));
+    mats.forEach(m => { if(subjects[m.subject]) subjects[m.subject].push(m); });
 
     container.innerHTML = SUBJECTS_META.map(s => {
       const subjMats = subjects[s.id];
@@ -469,7 +539,7 @@
                 <span style="font-size:1.5rem;">📄</span>
                 <div style="flex:1; overflow:hidden;">
                   <div style="font-weight:700; white-space:nowrap; text-overflow:ellipsis; overflow:hidden;">${m.title}</div>
-                  <div style="font-size:0.7rem; color:var(--text-muted);">${m.type} · ${m.size||'N/A'}</div>
+                  <div style="font-size:0.7rem; color:var(--text-muted);">${m.type} · ${m.uploadedAt||'New'}</div>
                 </div>
                 <button class="act-btn act-danger" onclick="deleteMat('${m.id}')">Delete</button>
               </div>
@@ -480,6 +550,53 @@
     }).join('');
   }
 
+  function openMatModal() { document.getElementById('matModal').classList.add('visible'); }
+  function closeMatModal() { document.getElementById('matModal').classList.remove('visible'); }
+
+  function saveNewMaterial() {
+    const sub = document.getElementById('matSubject').value;
+    const title = document.getElementById('matTitle').value.trim();
+    const type = document.getElementById('matType').value;
+    const url = document.getElementById('matUrl').value.trim();
+
+    if (!title || !url) { showToast('Please fill all fields'); return; }
+
+    const entry = {
+      id: genMatId(),
+      subject: sub,
+      title,
+      type,
+      url,
+      uploadedAt: new Date().toISOString().split('T')[0],
+      uploadedBy: 'admin'
+    };
+
+    upsertMaterial(entry);
+    logAction('MATERIAL_ADDED: ' + title);
+    closeMatModal();
+    renderMats();
+    showToast('New material published!');
+    
+    // Clear inputs
+    document.getElementById('matTitle').value = '';
+    document.getElementById('matUrl').value = '';
+  }
+
+  function postAnn() {
+    const title = document.getElementById('annTitle').value.trim();
+    const body = document.getElementById('annMsg').value.trim();
+    if(!title || !body) { showToast('Broadcast requires title and body'); return; }
+
+    const anns = JSON.parse(localStorage.getItem('vision_announcements') || '[]');
+    anns.unshift({ title, body, date: new Date().toISOString() });
+    localStorage.setItem('vision_announcements', JSON.stringify(anns.slice(0, 5)));
+    
+    logAction('BROADCAST_SENT: ' + title);
+    showToast('Message broadcasted to all students!');
+    document.getElementById('annTitle').value = '';
+    document.getElementById('annMsg').value = '';
+  }
+
   function deleteMat(id) {
     if (!confirm('Permanently remove this material?')) return;
     deleteMaterial(id);
@@ -488,17 +605,108 @@
     showToast('Material removed');
   }
 
+  async function createUser() {
+    const name = document.getElementById('newUserName').value.trim();
+    const email = document.getElementById('newUserEmail').value.trim().toLowerCase();
+    const pass = document.getElementById('newUserPass').value;
+    const role = document.getElementById('newUserRole').value;
+
+    if (!name || !email || !pass) {
+      showToast('All fields required', 'error'); return;
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      showToast('Invalid email format', 'error'); return;
+    }
+    if (pass.length < 6) {
+      showToast('Password must be at least 6 chars', 'error'); return;
+    }
+
+    const users = getUsers();
+    if (users.some(u => u.email === email)) {
+      showToast('Email already in use', 'error'); return;
+    }
+
+    const hash = await sha256(pass);
+    users.push({ 
+      name, 
+      email, 
+      hash, 
+      role, 
+      provider: 'email', 
+      createdAt: Date.now(),
+      status: 'active'
+    });
+    saveUsers(users);
+    
+    // Clear form
+    ['newUserName', 'newUserEmail', 'newUserPass'].forEach(id => document.getElementById(id).value = '');
+    logAction('USER_CREATED: ' + email);
+    renderUsers();
+    showToast('Account created: ' + name);
+  }
+
   function renderUsers() {
-    const users = JSON.parse(localStorage.getItem('waec_users') || '[]');
+    const users = getUsers();
+    const q = document.getElementById('userSearch').value.toLowerCase();
     const tbody = document.getElementById('allUsersTbody');
-    tbody.innerHTML = users.map(u => `
+    
+    const filtered = users.filter(u => u.name.toLowerCase().includes(q) || u.email.toLowerCase().includes(q));
+
+    tbody.innerHTML = filtered.map(u => `
       <tr>
-        <td><b>${u.name}</b></td>
-        <td style="font-family:monospace;">${u.email}</td>
-        <td><span style="font-size:0.7rem; background:var(--primary-dim); color:var(--admin-primary); padding:2px 8px; border-radius:100px; font-weight:800; text-transform:uppercase;">${u.role}</span></td>
-        <td>${new Date(u.createdAt).toLocaleDateString()}</td>
+        <td>
+          <div style="display:flex; align-items:center; gap:10px;">
+            <div style="width:32px; height:32px; background:var(--admin-primary); border-radius:50%; display:flex; align-items:center; justify-content:center; color:#fff; font-weight:800; font-size:0.75rem;">${u.name[0].toUpperCase()}</div>
+            <div style="line-height:1.2;">
+              <div style="font-weight:700;">${u.name}</div>
+              <div style="font-size:0.65rem; color:var(--text-muted);">${new Date(u.createdAt).toLocaleDateString()}</div>
+            </div>
+          </div>
+        </td>
+        <td style="font-family:var(--font-mono); font-size:0.8rem;">${u.email}</td>
+        <td>
+          <select style="background:var(--bg-input); border:1px solid var(--border); color:var(--text-primary); padding:6px 10px; border-radius:8px; font-size:0.75rem; font-weight:700; outline:none; cursor:pointer;" onchange="updateRole('${u.email}', this.value)">
+            <option value="student" ${u.role === 'student' ? 'selected' : ''}>STUDENT</option>
+            <option value="pro" ${u.role === 'pro' ? 'selected' : ''}>PRO</option>
+            <option value="admin" ${u.role === 'admin' ? 'selected' : ''}>ADMIN</option>
+          </select>
+        </td>
+        <td style="text-align:right;">
+          <button class="act-btn act-danger" onclick="deleteUserAccount('${u.email}')" ${u.email === 'admin@visionedu.online' ? 'disabled' : ''} title="Delete Account">🗑️</button>
+        </td>
       </tr>
     `).join('');
+  }
+
+  function updateRole(email, newRole) {
+    const users = getUsers();
+    const idx = users.findIndex(u => u.email === email);
+    if (idx !== -1) {
+      const oldRole = users[idx].role;
+      users[idx].role = newRole;
+      saveUsers(users);
+      logAction(`ROLE_CHANGE: ${email} (${oldRole} -> ${newRole})`);
+      showToast(`Role updated: ${newRole.toUpperCase()}`);
+      
+      // Update session if editing self
+      const session = getSession();
+      if (session && session.email === email) {
+        session.role = newRole;
+        setSession(session);
+      }
+    }
+  }
+
+  function deleteUserAccount(email) {
+    if (email === 'admin@visionedu.online') return;
+    if (!confirm('Permanent deletion of account ' + email + '?')) return;
+    
+    const users = getUsers();
+    const filtered = users.filter(u => u.email !== email);
+    saveUsers(filtered);
+    logAction('USER_DELETED: ' + email);
+    renderUsers();
+    showToast('Account deleted');
   }
 
   function showToast(msg) {

@@ -174,14 +174,11 @@
 }
 
 .dash-nav-inner {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 1.5rem;
   height: 64px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 1rem;
+  gap: 2rem;
 }
 
 /* Logo */
@@ -279,6 +276,146 @@
   background: rgba(248,113,113,0.07);
 }
 @media (max-width: 480px) { .nav-logout-btn span:first-child { display: none; } }
+
+/* ═══ GLOBAL SEARCH ═══ */
+.nav-search-wrap {
+  flex: 1;
+  max-width: 500px;
+  position: relative;
+  z-index: 100;
+}
+@media (max-width: 768px) {
+  .nav-search-wrap { display: none; } /* Hide on small screens to save space */
+}
+
+.nav-search-input-group {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.search-icon {
+  position: absolute;
+  left: 14px;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  pointer-events: none;
+}
+
+#globalSearch {
+  width: 100%;
+  padding: 10px 40px 10px 40px;
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  color: var(--text-primary);
+  font-family: var(--font-main);
+  font-size: 0.9rem;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  outline: none;
+}
+
+#globalSearch:focus {
+  border-color: var(--primary);
+  background: var(--bg-card);
+  box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+}
+
+.search-kbd {
+  position: absolute;
+  right: 12px;
+  background: var(--bg-sidebar);
+  border: 1px solid var(--border-accent);
+  color: var(--text-muted);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.7rem;
+  font-family: var(--font-mono);
+  pointer-events: none;
+}
+
+.search-results-overlay {
+  position: absolute;
+  top: calc(100% + 10px);
+  left: 0;
+  right: 0;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  box-shadow: var(--shadow-premium);
+  max-height: 450px;
+  overflow-y: auto;
+  display: none;
+  flex-direction: column;
+  padding: 8px;
+  animation: slideDown 0.2s ease;
+}
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.search-results-overlay.visible {
+  display: flex;
+}
+
+.search-section-label {
+  font-size: 0.65rem;
+  font-weight: 800;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding: 12px 12px 6px;
+}
+
+.search-result-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  text-decoration: none;
+  color: var(--text-primary);
+  transition: background 0.2s;
+}
+
+.search-result-item:hover {
+  background: var(--primary-dim);
+}
+
+.search-result-icon {
+  width: 32px;
+  height: 32px;
+  background: var(--bg-input);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+}
+
+.search-result-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.search-result-title {
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.search-result-meta {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+}
+
+.search-no-results {
+  padding: 2rem;
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
 
 /* ═══════════════════════════════════════════════
    HERO / WELCOME

@@ -83,6 +83,25 @@
     .dropdown-item.danger { color: var(--error); }
     .dropdown-item.danger:hover { background: rgba(248,113,113,0.1); }
     .nav-user-chip .nav-avatar { cursor: pointer; }
+    
+    /* PRO Role Badge */
+    .pro-badge {
+      font-size: 0.62rem;
+      font-weight: 900;
+      background: linear-gradient(135deg, #fbbf24, #f59e0b);
+      color: #000;
+      padding: 2px 6px;
+      border-radius: 4px;
+      margin-left: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      box-shadow: 0 4px 10px rgba(251,191,36,0.25);
+      display: inline-flex;
+      align-items: center;
+      line-height: 1;
+      height: 16px;
+      vertical-align: middle;
+    }
   </style>
 </head>
 
@@ -145,6 +164,18 @@
         <span class="dash-logo-icon">📐</span>
         <span class="dash-logo-text">Vision <span class="brand-accent">Education</span></span>
       </a>
+
+      <!-- Global Search -->
+      <div class="nav-search-wrap">
+        <div class="nav-search-input-group">
+          <span class="search-icon">🔍</span>
+          <input type="search" id="globalSearch" placeholder="Search subjects, topics, or materials..." autocomplete="off">
+          <kbd class="search-kbd">/</kbd>
+        </div>
+        <div class="search-results-overlay" id="searchResults">
+          <!-- Results rendered via JS -->
+        </div>
+      </div>
 
       <div class="dash-nav-right">
         <span class="nav-badge">2026 WASSCE</span>
@@ -465,6 +496,31 @@
             </div>
           </div>
           <div class="subject-card-glow" style="--glow:#14b8a6;"></div>
+        </a>
+
+        <!-- Integrated Science -->
+        <a class="subject-card available" href="index.html?sub=science" id="card-science">
+          <div class="subject-card-inner">
+            <div class="subject-top">
+              <div class="subject-icon-wrap" style="--subj-color:#10b981;">
+                <span class="subject-icon">⚗️</span>
+              </div>
+              <div style="display:flex; flex-direction:column; align-items:flex-end; gap:4px;">
+                <span class="subject-status available-tag">Available</span>
+                <span style="font-size:0.6rem; font-weight:800; color:var(--primary); background:var(--primary-dim); padding:2px 8px; border-radius:4px; letter-spacing:0.05em; border: 1px solid var(--border-accent);">NEW MODULE</span>
+              </div>
+            </div>
+            <h3 class="subject-name">Integrated Science</h3>
+            <p class="subject-desc">Biology, Chemistry &amp; Physics for Senior High Schools.</p>
+            <div class="subject-meta">
+              <span class="meta-chip">15+ Questions</span>
+              <span class="meta-chip">MCQ + Theory</span>
+            </div>
+            <div class="subject-cta">
+              Start Practice <span class="cta-arrow">→</span>
+            </div>
+          </div>
+          <div class="subject-card-glow" style="--glow:#10b981;"></div>
         </a>
 
         <!-- Vision Education Robotics -->

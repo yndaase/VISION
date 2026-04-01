@@ -90,7 +90,14 @@ function migrateLegacyData() {
 }
 
 
-// ─── Simple hash (demo-grade, not cryptographic) ─────
+// ─── Secure SHA-256 Hashing ──────────────────────────
+async function sha256(str) {
+  const buf = new TextEncoder().encode(str);
+  const hashArray = new Uint8Array(await crypto.subtle.digest('SHA-256', buf));
+  return Array.from(hashArray).map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
+// ─── Legacy simple hash (for migration only) ─────────
 function simpleHash(str) {
   let h = 0;
   for (let i = 0; i < str.length; i++) { h = ((h << 5) - h) + str.charCodeAt(i); h |= 0; }
@@ -311,7 +318,7 @@ function handleGoogleCredential(response) {
 // (Using official GIS script load, no programmatic trigger needed)
 
 // ─── Email Login ─────────────────────────────────────
-function handleLogin(e) {
+async function handleLogin(e) {
   e.preventDefault();
   clearErrors();
 
@@ -329,8 +336,33 @@ function handleLogin(e) {
   }
   if (!valid) return;
 
-  const user = getUsers().find(u => u.email === email && u.hash === simpleHash(pass));
-  if (!user) {
+  const users = getUsers();
+  const userIndex = users.findIndex(u => u.email === email && u.provider === 'email');
+  
+  if (userIndex === -1) {
+    setError('errLoginGeneral', 'Invalid email or password. Please try again.');
+    const form = document.getElementById('loginForm');
+    if (form) { form.classList.add('form-shake'); setTimeout(() => form.classList.remove('form-shake'), 500); }
+    return;
+  }
+
+  const user = users[userIndex];
+  const inputHash = await sha256(pass);
+  const legacyHash = simpleHash(pass);
+
+  let authSuccess = false;
+  if (user.hash === inputHash) {
+    authSuccess = true;
+  } else if (user.hash === legacyHash) {
+    // Soft Migration: Upgrade to SHA-256 on successful login
+    user.hash = inputHash;
+    users[userIndex] = user;
+    saveUsers(users);
+    authSuccess = true;
+    console.log('[Auth] User password upgraded to SHA-256 security.');
+  }
+
+  if (!authSuccess) {
     setError('errLoginGeneral', 'Invalid email or password. Please try again.');
     const form = document.getElementById('loginForm');
     if (form) { form.classList.add('form-shake'); setTimeout(() => form.classList.remove('form-shake'), 500); }
@@ -398,7 +430,7 @@ function handle2FAVerification(e) {
 }
 
 // ─── Email Signup ────────────────────────────────────
-function handleSignup(e) {
+async function handleSignup(e) {
   e.preventDefault();
   clearErrors();
 
@@ -420,7 +452,15 @@ function handleSignup(e) {
     return;
   }
 
-  const user = { name, email, hash: simpleHash(pass), provider: 'email', createdAt: Date.now() };
+  const hash = await sha256(pass);
+  const user = { 
+    name, 
+    email, 
+    hash, 
+    provider: 'email', 
+    role: 'student', 
+    createdAt: Date.now() 
+  };
   users.push(user);
   saveUsers(users);
   setSession(user);
@@ -663,7 +703,7 @@ async function handleForgotPassword(e) {
   }
 }
 
-function handleResetPassword(e) {
+async function handleResetPassword(e) {
   e.preventDefault();
   clearErrors();
   const email = (document.getElementById('resetEmailHidden').value || '').trim().toLowerCase();
@@ -689,7 +729,7 @@ function handleResetPassword(e) {
     markInputError('resetCode', 'errResetCode', 'Incorrect or expired code. Please try again.'); return;
   }
   // Update password in the user database
-  user.hash = simpleHash(pass);
+  user.hash = await sha256(pass);
   delete user.resetToken;
   users[userIndex] = user;
   saveUsers(users);

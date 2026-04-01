@@ -14,7 +14,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const initial = session.name ? session.name.charAt(0).toUpperCase() : '?';
   if (navAvatar)   navAvatar.textContent   = initial;
-  if (navUsername) navUsername.textContent = session.name || 'Student';
+  if (navUsername) {
+    navUsername.textContent = session.name || 'Student';
+    // If PRO role, add gold badge
+    if (session.role === 'pro') {
+      const badge = document.createElement('span');
+      badge.className = 'pro-badge';
+      badge.textContent = 'PRO';
+      navUsername.after(badge);
+    }
+  }
 
   // If Google user has picture, show it
   if (session.picture && navAvatar) {
@@ -39,6 +48,17 @@ document.addEventListener('DOMContentLoaded', () => {
   if (welcomeName) {
     const firstName = session.name ? session.name.split(' ')[0] : 'Student';
     welcomeName.textContent = firstName;
+    
+    // Add PRO badge to hero if applicable
+    if (session.role === 'pro') {
+      const heroBadge = document.createElement('span');
+      heroBadge.className = 'pro-badge';
+      heroBadge.style.margin = '0 0 0 12px';
+      heroBadge.style.fontSize = '0.8rem';
+      heroBadge.style.height = '22px';
+      heroBadge.textContent = 'PRO';
+      welcomeName.after(heroBadge);
+    }
   }
 
   if (welcomeGreeting) {
@@ -76,6 +96,9 @@ document.addEventListener('DOMContentLoaded', () => {
       chip.classList.remove('open');
     }
   });
+
+  // ─── Initialize Global Search ────────────────────────
+  initGlobalSearch();
 });
 
 
@@ -102,4 +125,100 @@ function toggleUserDropdown() {
 function closeUserDropdown() {
   const chip = document.getElementById('navUserChip');
   if (chip) chip.classList.remove('open');
+}
+
+// ═════════════════════════════════════════════════════════════════════════════
+// GLOBAL SEARCH ENGINE
+// ═════════════════════════════════════════════════════════════════════════════
+function initGlobalSearch() {
+  const searchInput = document.getElementById('globalSearch');
+  const resultsBox = document.getElementById('searchResults');
+  
+  if (!searchInput || !resultsBox) return;
+
+  // Shortcut key "/"
+  document.addEventListener('keydown', (e) => {
+    if (e.key === '/' && document.activeElement.tagName !== 'INPUT' && document.activeElement.tagName !== 'TEXTAREA') {
+      e.preventDefault();
+      searchInput.focus();
+    }
+  });
+
+  searchInput.addEventListener('input', (e) => {
+    const query = e.target.value.trim().toLowerCase();
+    if (!query) {
+      resultsBox.classList.remove('visible');
+      resultsBox.innerHTML = '';
+      return;
+    }
+    
+    // 1. Filter Subjects
+    const matchSubjects = SUBJECTS_META.filter(s => 
+      s.name.toLowerCase().includes(query) || s.id.toLowerCase().includes(query)
+    );
+
+    // 2. Filter Materials
+    const allMaterials = typeof getMaterials === 'function' ? getMaterials() : [];
+    const matchMaterials = allMaterials.filter(m => 
+      m.title.toLowerCase().includes(query)
+    );
+
+    renderSearchResults(matchSubjects, matchMaterials, query);
+  });
+
+  // Hide results on outside click
+  document.addEventListener('click', (e) => {
+    if (!searchInput.contains(e.target) && !resultsBox.contains(e.target)) {
+      resultsBox.classList.remove('visible');
+    }
+  });
+}
+
+function renderSearchResults(subjects, materials, query) {
+  const resultsBox = document.getElementById('searchResults');
+  if (!resultsBox) return;
+
+  if (subjects.length === 0 && materials.length === 0) {
+    resultsBox.innerHTML = `<div class="search-no-results">No matches for "<strong>${query}</strong>"</div>`;
+    resultsBox.classList.add('visible');
+    return;
+  }
+
+  let html = '';
+
+  // Subjects Section
+  if (subjects.length > 0) {
+    html += `<div class="search-section-label">Subjects</div>`;
+    subjects.forEach(s => {
+      html += `
+        <a href="index.html?sub=${s.id.split('-').pop()}" class="search-result-item">
+          <div class="search-result-icon">${s.icon}</div>
+          <div class="search-result-info">
+            <span class="search-result-title">${s.name}</span>
+            <span class="search-result-meta">Subject Quiz · Authorized</span>
+          </div>
+        </a>
+      `;
+    });
+  }
+
+  // Materials Section
+  if (materials.length > 0) {
+    html += `<div class="search-section-label">Study Materials</div>`;
+    materials.forEach(m => {
+      const subj = SUBJECTS_META.find(s => s.id === m.subject) || { icon: '📄' };
+      html += `
+        <a href="${m.url !== '#' ? m.url : '#'}" target="${m.url !== '#' ? '_blank' : '_self'}" class="search-result-item">
+          <div class="search-result-icon">${subj.icon}</div>
+          <div class="search-result-info">
+            <span class="search-result-title">${m.title}</span>
+            <span class="search-result-meta">${m.type} · ${m.uploadedAt || '2026'}</span>
+          </div>
+        </a>
+      `;
+    });
+  }
+
+  resultsBox.innerHTML = html;
+  resultsBox.classList.add('visible');
 }
