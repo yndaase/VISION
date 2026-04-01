@@ -27,9 +27,17 @@ function clearSession()   {
 }
 
 function getStats() {
-  return JSON.parse(localStorage.getItem(STATS_KEY) || '{"answered":0,"correct":0}');
+  const session = getSession();
+  if (!session || !session.email) return { answered: 0, correct: 0 };
+  const userStatsKey = `${STATS_KEY}_${session.email}`;
+  return JSON.parse(localStorage.getItem(userStatsKey) || '{"answered":0,"correct":0}');
 }
-function saveStats(s) { localStorage.setItem(STATS_KEY, JSON.stringify(s)); }
+function saveStats(s) {
+  const session = getSession();
+  if (!session || !session.email) return;
+  const userStatsKey = `${STATS_KEY}_${session.email}`;
+  localStorage.setItem(userStatsKey, JSON.stringify(s));
+}
 
 // ─── Schema & Migration ───────────────────────────────
 /**

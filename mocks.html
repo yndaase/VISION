@@ -8,6 +8,15 @@
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css" />
   <link rel="stylesheet" href="dashboard.css" />
+  <script>
+    (function() {
+      const SESSION_KEY = 'waec_session';
+      const session = sessionStorage.getItem(SESSION_KEY) || localStorage.getItem(SESSION_KEY);
+      if (!session) {
+        window.location.href = 'login.html';
+      }
+    })();
+  </script>
   <style>
     .mocks-grid {
       display: grid;

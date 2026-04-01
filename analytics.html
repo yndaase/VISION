@@ -9,6 +9,15 @@
   <link rel="stylesheet" href="style.css" />
   <link rel="stylesheet" href="dashboard.css" />
   <link rel="stylesheet" href="analytics.css" />
+  <script>
+    (function() {
+      const SESSION_KEY = 'waec_session';
+      const session = sessionStorage.getItem(SESSION_KEY) || localStorage.getItem(SESSION_KEY);
+      if (!session) {
+        window.location.href = 'login.html';
+      }
+    })();
+  </script>
 </head>
 <body class="analytics-page dashboard-page">
 
@@ -121,7 +130,7 @@
             <span class="matrix-icon" style="color:#f59e0b;">📐</span>
             Core Mathematics
           </div>
-          <div class="matrix-score excellent">84%</div>
+          <div class="matrix-score" id="mathsMastery">—</div>
         </div>
         
         <div class="subject-matrix-row">
@@ -129,7 +138,7 @@
             <span class="matrix-icon" style="color:#60a5fa;">📖</span>
             English Language
           </div>
-          <div class="matrix-score excellent">76%</div>
+          <div class="matrix-score" id="englishMastery">—</div>
         </div>
 
         <div class="subject-matrix-row">
@@ -137,7 +146,7 @@
             <span class="matrix-icon" style="color:#10b981;">🧬</span>
             Integrated Science
           </div>
-          <div class="matrix-score needs-work">42%</div>
+          <div class="matrix-score" id="scienceMastery">—</div>
         </div>
 
         <div class="subject-matrix-row">
@@ -145,7 +154,7 @@
             <span class="matrix-icon" style="color:#a78bfa;">🌍</span>
             Social Studies
           </div>
-          <div class="matrix-score average">65%</div>
+          <div class="matrix-score" id="socialMastery">—</div>
         </div>
       </section>
 
@@ -178,6 +187,7 @@
 
   <!-- Dummy local auth check -->
   <script src="auth.js"></script>
+  <script src="analytics.js"></script>
   <script>
     function handleLogout() {
       window.location.href = 'login.html';
