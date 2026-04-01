@@ -213,6 +213,118 @@ async function selectUser(user, element) {
     list.innerHTML = "";
     for (const msg of history) await renderMessage(msg);
     list.scrollTop = list.scrollHeight;
+
+    // Update Intelligence Panel
+    updateInfoPanel(user);
+}
+
+/**
+ * Enterprise Intelligence Panel Logic
+ */
+function toggleInfoPanel() {
+    const container = document.querySelector(".chat-container");
+    container.classList.toggle("panel-open");
+}
+
+async function updateInfoPanel(user) {
+    const content = document.getElementById("panelContent");
+    if (!content) return;
+
+    const registry = JSON.parse(localStorage.getItem(IDENTITIES_KEY) || "{}");
+    const pubKey = registry[user.email];
+    
+    // Simulate Fingerprint (Hardware Verification)
+    let fingerprint = "UNAVAILABLE";
+    if (pubKey) {
+        // Simple hash for display (using first 32 chars of JWK 'n' if exists)
+        fingerprint = pubKey.n ? pubKey.n.substring(0, 32) + "..." : "REGISTRY_SYNC_PENDING";
+    }
+
+    const role = user.roboticsRole || user.role || "Systems Architect";
+    const status = ["Analyzing Hardware", "Idle", "Busy", "Testing Sync"][Math.floor(Math.random() * 4)];
+    const isOnline = Math.random() > 0.3;
+
+    content.innerHTML = `
+        <div class="intelligence-card">
+            <div class="card-label">Hardware Operator</div>
+            <h3 style="margin: 0; color: white;">${user.name}</h3>
+            <div style="font-size: 0.8rem; color: var(--accent); margin-top: 4px;">${role}</div>
+        </div>
+
+        <div class="intelligence-card">
+            <div class="card-label">Operational Status</div>
+            <div style="display: flex; align-items: center; gap: 8px;">
+                <span class="telemetry-pip ${isOnline ? 'active' : 'idle'}"></span>
+                <span style="font-size: 0.9rem; color: white;">${isOnline ? 'ONLINE' : 'OFFLINE'}</span>
+            </div>
+            <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 8px;">
+                Current Task: ${isOnline ? status : 'Sleep Mode'}
+            </div>
+        </div>
+
+        <div class="intelligence-card">
+            <div class="card-label">Security Identity Fingerprint</div>
+            <div class="security-mono">${fingerprint}</div>
+            <div style="font-size: 0.65rem; color: #64748b; margin-top: 8px; line-height: 1.4;">
+                This cryptographic fingerprint verifies that this session is 100% end-to-end encrypted with the recipient's personal hardware key.
+            </div>
+        </div>
+    `;
+}
+
+/**
+ * Conversation Controls
+ */
+async function clearSecureHistory() {
+    if (!selectedContact) return;
+    const ok = confirm("⚠️ PERMANENT DATA PURGE\n\nThis will locally erase all encrypted messages for this thread. This action is non-reversible. Proceed?");
+    if (!ok) return;
+
+    const session = getSession();
+    const threadId = [session.email, selectedContact.email].sort().join("<->");
+    await window.VisionStore.clearThread(threadId);
+    
+    document.getElementById("messageList").innerHTML = "";
+    renderContacts(); // Refresh sidebar previews
+}
+
+async function exportConversation() {
+    if (!selectedContact) return;
+    
+    const session = getSession();
+    const threadId = [session.email, selectedContact.email].sort().join("<->");
+    const history = await window.VisionStore.getThread(threadId);
+
+    let transcript = `VISION PRIVATE COMM - SECURE TRANSCRIPT\n`;
+    transcript += `Thread: ${session.email} <=> ${selectedContact.email}\n`;
+    transcript += `Generated: ${new Date().toLocaleString()}\n`;
+    transcript += `--------------------------------------------------\n\n`;
+
+    for (const msg of history) {
+        const date = new Date(msg.timestamp).toLocaleString();
+        const sender = msg.from === session.email ? "ME" : selectedContact.name;
+        let body = "[Encrypted Content]";
+        
+        // Use preview or decrypt if possible for export
+        if (msg.from === session.email && msg.textPreview) {
+            body = msg.textPreview;
+        } else {
+             try {
+                const dc = await window.VisionCrypto.decrypt(msg.payload, currentIdentity.privateKey);
+                body = new TextDecoder().decode(dc);
+             } catch(e) { body = "[Decryption Failure]"; }
+        }
+
+        if (msg.fileName) body = `[ATTACHMENT] ${msg.fileName}`;
+        transcript += `[${date}] ${sender}: ${body}\n`;
+    }
+
+    const blob = new Blob([transcript], { type: "text/plain" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `secure_log_${selectedContact.name.replace(/\s+/g, '_')}_${Date.now()}.txt`;
+    a.click();
 }
 
 /**

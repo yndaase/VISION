@@ -173,6 +173,29 @@ class VisionStore {
             request.onerror = () => reject("Read Error");
         });
     }
+
+    static async clearThread(threadId) {
+        const db = await this.init();
+        return new Promise((resolve, reject) => {
+            const tx = db.transaction(STORE_MESSAGES, "readwrite");
+            const store = tx.objectStore(STORE_MESSAGES);
+            const index = store.index("thread");
+            const request = index.openCursor(IDBKeyRange.only(threadId));
+
+            request.onsuccess = (e) => {
+                const cursor = e.target.result;
+                if (cursor) {
+                    store.delete(cursor.primaryKey);
+                    cursor.continue();
+                }
+            };
+            tx.oncomplete = () => {
+                localStorage.setItem("waec_chat_signal", Date.now());
+                resolve();
+            };
+            tx.onerror = () => reject("Clear Error");
+        });
+    }
 }
 
 window.VisionCrypto = VisionCrypto;
