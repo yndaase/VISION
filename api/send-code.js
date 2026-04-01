@@ -21,9 +21,9 @@ export default async function handler(req, res) {
     ? 'A secondary security sign-in was requested from your account.' 
     : 'You requested to reset your password for the Vision Education platform.';
 
-  // Default to Resend's onboarding address if no domain is verified yet.
-  // In "Testing" mode, Resend only allows sending to the account owner's email.
-  const fromEmail = process.env.RESEND_FROM_EMAIL || 'onboarding@resend.dev';
+  // Since the domain is verified, we can use a professional address.
+  // Priority: 1. Environment Variable 2. Verified Domain Default 3. Resend Onboarding Fallback
+  const fromEmail = process.env.RESEND_FROM_EMAIL || 'auth@visionedu.online';
 
   const html = `
     <!DOCTYPE html>
