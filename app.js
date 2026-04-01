@@ -43,7 +43,7 @@ function getDailyQuestions(subject, mode = "objective") {
 const DISPLAY_COUNT = 15;
 let activeQuestions = [];
 
-// ─── Mode Management (V4) ───────────────────────────
+//  Mode Management (V4)
 function setMode(mode) {
   const practiceBtn = document.getElementById("practiceModeBtn");
   const mockBtn = document.getElementById("mockModeBtn");
@@ -108,7 +108,7 @@ function updateTimerUI() {
   if (mockTimeRemaining < 300 && clock) clock.style.color = "var(--error)";
 }
 
-// ─── Render Logic ────────────────────────────────────
+//  Render Logic
 function renderAll() {
   const grid = document.getElementById("questionsGrid");
   grid.innerHTML = "";
@@ -240,7 +240,7 @@ function buildTheoryCard(q, idx) {
   return div;
 }
 
-// ─── AI Marking Engine (Simulated) ────────────────────
+//  AI Marking Engine (Simulated)
 function handleTheorySubmit(qId) {
   const input = document.getElementById(`theory-input-${qId}`).value.trim();
   if (!input) {
@@ -256,7 +256,7 @@ function handleTheorySubmit(qId) {
     const btn = document.getElementById(`theory-submit-${qId}`);
     if (btn) {
       btn.classList.add("saving");
-      btn.innerHTML = "<span>️ Encryption & Saving...</span>";
+      btn.innerHTML = "<span> Encryption & Saving...</span>";
       setTimeout(() => {
         btn.innerHTML = "<span> Script Saved</span>";
         btn.style.background = "var(--success)";
@@ -345,7 +345,7 @@ function restoreTheoryState(q, state) {
   }, 0);
 }
 
-// ─── MCQ Answer Handling ─────────────────────────────
+//  MCQ Answer Handling
 function chooseOption(qId, chosen) {
   if (isMockActive) {
     mockAnswered[qId] = chosen;
@@ -542,7 +542,7 @@ function restoreCardState(q, state) {
   setTimeout(() => applyCardFeedback(q, state.chosen, state.isCorrect), 0);
 }
 
-// ─── Stats & Progress ────────────────────────────────
+//  Stats & Progress
 function updateGlobalStats(isCorrect) {
   const stats = getStats();
   stats.answered = (stats.answered || 0) + 1;
@@ -584,7 +584,7 @@ function showResults() {
 
   document.getElementById("resultsSection").style.display = "block";
   document.getElementById("resultsTitle").textContent =
-    `${correct}/${total} — ${pct}%`;
+    `${correct}/${total}  ${pct}%`;
   document
     .getElementById("resultsSection")
     .scrollIntoView({ behavior: "smooth" });

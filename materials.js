@@ -1,9 +1,9 @@
-// ─────────────────────────────────────────────────────────────────────────────
-//  VISION EDUCATION — Learner Materials Engine
+//
+//  VISION EDUCATION  Learner Materials Engine
 //  Admin posts materials via admin.html. Students download from dashboard.
 //  Materials are stored in: localStorage key "vision_materials"
-//  Default seed is defined here — admin can override/add via Admin Portal.
-// ─────────────────────────────────────────────────────────────────────────────
+//  Default seed is defined here  admin can override/add via Admin Portal.
+//
 
 const SUBJECTS_META = [
   { id: "core-maths", name: "Core Mathematics", icon: "", color: "#6366f1" },
@@ -14,10 +14,10 @@ const SUBJECTS_META = [
   { id: "biology", name: "Biology", icon: "", color: "#4ade80" },
   { id: "economics", name: "Economics", icon: "", color: "#38bdf8" },
   { id: "cs", name: "Computer Science", icon: "", color: "#14b8a6" },
-  { id: "science", name: "Integrated Science", icon: "️", color: "#10b981" },
+  { id: "science", name: "Integrated Science", icon: "", color: "#10b981" },
 ];
 
-// Default materials — Admin updates these via the portal.
+// Default materials  Admin updates these via the portal.
 // URL should be a Google Drive direct-download link or any public file link.
 // Google Drive format: https://drive.google.com/uc?export=download&id=FILE_ID
 const SEED_MATERIALS = [

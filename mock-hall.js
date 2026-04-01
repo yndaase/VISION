@@ -1,9 +1,9 @@
 // ============================================================
-// VISION EDUCATION — MOCK EXAMINATION HALL ENGINE
+// VISION EDUCATION  MOCK EXAMINATION HALL ENGINE
 // mock-hall.js | Proctored WASSCE Simulation Logic
 // ============================================================
 
-// ── State ──────────────────────────────────────────────────
+//  State
 let examState = {
   mockId: null,
   mockConfig: null,
@@ -17,7 +17,7 @@ let examState = {
   submitted: false,
 };
 
-// ─── Init ──────────────────────────────────────────────────
+//  Init
 document.addEventListener("DOMContentLoaded", () => {
   const params = new URLSearchParams(window.location.search);
   const mockId = params.get("id") || "math_mock_a";
@@ -53,7 +53,7 @@ document.addEventListener("DOMContentLoaded", () => {
   startTimer();
 });
 
-// ─── Timer ─────────────────────────────────────────────────
+//  Timer
 function startTimer() {
   clearInterval(examState.timerInterval);
   updateTimerDisplay();
@@ -81,7 +81,7 @@ function updateTimerDisplay() {
   else if (t <= 900) el.classList.add("warning");
 }
 
-// ─── Question Rendering ─────────────────────────────────────
+//  Question Rendering
 function renderQuestion() {
   const q = examState.questions[examState.currentIndex];
   if (!q) return;
@@ -139,7 +139,7 @@ function renderQuestion() {
   updateSideStats();
 }
 
-// ─── Answer Selection ───────────────────────────────────────
+//  Answer Selection
 function selectAnswer(qId, letter) {
   if (examState.submitted) return;
   examState.answers[qId] = letter;
@@ -156,7 +156,7 @@ function selectAnswer(qId, letter) {
   updateSideStats();
 }
 
-// ─── Navigation ─────────────────────────────────────────────
+//  Navigation
 function navigateQ(delta) {
   const next = examState.currentIndex + delta;
   if (next < 0 || next >= examState.questions.length) return;
@@ -170,7 +170,7 @@ function goToQuestion(index) {
   renderQuestion();
 }
 
-// ─── Flag ───────────────────────────────────────────────────
+//  Flag
 function toggleFlag() {
   const q = examState.questions[examState.currentIndex];
   if (!q) return;
@@ -182,7 +182,7 @@ function toggleFlag() {
   renderQuestion(); // re-render to update button
 }
 
-// ─── Palette ────────────────────────────────────────────────
+//  Palette
 function renderPalette() {
   const grid = document.getElementById("paletteGrid");
   if (!grid) return;
@@ -228,7 +228,7 @@ function updateSideStats() {
   s("statUnanswered", total - answered);
 }
 
-// ─── Submit ─────────────────────────────────────────────────
+//  Submit
 function confirmSubmit() {
   const answered = Object.keys(examState.answers).length;
   const total = examState.questions.length;
@@ -326,7 +326,7 @@ function submitExam() {
   modal.scrollTop = 0;
 }
 
-// ─── Persist to user account ────────────────────────────────
+//  Persist to user account
 function saveExamResult({
   grade,
   pct,

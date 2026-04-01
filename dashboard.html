@@ -58,7 +58,7 @@
 
     <script src="theme.js"></script>
     <script>
-      // ─── Phase 1: Zero-Flash Auth Guard ───────────────────
+      //  Phase 1: Zero-Flash Auth Guard
       (function () {
         const SESSION_KEY = "waec_session";
         const session =
@@ -70,7 +70,7 @@
       })();
     </script>
     <style>
-      /* ─── User Dropdown ─── */
+      /*  User Dropdown  */
       .nav-user-chip {
         position: relative;
         cursor: pointer;
@@ -169,7 +169,7 @@
   </head>
 
   <body class="dashboard-page">
-    <!-- ── SIDE NAVIGATION ── -->
+    <!--  SIDE NAVIGATION  -->
     <aside class="side-nav">
       <a class="side-nav-logo" href="dashboard.html">
         <span class="dash-logo-icon"></span>
@@ -198,13 +198,13 @@
             return false;
           "
         >
-          <span class="nav-item-icon">️</span>
+          <span class="nav-item-icon"></span>
           <span>Settings</span>
         </a>
       </div>
     </aside>
 
-    <!-- ── BOTTOM NAVIGATION (Mobile) ── -->
+    <!--  BOTTOM NAVIGATION (Mobile)  -->
     <nav class="bottom-nav">
       <a href="dashboard.html" class="bottom-nav-item active">
         <span class="bottom-icon"></span>
@@ -226,13 +226,13 @@
           return false;
         "
       >
-        <span class="bottom-icon">️</span>
+        <span class="bottom-icon"></span>
         <span>Settings</span>
       </a>
     </nav>
 
     <div class="main-wrapper">
-      <!-- ── NAVBAR ── -->
+      <!--  NAVBAR  -->
       <nav class="dash-nav" id="dashNav">
         <div class="dash-nav-inner">
           <a class="dash-logo" href="dashboard.html">
@@ -265,9 +265,7 @@
               class="theme-toggle-btn"
               onclick="toggleTheme()"
               title="Toggle Theme"
-            >
-              ️
-            </button>
+            ></button>
             <div
               class="nav-user-chip"
               id="navUserChip"
@@ -281,8 +279,7 @@
                   color: var(--text-muted);
                   margin-left: 2px;
                 "
-                >▾</span
-              >
+              ></span>
               <div class="user-dropdown" id="userDropdown">
                 <div class="dropdown-header">
                   <div class="dh-name" id="dropdownName">Student</div>
@@ -297,7 +294,7 @@
                     closeUserDropdown();
                   "
                 >
-                  ️ Settings
+                  Settings
                 </button>
                 <a class="dropdown-item" href="analytics.html">
                   My Performance</a
@@ -311,7 +308,7 @@
         </div>
       </nav>
 
-      <!-- ── HERO / WELCOME ── -->
+      <!--  HERO / WELCOME  -->
       <section class="dash-hero">
         <div class="dash-hero-content">
           <div class="welcome-badge" id="welcomeBadge">
@@ -352,7 +349,7 @@
               <span class="dash-stat-lbl">Correct</span>
             </div>
             <div class="dash-stat-chip">
-              <span class="dash-stat-num" id="statPct">—</span>
+              <span class="dash-stat-num" id="statPct"></span>
               <span class="dash-stat-lbl">Accuracy</span>
             </div>
             <div class="dash-stat-chip">
@@ -363,7 +360,7 @@
         </div>
       </section>
 
-      <!-- ── TRUSTED SCHOOLS ── -->
+      <!--  TRUSTED SCHOOLS  -->
       <section class="trusted-schools">
         <p class="trusted-label">Trusted by Top Institutions in Ghana</p>
         <div class="trusted-pills">
@@ -378,7 +375,7 @@
         </div>
       </section>
 
-      <!-- ── SUBJECTS GRID ── -->
+      <!--  SUBJECTS GRID  -->
       <section class="subjects-section">
         <div class="subjects-inner">
           <div class="section-header">
@@ -389,7 +386,7 @@
           </div>
 
           <div class="subjects-grid" id="subjectsGrid">
-            <!-- Core Mathematics — AVAILABLE -->
+            <!-- Core Mathematics  AVAILABLE -->
             <a
               class="subject-card available"
               href="index.html?sub=maths"
@@ -858,7 +855,7 @@
               <div class="subject-card-inner">
                 <div class="subject-top">
                   <div class="subject-icon-wrap" style="--subj-color: #10b981">
-                    <span class="subject-icon">️</span>
+                    <span class="subject-icon"></span>
                   </div>
                   <div
                     style="
@@ -945,7 +942,7 @@
         </div>
       </section>
 
-      <!-- ── LEARNER MATERIALS ── -->
+      <!--  LEARNER MATERIALS  -->
       <section
         class="main-section"
         id="materialsSection"
@@ -963,13 +960,13 @@
         <div id="materialsContainer" style="margin-top: 1.5rem"></div>
       </section>
 
-      <!-- ── ANNOUNCEMENTS BANNER ── -->
+      <!--  ANNOUNCEMENTS BANNER  -->
       <div
         id="announceBanner"
         style="display: none; padding: 0 2rem 1.5rem"
       ></div>
 
-      <!-- ── FOOTER ── -->
+      <!--  FOOTER  -->
       <footer class="site-footer">
         <p>
           Built for Ghana SHS Students · 2026 WASSCE · Questions align with the
@@ -1126,7 +1123,7 @@
     <script src="dashboard.js"></script>
     <script src="materials.js"></script>
     <script>
-      // ─── Render Materials on Dashboard ───────────────────────────
+      //  Render Materials on Dashboard
       (function renderDashMaterials() {
         const container = document.getElementById("materialsContainer");
         if (!container) return;

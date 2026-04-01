@@ -1,11 +1,11 @@
 /* =====================================================
-   VISION EDUCATION — Analytics Engine
+   VISION EDUCATION  Analytics Engine
    Populates performance data from localStorage
    Calculates trends and AI diagnostic flags
    ===================================================== */
 
 document.addEventListener("DOMContentLoaded", () => {
-  // ─── 1. Auth & Session ──────────────────────────────
+  //  1. Auth & Session
   const session = checkAuth();
   if (!session) return;
 
@@ -15,13 +15,13 @@ document.addEventListener("DOMContentLoaded", () => {
   if (navAvatar) navAvatar.textContent = session.name.charAt(0).toUpperCase();
   if (navUsername) navUsername.textContent = session.name || "Student";
 
-  // ─── 2. Fetch User Stats ────────────────────────────
+  //  2. Fetch User Stats
   const stats = getStats();
   const answered = stats.answered || 0;
   const correct = stats.correct || 0;
   const accuracy = answered > 0 ? Math.round((correct / answered) * 100) : 0;
 
-  // ─── 3. Populate Overview Cards ─────────────────────
+  //  3. Populate Overview Cards
   updateEl("totalQuestions", answered);
   updateEl("avgAccuracy", accuracy + "%");
 
@@ -38,7 +38,7 @@ document.addEventListener("DOMContentLoaded", () => {
   else if (accuracy < 50) grade = "F9";
   updateEl("theoryScore", grade);
 
-  // ─── 4. Subject Matrix Mastery ──────────────────────
+  //  4. Subject Matrix Mastery
   // (In a real app, these would be separate keys. For now, we scale based on overall stats)
   updateEl("mathsMastery", accuracy + "%");
 
@@ -48,7 +48,7 @@ document.addEventListener("DOMContentLoaded", () => {
     mathsEl.className = "matrix-score " + getScoreClass(accuracy);
   }
 
-  // ─── 5. AI Diagnostic Flags ─────────────────────────
+  //  5. AI Diagnostic Flags
   renderAIFlags(answered, accuracy);
 });
 

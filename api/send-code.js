@@ -1,5 +1,5 @@
 export default async function handler(req, res) {
-  // ── CORS headers ──────────────────────────────────────────
+  //  CORS headers
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
@@ -27,8 +27,8 @@ export default async function handler(req, res) {
 
   const subject =
     type === "2fa"
-      ? "Vision — Identity Verification Code"
-      : "Vision — Password Reset Code";
+      ? "Vision  Identity Verification Code"
+      : "Vision  Password Reset Code";
   const title =
     type === "2fa" ? "Identity Verification" : "Password Reset Request";
   const message =

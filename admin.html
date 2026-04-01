@@ -41,7 +41,7 @@
         overflow-x: hidden;
       }
 
-      /* ── AUTH SCREEN ── */
+      /*  AUTH SCREEN  */
       #adminAuth {
         min-height: 100vh;
         display: flex;
@@ -188,7 +188,7 @@
         display: none;
       }
 
-      /* ── PORTAL LAYOUT ── */
+      /*  PORTAL LAYOUT  */
       #adminPortal {
         display: none;
         min-height: 100vh;
@@ -587,11 +587,11 @@
     </style>
   </head>
   <body>
-    <!-- ── AUTH SCREEN ── -->
+    <!--  AUTH SCREEN  -->
     <div id="adminAuth">
       <div class="secure-backdrop"></div>
       <div class="admin-login-card">
-        <div class="secure-badge">️ Encrypted Access (SHA-256)</div>
+        <div class="secure-badge">Encrypted Access (SHA-256)</div>
         <div class="admin-login-logo">
           <h1>Vision <em>Admin</em></h1>
           <p>Secure system portal for educational administrators.</p>
@@ -612,7 +612,7 @@
             class="admin-input"
             type="password"
             id="adminPass"
-            placeholder="••••••••"
+            placeholder=""
             autocomplete="current-password"
           />
         </div>
@@ -625,17 +625,17 @@
       </div>
     </div>
 
-    <!-- ── SYSTEM PORTAL ── -->
+    <!--  SYSTEM PORTAL  -->
     <div id="adminPortal">
       <header class="admin-topbar">
         <div class="admin-topbar-brand">
-          <span style="font-size: 1.5rem">️</span> System Core
+          <span style="font-size: 1.5rem"></span> System Core
         </div>
         <div class="admin-topbar-right">
           <div class="sec-session-pill">
             <span class="pulse"></span> Secure Session Active
           </div>
-          <button onclick="toggleTheme()" class="theme-toggle-btn">️</button>
+          <button onclick="toggleTheme()" class="theme-toggle-btn"></button>
           <button class="admin-logout-btn" id="logoutBtn">End Session</button>
         </div>
       </header>
@@ -666,7 +666,7 @@
         </nav>
 
         <main class="admin-main">
-          <!-- ── OVERVIEW ── -->
+          <!--  OVERVIEW  -->
           <section class="admin-section active" id="sec-overview">
             <div class="admin-page-header">
               <h2 style="font-size: 1.5rem; font-weight: 800">
@@ -784,7 +784,7 @@
             </div>
           </section>
 
-          <!-- ── MATERIALS ── -->
+          <!--  MATERIALS  -->
           <section class="admin-section" id="sec-materials">
             <div class="admin-page-header">
               <h2 style="font-size: 1.5rem; font-weight: 800">
@@ -806,7 +806,7 @@
             <div id="matDisplay"></div>
           </section>
 
-          <!-- ── USERS & BROADCASTS ── -->
+          <!--  USERS & BROADCASTS  -->
           <section class="admin-section" id="sec-users">
             <div class="admin-page-header">
               <h2 style="font-size: 1.5rem; font-weight: 800">
@@ -852,7 +852,7 @@
                       class="admin-input"
                       type="password"
                       id="newUserPass"
-                      placeholder="••••••••"
+                      placeholder=""
                     />
                   </div>
                 </div>
@@ -877,7 +877,7 @@
                     onclick="createUser()"
                     style="height: 48px; padding: 0 30px"
                   >
-                    Create Account ✓
+                    Create Account
                   </button>
                 </div>
               </div>
@@ -962,7 +962,7 @@
 
     <div class="admin-toast" id="toast"></div>
 
-    <!-- ── MODAL: NEW MATERIAL ── -->
+    <!--  MODAL: NEW MATERIAL  -->
     <div class="modal-overlay" id="matModal">
       <div class="modal-card">
         <div
@@ -1038,7 +1038,7 @@
     </div>
 
     <script>
-      // ─── SECURITY ENGINE ───
+      //  SECURITY ENGINE
       const ADMIN_SESSION_KEY = "vision_admin_at";
 
       function logAction(action) {
@@ -1056,7 +1056,7 @@
           renderAudit();
       }
 
-      // ─── AUTH ───
+      //  AUTH
       async function adminInit() {
         const users = getUsers();
         const adminEmail = "admin@visionedu.online";
@@ -1119,7 +1119,7 @@
         renderAudit();
       }
 
-      // ─── NAVIGATION ───
+      //  NAVIGATION
       function navTo(secId, btn) {
         document
           .querySelectorAll(".admin-section")
@@ -1133,7 +1133,7 @@
         if (secId === "users") renderUsers();
       }
 
-      // ─── CONTENT RENDERING ───
+      //  CONTENT RENDERING
       function renderStats() {
         const users = getUsers();
         const mats = getMaterials();
@@ -1142,7 +1142,7 @@
         const items = [
           { l: "Registered Learners", v: users.length, i: "" },
           { l: "Study Materials", v: mats.length, i: "" },
-          { l: "Security Score", v: "High", i: "️" },
+          { l: "Security Score", v: "High", i: "" },
           { l: "Active Modules", v: 8, i: "" },
         ];
 
@@ -1372,7 +1372,7 @@
           </select>
         </td>
         <td style="text-align:right;">
-          <button class="act-btn act-danger" onclick="deleteUserAccount('${u.email}')" ${u.email === "admin@visionedu.online" ? "disabled" : ""} title="Delete Account">️</button>
+          <button class="act-btn act-danger" onclick="deleteUserAccount('${u.email}')" ${u.email === "admin@visionedu.online" ? "disabled" : ""} title="Delete Account"></button>
         </td>
       </tr>
     `,
@@ -1413,7 +1413,7 @@
 
       function showToast(msg) {
         const t = document.getElementById("toast");
-        t.innerText = "️ " + msg;
+        t.innerText = " " + msg;
         t.classList.add("show");
         setTimeout(() => t.classList.remove("show"), 3000);
       }

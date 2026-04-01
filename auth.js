@@ -1,5 +1,5 @@
 /* =====================================================
-   WAEC 2026 — Shared Auth Module
+   WAEC 2026  Shared Auth Module
    Handles: localStorage accounts, session management,
             Google Sign-In callback, login/signup logic,
             page-level auth guard (checkAuth)
@@ -9,7 +9,7 @@ const AUTH_KEY = "waec_users";
 const SESSION_KEY = "waec_session";
 const STATS_KEY = "waec_stats";
 
-// ─── Storage helpers ─────────────────────────────────
+//  Storage helpers
 function getUsers() {
   return JSON.parse(localStorage.getItem(AUTH_KEY) || "[]");
 }
@@ -49,7 +49,7 @@ function saveStats(s) {
   localStorage.setItem(userStatsKey, JSON.stringify(s));
 }
 
-// ─── Schema & Migration ───────────────────────────────
+//  Schema & Migration
 /**
  * Ensures user objects have the correct field names and types.
  * Solves "Can't login" issues caused by property renaming.
@@ -99,7 +99,7 @@ function migrateLegacyData() {
   }
 }
 
-// ─── Secure SHA-256 Hashing ──────────────────────────
+//  Secure SHA-256 Hashing
 async function sha256(str) {
   const buf = new TextEncoder().encode(str);
   const hashArray = new Uint8Array(await crypto.subtle.digest("SHA-256", buf));
@@ -108,7 +108,7 @@ async function sha256(str) {
     .join("");
 }
 
-// ─── Legacy simple hash (for migration only) ─────────
+//  Legacy simple hash (for migration only)
 function simpleHash(str) {
   let h = 0;
   for (let i = 0; i < str.length; i++) {
@@ -118,7 +118,7 @@ function simpleHash(str) {
   return h.toString(16);
 }
 
-// ─── Auth guard — call on every protected page ───────
+//  Auth guard  call on every protected page
 function checkAuth() {
   const session = getSession();
   if (!session) {
@@ -129,7 +129,7 @@ function checkAuth() {
   return session;
 }
 
-// ─── Redirect helpers ────────────────────────────────
+//  Redirect helpers
 function goToDashboard() {
   const isRobotics = window.location.pathname.includes("robotics");
   window.location.href = isRobotics
@@ -140,14 +140,14 @@ function goToLogin() {
   window.location.href = "login.html";
 }
 
-// ─── Logout ──────────────────────────────────────────
+//  Logout
 function handleLogout() {
   clearSession();
   const isRobotics = window.location.pathname.includes("robotics");
   window.location.href = isRobotics ? "robotics-login.html" : "login.html";
 }
 
-// ─── 2FA State Helpers ────────────────────────────────
+//  2FA State Helpers
 function is2FAEnabled(email) {
   const user = getUsers().find((u) => u.email === email);
   return user ? !!user.twoFAEnabled : false;
@@ -178,8 +178,8 @@ function updateSecurityStatusUI(enabled) {
 
   if (statusEl) {
     statusEl.innerHTML = enabled
-      ? '<span class="status-secure">️ Level 2 Protected (2FA Active)</span>'
-      : '<span class="status-warn">️ Level 1 Protected (Standard)</span>';
+      ? '<span class="status-secure"> Level 2 Protected (2FA Active)</span>'
+      : '<span class="status-warn"> Level 1 Protected (Standard)</span>';
   }
   if (toggleEl) {
     toggleEl.classList.toggle("active", enabled);
@@ -207,7 +207,7 @@ function updateSecurityStatusUI(enabled) {
   }
 }
 
-// ─── Shared Logic ────────────────────────────────────
+//  Shared Logic
 function unifiedToggle2FA(enabled) {
   const session = getSession();
   if (!session) return;
@@ -249,7 +249,7 @@ function unifiedChangePassword() {
   users[idx].hash = simpleHash(newP);
   saveUsers(users);
 
-  showMsg("✓ Password updated successfully! Please log in again.", true);
+  showMsg(" Password updated successfully! Please log in again.", true);
   ["setCurrentPass", "setNewPass", "setConfirmPass"].forEach((id) => {
     const el = document.getElementById(id);
     if (el) el.value = "";
@@ -268,7 +268,7 @@ function handle2FAToggle() {
   toggle2FA(session.email, !current);
 }
 
-// ─── Settings Modal Logic (Standard Site) ────────────
+//  Settings Modal Logic (Standard Site)
 function openSettings() {
   const session = getSession();
   if (!session) return;
@@ -295,7 +295,7 @@ function openSettings() {
       getTheme() === "light" ? "\uD83C\uDF19" : "\u2600\uFE0F";
   }
 
-  // Show modal — don't lock body scroll, overlay handles it
+  // Show modal  don't lock body scroll, overlay handles it
   modal.classList.add("visible");
 }
 
@@ -312,7 +312,7 @@ function handleModalOutsideClick(event) {
   }
 }
 
-// ─── Google Sign-In callback (GIS) ───────────────────
+//  Google Sign-In callback (GIS)
 function handleGoogleCredential(response) {
   try {
     // Decode JWT payload (base64url, middle part)
@@ -345,10 +345,10 @@ function handleGoogleCredential(response) {
   }
 }
 
-// ─── Google Sign-In helper ────────────────────────────
+//  Google Sign-In helper
 // (Using official GIS script load, no programmatic trigger needed)
 
-// ─── Email Login ─────────────────────────────────────
+//  Email Login
 async function handleLogin(e) {
   e.preventDefault();
   clearErrors();
@@ -425,7 +425,7 @@ async function handleLogin(e) {
     const hiddenEl = document.getElementById("2faEmailHidden");
     if (hiddenEl) hiddenEl.value = email;
 
-    // ─── NEW: Secure API-based 2FA sending ──────
+    //  NEW: Secure API-based 2FA sending
     const sendBtn = document.getElementById("loginSubmit");
     if (sendBtn) sendBtn.innerHTML = "<span>Verifying Identity...</span>";
 
@@ -448,7 +448,7 @@ async function handleLogin(e) {
   setTimeout(goToDashboard, 900);
 }
 
-// ─── 2FA Verification ────────────────────────────────
+//  2FA Verification
 function handle2FAVerification(e) {
   e.preventDefault();
   clearErrors();
@@ -485,7 +485,7 @@ function handle2FAVerification(e) {
   setTimeout(goToDashboard, 900);
 }
 
-// ─── Email Signup ────────────────────────────────────
+//  Email Signup
 async function handleSignup(e) {
   e.preventDefault();
   clearErrors();
@@ -560,7 +560,7 @@ async function handleSignup(e) {
   setTimeout(goToDashboard, 900);
 }
 
-// ─── Guest ────────────────────────────────────────────
+//  Guest
 function continueAsGuest() {
   const guest = { name: "Guest", email: "", provider: "guest", isGuest: true };
   setSession(guest);
@@ -574,7 +574,7 @@ window.addEventListener("click", (e) => {
   if (e.target.id === "settingsModal") closeSettings();
 });
 
-// ─── Tab switching ────────────────────────────────────
+//  Tab switching
 function switchTab(tab) {
   clearErrors();
 
@@ -650,7 +650,7 @@ function switchTab(tab) {
   }
 }
 
-// ─── Errors ───────────────────────────────────────────
+//  Errors
 function setError(id, msg) {
   const el = document.getElementById(id);
   if (el) {
@@ -673,7 +673,7 @@ function markInputError(inputId, errorId, msg) {
   setError(errorId, msg);
 }
 
-// ─── Password strength ────────────────────────────────
+//  Password strength
 function checkPasswordStrength(val) {
   const bar = document.getElementById("strengthBar");
   const label = document.getElementById("strengthLabel");
@@ -699,7 +699,7 @@ function checkPasswordStrength(val) {
   label.style.color = l.c;
 }
 
-// ─── Toggle password visibility ───────────────────────
+//  Toggle password visibility
 function toggleVisibility(inputId, btn) {
   const inp = document.getElementById(inputId);
   if (!inp) return;
@@ -712,7 +712,7 @@ function toggleVisibility(inputId, btn) {
   }
 }
 
-// ─── Success toast ────────────────────────────────────
+//  Success toast
 function showAuthSuccess(msg) {
   const toast = document.getElementById("authSuccessToast");
   if (!toast) return;
@@ -721,7 +721,7 @@ function showAuthSuccess(msg) {
   setTimeout(() => toast.classList.remove("toast-visible"), 3000);
 }
 
-// ─── Unified Email Sending (Backend API) ─────────────
+//  Unified Email Sending (Backend API)
 async function sendEmailCode(email, code, type = "reset", name = "") {
   try {
     const response = await fetch("/api/send-code", {
@@ -795,7 +795,7 @@ async function handleForgotPassword(e) {
     markInputError(
       "forgotEmail",
       "errForgotEmail",
-      "This account uses Google Sign-In — no password to reset.",
+      "This account uses Google Sign-In  no password to reset.",
     );
     return;
   }
@@ -826,7 +826,7 @@ async function handleForgotPassword(e) {
       "Reset code sent to " + email + "! Check your inbox (and spam folder).",
     );
   } else {
-    // Email failed — show error, don't switch tab, don't reveal code
+    // Email failed  show error, don't switch tab, don't reveal code
     const errEl = document.getElementById("errForgotEmail");
     if (errEl) {
       errEl.textContent =
@@ -898,7 +898,7 @@ async function handleResetPassword(e) {
   setTimeout(goToDashboard, 1200);
 }
 
-// ─── Init on page load ────────────────────────────────
+//  Init on page load
 document.addEventListener("DOMContentLoaded", () => {
   // Always run migration first to ensure database is in sync
   migrateLegacyData();

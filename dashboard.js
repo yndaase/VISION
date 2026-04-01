@@ -1,14 +1,14 @@
 /* =====================================================
-   WAEC 2026 — Dashboard Logic
+   WAEC 2026  Dashboard Logic
    Populates welcome section, stats, user chip
    ===================================================== */
 
 document.addEventListener("DOMContentLoaded", () => {
-  // ─── Auth guard ─────────────────────────────────────
+  //  Auth guard
   const session = checkAuth(); // redirects to login.html if null
   if (!session) return;
 
-  // ─── Populate user chip ──────────────────────────────
+  //  Populate user chip
   const navAvatar = document.getElementById("navAvatar");
   const navUsername = document.getElementById("navUsername");
 
@@ -35,13 +35,13 @@ document.addEventListener("DOMContentLoaded", () => {
     `;
   }
 
-  // ─── Populate dropdown ───────────────────────────────
+  //  Populate dropdown
   const dropdownName = document.getElementById("dropdownName");
   const dropdownEmail = document.getElementById("dropdownEmail");
   if (dropdownName) dropdownName.textContent = session.name || "Student";
   if (dropdownEmail) dropdownEmail.textContent = session.email || "";
 
-  // ─── Welcome hero ────────────────────────────────────
+  //  Welcome hero
   const welcomeName = document.getElementById("welcomeName");
   const welcomeGreeting = document.getElementById("welcomeGreeting");
 
@@ -69,11 +69,11 @@ document.addEventListener("DOMContentLoaded", () => {
     welcomeGreeting.textContent = greeting;
   }
 
-  // ─── Stats ───────────────────────────────────────────
+  //  Stats
   const stats = getStats();
   const answered = stats.answered || 0;
   const correct = stats.correct || 0;
-  const pct = answered > 0 ? Math.round((correct / answered) * 100) + "%" : "—";
+  const pct = answered > 0 ? Math.round((correct / answered) * 100) + "%" : "";
 
   const elAnswered = document.getElementById("statAnswered");
   const elCorrect = document.getElementById("statCorrect");
@@ -83,13 +83,13 @@ document.addEventListener("DOMContentLoaded", () => {
   if (elCorrect) animateCount(elCorrect, correct);
   if (elPct) elPct.textContent = pct;
 
-  // ─── Stagger card animation ──────────────────────────
+  //  Stagger card animation
   const cards = document.querySelectorAll(".subject-card");
   cards.forEach((card, i) => {
     card.style.animationDelay = `${i * 0.07 + 0.1}s`;
   });
 
-  // ─── Close dropdown on outside click ─────────────────
+  //  Close dropdown on outside click
   document.addEventListener("click", (e) => {
     const chip = document.getElementById("navUserChip");
     if (chip && !chip.contains(e.target)) {
@@ -97,11 +97,11 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // ─── Initialize Global Search ────────────────────────
+  //  Initialize Global Search
   initGlobalSearch();
 });
 
-// ─── Animated counter ────────────────────────────────
+//  Animated counter
 function animateCount(el, target) {
   if (target === 0) {
     el.textContent = "0";
@@ -119,7 +119,7 @@ function animateCount(el, target) {
   requestAnimationFrame(step);
 }
 
-// ─── User Dropdown Toggle ─────────────────────────────
+//  User Dropdown Toggle
 function toggleUserDropdown() {
   const chip = document.getElementById("navUserChip");
   if (chip) chip.classList.toggle("open");
@@ -129,9 +129,9 @@ function closeUserDropdown() {
   if (chip) chip.classList.remove("open");
 }
 
-// ═════════════════════════════════════════════════════════════════════════════
+//
 // GLOBAL SEARCH ENGINE
-// ═════════════════════════════════════════════════════════════════════════════
+//
 function initGlobalSearch() {
   const searchInput = document.getElementById("globalSearch");
   const resultsBox = document.getElementById("searchResults");

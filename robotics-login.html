@@ -30,7 +30,7 @@
     <script src="https://accounts.google.com/gsi/client" async defer></script>
 
     <script>
-      // ── Seed official role accounts before login ──────────────────
+      //  Seed official role accounts before login
       // This runs BEFORE auth.js so accounts exist when the user logs in.
       (function seedRoboticsAccounts() {
         const AUTH_KEY = "waec_users";
@@ -89,7 +89,7 @@
       })();
     </script>
     <style>
-      /* ─── Robotics Portal Login Theme ─── */
+      /*  Robotics Portal Login Theme  */
       body {
         background: var(--bg);
         color: var(--text-primary);
@@ -126,7 +126,7 @@
         opacity: 0.06;
       }
 
-      /* Left panel — dark robotics gradient */
+      /* Left panel  dark robotics gradient */
       .login-left {
         background: linear-gradient(
           160deg,
@@ -147,7 +147,7 @@
         );
       }
 
-      /* Crest in left panel — visible and small */
+      /* Crest in left panel  visible and small */
       .login-left::before {
         content: "";
         position: absolute;
@@ -375,13 +375,13 @@
               class="subject-pill"
               style="border-color: var(--border-accent); color: #22c55e"
             >
-              ️ Hardware Systems
+              Hardware Systems
             </div>
             <div
               class="subject-pill"
               style="border-color: var(--border-accent); color: #0ea5e9"
             >
-              ️ Telemetry
+              Telemetry
             </div>
             <div
               class="subject-pill"
@@ -516,7 +516,7 @@
               </button>
             </div>
 
-            <!-- ── LOGIN FORM ── -->
+            <!--  LOGIN FORM  -->
             <form
               class="auth-form form-active"
               id="loginForm"
@@ -558,7 +558,7 @@
                     class="auth-input"
                     id="loginPass"
                     type="password"
-                    placeholder="••••••••"
+                    placeholder=""
                     required
                   />
                   <button
@@ -575,7 +575,7 @@
               </button>
             </form>
 
-            <!-- ── SIGNUP FORM ── -->
+            <!--  SIGNUP FORM  -->
             <form
               class="auth-form"
               id="signupForm"
@@ -667,7 +667,7 @@
               </button>
             </form>
 
-            <!-- ── FORGOT PASSWORD FORM ── -->
+            <!--  FORGOT PASSWORD FORM  -->
             <form
               class="auth-form"
               id="forgotForm"
@@ -714,7 +714,7 @@
               </div>
             </form>
 
-            <!-- ── 2FA VERIFICATION FORM ── -->
+            <!--  2FA VERIFICATION FORM  -->
             <form
               class="auth-form"
               id="2faForm"
@@ -755,7 +755,7 @@
                   >6-Digit Identity Code</label
                 >
                 <div class="input-wrap">
-                  <span class="input-icon">️</span>
+                  <span class="input-icon"></span>
                   <input
                     class="auth-input"
                     id="2faCodeInput"
@@ -790,7 +790,7 @@
               </div>
             </form>
 
-            <!-- ── RESET PASSWORD FORM ── -->
+            <!--  RESET PASSWORD FORM  -->
             <form
               class="auth-form"
               id="resetForm"

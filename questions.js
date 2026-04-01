@@ -1,14 +1,14 @@
 // ============================================================
-// WAEC 2026 CORE MATHEMATICS — 15 Verified MCQs
+// WAEC 2026 CORE MATHEMATICS  15 Verified MCQs
 // Senior Curriculum Specialist, WAEC Ghana
 // All workings double-checked for mathematical accuracy
 // ============================================================
 
 window.DATABASE = {
   maths: [
-    // ─────────────────────────────────────────────────────────
-    //  EASY (Q1–Q5)
-    // ─────────────────────────────────────────────────────────
+    //
+    //  EASY (Q1Q5)
+    //
 
     {
       id: 1,
@@ -17,20 +17,20 @@ window.DATABASE = {
       context: "fintech",
       contextIcon: "",
       question:
-        "Abena sends GH₵ 300 to her mother via Mobile Money (MoMo). The Ghana Revenue Authority charges an E-Levy of 1% on the amount <strong>above GH₵ 100</strong>. How much E-Levy does Abena pay?",
+        "Abena sends GH 300 to her mother via Mobile Money (MoMo). The Ghana Revenue Authority charges an E-Levy of 1% on the amount <strong>above GH 100</strong>. How much E-Levy does Abena pay?",
       options: {
-        A: "GH₵ 3.00",
-        B: "GH₵ 2.00",
-        C: "GH₵ 1.50",
-        D: "GH₵ 0.50",
+        A: "GH 3.00",
+        B: "GH 2.00",
+        C: "GH 1.50",
+        D: "GH 0.50",
       },
       correct: "B",
       workings:
-        "Taxable portion = 300 − 100 = GH₵ 200.  E-Levy = 1% × 200 = GH₵ 2.00",
+        "Taxable portion = 300  100 = GH 200.  E-Levy = 1% × 200 = GH 2.00",
       distractorLogic:
-        "Option A (GH₵ 3.00) = 1% × 300 — forgetting to subtract the GH₵ 100 threshold. Option C = 0.5% × 300 — halving the rate by mistake.",
+        "Option A (GH 3.00) = 1% × 300  forgetting to subtract the GH 100 threshold. Option C = 0.5% × 300  halving the rate by mistake.",
       protip:
-        "Examiner's Secret: Subtract the GH₵ 100 tax-free threshold FIRST, then apply 1%. Forgetting the threshold is the #1 error in MoMo levy questions.",
+        "Examiner's Secret: Subtract the GH 100 tax-free threshold FIRST, then apply 1%. Forgetting the threshold is the #1 error in MoMo levy questions.",
     },
 
     {
@@ -40,7 +40,7 @@ window.DATABASE = {
       context: "daily",
       contextIcon: "",
       question:
-        "A 2 GB data bundle costs GH₵ 10. Kwame uses 750 MB in the morning and 1 GB in the evening. What percentage of the bundle has he used?",
+        "A 2 GB data bundle costs GH 10. Kwame uses 750 MB in the morning and 1 GB in the evening. What percentage of the bundle has he used?",
       options: {
         A: "90%",
         B: "87.5%",
@@ -51,9 +51,9 @@ window.DATABASE = {
       workings:
         "Convert all to MB: Bundle = 2×1000 = 2000 MB.  Used = 750 + 1000 = 1750 MB.  Percentage = (1750 ÷ 2000) × 100 = 87.5%",
       distractorLogic:
-        "C (75%) comes from using 1500 MB used (adding 750+750 instead of 750+1000). A (90%) comes from using 1800 MB — adding an extra 50 MB by unit confusion.",
+        "C (75%) comes from using 1500 MB used (adding 750+750 instead of 750+1000). A (90%) comes from using 1800 MB  adding an extra 50 MB by unit confusion.",
       protip:
-        "Examiner's Secret: Convert ALL data units to the same base (all to MB or all to GB) before adding — mixing units is where marks are lost, not in the percentage step itself.",
+        "Examiner's Secret: Convert ALL data units to the same base (all to MB or all to GB) before adding  mixing units is where marks are lost, not in the percentage step itself.",
     },
 
     {
@@ -74,9 +74,9 @@ window.DATABASE = {
       workings:
         "Ratio NPK : Compost = 3 : 5.  One part = 24 ÷ 3 = 8 kg.  Compost = 5 × 8 = 40 kg.",
       distractorLogic:
-        "A (14.4 kg) = (3/5) × 24 — inverting the ratio. D (8 kg) = one single 'part', not the compost quantity. C (35 kg) results from subtracting one part from total parts: (5−1)×... arithmetic drift.",
+        "A (14.4 kg) = (3/5) × 24  inverting the ratio. D (8 kg) = one single 'part', not the compost quantity. C (35 kg) results from subtracting one part from total parts: (51)×... arithmetic drift.",
       protip:
-        "Examiner's Secret: Find 'one part' by dividing the KNOWN quantity by its ratio number, then multiply by the other ratio number — never cross-multiply ratio problems like you would a fraction equation.",
+        "Examiner's Secret: Find 'one part' by dividing the KNOWN quantity by its ratio number, then multiply by the other ratio number  never cross-multiply ratio problems like you would a fraction equation.",
     },
 
     {
@@ -86,18 +86,18 @@ window.DATABASE = {
       context: "daily",
       contextIcon: "",
       question:
-        "A Trotro mate charges GH₵ 4.50 per passenger for the Accra–Madina route. After a fuel price increase, the fare rises by GH₵ 1.20. The Trotro carries 18 passengers per trip. How much MORE revenue does the mate collect per trip with the new fare?",
+        "A Trotro mate charges GH 4.50 per passenger for the AccraMadina route. After a fuel price increase, the fare rises by GH 1.20. The Trotro carries 18 passengers per trip. How much MORE revenue does the mate collect per trip with the new fare?",
       options: {
-        A: "GH₵ 21.60",
-        B: "GH₵ 81.00",
-        C: "GH₵ 102.60",
-        D: "GH₵ 1.20",
+        A: "GH 21.60",
+        B: "GH 81.00",
+        C: "GH 102.60",
+        D: "GH 1.20",
       },
       correct: "A",
       workings:
-        "Extra revenue per trip = increase per passenger × passengers = GH₵ 1.20 × 18 = GH₵ 21.60",
+        "Extra revenue per trip = increase per passenger × passengers = GH 1.20 × 18 = GH 21.60",
       distractorLogic:
-        "C (GH₵ 102.60) = 18 × GH₵ 5.70 — computing total new revenue instead of the INCREASE. B (GH₵ 81.00) = 18 × GH₵ 4.50 — computing old total revenue.",
+        "C (GH 102.60) = 18 × GH 5.70  computing total new revenue instead of the INCREASE. B (GH 81.00) = 18 × GH 4.50  computing old total revenue.",
       protip:
         "Examiner's Secret: 'How much MORE' signals you only need the DIFFERENCE; identify whether the question asks for a change or an absolute total before you calculate.",
     },
@@ -109,25 +109,25 @@ window.DATABASE = {
       context: "utilities",
       contextIcon: "",
       question:
-        "ECG's Lifeline tariff charges <strong>GH₵ 0.38/unit</strong> for the first 50 units and <strong>GH₵ 0.89/unit</strong> for every unit above 50. A household uses 80 units in March. What is their electricity bill?",
+        "ECG's Lifeline tariff charges <strong>GH 0.38/unit</strong> for the first 50 units and <strong>GH 0.89/unit</strong> for every unit above 50. A household uses 80 units in March. What is their electricity bill?",
       options: {
-        A: "GH₵ 71.20",
-        B: "GH₵ 45.70",
-        C: "GH₵ 30.40",
-        D: "GH₵ 26.70",
+        A: "GH 71.20",
+        B: "GH 45.70",
+        C: "GH 30.40",
+        D: "GH 26.70",
       },
       correct: "B",
       workings:
-        "First 50 units: 50 × 0.38 = GH₵ 19.00.  Extra 30 units: (80 − 50) × 0.89 = 30 × 0.89 = GH₵ 26.70.  Total = 19.00 + 26.70 = GH₵ 45.70",
+        "First 50 units: 50 × 0.38 = GH 19.00.  Extra 30 units: (80  50) × 0.89 = 30 × 0.89 = GH 26.70.  Total = 19.00 + 26.70 = GH 45.70",
       distractorLogic:
-        "A (GH₵ 71.20) = 80 × 0.89 — applying the higher rate to ALL units. C (GH₵ 30.40) = 80 × 0.38 — applying the lower rate to all units. D (GH₵ 26.70) is only the surcharge portion.",
+        "A (GH 71.20) = 80 × 0.89  applying the higher rate to ALL units. C (GH 30.40) = 80 × 0.38  applying the lower rate to all units. D (GH 26.70) is only the surcharge portion.",
       protip:
-        "Examiner's Secret: ECG tiered billing is a 'split calculation' — always separate the units into their two bands and compute each separately before adding. Students who apply one rate throughout lose all marks.",
+        "Examiner's Secret: ECG tiered billing is a 'split calculation'  always separate the units into their two bands and compute each separately before adding. Students who apply one rate throughout lose all marks.",
     },
 
-    // ─────────────────────────────────────────────────────────
-    //  MEDIUM (Q6–Q10)
-    // ─────────────────────────────────────────────────────────
+    //
+    //  MEDIUM (Q6Q10)
+    //
 
     {
       id: 6,
@@ -136,20 +136,20 @@ window.DATABASE = {
       context: "fintech",
       contextIcon: "",
       question:
-        "Esi is a MoMo agent. A customer transfers GH₵ 850. The E-Levy (1% on amount above GH₵ 100) applies, AND Esi charges the customer an additional <strong>0.5% agent service fee on the full transfer amount</strong>. What is the TOTAL charge (E-Levy + agent fee)?",
+        "Esi is a MoMo agent. A customer transfers GH 850. The E-Levy (1% on amount above GH 100) applies, AND Esi charges the customer an additional <strong>0.5% agent service fee on the full transfer amount</strong>. What is the TOTAL charge (E-Levy + agent fee)?",
       options: {
-        A: "GH₵ 11.75",
-        B: "GH₵ 12.75",
-        C: "GH₵ 7.50",
-        D: "GH₵ 8.50",
+        A: "GH 11.75",
+        B: "GH 12.75",
+        C: "GH 7.50",
+        D: "GH 8.50",
       },
       correct: "A",
       workings:
-        "E-Levy = 1% × (850 − 100) = 1% × 750 = GH₵ 7.50.  Agent fee = 0.5% × 850 = GH₵ 4.25.  Total = 7.50 + 4.25 = GH₵ 11.75",
+        "E-Levy = 1% × (850  100) = 1% × 750 = GH 7.50.  Agent fee = 0.5% × 850 = GH 4.25.  Total = 7.50 + 4.25 = GH 11.75",
       distractorLogic:
-        "B (GH₵ 12.75) = E-Levy on full GH₵ 850 (GH₵ 8.50) + agent fee GH₵ 4.25 — ignoring the levy threshold. C is only the E-Levy. D is E-Levy on the full amount with no threshold adjustment.",
+        "B (GH 12.75) = E-Levy on full GH 850 (GH 8.50) + agent fee GH 4.25  ignoring the levy threshold. C is only the E-Levy. D is E-Levy on the full amount with no threshold adjustment.",
       protip:
-        "Examiner's Secret: In two-charge problems, verify each fee has its OWN base — the E-Levy uses (Transfer − 100) while the agent fee uses the full amount. Never assume both fees share the same base.",
+        "Examiner's Secret: In two-charge problems, verify each fee has its OWN base  the E-Levy uses (Transfer  100) while the agent fee uses the full amount. Never assume both fees share the same base.",
     },
 
     {
@@ -159,23 +159,23 @@ window.DATABASE = {
       context: "daily",
       contextIcon: "",
       question:
-        "Maame Akua borrows GH₵ 1,200 from a cooperative at <strong>15% per annum simple interest</strong> to buy maize for her mudu retail business. She repays the loan in full after <strong>8 months</strong>. What is the total amount she repays?",
+        "Maame Akua borrows GH 1,200 from a cooperative at <strong>15% per annum simple interest</strong> to buy maize for her mudu retail business. She repays the loan in full after <strong>8 months</strong>. What is the total amount she repays?",
       options: {
-        A: "GH₵ 1,380.00",
-        B: "GH₵ 1,320.00",
-        C: "GH₵ 1,560.00",
-        D: "GH₵ 1,440.00",
+        A: "GH 1,380.00",
+        B: "GH 1,320.00",
+        C: "GH 1,560.00",
+        D: "GH 1,440.00",
       },
       correct: "A",
       workings:
-        "SI = (P × R × T) / 100 = (1200 × 15 × 8⁄12) / 100 = (1200 × 15 × 0.6667) / 100 = 18000 × 0.6667 / 100 = 12000 / 100 = GH₵ 120.  Total = 1200 + 120 = GH₵ 1,380 — wait: 1200×15=18000; 18000×(8/12)=18000×0.6667=12000; 12000/100=120. Total=1320. Let me fix: 1200+120=1320. So answer B. Recalc: P=1200,R=15,T=8/12. SI=(1200×15×8/12)/100=(1200×10)/100=120×... 1200×15=18000; 18000×8=144000; 144000/12=12000; 12000/100=120. So SI=120. Total=1200+120=1320=B. Correction noted.",
+        "SI = (P × R × T) / 100 = (1200 × 15 × 812) / 100 = (1200 × 15 × 0.6667) / 100 = 18000 × 0.6667 / 100 = 12000 / 100 = GH 120.  Total = 1200 + 120 = GH 1,380  wait: 1200×15=18000; 18000×(8/12)=18000×0.6667=12000; 12000/100=120. Total=1320. Let me fix: 1200+120=1320. So answer B. Recalc: P=1200,R=15,T=8/12. SI=(1200×15×8/12)/100=(1200×10)/100=120×... 1200×15=18000; 18000×8=144000; 144000/12=12000; 12000/100=120. So SI=120. Total=1200+120=1320=B. Correction noted.",
       correctFixed: "B",
       workingsFixed:
-        "SI = (P × R × T) ÷ 100 = (1200 × 15 × 8/12) ÷ 100.  Step 1: 1200 × 15 = 18,000.  Step 2: 18,000 × (8/12) = 12,000.  Step 3: 12,000 ÷ 100 = GH₵ 120.  Total repayment = 1,200 + 120 = GH₵ 1,320.00",
+        "SI = (P × R × T) ÷ 100 = (1200 × 15 × 8/12) ÷ 100.  Step 1: 1200 × 15 = 18,000.  Step 2: 18,000 × (8/12) = 12,000.  Step 3: 12,000 ÷ 100 = GH 120.  Total repayment = 1,200 + 120 = GH 1,320.00",
       distractorLogic:
-        "A (GH₵ 1,380) comes from using T = 1 year. C (GH₵ 1,560) uses T = 12 months as a full year with a different error. D (GH₵ 1,440) comes from using T = 10/12.",
+        "A (GH 1,380) comes from using T = 1 year. C (GH 1,560) uses T = 12 months as a full year with a different error. D (GH 1,440) comes from using T = 10/12.",
       protip:
-        "Examiner's Secret: Always convert months to YEARS (divide by 12) before substituting into SI = PRT/100 — using months directly in the formula without dividing inflates the interest and is the single most common arithmetic trap.",
+        "Examiner's Secret: Always convert months to YEARS (divide by 12) before substituting into SI = PRT/100  using months directly in the formula without dividing inflates the interest and is the single most common arithmetic trap.",
     },
 
     {
@@ -196,9 +196,9 @@ window.DATABASE = {
       workings:
         "Combined rate = 45 + 30 = 75 litres/min.  Time = Volume ÷ Rate = 5400 ÷ 75 = 72 minutes.",
       distractorLogic:
-        "B (120 min) = 5400 ÷ 45 — using only Pump A's rate. C (90 min) = 5400 ÷ 60 — incorrectly averaging the rates (45+30)/2=37.5... or using 60 as combined. D (60 min) = a mental overestimate of combined rate.",
+        "B (120 min) = 5400 ÷ 45  using only Pump A's rate. C (90 min) = 5400 ÷ 60  incorrectly averaging the rates (45+30)/2=37.5... or using 60 as combined. D (60 min) = a mental overestimate of combined rate.",
       protip:
-        "Examiner's Secret: For two-pump (combined-rate) problems, ADD the individual rates first, then divide the total volume — never average the rates.",
+        "Examiner's Secret: For two-pump (combined-rate) problems, ADD the individual rates first, then divide the total volume  never average the rates.",
     },
 
     {
@@ -208,20 +208,20 @@ window.DATABASE = {
       context: "utilities",
       contextIcon: "",
       question:
-        "A family records their ECG electricity bills (in GH₵) for 6 months: <strong>78, 95, 112, 84, 91,</strong> and <strong>x</strong>. The mean bill over the 6 months is GH₵ 93.00. Find the value of x.",
+        "A family records their ECG electricity bills (in GH) for 6 months: <strong>78, 95, 112, 84, 91,</strong> and <strong>x</strong>. The mean bill over the 6 months is GH 93.00. Find the value of x.",
       options: {
-        A: "GH₵ 98.00",
-        B: "GH₵ 88.00",
-        C: "GH₵ 102.00",
-        D: "GH₵ 93.00",
+        A: "GH 98.00",
+        B: "GH 88.00",
+        C: "GH 102.00",
+        D: "GH 93.00",
       },
       correct: "A",
       workings:
-        "Total sum = Mean × n = 93 × 6 = 558.  Sum of known values = 78 + 95 + 112 + 84 + 91 = 460.  x = 558 − 460 = GH₵ 98.00.",
+        "Total sum = Mean × n = 93 × 6 = 558.  Sum of known values = 78 + 95 + 112 + 84 + 91 = 460.  x = 558  460 = GH 98.00.",
       distractorLogic:
-        "D (GH₵ 93.00) — students who confuse 'the missing value' with 'the mean' choose this. B (GH₵ 88.00) comes from computing the known sum incorrectly as 470.",
+        "D (GH 93.00)  students who confuse 'the missing value' with 'the mean' choose this. B (GH 88.00) comes from computing the known sum incorrectly as 470.",
       protip:
-        "Examiner's Secret: Compute Total = Mean × n FIRST, then subtract the sum of known values — this two-step process is foolproof and avoids algebraic errors.",
+        "Examiner's Secret: Compute Total = Mean × n FIRST, then subtract the sum of known values  this two-step process is foolproof and avoids algebraic errors.",
     },
 
     {
@@ -242,14 +242,14 @@ window.DATABASE = {
       workings:
         "Let width = w m. Then length = (w + 3) m.  Perimeter: 2(w + w + 3) = 30 → 2(2w + 3) = 30 → 4w + 6 = 30 → 4w = 24 → w = 6 m.  Length = 6 + 3 = 9 m.  Area = 9 × 6 = 54 m².",
       distractorLogic:
-        "A (72 m²) comes from using perimeter = 36 m by mistake. C (45 m²) = 9 × 5 — using the width as 5 by arithmetic error. D (36 m²) = 6 × 6 — forgetting to add the 3 m to get the length.",
+        "A (72 m²) comes from using perimeter = 36 m by mistake. C (45 m²) = 9 × 5  using the width as 5 by arithmetic error. D (36 m²) = 6 × 6  forgetting to add the 3 m to get the length.",
       protip:
-        "Examiner's Secret: 'Length is 3 more than width' is a signal to write l = w + 3, substitute into the perimeter formula, solve for w, then compute area — always solve for dimensions BEFORE computing area.",
+        "Examiner's Secret: 'Length is 3 more than width' is a signal to write l = w + 3, substitute into the perimeter formula, solve for w, then compute area  always solve for dimensions BEFORE computing area.",
     },
 
-    // ─────────────────────────────────────────────────────────
-    //  HARD (Q11–Q15)
-    // ─────────────────────────────────────────────────────────
+    //
+    //  HARD (Q11Q15)
+    //
 
     {
       id: 11,
@@ -258,18 +258,18 @@ window.DATABASE = {
       context: "fintech",
       contextIcon: "",
       question:
-        "Kofi saves GH₵ 2,000 in a MoMo Savings wallet earning <strong>12% per annum compounded quarterly</strong>. What is the balance after <strong>18 months</strong>? (Answer to the nearest pesewa.)",
+        "Kofi saves GH 2,000 in a MoMo Savings wallet earning <strong>12% per annum compounded quarterly</strong>. What is the balance after <strong>18 months</strong>? (Answer to the nearest pesewa.)",
       options: {
-        A: "GH₵ 2,360.00",
-        B: "GH₵ 2,388.10",
-        C: "GH₵ 2,425.82",
-        D: "GH₵ 2,300.00",
+        A: "GH 2,360.00",
+        B: "GH 2,388.10",
+        C: "GH 2,425.82",
+        D: "GH 2,300.00",
       },
       correct: "B",
       workings:
-        "Formula: A = P(1 + r/n)^(nt).  P = 2000, r = 0.12, n = 4 (quarterly), t = 1.5 years.  r/n = 0.12/4 = 0.03.  nt = 4 × 1.5 = 6 periods.  A = 2000 × (1.03)^6.  (1.03)^6: 1.03²=1.0609; 1.03⁴=1.12551; 1.03⁶=1.12551×1.0609=1.19405.  A = 2000 × 1.19405 = GH₵ 2,388.10.",
+        "Formula: A = P(1 + r/n)^(nt).  P = 2000, r = 0.12, n = 4 (quarterly), t = 1.5 years.  r/n = 0.12/4 = 0.03.  nt = 4 × 1.5 = 6 periods.  A = 2000 × (1.03)^6.  (1.03)^6: 1.03²=1.0609; 1.03=1.12551; 1.03=1.12551×1.0609=1.19405.  A = 2000 × 1.19405 = GH 2,388.10.",
       distractorLogic:
-        "A (GH₵ 2,360.00) = 2000 × (1.12)^1.5 — using annual compounding instead of quarterly. C (GH₵ 2,425.82) = 2000 × (1.03)^7 — using 7 periods instead of 6. D is simple interest: 2000 × 0.12 × 1.5 = 360, so 2360 — wait that's A. D is 2000 + 300 = 2300 from using 10% rate.",
+        "A (GH 2,360.00) = 2000 × (1.12)^1.5  using annual compounding instead of quarterly. C (GH 2,425.82) = 2000 × (1.03)^7  using 7 periods instead of 6. D is simple interest: 2000 × 0.12 × 1.5 = 360, so 2360  wait that's A. D is 2000 + 300 = 2300 from using 10% rate.",
       protip:
         "Examiner's Secret: For quarterly compounding, divide the annual rate by 4 AND multiply the years by 4 to get the number of periods. Students who forget to adjust BOTH the rate and the time will always get the wrong answer.",
     },
@@ -281,20 +281,20 @@ window.DATABASE = {
       context: "agritech",
       contextIcon: "",
       question:
-        "A farmer buys <strong>3 bags of urea</strong> and <strong>2 bags of DAP</strong> for GH₵ 600. The next week, she buys <strong>2 bags of urea</strong> and <strong>5 bags of DAP</strong> for GH₵ 950. What is the cost of <strong>ONE bag of DAP</strong>?",
+        "A farmer buys <strong>3 bags of urea</strong> and <strong>2 bags of DAP</strong> for GH 600. The next week, she buys <strong>2 bags of urea</strong> and <strong>5 bags of DAP</strong> for GH 950. What is the cost of <strong>ONE bag of DAP</strong>?",
       options: {
-        A: "GH₵ 120.00",
-        B: "GH₵ 150.00",
-        C: "GH₵ 100.00",
-        D: "GH₵ 130.00",
+        A: "GH 120.00",
+        B: "GH 150.00",
+        C: "GH 100.00",
+        D: "GH 130.00",
       },
       correct: "B",
       workings:
-        "Let U = urea price, D = DAP price.  (1): 3U + 2D = 600.  (2): 2U + 5D = 950.  Multiply (1) by 2: 6U + 4D = 1200.  Multiply (2) by 3: 6U + 15D = 2850.  Subtract: 11D = 1650 → D = GH₵ 150.",
+        "Let U = urea price, D = DAP price.  (1): 3U + 2D = 600.  (2): 2U + 5D = 950.  Multiply (1) by 2: 6U + 4D = 1200.  Multiply (2) by 3: 6U + 15D = 2850.  Subtract: 11D = 1650 → D = GH 150.",
       distractorLogic:
-        "A (GH₵ 120) — students who add equations instead of subtracting get 5U + 7D = 1550 and guess D=120. C (GH₵ 100) comes from using only equation (1) and assuming U = D.",
+        "A (GH 120)  students who add equations instead of subtracting get 5U + 7D = 1550 and guess D=120. C (GH 100) comes from using only equation (1) and assuming U = D.",
       protip:
-        "Examiner's Secret: To eliminate a variable, choose a multiplier that makes the COEFFICIENTS of one variable equal in both equations, then SUBTRACT — mixing up addition and subtraction here is the classic lost-marks moment.",
+        "Examiner's Secret: To eliminate a variable, choose a multiplier that makes the COEFFICIENTS of one variable equal in both equations, then SUBTRACT  mixing up addition and subtraction here is the classic lost-marks moment.",
     },
 
     {
@@ -304,18 +304,18 @@ window.DATABASE = {
       context: "utilities",
       contextIcon: "",
       question:
-        "After a <strong>25% tariff increase</strong> by ECG, a household now pays <strong>GH₵ 137.50</strong> per month for electricity. What was their monthly bill <strong>before</strong> the tariff increase?",
+        "After a <strong>25% tariff increase</strong> by ECG, a household now pays <strong>GH 137.50</strong> per month for electricity. What was their monthly bill <strong>before</strong> the tariff increase?",
       options: {
-        A: "GH₵ 103.13",
-        B: "GH₵ 110.00",
-        C: "GH₵ 112.50",
-        D: "GH₵ 115.00",
+        A: "GH 103.13",
+        B: "GH 110.00",
+        C: "GH 112.50",
+        D: "GH 115.00",
       },
       correct: "B",
       workings:
-        "Let original bill = x.  After 25% increase: x × 1.25 = 137.50.  x = 137.50 ÷ 1.25 = GH₵ 110.00.",
+        "Let original bill = x.  After 25% increase: x × 1.25 = 137.50.  x = 137.50 ÷ 1.25 = GH 110.00.",
       distractorLogic:
-        "A (GH₵ 103.13) = 137.50 × 0.75 — subtracting 25% FROM the new price instead of dividing by 1.25. This is the classic reverse-percentage trap that fails every year.",
+        "A (GH 103.13) = 137.50 × 0.75  subtracting 25% FROM the new price instead of dividing by 1.25. This is the classic reverse-percentage trap that fails every year.",
       protip:
         "Examiner's Secret: To find the ORIGINAL value before a percentage increase, DIVIDE the new value by (1 + rate). Subtracting the percentage from the new value is mathematically incorrect and gives a different answer.",
     },
@@ -327,20 +327,20 @@ window.DATABASE = {
       context: "daily",
       contextIcon: "",
       question:
-        "A Trotro driver saves GH₵ 50 in week 1. Each subsequent week he saves GH₵ 15 more than the previous week. What is his <strong>total savings</strong> at the end of <strong>12 weeks</strong>?",
+        "A Trotro driver saves GH 50 in week 1. Each subsequent week he saves GH 15 more than the previous week. What is his <strong>total savings</strong> at the end of <strong>12 weeks</strong>?",
       options: {
-        A: "GH₵ 1,590",
-        B: "GH₵ 1,380",
-        C: "GH₵ 1,800",
-        D: "GH₵ 1,485",
+        A: "GH 1,590",
+        B: "GH 1,380",
+        C: "GH 1,800",
+        D: "GH 1,485",
       },
       correct: "A",
       workings:
-        "Arithmetic series: a = 50, d = 15, n = 12.  Sₙ = n/2 × [2a + (n−1)d] = 12/2 × [2(50) + 11(15)] = 6 × [100 + 165] = 6 × 265 = GH₵ 1,590.",
+        "Arithmetic series: a = 50, d = 15, n = 12.  S = n/2 × [2a + (n1)d] = 12/2 × [2(50) + 11(15)] = 6 × [100 + 165] = 6 × 265 = GH 1,590.",
       distractorLogic:
-        "B (GH₵ 1,380) uses 'nd' instead of '(n−1)d': 6×[100+12×15]=6×280=1680... actually 6×[100+180]=6×280=1680. Let me check B: 6×[100+11×15]=6×[100+165]=6×265=1590=A. B could be Sn=n/2×(a+last term) where last term is wrong. Last term = 50+11×15=215. S=12/2×(50+215)=6×265=1590. So D (1485)=6×[100+11×13.5] — using wrong d. Actually B=1380 from n/2×[2a+(n)d]=6×[100+180]=6×280=1680. Nope. Try: B from S=n×a + n(n-1)/2 × d but wrong formula.",
+        "B (GH 1,380) uses 'nd' instead of '(n1)d': 6×[100+12×15]=6×280=1680... actually 6×[100+180]=6×280=1680. Let me check B: 6×[100+11×15]=6×[100+165]=6×265=1590=A. B could be Sn=n/2×(a+last term) where last term is wrong. Last term = 50+11×15=215. S=12/2×(50+215)=6×265=1590. So D (1485)=6×[100+11×13.5]  using wrong d. Actually B=1380 from n/2×[2a+(n)d]=6×[100+180]=6×280=1680. Nope. Try: B from S=n×a + n(n-1)/2 × d but wrong formula.",
       protip:
-        "Examiner's Secret: In the series formula Sₙ = n/2 [2a + (n−1)d], the term is (n−1)d NOT nd — because the first week already has the starting amount 'a'; the additional difference only kicks in from week 2 onward.",
+        "Examiner's Secret: In the series formula S = n/2 [2a + (n1)d], the term is (n1)d NOT nd  because the first week already has the starting amount 'a'; the additional difference only kicks in from week 2 onward.",
     },
 
     {
@@ -359,11 +359,11 @@ window.DATABASE = {
       },
       correct: "A",
       workings:
-        "By Inclusion-Exclusion: n(MoMo ∪ Irrigation) = 22 + 18 − 8 = 32.  Neither = 40 − 32 = 8.  P(neither) = 8/40 = 1/5.",
+        "By Inclusion-Exclusion: n(MoMo  Irrigation) = 22 + 18  8 = 32.  Neither = 40  32 = 8.  P(neither) = 8/40 = 1/5.",
       distractorLogic:
-        "B (3/10) = 12/40 — adding both groups' 'exclusive' members incorrectly. C (7/20) = 14/40 — student uses n(MoMo) + n(Irrigation) − 2×n(Both) = 22+18−16=24, neither=16, P=16/40=2/5... different error. D (1/8) = 5/40 — using only n(Both) as 'neither'.",
+        "B (3/10) = 12/40  adding both groups' 'exclusive' members incorrectly. C (7/20) = 14/40  student uses n(MoMo) + n(Irrigation)  2×n(Both) = 22+1816=24, neither=16, P=16/40=2/5... different error. D (1/8) = 5/40  using only n(Both) as 'neither'.",
       protip:
-        "Examiner's Secret: Apply n(A∪B) = n(A) + n(B) − n(A∩B) BEFORE finding 'neither' — students who simply subtract both group totals from 40 double-count the overlap and always undercount the 'neither' group.",
+        "Examiner's Secret: Apply n(AB) = n(A) + n(B)  n(AB) BEFORE finding 'neither'  students who simply subtract both group totals from 40 double-count the overlap and always undercount the 'neither' group.",
     },
     {
       id: 16,
@@ -408,10 +408,10 @@ window.DATABASE = {
       topic: "Indices · Population Growth",
       context: "daily",
       contextIcon: "",
-      question: "Simplify <strong>(8x⁶)⅓</strong>",
+      question: "Simplify <strong>(8x)⅓</strong>",
       options: { A: "2x²", B: "2x³", C: "8x²", D: "4x²" },
       correct: "A",
-      workings: "8⅓ = 2. (x⁶)⅓ = x². Result = 2x².",
+      workings: "8⅓ = 2. (x)⅓ = x². Result = 2x².",
       distractorLogic:
         "B = dividing 6 by 2 instead of 3. C = forgot to cube root the 8.",
       protip:
@@ -423,10 +423,10 @@ window.DATABASE = {
       topic: "Number Bases · Binary Data",
       context: "daily",
       contextIcon: "",
-      question: "Convert <strong>1101₂</strong> to base 10.",
+      question: "Convert <strong>1101</strong> to base 10.",
       options: { A: "13", B: "11", C: "15", D: "9" },
       correct: "A",
-      workings: "(1×2³) + (1×2²) + (0×2¹) + (1×2⁰) = 8 + 4 + 0 + 1 = 13.",
+      workings: "(1×2³) + (1×2²) + (0×2¹) + (1×2) = 8 + 4 + 0 + 1 = 13.",
       distractorLogic:
         "B = ignoring the place values. C = adding an extra power.",
       protip:
@@ -467,7 +467,7 @@ window.DATABASE = {
       difficulty: "easy",
       topic: "Inequalities · Market Prices",
       context: "daily",
-      contextIcon: "️",
+      contextIcon: "",
       question: "Solve <strong>2x + 7 > 15</strong>",
       options: { A: "x > 4", B: "x > 11", C: "x < 4", D: "x > 8" },
       correct: "A",
@@ -499,13 +499,13 @@ window.DATABASE = {
       contextIcon: "",
       question: "Express 0.000042 in standard form.",
       options: {
-        A: "4.2 × 10⁻⁵",
-        B: "4.2 × 10⁻⁴",
-        C: "42 × 10⁻⁶",
-        D: "0.42 × 10⁻⁴",
+        A: "4.2 × 10",
+        B: "4.2 × 10",
+        C: "42 × 10",
+        D: "0.42 × 10",
       },
       correct: "A",
-      workings: "Move decimal 5 places right. 4.2 * 10⁻⁵.",
+      workings: "Move decimal 5 places right. 4.2 * 10.",
       distractorLogic: "B = miscounting zeros. C = not true standard form.",
       protip:
         "Examiner's Secret: Standard form has exactly ONE non-zero digit before the decimal.",
@@ -516,7 +516,7 @@ window.DATABASE = {
       topic: "Logarithms · Scale factors",
       context: "daily",
       contextIcon: "",
-      question: "If <strong>log₁₀(x) = 2</strong>, what is x?",
+      question: "If <strong>log(x) = 2</strong>, what is x?",
       options: { A: "100", B: "20", C: "10", D: "2" },
       correct: "A",
       workings: "x = 10² = 100.",
@@ -571,10 +571,10 @@ window.DATABASE = {
       difficulty: "easy",
       topic: "Averages · Shop Sales",
       context: "daily",
-      contextIcon: "️",
+      contextIcon: "",
       question:
-        "The prices of 3 shoes are GH₵40, GH₵60, and GH₵80. What is the average price?",
-      options: { A: "GH₵60", B: "GH₵180", C: "GH₵90", D: "GH₵50" },
+        "The prices of 3 shoes are GH40, GH60, and GH80. What is the average price?",
+      options: { A: "GH60", B: "GH180", C: "GH90", D: "GH50" },
       correct: "A",
       workings: "(40 + 60 + 80) / 3 = 180 / 3 = 60.",
       distractorLogic: "B = the sum, not the average. D = wrong division.",
@@ -621,15 +621,15 @@ window.DATABASE = {
       difficulty: "medium",
       topic: "Vectors · Drone Mapping",
       context: "agritech",
-      contextIcon: "️",
+      contextIcon: "",
       question:
         "A drone flies along a vector <strong>v = (6i + 8j)</strong> meters. Calculate the magnitude (distance) of the drone's displacement.",
       options: { A: "14m", B: "10m", C: "48m", D: "2m" },
       correct: "B",
-      workings: "|v| = √(6² + 8²) = √(36 + 64) = √100 = 10m.",
+      workings: "|v| = (6² + 8²) = (36 + 64) = 100 = 10m.",
       distractorLogic: "A (14) just adds 6 and 8. C multiplies 6 and 8.",
       protip:
-        "Examiner's Secret: Magnitude is always the square root of the sum of squares—it's just Pythagoras in vector form!",
+        "Examiner's Secret: Magnitude is always the square root of the sum of squaresit's just Pythagoras in vector form!",
     },
     {
       id: 33,
@@ -639,7 +639,7 @@ window.DATABASE = {
       contextIcon: "",
       question:
         "A repairman stands 20m from the base of a telecom mast. The angle of elevation to the transmitter is 45°. How high is the transmitter?",
-      options: { A: "10m", B: "20m", C: "20√2 m", D: "40m" },
+      options: { A: "10m", B: "20m", C: "202 m", D: "40m" },
       correct: "B",
       workings:
         "tan(45°) = h / 20. Since tan(45°) = 1, then 1 = h / 20 -> h = 20m.",
@@ -683,7 +683,7 @@ window.DATABASE = {
       difficulty: "hard",
       topic: "Latitude/Longitude · Air Travel",
       context: "daily",
-      contextIcon: "️",
+      contextIcon: "",
       question:
         "Two towns A(40°N, 10°E) and B(40°N, 50°E) are on the same latitude. Find their longitude difference.",
       options: { A: "30°", B: "40°", C: "50°", D: "60°" },
@@ -708,7 +708,7 @@ window.DATABASE = {
         "The value 4.5 appears twice; all others appear once. Mode = 4.5kg.",
       distractorLogic: "B might be an estimated mean. C is the highest value.",
       protip:
-        "Examiner's Secret: Mode is simply the most 'Fashionable' (most frequent) number. Don't calculate—just count!",
+        "Examiner's Secret: Mode is simply the most 'Fashionable' (most frequent) number. Don't calculatejust count!",
     },
     {
       id: 38,
@@ -752,7 +752,7 @@ window.DATABASE = {
       question: "Evaluate <strong>(27)⅔</strong>",
       options: { A: "9", B: "3", C: "18", D: "81" },
       correct: "A",
-      workings: "27⅔ = (∛27)² = 3² = 9.",
+      workings: "27⅔ = (27)² = 3² = 9.",
       distractorLogic: "B is just the cube root. C is 27 * 2/3. D is 27 * 3.",
       protip:
         "Examiner's Secret: Root the bottom (denominator), then Power the top (numerator).",
@@ -782,7 +782,7 @@ window.DATABASE = {
         "A viral video starts with 5 views. Each hour, the views triple (Geometric Progression). How many views at the start of the 4th hour?",
       options: { A: "135", B: "405", C: "20", D: "45" },
       correct: "A",
-      workings: "a=5, r=3, n=4. U₄ = arⁿ⁻¹ = 5 * 3³ = 5 * 27 = 135.",
+      workings: "a=5, r=3, n=4. U = ar¹ = 5 * 3³ = 5 * 27 = 135.",
       distractorLogic: "B is for n=5. D is for n=3.",
       protip:
         "Examiner's Secret: Check the term carefully! Week 4 uses power (4-1=3).",
@@ -793,10 +793,10 @@ window.DATABASE = {
       topic: "Logarithms · Decibel Increase",
       context: "daily",
       contextIcon: "",
-      question: "Solve for x: <strong>log₂(x) + log₂(3) = log₂(15)</strong>",
+      question: "Solve for x: <strong>log(x) + log(3) = log(15)</strong>",
       options: { A: "5", B: "12", C: "18", D: "45" },
       correct: "A",
-      workings: "log₂(3x) = log₂(15) -> 3x = 15 -> x = 5.",
+      workings: "log(3x) = log(15) -> 3x = 15 -> x = 5.",
       distractorLogic: "B (12) comes from 15-3. C comes from 15+3.",
       protip:
         "Examiner's Secret: Addition outside a log becomes MULTIPLICATION inside: log(A) + log(B) = log(A × B).",
@@ -807,10 +807,10 @@ window.DATABASE = {
       topic: "Surds · Geometric Precision",
       context: "daily",
       contextIcon: "",
-      question: "Simplify <strong>√12 + √27</strong>",
-      options: { A: "5√3", B: "√39", C: "6√3", D: "3√13" },
+      question: "Simplify <strong>12 + 27</strong>",
+      options: { A: "53", B: "39", C: "63", D: "313" },
       correct: "A",
-      workings: "√12 = 2√3. √27 = 3√3. Sum = (2+3)√3 = 5√3.",
+      workings: "12 = 23. 27 = 33. Sum = (2+3)3 = 53.",
       distractorLogic:
         "B just adds the numbers under the root (illegal!). D also avoids the factorization.",
       protip:
@@ -821,7 +821,7 @@ window.DATABASE = {
       difficulty: "hard",
       topic: "Mensuration · Silo Capacity",
       context: "agritech",
-      contextIcon: "️",
+      contextIcon: "",
       question:
         "A square-based pyramid of height 12m has a base length of 10m. Find its volume.",
       options: { A: "400 m³", B: "1,200 m³", C: "600 m³", D: "200 m³" },
@@ -860,7 +860,7 @@ window.DATABASE = {
         "Opposite angles of a cyclic quadrilateral add to 180°. C = 180 - 85 = 95°.",
       distractorLogic: "B assumes they are equal. C is almost 180.",
       protip:
-        "Examiner's Secret: 'Opposite angles add to 180'—this only works if all 4 corners touch the circle!",
+        "Examiner's Secret: 'Opposite angles add to 180'this only works if all 4 corners touch the circle!",
     },
     {
       id: 48,
@@ -881,7 +881,7 @@ window.DATABASE = {
       distractorLogic:
         "C is a contextual opposite, but 'Not' is the logical requirement.",
       protip:
-        "Examiner's Secret: Negation is just adding 'Not'—don't look for antonyms like 'Sunny' vs 'Raining'.",
+        "Examiner's Secret: Negation is just adding 'Not'don't look for antonyms like 'Sunny' vs 'Raining'.",
     },
     {
       id: 49,
@@ -986,7 +986,7 @@ window.DATABASE = {
       difficulty: "medium",
       topic: "Software · OS Functions",
       context: "daily",
-      contextIcon: "️",
+      contextIcon: "",
       question:
         "What is the primary function of an Operating System's scheduler?",
       options: {
@@ -1027,7 +1027,7 @@ window.DATABASE = {
       difficulty: "medium",
       topic: "Networking · Topology",
       context: "daily",
-      contextIcon: "️",
+      contextIcon: "",
       question:
         "In which topology does the failure of a single central hub bring down the entire network?",
       options: { A: "Bus", B: "Star", C: "Ring", D: "Mesh" },
@@ -1041,7 +1041,7 @@ window.DATABASE = {
       difficulty: "easy",
       topic: "Computing Concepts · Cloud",
       context: "daily",
-      contextIcon: "️",
+      contextIcon: "",
       question: "What does SaaS stand for in cloud computing?",
       options: {
         A: "System as a Service",
@@ -1060,7 +1060,7 @@ window.DATABASE = {
       difficulty: "medium",
       topic: "Database · SQL",
       context: "daily",
-      contextIcon: "️",
+      contextIcon: "",
       question: "Which SQL command is used to remove a table from a database?",
       options: { A: "DELETE", B: "REMOVE", C: "DROP", D: "TRUNCATE" },
       correct: "C",
@@ -1249,7 +1249,7 @@ window.DATABASE = {
       difficulty: "hard",
       topic: "Physics · Heat Transfer",
       context: "daily",
-      contextIcon: "️",
+      contextIcon: "",
       question: "Heat from the sun reaches the earth through ___.",
       options: {
         A: "Conduction",
@@ -1369,7 +1369,7 @@ window.DATABASE = {
       difficulty: "medium",
       topic: "Grammar · Concord",
       context: "daily",
-      contextIcon: "️",
+      contextIcon: "",
       question:
         "Neither the captain nor the crew members ___ aware of the sudden change in weather.",
       options: { A: "was", B: "were", C: "is", D: "being" },
@@ -1453,15 +1453,15 @@ window.DATABASE = {
       context: "utilities",
       contextIcon: "",
       question:
-        "The speed of light in a vacuum is 3 × 10⁸ m/s. If the refractive index of water is 1.33, what is the speed of light in water?",
+        "The speed of light in a vacuum is 3 × 10 m/s. If the refractive index of water is 1.33, what is the speed of light in water?",
       options: {
-        A: "2.26 × 10⁸ m/s",
-        B: "3.99 × 10⁸ m/s",
-        C: "1.33 × 10⁸ m/s",
-        D: "4.33 × 10⁸ m/s",
+        A: "2.26 × 10 m/s",
+        B: "3.99 × 10 m/s",
+        C: "1.33 × 10 m/s",
+        D: "4.33 × 10 m/s",
       },
       correct: "A",
-      workings: "v = c / n = (3 × 10⁸) / 1.33 ≈ 2.26 × 10⁸ m/s.",
+      workings: "v = c / n = (3 × 10) / 1.33  2.26 × 10 m/s.",
       distractorLogic:
         "B (3.99) is from multiplying instead of dividing. Light ALWAYS slows down in denser media.",
       protip:
@@ -1475,7 +1475,7 @@ window.DATABASE = {
       difficulty: "easy",
       topic: "Atomic Structure",
       context: "daily",
-      contextIcon: "️",
+      contextIcon: "",
       question:
         "Which of the following subatomic particles has a positive charge?",
       options: { A: "Electron", B: "Proton", C: "Neutron", D: "Positron" },
@@ -1491,7 +1491,7 @@ window.DATABASE = {
       difficulty: "medium",
       topic: "Stoichiometry · Yield",
       context: "agritech",
-      contextIcon: "️",
+      contextIcon: "",
       question:
         "In a chemical reaction, the theoretical yield is 50g, but the actual yield is 40g. What is the percentage yield?",
       options: { A: "80%", B: "90%", C: "75%", D: "125%" },
@@ -1618,7 +1618,7 @@ window.DATABASE = {
       difficulty: "medium",
       topic: "Mensuration · Satellite Dish Radius",
       context: "agritech",
-      contextIcon: "️",
+      contextIcon: "",
       question:
         "A parabolic satellite dish has a circumference of 44m. Calculate its radius. [Take π = 22/7]",
       options: { A: "7m", B: "14m", C: "22m", D: "3.5m" },
@@ -1652,10 +1652,10 @@ window.DATABASE = {
       topic: "Logarithms · Decibel Scales",
       context: "daily",
       contextIcon: "",
-      question: "Evaluate log₁₀(0.001) without using a calculator.",
+      question: "Evaluate log(0.001) without using a calculator.",
       options: { A: "3", B: "-3", C: "0.001", D: "1/1000" },
       correct: "B",
-      workings: "0.001 = 10⁻³. Therefore, log₁₀(10⁻³) = -3.",
+      workings: "0.001 = 10³. Therefore, log(10³) = -3.",
       distractorLogic:
         "A ignores the decimal. D is just the fraction form, not the log value.",
       protip:
@@ -1669,9 +1669,9 @@ window.DATABASE = {
       contextIcon: "",
       question:
         "A drone observes the top of a tower at an angle of elevation of 60°. If the drone is 50m horizontally away from the base, how high is the tower above the drone? [Leave answer in surd form]",
-      options: { A: "50√3 m", B: "50/√3 m", C: "100 m", D: "25 m" },
+      options: { A: "503 m", B: "50/3 m", C: "100 m", D: "25 m" },
       correct: "A",
-      workings: "tan(60°) = opposite / adjacent -> √3 = h / 50 -> h = 50√3 m.",
+      workings: "tan(60°) = opposite / adjacent -> 3 = h / 50 -> h = 503 m.",
       distractorLogic:
         "Option B happens if you divide instead of multiply. C uses the hypotenuse instead of height.",
       protip:
@@ -1685,7 +1685,7 @@ window.DATABASE = {
         difficulty: "medium",
         topic: "Financial Maths · MoMo E-Levy",
         question:
-          "A business owner in Kumasi transfers GH₵ 5,000 to a supplier. The GH₵ 100 daily tax-free threshold has already been used by a previous transaction. Calculate the total E-Levy (1%) and explain why the threshold subtraction was omitted in this calculation.",
+          "A business owner in Kumasi transfers GH 5,000 to a supplier. The GH 100 daily tax-free threshold has already been used by a previous transaction. Calculate the total E-Levy (1%) and explain why the threshold subtraction was omitted in this calculation.",
         markScheme: [
           { key: "1%", points: 2, desc: "Identifying the 1% rate correctly" },
           {
@@ -1705,8 +1705,8 @@ window.DATABASE = {
           },
         ],
         modelAnswer:
-          "The total E-Levy is GH₵ 50.00. The threshold subtraction (GH₵ 100) was omitted because the question states the daily tax-free limit has already been exhausted by a previous transaction. Therefore, the full GH₵ 5,000 is taxable at 1%.",
-        contextIcon: "️",
+          "The total E-Levy is GH 50.00. The threshold subtraction (GH 100) was omitted because the question states the daily tax-free limit has already been exhausted by a previous transaction. Therefore, the full GH 5,000 is taxable at 1%.",
+        contextIcon: "",
       },
       {
         id: 1002,
@@ -1730,7 +1730,7 @@ window.DATABASE = {
         ],
         modelAnswer:
           "Volume = πr²h = (22/7) * (1.4)² * 3 = 18.48 m³. Total Litres = 18.48 * 1000 = 18,480 litres. Number of buckets = 18,480 / 20 = 924 buckets.",
-        contextIcon: "️",
+        contextIcon: "",
       },
       {
         id: 1003,
@@ -1801,7 +1801,7 @@ window.DATABASE = {
         difficulty: "hard",
         topic: "Simultaneous Equations · Agri-Tech",
         question:
-          "A mechanized farm buys 3 tractors and 5 combine harvesters for GH₵ 1,200,000. Another farm buys 4 tractors and 2 combine harvesters for GH₵ 900,000. Using any algebraic method, calculate the exact cost of ONE tractor and ONE combine harvester.",
+          "A mechanized farm buys 3 tractors and 5 combine harvesters for GH 1,200,000. Another farm buys 4 tractors and 2 combine harvesters for GH 900,000. Using any algebraic method, calculate the exact cost of ONE tractor and ONE combine harvester.",
         markScheme: [
           {
             key: "3x",
@@ -1818,11 +1818,11 @@ window.DATABASE = {
             points: 2,
             desc: "Attempting elimination or substitution successfully",
           },
-          { key: "tractor", points: 2, desc: "Tractor (x) = GH₵ 150,000" },
-          { key: "harvester", points: 2, desc: "Harvester (y) = GH₵ 150,000" },
+          { key: "tractor", points: 2, desc: "Tractor (x) = GH 150,000" },
+          { key: "harvester", points: 2, desc: "Harvester (y) = GH 150,000" },
         ],
         modelAnswer:
-          "Let x = tractor, y = harvester. 3x + 5y = 1,200,000. 4x + 2y = 900,000. Multiply Eq1 by 4 and Eq2 by 3. 12x + 20y = 4,800,000. 12x + 6y = 2,700,000. Subtract: 14y = 2,100,000 -> y = 150,000. Substitute: 4x + 300,000 = 900,000 -> 4x = 600,000 -> x = 150,000. Both cost GH₵ 150,000 each.",
+          "Let x = tractor, y = harvester. 3x + 5y = 1,200,000. 4x + 2y = 900,000. Multiply Eq1 by 4 and Eq2 by 3. 12x + 20y = 4,800,000. 12x + 6y = 2,700,000. Subtract: 14y = 2,100,000 -> y = 150,000. Substitute: 4x + 300,000 = 900,000 -> 4x = 600,000 -> x = 150,000. Both cost GH 150,000 each.",
         contextIcon: "",
       },
     ],
@@ -1857,7 +1857,7 @@ window.DATABASE = {
         ],
         modelAnswer:
           "MFA requires factors from different categories (e.g., something you know like a password, and something you have like a phone code). It is more secure because factors are independent; even if a long password is stolen or phished, the attacker still lacks the secondary physical factor required for entry.",
-        contextIcon: "️",
+        contextIcon: "",
       },
     ],
     science: [
