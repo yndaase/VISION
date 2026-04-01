@@ -1678,6 +1678,10 @@ window.DATABASE = {
         "Examiner's Secret: Always draw a quick right-angled triangle. Height is usually 'Opposite', Distance is 'Adjacent'.",
     },
   ],
+  cs: [],
+  science: [],
+  physics: [],
+  social: [],
   theory: {
     maths: [
       {

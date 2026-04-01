@@ -111,6 +111,7 @@ function updateTimerUI() {
 //  Render Logic
 function renderAll() {
   const grid = document.getElementById("questionsGrid");
+  if (!grid) return;
   grid.innerHTML = "";
 
   const filtered =
@@ -121,6 +122,16 @@ function renderAll() {
         : currentMode === "objective"
           ? activeQuestions
           : QUESTIONS;
+
+  if (filtered.length === 0) {
+    grid.innerHTML = `
+      <div class="q-card" style="text-align: center; padding: 4rem 2rem; grid-column: 1 / -1;">
+        <h2 style="color: var(--text-primary); margin-bottom: 1rem;">Session Initializing...</h2>
+        <p style="color: var(--text-secondary);">We are preparing your expert-curated questions for this subject. Please stay on the line.</p>
+      </div>
+    `;
+    return;
+  }
 
   filtered.forEach((q, idx) => {
     const card =
