@@ -5,43 +5,11 @@
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-:root {
-  /* V3 Professional Academic Palette */
-  --bg-dark:        #020617; /* Solid Deep Slate */
-  --bg-card:        #0f172a; /* Deep Navy Card */
-  --bg-card-hover:  #1e293b; /* Slate 800 */
-  
-  --primary:        #b45309; /* Burnished Gold */
-  --primary-dim:    rgba(180, 83, 9, 0.1);
-  --secondary:      #334155; /* Slate Blue */
-  
-  --success:        #065f46; /* Forest Green */
-  --success-dim:    rgba(6, 95, 70, 0.1);
-  --error:          #991b1b; /* Academic Crimson */
-  --error-dim:      rgba(153, 27, 27, 0.1);
-  --warning:        #854d0e; /* Ochre */
-  
-  --text-primary:   #f8fafc;
-  --text-secondary: #cbd5e1;
-  --text-muted:     #64748b;
-  
-  --border:         rgba(255, 255, 255, 0.12);
-  --border-bright:  rgba(255, 255, 255, 0.2);
-  --border-accent:  rgba(180, 83, 9, 0.4);
-  
-  --shadow-sm:      0 1px 3px rgba(0,0,0,0.2);
-  --shadow-md:      0 4px 6px -1px rgba(0,0,0,0.3);
-  --shadow-lg:      0 20px 25px -5px rgba(0,0,0,0.4);
-  --shadow-premium: 0 0 0 1px var(--border), 0 20px 50px rgba(0,0,0,0.5);
-  
-  --radius-sm:      4px;  /* Sharp & Professional */
-  --radius-md:      8px;
-  --radius-lg:      12px;
-  --radius-xl:      24px;
-  
-  --font-main:      'Outfit', sans-serif;
-  --font-mono:      'JetBrains Mono', monospace;
-}
+
+/* NOTE: All CSS variables (colors, radii, etc.) are defined in theme.css.
+   Style.css provides component-level styles only. */
+
+
 
 html { scroll-behavior: smooth; }
 
