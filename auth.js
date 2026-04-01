@@ -17,8 +17,9 @@ function getSession()     {
   return JSON.parse(sessionStorage.getItem(SESSION_KEY) || localStorage.getItem(SESSION_KEY) || 'null');
 }
 function setSession(user) {
-  sessionStorage.setItem(SESSION_KEY, JSON.stringify(user));
-  localStorage.setItem(SESSION_KEY, JSON.stringify(user));  // persist across refreshes
+  const verified = verifyUserSchema(user);
+  sessionStorage.setItem(SESSION_KEY, JSON.stringify(verified));
+  localStorage.setItem(SESSION_KEY, JSON.stringify(verified));
 }
 function clearSession()   {
   sessionStorage.removeItem(SESSION_KEY);
@@ -29,6 +30,57 @@ function getStats() {
   return JSON.parse(localStorage.getItem(STATS_KEY) || '{"answered":0,"correct":0}');
 }
 function saveStats(s) { localStorage.setItem(STATS_KEY, JSON.stringify(s)); }
+
+// ─── Schema & Migration ───────────────────────────────
+/**
+ * Ensures user objects have the correct field names and types.
+ * Solves "Can't login" issues caused by property renaming.
+ */
+function verifyUserSchema(user) {
+  if (!user) return null;
+  // Migrate 2FA property if missing on object but present as legacy
+  if (user.hasOwnProperty('twoFactorEnabled')) {
+    user.twoFAEnabled = user.twoFactorEnabled;
+    delete user.twoFactorEnabled;
+  }
+  // Ensure default booleans
+  user.twoFAEnabled = !!user.twoFAEnabled;
+  return user;
+}
+
+function migrateLegacyData() {
+  try {
+    const users = getUsers();
+    let changed = false;
+    
+    // 1. Migrate Users Array
+    const migratedUsers = users.map(u => {
+      if (u.hasOwnProperty('twoFactorEnabled')) {
+        u.twoFAEnabled = u.twoFactorEnabled;
+        delete u.twoFactorEnabled;
+        changed = true;
+      }
+      return u;
+    });
+    
+    if (changed) saveUsers(migratedUsers);
+    
+    // 2. Migrate Active Session
+    let session = getSession();
+    if (session) {
+      if (session.hasOwnProperty('twoFactorEnabled')) {
+        session.twoFAEnabled = session.twoFactorEnabled;
+        delete session.twoFactorEnabled;
+        setSession(session);
+      }
+    }
+    
+    console.log('[Auth] Database migration checked.');
+  } catch (e) {
+    console.error('[Auth] Migration error:', e);
+  }
+}
+
 
 // ─── Simple hash (demo-grade, not cryptographic) ─────
 function simpleHash(str) {
@@ -624,8 +676,11 @@ function handleResetPassword(e) {
   setTimeout(goToDashboard, 1200);
 }
 
-// ─── Init on login page ───────────────────────────────
+// ─── Init on page load ────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
+  // Always run migration first to ensure database is in sync
+  migrateLegacyData();
+
   if (document.getElementById('loginForm')) {
     if (getSession()) { goToDashboard(); return; }
   }
