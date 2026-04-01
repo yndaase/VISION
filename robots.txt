@@ -1,0 +1,13 @@
+User-agent: *
+Allow: /
+
+# Block admin and private pages from crawlers
+Disallow: /admin.html
+Disallow: /robotics-login.html
+Disallow: /robotics-dashboard.html
+Disallow: /robotics.html
+Disallow: /mock-hall.html
+Disallow: /api/
+
+# Sitemap location
+Sitemap: https://www.visionedu.online/sitemap.xml
