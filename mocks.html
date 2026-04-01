@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mock Exams | Vision Education · 2026 WASSCE</title>
+  <meta name="description" content="Take full-length WASSCE mock simulations." />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="dashboard.css" />
+  <style>
+    .mocks-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 1.5rem;
+      padding: 2rem 0;
+    }
+    .mock-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 2rem;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.3s ease;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+    .mock-card:hover {
+      border-color: var(--primary);
+      transform: translateY(-5px);
+      box-shadow: 0 15px 30px rgba(0,0,0,0.3);
+    }
+    .mock-badge {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      background: var(--primary-dim);
+      color: var(--primary);
+      font-size: 0.65rem;
+      font-weight: 800;
+      padding: 4px 10px;
+      border-radius: 4px;
+      text-transform: uppercase;
+    }
+    .mock-title { font-size: 1.3rem; font-weight: 800; margin: 0; }
+    .mock-meta { display: flex; gap: 1rem; color: var(--text-muted); font-size: 0.85rem; }
+    .mock-footer { display: flex; justify-content: space-between; align-items: center; margin-top: auto; }
+    .start-mock-btn {
+      background: var(--primary);
+      color: #000;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+    .start-mock-btn:hover { opacity: 0.9; }
+  </style>
+</head>
+<body class="dashboard-page">
+
+  <!-- ── SIDE NAVIGATION ── -->
+  <aside class="side-nav">
+    <a class="side-nav-logo" href="dashboard.html">
+      <span class="dash-logo-icon">📐</span>
+      <span>Vision Edu</span>
+    </a>
+    <nav class="side-nav-menu">
+      <a href="dashboard.html" class="nav-item">
+        <span class="nav-item-icon">🏠</span>
+        <span>Dashboard</span>
+      </a>
+      <a href="mocks.html" class="nav-item active">
+        <span class="nav-item-icon">📝</span>
+        <span>Mock Exams</span>
+      </a>
+      <a href="analytics.html" class="nav-item">
+        <span class="nav-item-icon">📊</span>
+        <span>Performance</span>
+      </a>
+    </nav>
+    <div class="side-nav-footer">
+      <a href="#" class="nav-item" onclick="openSettings(); return false;">
+        <span class="nav-item-icon">⚙️</span>
+        <span>Settings</span>
+      </a>
+    </div>
+  </aside>
+
+  <!-- ── BOTTOM NAVIGATION (Mobile) ── -->
+  <nav class="bottom-nav">
+    <a href="dashboard.html" class="bottom-nav-item">
+      <span class="bottom-icon">🏠</span>
+      <span>Home</span>
+    </a>
+    <a href="mocks.html" class="bottom-nav-item active">
+      <span class="bottom-icon">📝</span>
+      <span>Mocks</span>
+    </a>
+    <a href="analytics.html" class="bottom-nav-item">
+      <span class="bottom-icon">📊</span>
+      <span>Stats</span>
+    </a>
+    <a href="#" class="bottom-nav-item" onclick="openSettings(); return false;">
+      <span class="bottom-icon">⚙️</span>
+      <span>Settings</span>
+    </a>
+  </nav>
+
+  <div class="main-wrapper">
+    <nav class="dash-nav">
+      <div class="dash-nav-inner">
+        <div class="dash-logo">
+          <span class="dash-logo-icon">📝</span>
+          <span class="dash-logo-text">Mock <span class="brand-accent">Exams</span></span>
+        </div>
+        <div class="dash-nav-right">
+          <div class="nav-user-chip">
+            <div class="nav-avatar">K</div>
+            <span class="nav-username">Student</span>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <main style="padding: 2rem 3rem;">
+      <header>
+        <h1 style="font-size: 2.5rem; font-weight: 800; margin-bottom: 0.5rem;">Examination Hall</h1>
+        <p style="color: var(--text-secondary); max-width: 600px;">Simulate the real WASSCE environment with full-length, timed mock papers curated by senior examiners.</p>
+      </header>
+
+      <div class="mocks-grid">
+        <!-- Mock 1 -->
+        <div class="mock-card">
+          <span class="mock-badge">2026 Simulation</span>
+          <div>
+            <h3 class="mock-title">Core Mathematics Mock A</h3>
+            <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 0.5rem;">Focus: Algebra, Geometry, and Section B Theory.</p>
+          </div>
+          <div class="mock-meta">
+            <span>⏱ 2.5 Hours</span>
+            <span>📝 50 Questions</span>
+          </div>
+          <div class="mock-footer">
+            <span style="font-weight: 700; color: var(--primary);">Ready to start</span>
+            <button class="start-mock-btn">Launch Exam</button>
+          </div>
+        </div>
+
+        <!-- Mock 2 -->
+        <div class="mock-card">
+          <span class="mock-badge">Past Paper Refined</span>
+          <div>
+            <h3 class="mock-title">Integrated Science Mock 1</h3>
+            <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 0.5rem;">Full coverage of Biology, Physics, and Chemistry modules.</p>
+          </div>
+          <div class="mock-meta">
+            <span>⏱ 2 Hours</span>
+            <span>📝 60 Questions</span>
+          </div>
+          <div class="mock-footer">
+            <span style="font-weight: 700; color: var(--primary);">Ready to start</span>
+            <button class="start-mock-btn">Launch Exam</button>
+          </div>
+        </div>
+
+        <!-- Mock 3 -->
+        <div class="mock-card" style="opacity: 0.6; pointer-events: none;">
+          <span class="mock-badge" style="background: #334155; color: #94a3b8;">Coming Soon</span>
+          <div>
+            <h3 class="mock-title">English Language Mock B</h3>
+            <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 0.5rem;">Objective & Theory simulation for 2026 standards.</p>
+          </div>
+          <div class="mock-meta">
+            <span>⏱ 3 Hours</span>
+            <span>📝 100 Questions</span>
+          </div>
+          <div class="mock-footer">
+            <span>Locked</span>
+            <button class="start-mock-btn" style="background: #475569;">Unlock Soon</button>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="auth.js"></script>
+</body>
+</html>

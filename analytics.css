@@ -1,13 +1,4 @@
 /* ─── V5.0 ANALYTICS STYLES ─── */
-body.analytics-page {
-  background-color: var(--bg-dark);
-  color: var(--text-primary);
-  font-family: var(--font-main);
-  min-height: 100vh;
-  margin: 0;
-  padding-bottom: 4rem;
-}
-
 .analytics-container {
   max-width: 1200px;
   margin: 0 auto;

@@ -10,29 +10,73 @@
   <link rel="stylesheet" href="dashboard.css" />
   <link rel="stylesheet" href="analytics.css" />
 </head>
-<body class="analytics-page">
+<body class="analytics-page dashboard-page">
 
-  <!-- ── NAVBAR ── -->
-  <nav class="dash-nav" id="dashNav">
-    <div class="dash-nav-inner">
-      <a class="dash-logo" href="dashboard.html">
-        <span class="dash-logo-icon">📐</span>
-        <span class="dash-logo-text">Vision <span class="brand-accent">Education</span></span>
+  <!-- ── SIDE NAVIGATION ── -->
+  <aside class="side-nav">
+    <a class="side-nav-logo" href="dashboard.html">
+      <span class="dash-logo-icon">📐</span>
+      <span>Vision Edu</span>
+    </a>
+    <nav class="side-nav-menu">
+      <a href="dashboard.html" class="nav-item">
+        <span class="nav-item-icon">🏠</span>
+        <span>Dashboard</span>
       </a>
-
-      <div class="dash-nav-right">
-        <span class="nav-badge">2026 WASSCE</span>
-        <div class="nav-user-chip" id="navUserChip">
-          <div class="nav-avatar" id="navAvatar">K</div>
-          <span class="nav-username" id="navUsername">Student</span>
-        </div>
-        <button class="nav-logout-btn" id="navLogoutBtn" onclick="handleLogout()" title="Log out">
-          <span>Log out</span>
-          <span>↩</span>
-        </button>
-      </div>
+      <a href="mocks.html" class="nav-item">
+        <span class="nav-item-icon">📝</span>
+        <span>Mock Exams</span>
+      </a>
+      <a href="analytics.html" class="nav-item active">
+        <span class="nav-item-icon">📊</span>
+        <span>Performance</span>
+      </a>
+    </nav>
+    <div class="side-nav-footer">
+      <a href="#" class="nav-item" onclick="openSettings(); return false;">
+        <span class="nav-item-icon">⚙️</span>
+        <span>Settings</span>
+      </a>
     </div>
+  </aside>
+
+  <!-- ── BOTTOM NAVIGATION (Mobile) ── -->
+  <nav class="bottom-nav">
+    <a href="dashboard.html" class="bottom-nav-item">
+      <span class="bottom-icon">🏠</span>
+      <span>Home</span>
+    </a>
+    <a href="mocks.html" class="bottom-nav-item">
+      <span class="bottom-icon">📝</span>
+      <span>Mocks</span>
+    </a>
+    <a href="analytics.html" class="bottom-nav-item active">
+      <span class="bottom-icon">📊</span>
+      <span>Stats</span>
+    </a>
+    <a href="#" class="bottom-nav-item" onclick="openSettings(); return false;">
+      <span class="bottom-icon">⚙️</span>
+      <span>Settings</span>
+    </a>
   </nav>
+
+  <div class="main-wrapper">
+
+    <!-- ── NAVBAR ── -->
+    <nav class="dash-nav" id="dashNav">
+      <div class="dash-nav-inner">
+        <div class="dash-logo">
+          <span class="dash-logo-icon">📊</span>
+          <span class="dash-logo-text">Vision <span class="brand-accent">Analytics</span></span>
+        </div>
+        <div class="dash-nav-right">
+          <div class="nav-user-chip">
+            <div class="nav-avatar">K</div>
+            <span class="nav-username">Student</span>
+          </div>
+        </div>
+      </div>
+    </nav>
 
   <!-- ── ANALYTICS CONTENT ── -->
   <main class="analytics-container">
@@ -40,11 +84,6 @@
       <div>
         <h1 class="analytics-title">Performance Analytics</h1>
         <p class="analytics-subtitle">Aggregated data from your recent WASSCE mock simulations and practice sets.</p>
-      </div>
-      <div>
-        <a href="dashboard.html" class="return-dash-btn">
-          <span>←</span> Return to Dashboard
-        </a>
       </div>
     </header>
 
@@ -135,7 +174,10 @@
     </div>
   </main>
 
+  </div> <!-- /main-wrapper -->
+
   <!-- Dummy local auth check -->
+  <script src="auth.js"></script>
   <script>
     function handleLogout() {
       window.location.href = 'login.html';

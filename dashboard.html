@@ -17,7 +17,57 @@
 </head>
 <body class="dashboard-page">
 
-  <!-- ── NAVBAR ── -->
+  <!-- ── SIDE NAVIGATION ── -->
+  <aside class="side-nav">
+    <a class="side-nav-logo" href="dashboard.html">
+      <span class="dash-logo-icon">📐</span>
+      <span>Vision Edu</span>
+    </a>
+    <nav class="side-nav-menu">
+      <a href="dashboard.html" class="nav-item active">
+        <span class="nav-item-icon">🏠</span>
+        <span>Dashboard</span>
+      </a>
+      <a href="mocks.html" class="nav-item">
+        <span class="nav-item-icon">📝</span>
+        <span>Mock Exams</span>
+      </a>
+      <a href="analytics.html" class="nav-item">
+        <span class="nav-item-icon">📊</span>
+        <span>Performance</span>
+      </a>
+    </nav>
+    <div class="side-nav-footer">
+      <a href="#" class="nav-item" onclick="openSettings(); return false;">
+        <span class="nav-item-icon">⚙️</span>
+        <span>Settings</span>
+      </a>
+    </div>
+  </aside>
+
+  <!-- ── BOTTOM NAVIGATION (Mobile) ── -->
+  <nav class="bottom-nav">
+    <a href="dashboard.html" class="bottom-nav-item active">
+      <span class="bottom-icon">🏠</span>
+      <span>Home</span>
+    </a>
+    <a href="mocks.html" class="bottom-nav-item">
+      <span class="bottom-icon">📝</span>
+      <span>Mocks</span>
+    </a>
+    <a href="analytics.html" class="bottom-nav-item">
+      <span class="bottom-icon">📊</span>
+      <span>Stats</span>
+    </a>
+    <a href="#" class="bottom-nav-item" onclick="openSettings(); return false;">
+      <span class="bottom-icon">⚙️</span>
+      <span>Settings</span>
+    </a>
+  </nav>
+
+  <div class="main-wrapper">
+
+    <!-- ── NAVBAR ── -->
   <nav class="dash-nav" id="dashNav">
     <div class="dash-nav-inner">
       <a class="dash-logo" href="dashboard.html">
@@ -31,8 +81,6 @@
           <div class="nav-avatar" id="navAvatar">K</div>
           <span class="nav-username" id="navUsername">Student</span>
         </div>
-        <a href="analytics.html" class="nav-settings-btn" style="text-decoration:none; padding:4px 12px; font-size:0.85rem; border-radius:12px; font-weight:700;" title="Analytics">📊 Analytics</a>
-        <button class="nav-settings-btn" id="navSettingsBtn" onclick="openSettings()" title="Settings">⚙</button>
         <button class="nav-logout-btn" id="navLogoutBtn" onclick="handleLogout()" title="Log out">
           <span>Log out</span>
           <span>↩</span>
@@ -397,6 +445,8 @@
       </div>
     </div>
   </div>
+
+  </div> <!-- /main-wrapper -->
 
   <script src="auth.js"></script>
   <script src="dashboard.js"></script>
