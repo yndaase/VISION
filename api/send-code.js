@@ -59,7 +59,7 @@ export default async function handler(req, res) {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        from: 'Vision Education <onboarding@resend.dev>',
+        from: 'Vision Education <auth@visionedu.online>',
         to: email,
         subject: subject,
         html: html,
