@@ -259,16 +259,14 @@ function openSettings() {
     themeBtn.textContent = getTheme() === 'light' ? '\uD83C\uDF19' : '\u2600\uFE0F';
   }
 
-  // Show modal
+  // Show modal — don't lock body scroll, overlay handles it
   modal.classList.add('visible');
-  document.body.style.overflow = 'hidden';
 }
 
 function closeSettings() {
   const modal = document.getElementById('settingsModal');
   if (modal) {
     modal.classList.remove('visible');
-    document.body.style.overflow = '';
   }
 }
 

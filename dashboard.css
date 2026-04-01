@@ -675,9 +675,10 @@
   background: rgba(5,6,10,0.82);
   backdrop-filter: blur(12px);
   display: none;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
-  padding: 1.5rem;
+  padding: 2rem 1rem;
+  overflow-y: auto;
   transition: opacity 0.3s ease;
 }
 .modal-overlay.visible {
@@ -688,23 +689,20 @@
 
 [data-theme="light"] .modal-overlay { background: rgba(15,23,42,0.65); }
 
-
 .settings-modal {
   background: var(--bg-card);
   width: 100%;
-  max-width: 500px;
-  max-height: 90vh;
-  overflow-y: auto;
-  border-radius: 24px;
+  max-width: 480px;
+  border-radius: 20px;
   border: 1px solid var(--border);
   box-shadow: var(--shadow-premium);
-  transform: scale(0.96) translateY(16px);
-  transition: transform 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  animation: modalSlideUp 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+  display: flex;
+  flex-direction: column;
+  animation: modalSlideUp 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
 }
 @keyframes modalSlideUp {
-  from { opacity:0; transform: scale(0.94) translateY(24px); }
-  to   { opacity:1; transform: scale(1) translateY(0); }
+  from { opacity:0; transform: translateY(20px); }
+  to   { opacity:1; transform: translateY(0); }
 }
 
 /* Scrollbar for modal */
@@ -747,7 +745,9 @@
 .close-modal-btn:hover { background: rgba(248,113,113,0.15); color: var(--error); border-color: var(--error); }
 
 .modal-content {
-  padding: 0 1.75rem 2rem;
+  padding: 0 1.5rem 1.5rem;
+  overflow-y: auto;
+  flex: 1;
 }
 
 
@@ -839,12 +839,12 @@
   display: flex;
   gap: 10px;
   margin-top: 1.5rem;
-  flex-wrap: wrap;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border);
 }
 .modal-btn {
   flex: 1;
-  min-width: 120px;
-  padding: 12px 20px;
+  padding: 13px 16px;
   border-radius: var(--radius-sm);
   font-family: var(--font-main);
   font-size: 0.88rem;
@@ -853,18 +853,20 @@
   border: none;
   transition: all 0.2s;
   text-align: center;
+  white-space: nowrap;
 }
 .modal-btn-primary {
   background: linear-gradient(135deg, var(--primary), #8b5cf6);
   color: #fff;
 }
-.modal-btn-primary:hover { opacity: 0.88; transform: translateY(-1px); }
+.modal-btn-primary:hover { opacity: 0.9; transform: translateY(-1px); }
 .modal-btn-ghost {
   background: var(--bg-input);
-  border: 1px solid var(--border);
+  border: 1.5px solid var(--border-bright);
   color: var(--text-secondary);
 }
-.modal-btn-ghost:hover { background: var(--primary-dim); border-color: var(--primary); color: var(--primary); }
+.modal-btn-ghost:hover { background: rgba(248,113,113,0.1); border-color: var(--error); color: var(--error); }
+
 
 
 /* Toggle Switch */
