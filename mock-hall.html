@@ -12,7 +12,9 @@
     })();
   </script>
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <script src="theme.js"></script>
   <style>
+
     /* ─── CSS Variables ─── */
     :root {
       --bg: #050608;
@@ -374,9 +376,12 @@
         <div id="timerClock">02:30:00</div>
       </div>
     </div>
-    <div class="topbar-meta" id="topbarMeta">
-      <strong id="topbarMockTitle">Core Mathematics Mock A</strong><br>
-      <span id="topbarProgress">0 of 50 answered</span>
+    <div style="display:flex;align-items:center;gap:12px;">
+      <button onclick="toggleTheme()" title="Toggle Theme" style="background:none;border:1px solid rgba(255,255,255,0.1);border-radius:50%;width:36px;height:36px;cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center;" class="theme-toggle-btn">☀️</button>
+      <div class="topbar-meta" id="topbarMeta">
+        <strong id="topbarMockTitle">Core Mathematics Mock A</strong><br>
+        <span id="topbarProgress">0 of 50 answered</span>
+      </div>
     </div>
   </header>
 

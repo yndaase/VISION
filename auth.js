@@ -637,17 +637,17 @@ async function handleForgotPassword(e) {
   if (btnArrow) btnArrow.style.display = 'inline';
   if (submitBtn) submitBtn.disabled = false;
 
-  switchTab('reset');
-  
   if (result.success) {
-    showAuthSuccess('Reset code sent to ' + email + '! Check your inbox.');
+    switchTab('reset');
+    showAuthSuccess('Reset code sent to ' + email + '! Check your inbox (and spam folder).');
   } else {
-    showAuthSuccess('Email service busy — use the code below.');
-    const fallback = document.getElementById('resetCodeFallback');
-    if (fallback) {
-      fallback.textContent = 'Your code: ' + code;
-      fallback.style.display = 'block';
+    // Email failed — show error, don't switch tab, don't reveal code
+    const errEl = document.getElementById('errForgotEmail');
+    if (errEl) {
+      errEl.textContent = 'Failed to send email. Please check your address or try again shortly.';
+      errEl.style.display = 'block';
     }
+    console.error('Email send failed:', result.error, result.detail);
   }
 }
 

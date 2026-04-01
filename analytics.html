@@ -6,9 +6,12 @@
   <title>Analytics | Vision Education · 2026 WASSCE</title>
   <meta name="description" content="Track your WASSCE readiness and subject mastery." />
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="theme.css" />
   <link rel="stylesheet" href="style.css" />
   <link rel="stylesheet" href="dashboard.css" />
   <link rel="stylesheet" href="analytics.css" />
+  <script src="theme.js"></script>
+
   <script>
     (function() {
       const SESSION_KEY = 'waec_session';
@@ -79,13 +82,15 @@
           <span class="dash-logo-text">Vision <span class="brand-accent">Analytics</span></span>
         </div>
         <div class="dash-nav-right">
+          <button class="theme-toggle-btn" onclick="toggleTheme()" title="Toggle Theme">☀️</button>
           <div class="nav-user-chip">
-            <div class="nav-avatar">K</div>
-            <span class="nav-username">Student</span>
+            <div class="nav-avatar" id="navAvatar">K</div>
+            <span class="nav-username" id="navUsername">Student</span>
           </div>
         </div>
       </div>
     </nav>
+
 
   <!-- ── ANALYTICS CONTENT ── -->
   <main class="analytics-container">

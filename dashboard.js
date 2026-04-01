@@ -26,12 +26,17 @@ document.addEventListener('DOMContentLoaded', () => {
     `;
   }
 
+  // ─── Populate dropdown ───────────────────────────────
+  const dropdownName  = document.getElementById('dropdownName');
+  const dropdownEmail = document.getElementById('dropdownEmail');
+  if (dropdownName)  dropdownName.textContent  = session.name || 'Student';
+  if (dropdownEmail) dropdownEmail.textContent = session.email || '';
+
   // ─── Welcome hero ────────────────────────────────────
   const welcomeName     = document.getElementById('welcomeName');
   const welcomeGreeting = document.getElementById('welcomeGreeting');
 
   if (welcomeName) {
-    // Show first name only
     const firstName = session.name ? session.name.split(' ')[0] : 'Student';
     welcomeName.textContent = firstName;
   }
@@ -63,7 +68,16 @@ document.addEventListener('DOMContentLoaded', () => {
   cards.forEach((card, i) => {
     card.style.animationDelay = `${i * 0.07 + 0.1}s`;
   });
+
+  // ─── Close dropdown on outside click ─────────────────
+  document.addEventListener('click', (e) => {
+    const chip = document.getElementById('navUserChip');
+    if (chip && !chip.contains(e.target)) {
+      chip.classList.remove('open');
+    }
+  });
 });
+
 
 // ─── Animated counter ────────────────────────────────
 function animateCount(el, target) {
@@ -78,4 +92,14 @@ function animateCount(el, target) {
     else el.textContent = target;
   };
   requestAnimationFrame(step);
+}
+
+// ─── User Dropdown Toggle ─────────────────────────────
+function toggleUserDropdown() {
+  const chip = document.getElementById('navUserChip');
+  if (chip) chip.classList.toggle('open');
+}
+function closeUserDropdown() {
+  const chip = document.getElementById('navUserChip');
+  if (chip) chip.classList.remove('open');
 }

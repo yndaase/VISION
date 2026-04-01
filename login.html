@@ -12,11 +12,14 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="theme.css" />
   <link rel="stylesheet" href="style.css" />
   <link rel="stylesheet" href="login.css" />
+  <script src="theme.js"></script>
   <script src="https://accounts.google.com/gsi/client" async defer></script>
 
 </head>
+
 <body class="login-page">
 
   <!-- Animated background -->
@@ -33,6 +36,8 @@
       <span class="about-icon">ℹ</span>
       <span>About Vision</span>
     </a>
+    <button onclick="toggleTheme()" class="theme-toggle-btn" title="Toggle Theme"
+      style="position:fixed;top:1rem;right:1rem;z-index:100;">☀️</button>
 
     <!-- ── LEFT PANEL (branding) ── -->
     <aside class="login-left" aria-hidden="true">

@@ -6,8 +6,11 @@
   <title>Mock Exams | Vision Education · 2026 WASSCE</title>
   <meta name="description" content="Take full-length WASSCE mock simulations." />
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="theme.css" />
   <link rel="stylesheet" href="style.css" />
   <link rel="stylesheet" href="dashboard.css" />
+  <script src="theme.js"></script>
+
   <script>
     (function() {
       const SESSION_KEY = 'waec_session';
@@ -127,13 +130,15 @@
           <span class="dash-logo-text">Mock <span class="brand-accent">Exams</span></span>
         </div>
         <div class="dash-nav-right">
-          <div class="nav-user-chip">
+          <button class="theme-toggle-btn" onclick="toggleTheme()" title="Toggle Theme">☀️</button>
+          <div class="nav-user-chip" id="navUserChip">
             <div class="nav-avatar">K</div>
             <span class="nav-username">Student</span>
           </div>
         </div>
       </div>
     </nav>
+
 
     <main style="padding: 2rem 3rem;">
       <header>
