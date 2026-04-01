@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Portal | Vision Education</title>
+  <meta name="robots" content="noindex, nofollow" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="theme.css" />
+  <script src="theme.js"></script>
+  <script src="materials.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--font-main); background: var(--bg); color: var(--text-primary); min-height: 100vh; }
+
+    /* ── AUTH SCREEN ── */
+    #adminAuth {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: radial-gradient(ellipse 70% 50% at 50% 0%, rgba(99,102,241,0.15) 0%, transparent 70%),
+                  var(--bg);
+    }
+    .admin-login-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-accent);
+      border-radius: 20px;
+      padding: 2.5rem 2rem;
+      width: 100%;
+      max-width: 420px;
+      box-shadow: 0 24px 60px rgba(0,0,0,0.5);
+      animation: fadeUp 0.5s ease;
+    }
+    @keyframes fadeUp { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
+    .admin-login-logo { display:flex; align-items:center; gap:10px; margin-bottom:2rem; }
+    .admin-login-logo span { font-size:2rem; }
+    .admin-login-logo h1 { font-size:1.4rem; font-weight:800; }
+    .admin-login-logo h1 em { color:var(--primary); font-style:normal; }
+    .admin-badge { background:rgba(239,68,68,0.15); border:1px solid rgba(239,68,68,0.4); color:#f87171; font-size:0.65rem; font-weight:800; letter-spacing:0.1em; padding:2px 8px; border-radius:4px; }
+    .admin-field { margin-bottom:1rem; }
+    .admin-label { display:block; font-size:0.78rem; font-weight:600; color:var(--text-secondary); margin-bottom:6px; letter-spacing:0.03em; }
+    .admin-input {
+      width:100%; padding:11px 14px; background:var(--bg-input); border:1.5px solid var(--border-bright);
+      border-radius:var(--radius-sm); color:var(--text-primary); font-size:0.9rem; font-family:var(--font-main);
+      outline:none; transition:border-color 0.2s, box-shadow 0.2s;
+    }
+    .admin-input:focus { border-color:var(--primary); box-shadow:0 0 0 3px rgba(99,102,241,0.15); }
+    .admin-sign-btn {
+      width:100%; padding:13px; background:linear-gradient(135deg,var(--primary),#8b5cf6);
+      color:#fff; font-family:var(--font-main); font-size:0.92rem; font-weight:800; border:none;
+      border-radius:var(--radius-sm); cursor:pointer; margin-top:0.5rem; transition:all 0.2s;
+    }
+    .admin-sign-btn:hover { opacity:0.9; transform:translateY(-1px); }
+    .admin-err { color:#f87171; font-size:0.8rem; margin-top:0.5rem; display:none; }
+
+    /* ── PORTAL LAYOUT ── */
+    #adminPortal { display:none; min-height:100vh; display:none; flex-direction:column; }
+    #adminPortal.visible { display:flex; }
+    .admin-topbar {
+      background:var(--bg-card); border-bottom:1px solid var(--border);
+      padding:0 2rem; height:60px; display:flex; align-items:center; gap:1rem;
+      position:sticky; top:0; z-index:100;
+    }
+    .admin-topbar-brand { font-size:1.1rem; font-weight:800; color:var(--primary); display:flex; align-items:center; gap:8px; flex:1; }
+    .admin-topbar-right { display:flex; align-items:center; gap:10px; }
+    .admin-topbar-user { font-size:0.82rem; font-weight:600; color:var(--text-secondary); }
+    .admin-logout-btn {
+      background:transparent; border:1px solid rgba(248,113,113,0.4); color:#f87171;
+      padding:5px 12px; border-radius:var(--radius-sm); font-size:0.78rem; font-weight:700; cursor:pointer; transition:all 0.2s;
+    }
+    .admin-logout-btn:hover { background:rgba(248,113,113,0.1); }
+
+    .admin-body { display:flex; flex:1; }
+
+    /* Sidebar */
+    .admin-sidebar {
+      width:220px; background:var(--bg-sidebar); border-right:1px solid var(--border);
+      padding:1.5rem 1rem; flex-shrink:0; min-height:calc(100vh - 60px);
+    }
+    .admin-nav { display:flex; flex-direction:column; gap:4px; }
+    .admin-nav-item {
+      display:flex; align-items:center; gap:10px; padding:10px 12px;
+      border-radius:var(--radius-sm); text-decoration:none; color:var(--text-secondary);
+      font-size:0.85rem; font-weight:600; cursor:pointer; border:none; background:none;
+      width:100%; text-align:left; transition:all 0.15s; white-space:nowrap;
+    }
+    .admin-nav-item:hover { background:var(--primary-dim); color:var(--text-primary); }
+    .admin-nav-item.active { background:var(--primary-dim); color:var(--primary); box-shadow:inset 3px 0 0 var(--primary); }
+
+    /* Main area */
+    .admin-main { flex:1; padding:2rem; overflow-y:auto; }
+    .admin-section { display:none; }
+    .admin-section.active { display:block; }
+
+    /* Page headers */
+    .admin-page-header { margin-bottom:2rem; }
+    .admin-page-title { font-size:1.6rem; font-weight:800; margin-bottom:4px; }
+    .admin-page-sub { color:var(--text-muted); font-size:0.85rem; }
+
+    /* Stat cards */
+    .admin-stats-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:1rem; margin-bottom:2rem; }
+    .admin-stat-card {
+      background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius-md);
+      padding:1.25rem 1.5rem; display:flex; flex-direction:column; gap:4px;
+    }
+    .admin-stat-label { font-size:0.72rem; font-weight:700; letter-spacing:0.08em; color:var(--text-muted); text-transform:uppercase; }
+    .admin-stat-value { font-size:2rem; font-weight:800; color:var(--primary); }
+    .admin-stat-sub { font-size:0.78rem; color:var(--text-muted); }
+
+    /* Card containers */
+    .admin-card {
+      background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius-md); overflow:hidden;
+    }
+    .admin-card-header {
+      padding:1rem 1.5rem; border-bottom:1px solid var(--border);
+      display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px;
+    }
+    .admin-card-title { font-size:1rem; font-weight:700; }
+    .admin-card-body { padding:1.5rem; }
+
+    /* Buttons */
+    .btn-primary {
+      background:linear-gradient(135deg,var(--primary),#8b5cf6); color:#fff;
+      border:none; padding:9px 18px; border-radius:var(--radius-sm); font-family:var(--font-main);
+      font-size:0.82rem; font-weight:700; cursor:pointer; transition:all 0.2s; display:inline-flex; align-items:center; gap:6px;
+    }
+    .btn-primary:hover { opacity:0.9; transform:translateY(-1px); }
+    .btn-ghost {
+      background:var(--bg-input); border:1.5px solid var(--border-bright); color:var(--text-secondary);
+      padding:9px 18px; border-radius:var(--radius-sm); font-family:var(--font-main);
+      font-size:0.82rem; font-weight:700; cursor:pointer; transition:all 0.2s; display:inline-flex; align-items:center; gap:6px;
+    }
+    .btn-ghost:hover { border-color:var(--primary); color:var(--primary); }
+    .btn-danger {
+      background:rgba(248,113,113,0.1); border:1px solid rgba(248,113,113,0.3); color:#f87171;
+      padding:7px 14px; border-radius:var(--radius-sm); font-family:var(--font-main);
+      font-size:0.78rem; font-weight:700; cursor:pointer; transition:all 0.2s;
+    }
+    .btn-danger:hover { background:rgba(248,113,113,0.2); }
+    .btn-sm { padding:6px 12px; font-size:0.75rem; }
+
+    /* Table */
+    .admin-table { width:100%; border-collapse:collapse; }
+    .admin-table th { text-align:left; font-size:0.72rem; font-weight:800; letter-spacing:0.08em; text-transform:uppercase; color:var(--text-muted); padding:10px 12px; border-bottom:1px solid var(--border); }
+    .admin-table td { padding:12px; border-bottom:1px solid var(--border); font-size:0.85rem; vertical-align:middle; }
+    .admin-table tr:last-child td { border-bottom:none; }
+    .admin-table tbody tr:hover { background:rgba(255,255,255,0.02); }
+    [data-theme="light"] .admin-table tbody tr:hover { background:rgba(0,0,0,0.02); }
+
+    /* Badge */
+    .badge { display:inline-flex; align-items:center; padding:2px 8px; border-radius:100px; font-size:0.7rem; font-weight:700; }
+    .badge-green { background:rgba(34,197,94,0.15); color:#22c55e; }
+    .badge-blue  { background:rgba(96,165,250,0.15); color:#60a5fa; }
+    .badge-red   { background:rgba(248,113,113,0.15); color:#f87171; }
+    .badge-gold  { background:rgba(251,191,36,0.15); color:#fbbf24; }
+    .badge-purple{ background:rgba(167,139,250,0.15); color:#a78bfa; }
+
+    /* Subject group in materials */
+    .mat-subject-group { margin-bottom:1.5rem; }
+    .mat-subject-heading {
+      display:flex; align-items:center; gap:8px; font-size:0.9rem; font-weight:800;
+      margin-bottom:0.75rem; padding-bottom:0.5rem; border-bottom:1px solid var(--border);
+    }
+    .mat-item {
+      display:flex; align-items:center; gap:12px; padding:10px 12px;
+      background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius-sm);
+      margin-bottom:8px; transition:border-color 0.2s;
+    }
+    .mat-item:hover { border-color:var(--border-bright); }
+    .mat-type-badge { padding:3px 8px; border-radius:4px; font-size:0.65rem; font-weight:800; letter-spacing:0.06em; flex-shrink:0; }
+    .mat-title { flex:1; font-size:0.85rem; font-weight:600; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+    .mat-meta { font-size:0.72rem; color:var(--text-muted); white-space:nowrap; }
+    .mat-url-preview { font-family:var(--font-mono); font-size:0.7rem; color:var(--text-muted); max-width:200px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+
+    /* Add material form */
+    .add-mat-form {
+      background:var(--bg-card); border:1px solid var(--border-accent); border-radius:var(--radius-md);
+      padding:1.25rem 1.5rem; margin-bottom:1.5rem; display:none; animation:fadeUp 0.2s ease;
+    }
+    .add-mat-form.open { display:block; }
+    .form-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+    .form-field { display:flex; flex-direction:column; gap:6px; }
+    .form-field label { font-size:0.75rem; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.05em; }
+    .form-field input, .form-field select { padding:9px 12px; background:var(--bg-input); border:1.5px solid var(--border-bright); border-radius:var(--radius-sm); color:var(--text-primary); font-family:var(--font-main); font-size:0.85rem; outline:none; }
+    .form-field input:focus, .form-field select:focus { border-color:var(--primary); }
+    .form-field.full { grid-column:1/-1; }
+    .form-actions { display:flex; gap:8px; margin-top:1rem; }
+
+    /* User edit inline */
+    .user-role-select { background:var(--bg-input); border:1px solid var(--border); color:var(--text-primary); padding:4px 8px; border-radius:var(--radius-sm); font-family:var(--font-main); font-size:0.78rem; }
+    .user-avatar-chip { width:32px; height:32px; border-radius:50%; display:inline-flex; align-items:center; justify-content:center; font-size:0.75rem; font-weight:800; color:#000; flex-shrink:0; }
+
+    /* Announcements */
+    .announce-list { display:flex; flex-direction:column; gap:10px; }
+    .announce-item {
+      background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius-sm);
+      padding:1rem 1.25rem; display:flex; flex-direction:column; gap:4px;
+    }
+    .announce-title { font-weight:700; font-size:0.9rem; }
+    .announce-body { font-size:0.82rem; color:var(--text-secondary); line-height:1.6; }
+    .announce-meta { font-size:0.72rem; color:var(--text-muted); display:flex; gap:12px; margin-top:4px; }
+
+    /* Toast */
+    .admin-toast {
+      position:fixed; bottom:1.5rem; right:1.5rem; background:var(--bg-card); border:1px solid var(--border);
+      border-radius:var(--radius-sm); padding:12px 18px; font-size:0.85rem; font-weight:600;
+      z-index:9999; transform:translateY(80px); opacity:0; transition:all 0.35s;
+      max-width:320px; display:flex; align-items:center; gap:8px;
+    }
+    .admin-toast.show { transform:translateY(0); opacity:1; }
+    .admin-toast.success { border-color:rgba(34,197,94,0.4); color:#22c55e; }
+    .admin-toast.error   { border-color:rgba(248,113,113,0.4); color:#f87171; }
+
+    @media(max-width:768px) {
+      .admin-sidebar { display:none; }
+      .admin-stats-grid { grid-template-columns:1fr 1fr; }
+      .form-grid { grid-template-columns:1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── AUTH SCREEN ── -->
+<div id="adminAuth">
+  <div class="admin-login-card">
+    <div class="admin-login-logo">
+      <span>⚙️</span>
+      <div>
+        <h1>Vision <em>Admin</em></h1>
+        <div class="admin-badge">RESTRICTED ACCESS</div>
+      </div>
+    </div>
+    <div class="admin-field">
+      <label class="admin-label" for="adminEmail">Admin Email</label>
+      <input class="admin-input" type="email" id="adminEmail" placeholder="admin@visionedu.online" autocomplete="email">
+    </div>
+    <div class="admin-field">
+      <label class="admin-label" for="adminPass">Password</label>
+      <input class="admin-input" type="password" id="adminPass" placeholder="••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter')adminLogin()">
+    </div>
+    <button class="admin-sign-btn" onclick="adminLogin()">Access Portal →</button>
+    <p class="admin-err" id="adminErr">Incorrect admin credentials.</p>
+  </div>
+</div>
+
+<!-- ── ADMIN PORTAL ── -->
+<div id="adminPortal">
+
+  <!-- Top Bar -->
+  <header class="admin-topbar">
+    <div class="admin-topbar-brand">
+      <span>⚙️</span> Vision Admin Portal
+    </div>
+    <div class="admin-topbar-right">
+      <button onclick="toggleTheme()" class="theme-toggle-btn" title="Toggle Theme">☀️</button>
+      <span class="admin-topbar-user" id="adminUserLabel">Admin</span>
+      <button class="admin-logout-btn" onclick="adminLogout()">Logout</button>
+    </div>
+  </header>
+
+  <div class="admin-body">
+    <!-- Sidebar -->
+    <nav class="admin-sidebar">
+      <div class="admin-nav">
+        <button class="admin-nav-item active" onclick="showAdminSection('overview', this)">📊 Overview</button>
+        <button class="admin-nav-item" onclick="showAdminSection('materials', this)">📚 Materials</button>
+        <button class="admin-nav-item" onclick="showAdminSection('users', this)">👥 Users</button>
+        <button class="admin-nav-item" onclick="showAdminSection('announce', this)">📢 Announcements</button>
+      </div>
+    </nav>
+
+    <!-- Main -->
+    <main class="admin-main">
+
+      <!-- ── OVERVIEW ── -->
+      <section class="admin-section active" id="sec-overview">
+        <div class="admin-page-header">
+          <h2 class="admin-page-title">Dashboard Overview</h2>
+          <p class="admin-page-sub">Platform snapshot — today <span id="adminDateDisplay"></span></p>
+        </div>
+        <div class="admin-stats-grid" id="overviewStats"></div>
+        <div class="admin-card">
+          <div class="admin-card-header">
+            <span class="admin-card-title">Recent Users</span>
+          </div>
+          <div class="admin-card-body">
+            <table class="admin-table" id="recentUsersTable">
+              <thead><tr><th>User</th><th>Email</th><th>Provider</th><th>Role</th><th>Joined</th></tr></thead>
+              <tbody id="recentUsersTbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── MATERIALS ── -->
+      <section class="admin-section" id="sec-materials">
+        <div class="admin-page-header">
+          <h2 class="admin-page-title">📚 Learner Materials</h2>
+          <p class="admin-page-sub">Add Google Drive or direct-download links for each subject. Students see these on the dashboard.</p>
+        </div>
+
+        <div style="display:flex;gap:10px;margin-bottom:1.5rem;flex-wrap:wrap;">
+          <button class="btn-primary" onclick="toggleAddMatForm()">+ Add Material</button>
+          <button class="btn-ghost" onclick="resetMaterials()">↺ Reset to Defaults</button>
+        </div>
+
+        <!-- Add form -->
+        <div class="add-mat-form" id="addMatForm">
+          <h4 style="margin-bottom:1rem;font-size:0.95rem;font-weight:800;">New Material</h4>
+          <div class="form-grid">
+            <div class="form-field">
+              <label>Subject</label>
+              <select id="matSubject">
+                <option value="core-maths">Core Mathematics</option>
+                <option value="english">English Language</option>
+                <option value="social">Social Studies</option>
+                <option value="physics">Physics</option>
+                <option value="chemistry">Chemistry</option>
+                <option value="biology">Biology</option>
+                <option value="economics">Economics</option>
+                <option value="cs">Computer Science</option>
+              </select>
+            </div>
+            <div class="form-field">
+              <label>Type</label>
+              <select id="matType">
+                <option>PDF</option><option>VIDEO</option><option>DOC</option><option>SLIDE</option><option>LINK</option>
+              </select>
+            </div>
+            <div class="form-field full">
+              <label>Title</label>
+              <input type="text" id="matTitle" placeholder="e.g. Core Maths Past Questions 2025">
+            </div>
+            <div class="form-field full">
+              <label>Download URL (Google Drive / Direct Link)</label>
+              <input type="url" id="matUrl" placeholder="https://drive.google.com/uc?export=download&id=...">
+            </div>
+            <div class="form-field">
+              <label>File Size (optional)</label>
+              <input type="text" id="matSize" placeholder="e.g. 2.4 MB">
+            </div>
+          </div>
+          <div class="form-actions">
+            <button class="btn-primary" onclick="addMaterial()">💾 Save Material</button>
+            <button class="btn-ghost" onclick="toggleAddMatForm()">Cancel</button>
+          </div>
+        </div>
+
+        <div id="matList"></div>
+      </section>
+
+      <!-- ── USERS ── -->
+      <section class="admin-section" id="sec-users">
+        <div class="admin-page-header">
+          <h2 class="admin-page-title">👥 User Management</h2>
+          <p class="admin-page-sub">View and manage all registered users. Changes persist in localStorage.</p>
+        </div>
+        <div class="admin-card">
+          <div class="admin-card-header">
+            <span class="admin-card-title">All Users</span>
+            <input
+              style="padding:7px 12px;background:var(--bg-input);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text-primary);font-family:var(--font-main);font-size:0.82rem;outline:none;width:220px;"
+              placeholder="Search by name or email..."
+              oninput="renderUsersTable(this.value)"
+            >
+          </div>
+          <div class="admin-card-body" style="padding:0;overflow-x:auto;">
+            <table class="admin-table" id="usersTable">
+              <thead><tr><th>User</th><th>Email</th><th>Provider</th><th>Role</th><th>2FA</th><th>Joined</th><th>Actions</th></tr></thead>
+              <tbody id="usersTbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── ANNOUNCEMENTS ── -->
+      <section class="admin-section" id="sec-announce">
+        <div class="admin-page-header">
+          <h2 class="admin-page-title">📢 Announcements</h2>
+          <p class="admin-page-sub">Post platform-wide announcements visible to all students.</p>
+        </div>
+
+        <!-- Compose -->
+        <div class="admin-card" style="margin-bottom:1.5rem;">
+          <div class="admin-card-header"><span class="admin-card-title">Post Announcement</span></div>
+          <div class="admin-card-body">
+            <div class="form-field" style="margin-bottom:10px;">
+              <label style="font-size:0.75rem;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:6px;display:block;">Title</label>
+              <input class="admin-input" type="text" id="annTitle" placeholder="e.g. New materials uploaded for Physics" style="width:100%;">
+            </div>
+            <div class="form-field" style="margin-bottom:10px;">
+              <label style="font-size:0.75rem;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:6px;display:block;">Message</label>
+              <textarea class="admin-input" id="annBody" rows="3" placeholder="Write your message to students..." style="width:100%;resize:vertical;"></textarea>
+            </div>
+            <button class="btn-primary" onclick="postAnnouncement()">📢 Post Announcement</button>
+          </div>
+        </div>
+
+        <!-- List -->
+        <div class="admin-card">
+          <div class="admin-card-header">
+            <span class="admin-card-title">Posted Announcements</span>
+            <button class="btn-danger btn-sm" onclick="clearAnnouncements()">Clear All</button>
+          </div>
+          <div class="admin-card-body">
+            <div class="announce-list" id="announceList"></div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="admin-toast" id="adminToast"></div>
+
+<script>
+  // ─── Auth ───────────────────────────────────────────────────────
+  const ADMIN_KEY = 'vision_admin_session';
+
+  function hashStr(s) {
+    let h = 0;
+    for (let i = 0; i < s.length; i++) { h = Math.imul(31, h) + s.charCodeAt(i) | 0; }
+    return h.toString(16);
+  }
+
+  function seedAdminAccount() {
+    const users = JSON.parse(localStorage.getItem('waec_users') || '[]');
+    const adminEmail = 'admin@visionedu.online';
+    const exists = users.find(u => u.email === adminEmail);
+    if (!exists) {
+      users.push({
+        name: 'Vision Admin',
+        email: adminEmail,
+        hash: hashStr('VisionAdmin2026!'),
+        provider: 'email',
+        role: 'admin',
+        avatar: '#6366f1',
+        createdAt: Date.now()
+      });
+      localStorage.setItem('waec_users', JSON.stringify(users));
+    } else if (exists.role !== 'admin') {
+      exists.role = 'admin';
+      localStorage.setItem('waec_users', JSON.stringify(users));
+    }
+  }
+  seedAdminAccount();
+
+  function adminLogin() {
+    const email = document.getElementById('adminEmail').value.trim().toLowerCase();
+    const pass  = document.getElementById('adminPass').value;
+    const errEl = document.getElementById('adminErr');
+
+    const users = JSON.parse(localStorage.getItem('waec_users') || '[]');
+    const user = users.find(u => u.email === email && u.role === 'admin' && u.hash === hashStr(pass));
+    if (!user) { errEl.style.display = 'block'; return; }
+    errEl.style.display = 'none';
+    sessionStorage.setItem(ADMIN_KEY, JSON.stringify({ email: user.email, name: user.name }));
+    showPortal(user);
+  }
+
+  function adminLogout() {
+    sessionStorage.removeItem(ADMIN_KEY);
+    location.reload();
+  }
+
+  function showPortal(user) {
+    document.getElementById('adminAuth').style.display = 'none';
+    const portal = document.getElementById('adminPortal');
+    portal.style.display = 'flex';
+    portal.classList.add('visible');
+    document.getElementById('adminUserLabel').textContent = user.name || user.email;
+    document.getElementById('adminDateDisplay').textContent = new Date().toLocaleDateString('en-GB', {day:'numeric',month:'long',year:'numeric'});
+    initPortal();
+  }
+
+  // Check existing session
+  (function checkSession() {
+    const s = sessionStorage.getItem(ADMIN_KEY);
+    if (s) {
+      try {
+        const user = JSON.parse(s);
+        const users = JSON.parse(localStorage.getItem('waec_users') || '[]');
+        const dbUser = users.find(u => u.email === user.email && u.role === 'admin');
+        if (dbUser) { showPortal(dbUser); return; }
+      } catch(e) {}
+    }
+  })();
+
+  // ─── Navigation ─────────────────────────────────────────────────
+  function showAdminSection(id, btn) {
+    document.querySelectorAll('.admin-section').forEach(s => s.classList.remove('active'));
+    document.getElementById('sec-' + id).classList.add('active');
+    document.querySelectorAll('.admin-nav-item').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    if (id === 'users') renderUsersTable();
+    if (id === 'materials') renderMaterials();
+    if (id === 'announce') renderAnnouncements();
+  }
+
+  // ─── Portal Init ────────────────────────────────────────────────
+  function initPortal() {
+    renderOverview();
+    renderMaterials();
+  }
+
+  // ─── Overview ───────────────────────────────────────────────────
+  function renderOverview() {
+    const users = JSON.parse(localStorage.getItem('waec_users') || '[]');
+    const mats  = getMaterials();
+    const anns  = JSON.parse(localStorage.getItem('vision_announcements') || '[]');
+
+    const statsEl = document.getElementById('overviewStats');
+    statsEl.innerHTML = [
+      { label:'Total Users', value: users.length, sub:'Registered accounts', color:'var(--primary)' },
+      { label:'Materials',   value: mats.length,  sub:'Available for download', color:'#4ade80' },
+      { label:'Subjects',    value: SUBJECTS_META.length, sub:'Active subjects', color:'#fb923c' },
+      { label:'Announcements', value: anns.length, sub:'Posted messages', color:'#a78bfa' },
+    ].map(s => `
+      <div class="admin-stat-card">
+        <span class="admin-stat-label">${s.label}</span>
+        <span class="admin-stat-value" style="color:${s.color}">${s.value}</span>
+        <span class="admin-stat-sub">${s.sub}</span>
+      </div>`).join('');
+
+    const tbody = document.getElementById('recentUsersTbody');
+    const recent = [...users].sort((a,b) => (b.createdAt||0)-(a.createdAt||0)).slice(0,8);
+    tbody.innerHTML = recent.map(u => `
+      <tr>
+        <td><div style="display:flex;align-items:center;gap:8px;">
+          <div class="user-avatar-chip" style="background:${u.avatar||'#6366f1'}">${(u.name||'?')[0].toUpperCase()}</div>
+          <span>${escHtml(u.name||'N/A')}</span></div></td>
+        <td>${escHtml(u.email||'')}</td>
+        <td><span class="badge ${u.provider==='google'?'badge-blue':'badge-green'}">${u.provider||'email'}</span></td>
+        <td><span class="badge ${u.role==='admin'?'badge-red':'badge-purple'}">${u.role||'student'}</span></td>
+        <td>${u.createdAt ? new Date(u.createdAt).toLocaleDateString() : '—'}</td>
+      </tr>`).join('');
+  }
+
+  // ─── Materials ──────────────────────────────────────────────────
+  function renderMaterials() {
+    const all = getMaterials();
+    const listEl = document.getElementById('matList');
+    if (!all.length) { listEl.innerHTML = '<p style="color:var(--text-muted);text-align:center;padding:2rem;">No materials yet. Click "Add Material" to get started.</p>'; return; }
+
+    const bySubject = {};
+    SUBJECTS_META.forEach(s => { bySubject[s.id] = []; });
+    all.forEach(m => { if (bySubject[m.subject]) bySubject[m.subject].push(m); });
+
+    listEl.innerHTML = SUBJECTS_META.map(subj => {
+      const mats = bySubject[subj.id] || [];
+      if (!mats.length) return '';
+      return `<div class="mat-subject-group">
+        <div class="mat-subject-heading">
+          <span>${subj.icon}</span>
+          <span>${subj.name}</span>
+          <span class="badge badge-purple" style="margin-left:auto;">${mats.length} file${mats.length!==1?'s':''}</span>
+        </div>
+        ${mats.map(m => `
+          <div class="mat-item">
+            <span class="mat-type-badge" style="background:${matTypeColor(m.type)}22;color:${matTypeColor(m.type)}">${m.type||'PDF'}</span>
+            <div style="flex:1;min-width:0;">
+              <div class="mat-title">${escHtml(m.title)}</div>
+              <div class="mat-url-preview">${m.url === '#' ? '⚠ No link set — edit to add URL' : m.url}</div>
+            </div>
+            ${m.size ? `<span class="mat-meta">${escHtml(m.size)}</span>` : ''}
+            <button class="btn-ghost btn-sm" onclick="editMat('${m.id}')">✏️ Edit</button>
+            <button class="btn-danger btn-sm" onclick="confirmDeleteMat('${m.id}')">🗑</button>
+          </div>`).join('')}
+      </div>`;
+    }).join('');
+  }
+
+  function toggleAddMatForm(prefill) {
+    const form = document.getElementById('addMatForm');
+    const isOpen = form.classList.toggle('open');
+    if (!isOpen) clearMatForm();
+    if (prefill) {
+      document.getElementById('matSubject').value = prefill.subject;
+      document.getElementById('matType').value    = prefill.type;
+      document.getElementById('matTitle').value   = prefill.title;
+      document.getElementById('matUrl').value     = prefill.url;
+      document.getElementById('matSize').value    = prefill.size||'';
+      form._editId = prefill.id;
+      form.classList.add('open');
+    }
+  }
+
+  function clearMatForm() {
+    ['matTitle','matUrl','matSize'].forEach(id => document.getElementById(id).value = '');
+    document.getElementById('matSubject').value = 'core-maths';
+    document.getElementById('matType').value = 'PDF';
+    document.getElementById('addMatForm')._editId = null;
+  }
+
+  function addMaterial() {
+    const form = document.getElementById('addMatForm');
+    const title = document.getElementById('matTitle').value.trim();
+    const url   = document.getElementById('matUrl').value.trim();
+    if (!title) { toast('Please enter a title', 'error'); return; }
+
+    const mat = {
+      id:       form._editId || genMatId(),
+      subject:  document.getElementById('matSubject').value,
+      title,
+      type:     document.getElementById('matType').value,
+      url:      url || '#',
+      size:     document.getElementById('matSize').value.trim(),
+      uploadedBy: 'admin',
+      uploadedAt: new Date().toISOString().split('T')[0],
+    };
+
+    upsertMaterial(mat);
+    clearMatForm();
+    form.classList.remove('open');
+    renderMaterials();
+    toast('Material saved ✓', 'success');
+  }
+
+  function editMat(id) {
+    const mat = getMaterials().find(m => m.id === id);
+    if (mat) toggleAddMatForm(mat);
+  }
+
+  function confirmDeleteMat(id) {
+    if (confirm('Delete this material?')) {
+      deleteMaterial(id);
+      renderMaterials();
+      toast('Material deleted', 'success');
+    }
+  }
+
+  function resetMaterials() {
+    if (!confirm('Reset ALL materials to defaults? This will remove custom materials.')) return;
+    localStorage.removeItem('vision_materials');
+    renderMaterials();
+    toast('Materials reset to defaults', 'success');
+  }
+
+  // ─── Users ──────────────────────────────────────────────────────
+  function renderUsersTable(search = '') {
+    let users = JSON.parse(localStorage.getItem('waec_users') || '[]');
+    if (search) {
+      const q = search.toLowerCase();
+      users = users.filter(u => (u.name||'').toLowerCase().includes(q) || (u.email||'').toLowerCase().includes(q));
+    }
+    const tbody = document.getElementById('usersTbody');
+    if (!users.length) { tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;color:var(--text-muted);padding:2rem;">No users found</td></tr>`; return; }
+
+    tbody.innerHTML = users.map((u, i) => `
+      <tr>
+        <td><div style="display:flex;align-items:center;gap:8px;">
+          <div class="user-avatar-chip" style="background:${u.avatar||'#6366f1'}">${(u.name||'?')[0].toUpperCase()}</div>
+          <span>${escHtml(u.name||'N/A')}</span></div></td>
+        <td style="font-family:var(--font-mono);font-size:0.78rem;">${escHtml(u.email||'')}</td>
+        <td><span class="badge ${u.provider==='google'?'badge-blue':'badge-green'}">${u.provider||'email'}</span></td>
+        <td>
+          <select class="user-role-select" onchange="changeUserRole('${escHtml(u.email)}', this.value)">
+            <option value="student" ${(u.role||'student')==='student'?'selected':''}>Student</option>
+            <option value="admin"   ${u.role==='admin'?'selected':''}>Admin</option>
+          </select>
+        </td>
+        <td>${u.twoFAEnabled ? '✅' : '—'}</td>
+        <td>${u.createdAt ? new Date(u.createdAt).toLocaleDateString() : '—'}</td>
+        <td>
+          <button class="btn-danger btn-sm" onclick="deleteUser('${escHtml(u.email)}')">Delete</button>
+        </td>
+      </tr>`).join('');
+  }
+
+  function changeUserRole(email, role) {
+    const users = JSON.parse(localStorage.getItem('waec_users') || '[]');
+    const u = users.find(u => u.email === email);
+    if (u) { u.role = role; localStorage.setItem('waec_users', JSON.stringify(users)); toast(`Role updated for ${email}`, 'success'); }
+  }
+
+  function deleteUser(email) {
+    if (email === 'admin@visionedu.online') { toast('Cannot delete the primary admin', 'error'); return; }
+    if (!confirm(`Delete user ${email}?`)) return;
+    const users = JSON.parse(localStorage.getItem('waec_users') || '[]').filter(u => u.email !== email);
+    localStorage.setItem('waec_users', JSON.stringify(users));
+    renderUsersTable();
+    toast('User deleted', 'success');
+  }
+
+  // ─── Announcements ──────────────────────────────────────────────
+  function postAnnouncement() {
+    const title = document.getElementById('annTitle').value.trim();
+    const body  = document.getElementById('annBody').value.trim();
+    if (!title || !body) { toast('Title and message required', 'error'); return; }
+
+    const anns = JSON.parse(localStorage.getItem('vision_announcements') || '[]');
+    anns.unshift({ id: genMatId(), title, body, postedAt: new Date().toISOString(), postedBy: 'Admin' });
+    localStorage.setItem('vision_announcements', JSON.stringify(anns));
+    document.getElementById('annTitle').value = '';
+    document.getElementById('annBody').value = '';
+    renderAnnouncements();
+    toast('Announcement posted ✓', 'success');
+  }
+
+  function renderAnnouncements() {
+    const anns = JSON.parse(localStorage.getItem('vision_announcements') || '[]');
+    const listEl = document.getElementById('announceList');
+    if (!anns.length) { listEl.innerHTML = '<p style="color:var(--text-muted);text-align:center;padding:1rem;">No announcements yet.</p>'; return; }
+    listEl.innerHTML = anns.map(a => `
+      <div class="announce-item">
+        <div class="announce-title">${escHtml(a.title)}</div>
+        <div class="announce-body">${escHtml(a.body)}</div>
+        <div class="announce-meta">
+          <span>📅 ${new Date(a.postedAt).toLocaleString()}</span>
+          <span>👤 ${escHtml(a.postedBy||'Admin')}</span>
+          <button class="btn-danger btn-sm" onclick="deleteAnnouncement('${a.id}')">Delete</button>
+        </div>
+      </div>`).join('');
+  }
+
+  function deleteAnnouncement(id) {
+    const anns = JSON.parse(localStorage.getItem('vision_announcements') || '[]').filter(a => a.id !== id);
+    localStorage.setItem('vision_announcements', JSON.stringify(anns));
+    renderAnnouncements();
+  }
+
+  function clearAnnouncements() {
+    if (!confirm('Delete all announcements?')) return;
+    localStorage.removeItem('vision_announcements');
+    renderAnnouncements();
+    toast('All announcements cleared', 'success');
+  }
+
+  // ─── Utilities ──────────────────────────────────────────────────
+  function escHtml(s) {
+    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  let toastTimer;
+  function toast(msg, type = 'success') {
+    const el = document.getElementById('adminToast');
+    el.textContent = (type === 'success' ? '✓ ' : '✗ ') + msg;
+    el.className = `admin-toast ${type} show`;
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => el.classList.remove('show'), 3200);
+  }
+</script>
+</body>
+</html>

@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -482,10 +482,25 @@
     </div>
   </section>
 
+  <!-- ── LEARNER MATERIALS ── -->
+  <section class="main-section" id="materialsSection" style="padding: 3rem 2rem;">
+    <div class="section-header">
+      <div>
+        <h2 class="section-title">📚 Learner Materials</h2>
+        <p class="section-sub">Download official study packs, past questions, and revision guides for each subject.</p>
+      </div>
+    </div>
+    <div id="materialsContainer" style="margin-top:1.5rem;"></div>
+  </section>
+
+  <!-- ── ANNOUNCEMENTS BANNER ── -->
+  <div id="announceBanner" style="display:none; padding:0 2rem 1.5rem;"></div>
+
   <!-- ── FOOTER ── -->
   <footer class="site-footer">
     <p>Built for Ghana SHS Students · 2026 WASSCE · Questions align with the WAEC Chief Examiner's 2025 Report</p>
     <p class="footer-note">Practice tool only. Consult official syllabuses at <strong>waecgh.org</strong>.</p>
+    <p class="footer-note" style="margin-top:6px;"><a href="admin.html" style="color:var(--text-muted);font-size:0.72rem;opacity:0.5;text-decoration:none;">⚙ Admin Portal</a></p>
   </footer>
 
   <!-- SETTINGS MODAL -->
@@ -548,5 +563,76 @@
 
   <script src="auth.js"></script>
   <script src="dashboard.js"></script>
+  <script src="materials.js"></script>
+  <script>
+    // ─── Render Materials on Dashboard ───────────────────────────
+    (function renderDashMaterials() {
+      const container = document.getElementById('materialsContainer');
+      if (!container) return;
+
+      const all = getMaterials();
+      if (!all.length) {
+        container.innerHTML = '<p style="color:var(--text-muted);text-align:center;padding:2rem;">No materials uploaded yet. Check back soon!</p>';
+        return;
+      }
+
+      const bySubject = {};
+      SUBJECTS_META.forEach(s => { bySubject[s.id] = []; });
+      all.forEach(m => { if (bySubject[m.subject]) bySubject[m.subject].push(m); });
+
+      const activeSubjects = SUBJECTS_META.filter(s => (bySubject[s.id]||[]).length > 0);
+
+      container.innerHTML = activeSubjects.map(subj => {
+        const mats = bySubject[subj.id] || [];
+        return `<div style="margin-bottom:1.75rem;">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:0.75rem;">
+            <span style="font-size:1.2rem">${subj.icon}</span>
+            <h3 style="font-size:0.95rem;font-weight:800;color:var(--text-primary);">${subj.name}</h3>
+            <span style="font-size:0.68rem;font-weight:700;background:var(--primary-dim);color:var(--primary);padding:2px 8px;border-radius:100px;border:1px solid var(--border-accent);">${mats.length} file${mats.length!==1?'s':''}</span>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:10px;">
+            ${mats.map(m => {
+              const typeColor = {'PDF':'#f87171','VIDEO':'#fb923c','DOC':'#60a5fa','SLIDE':'#a78bfa','LINK':'#4ade80'}[m.type?.toUpperCase()] || '#94a3b8';
+              const noLink = !m.url || m.url === '#';
+              return `<div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-md);padding:1rem 1.25rem;display:flex;align-items:center;gap:12px;transition:border-color 0.2s;" onmouseover="this.style.borderColor='var(--border-bright)'" onmouseout="this.style.borderColor='var(--border)'">
+                <span style="font-size:1.4rem;flex-shrink:0;">📄</span>
+                <div style="flex:1;min-width:0;">
+                  <div style="font-size:0.85rem;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${escDash(m.title)}</div>
+                  <div style="display:flex;align-items:center;gap:6px;margin-top:4px;">
+                    <span style="padding:1px 7px;border-radius:4px;font-size:0.65rem;font-weight:800;background:${typeColor}22;color:${typeColor};">${m.type||'PDF'}</span>
+                    ${m.size ? `<span style="font-size:0.72rem;color:var(--text-muted);">${m.size}</span>` : ''}
+                    <span style="font-size:0.7rem;color:var(--text-muted);">· ${m.uploadedAt||''}</span>
+                  </div>
+                </div>
+                ${noLink
+                  ? `<span style="font-size:0.72rem;color:var(--text-muted);background:var(--bg-input);padding:6px 12px;border-radius:var(--radius-sm);border:1px dashed var(--border);flex-shrink:0;">Coming Soon</span>`
+                  : `<a href="${m.url}" target="_blank" rel="noopener" download style="display:inline-flex;align-items:center;gap:6px;padding:8px 14px;background:linear-gradient(135deg,var(--primary),#8b5cf6);color:#fff;text-decoration:none;border-radius:var(--radius-sm);font-size:0.78rem;font-weight:800;flex-shrink:0;transition:opacity 0.2s;" onmouseover="this.style.opacity='0.85'" onmouseout="this.style.opacity='1'">⬇ Download</a>`
+                }
+              </div>`;
+            }).join('')}
+          </div>
+        </div>`;
+      }).join('');
+
+      // Show announcements
+      const anns = JSON.parse(localStorage.getItem('vision_announcements') || '[]');
+      const banner = document.getElementById('announceBanner');
+      if (anns.length && banner) {
+        banner.style.display = 'block';
+        banner.innerHTML = anns.slice(0,2).map(a => `
+          <div style="background:var(--primary-dim);border:1px solid var(--border-accent);border-radius:var(--radius-md);padding:0.875rem 1.25rem;margin-bottom:8px;display:flex;gap:10px;align-items:flex-start;">
+            <span style="font-size:1rem;">📢</span>
+            <div>
+              <div style="font-weight:700;font-size:0.88rem;">${escDash(a.title)}</div>
+              <div style="font-size:0.8rem;color:var(--text-secondary);margin-top:2px;">${escDash(a.body)}</div>
+            </div>
+          </div>`);
+      }
+    })();
+
+    function escDash(s) {
+      return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    }
+  </script>
 </body>
 </html>
