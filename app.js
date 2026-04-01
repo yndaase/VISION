@@ -314,7 +314,7 @@ function markSubjective(input, q) {
     score: `${finalScore} / 10`,
     feedback: `
       <p style="margin-bottom:1rem;">${commentary}</p>
-      <div style="background:rgba(255,255,255,0.03); padding:1rem; border-radius:10px; font-size:0.85rem;">
+      <div style="background: var(--bg-input); border: 1px solid var(--border); padding:1rem; border-radius:10px; font-size:0.85rem;">
         <p style="text-transform:uppercase; font-size:0.7rem; font-weight:800; color:var(--text-muted); margin-bottom:0.5rem;">Logical Breakdown</p>
         ${breakdown.join("<br/>")}
       </div>
@@ -565,7 +565,7 @@ function updateProgress() {
   const currentQSpan = document.getElementById("currentQ");
 
   if (progressFill) progressFill.style.width = pct + "%";
-  if (currentQSpan) currentQSpan.textContent = done;
+  if (currentQSpan) currentQSpan.textContent = Math.min(done + 1, total);
 }
 
 function checkAllAnswered() {
