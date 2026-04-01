@@ -2030,55 +2030,26 @@
         </section>
       </main>
 
-      <!--  CHAT  -->
-      <aside class="chat-panel">
-        <div class="chat-header">
-          <h3 style="font-size: 1.1rem; font-weight: 800">
-            Hardware <span style="color: #4ade80">Comm</span>
+      <!--  ACTIVE COMMUNICATIONS HUB  -->
+      <aside class="chat-panel" style="background: rgba(15, 23, 42, 0.95); border-left: 1px solid rgba(255,255,255,0.05); overflow: hidden;">
+        <div class="chat-header" style="background: rgba(0,0,0,0.2);">
+          <h3 style="font-size: 1.1rem; font-weight: 800; color: #fff;">
+            Active <span style="color: #4ade80">Comm Hub</span>
           </h3>
-          <p style="font-size: 0.75rem; color: #94a3b8">
-            Team-wide encrypted relay
+          <p style="font-size: 0.75rem; color: #94a3b8; margin-top: 4px;">
+            Secure 1-on-1 encrypted routing
           </p>
         </div>
 
-        <div class="chat-messages" id="chatRelay">
-          <div class="msg msg-received">
-            <span class="msg-user">Capt. Kwame (SPIKE Team)</span>
-            Has anyone finished the PID loop for the color sensor alignment? The
-            turn is still overshooting 2 degrees.
-          </div>
-          <div class="msg msg-received">
-            <span class="msg-user">Engineer Ama</span>
-            Try reducing the integral constant to 0.05. I had the same issue on
-            the EV3 build last year.
-          </div>
-          <div class="msg msg-sent">
-            Checking the hex code now. I'll push the fix to the portal.
-          </div>
+        <div class="chat-messages" id="quickCommList" style="padding: 0; gap: 0;">
+          <!-- Dynamically populated with team members -->
         </div>
 
-        <div class="chat-input-area">
-          <input
-            type="text"
-            class="chat-input"
-            id="chatInput"
-            placeholder="Send relay message..."
-          />
-          <button
-            onclick="sendMessage()"
-            style="
-              background: #22c55e;
-              color: #000;
-              border: none;
-              width: 40px;
-              height: 40px;
-              border-radius: 50%;
-              font-weight: 900;
-              cursor: pointer;
-            "
-          >
-            ↑
-          </button>
+        <div class="chat-input-area" style="background: rgba(0,0,0,0.3); flex-direction: column; gap: 10px; align-items: stretch; border-top: 1px solid rgba(255,255,255,0.05);">
+            <button onclick="location.href='chat.html'" class="btn-create-meet" style="margin: 0; width: 100%; justify-content: center; font-size: 0.85rem; padding: 0.8rem;">
+               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 8px;"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg> Open Full Comm Suite
+            </button>
+            <p style="font-size: 0.65rem; color: #64748b; text-align: center; margin: 0;">Endpoints are secured via RSA-OAEP / AES-GCM.</p>
         </div>
       </aside>
     </div>
@@ -2773,96 +2744,41 @@
         document.getElementById("meetSpinner").style.display = "none";
       }
 
-      //  Real-time cross-tab chat
-      const CHAT_KEY = "team_chat";
-      let lastChatLen = 0;
-      let chatChannel = null;
-
+      //  Active Communications Hub
       function initChat() {
-        // BroadcastChannel for cross-tab real-time
-        if ("BroadcastChannel" in window) {
-          chatChannel = new BroadcastChannel("augusco_team_chat");
-          chatChannel.onmessage = (e) => {
-            if (e.data && e.data.type === "new_message") {
-              appendMessage(e.data.msg, false);
-            }
-          };
-        }
-        // Storage event for cross-tab: chat updates + new user registrations
-        window.addEventListener("storage", (e) => {
-          if (e.key === CHAT_KEY) {
-            const all = JSON.parse(e.newValue || "[]");
-            if (all.length > lastChatLen) {
-              const newMsgs = all.slice(lastChatLen);
-              newMsgs.forEach((m) => appendMessage(m, false));
-              lastChatLen = all.length;
-            }
+          const container = document.getElementById("quickCommList");
+          if (!container) return;
+          
+          const users = getUsers();
+          const session = getSession();
+          
+          const team = users.filter((u) => u.email !== session?.email && u.provider !== "guest" && u.name);
+          
+          if (team.length === 0) {
+              container.innerHTML = '<div style="padding: 2rem; text-align: center; color: #64748b; font-size: 0.8rem;">No team members registered.</div>';
+              return;
           }
-          // Auto-refresh team page when a new user registers
-          if (e.key === "waec_users") {
-            renderTeam();
-          }
-        });
-        loadMessages();
-      }
 
-      function appendMessage(m, isMine) {
-        const session = getSession();
-        const relay = document.getElementById("chatRelay");
-        const isOwn = isMine || (session && m.email === session.email);
-        const div = document.createElement("div");
-        div.className = isOwn ? "msg msg-sent" : "msg msg-received";
-        if (!isOwn) {
-          const s = document.createElement("span");
-          s.className = "msg-user";
-          s.textContent = m.user || "Unknown";
-          div.appendChild(s);
-        }
-        div.appendChild(document.createTextNode(m.text));
-        relay.appendChild(div);
-        relay.scrollTop = relay.scrollHeight;
+          container.innerHTML = team.map(u => {
+              const initial = u.name.charAt(0).toUpperCase();
+              const isAdmin = u.roboticsRole === "ADMIN" || u.role === "admin";
+              return `
+                  <div onclick="location.href='chat.html?email=${u.email}'" style="display: flex; align-items: center; gap: 12px; padding: 1rem 1.5rem; border-bottom: 1px solid rgba(255,255,255,0.03); cursor: pointer; transition: 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.03)'" onmouseout="this.style.background='transparent'">
+                      <div style="width: 36px; height: 36px; border-radius: 50%; background: #1e293b; display: flex; align-items: center; justify-content: center; font-weight: 700; color: #4ade80; border: ${isAdmin ? '2px solid #4ade80' : 'none'};">
+                          ${initial}
+                      </div>
+                      <div style="flex: 1; min-width: 0;">
+                          <div style="display: flex; align-items: center; gap: 6px;">
+                            <h4 style="font-size: 0.9rem; color: #fff; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${u.name}</h4>
+                            ${isAdmin ? '<span style="font-size:0.55rem; background:#22c55e; color:#000; padding:2px 4px; border-radius:4px; font-weight:800;">ADMIN</span>' : ''}
+                          </div>
+                          <p style="font-size: 0.7rem; color: #64748b; margin: 2px 0 0;">${u.roboticsRole || 'Engineer'}</p>
+                      </div>
+                      <div style="color: #4ade80; font-size: 1.2rem; opacity: 0.5;">→</div>
+                  </div>
+              `;
+          }).join("");
       }
-
-      function sendMessage() {
-        const input = document.getElementById("chatInput");
-        const text = input.value.trim();
-        if (!text) return;
-        const session = getSession();
-        const msg = {
-          user: session ? session.name : "Engineer",
-          email: session ? session.email : "",
-          text,
-          time: Date.now(),
-        };
-        // Append immediately as own message
-        appendMessage(msg, true);
-        // Persist to localStorage
-        const history = JSON.parse(localStorage.getItem(CHAT_KEY) || "[]");
-        history.push(msg);
-        localStorage.setItem(CHAT_KEY, JSON.stringify(history));
-        lastChatLen = history.length;
-        // Broadcast to other tabs
-        if (chatChannel) chatChannel.postMessage({ type: "new_message", msg });
-        input.value = "";
-      }
-
-      function loadMessages() {
-        const relay = document.getElementById("chatRelay");
-        relay.innerHTML = ""; // clear
-        const session = getSession();
-        const history = JSON.parse(localStorage.getItem(CHAT_KEY) || "[]");
-        lastChatLen = history.length;
-        history.forEach((m) => {
-          const isOwn = session && m.email === session.email;
-          appendMessage(m, isOwn);
-        });
-      }
-
-      document
-        .getElementById("chatInput")
-        .addEventListener("keypress", function (e) {
-          if (e.key === "Enter") sendMessage();
-        });
 
       //  Mobile Toggles
       function toggleSidebar() {
