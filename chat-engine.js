@@ -198,5 +198,99 @@ class VisionStore {
     }
 }
 
+// --- TRUE WEB-RTC P2P NETWORK RELAY ---
+class VisionNetwork {
+    static peer = null;
+    static connections = {};
+
+    static init(email) {
+        if (!window.Peer) {
+            console.error("VisionNetwork: PeerJS not loaded.");
+            return;
+        }
+
+        // Generate a deterministic but hashed peer ID to protect email privacy on the public tracker
+        let hash = 0;
+        for (let i = 0; i < email.length; i++) {
+            hash = ((hash << 5) - hash) + email.charCodeAt(i);
+            hash |= 0; 
+        }
+        const peerId = "vision_hq_v2_" + Math.abs(hash).toString(36);
+        
+        console.log("Initializing VisionNetwork P2P Node:", peerId);
+        this.peer = new window.Peer(peerId);
+
+        this.peer.on('open', (id) => {
+            console.log("P2P Node Online:", id);
+        });
+
+        this.peer.on('connection', (conn) => {
+            console.log("Incoming P2P Direct Tunnel from:", conn.peer);
+            this.connections[conn.peer] = conn;
+
+            conn.on('data', async (data) => {
+                if (data && data.type === 'msg') {
+                    console.log("Secure Payload received over WebRTC P2P");
+                    await window.VisionStore.saveMessage(data);
+                }
+            });
+            conn.on('close', () => delete this.connections[conn.peer]);
+        });
+        
+        this.peer.on('error', (err) => {
+            console.warn("P2P Network Warning:", err);
+        });
+    }
+
+    static async broadcast(payload) {
+        if (!this.peer || !this.peer.open) return false;
+        
+        const recipientEmail = payload.to;
+        let hash = 0;
+        for (let i = 0; i < recipientEmail.length; i++) {
+            hash = ((hash << 5) - hash) + recipientEmail.charCodeAt(i);
+            hash |= 0; 
+        }
+        const targetId = "vision_hq_v2_" + Math.abs(hash).toString(36);
+
+        // Check if tunnel exists
+        let conn = this.connections[targetId];
+        
+        if (!conn || !conn.open) {
+            console.log("Opening new P2P Tunnel to:", targetId);
+            conn = this.peer.connect(targetId, { reliable: true });
+            
+            // Await connection open
+            await new Promise((resolve) => {
+                let resolved = false;
+                conn.on('open', () => {
+                    if(!resolved) {
+                        resolved = true;
+                        this.connections[targetId] = conn;
+                        console.log("P2P Tunnel Established!");
+                        resolve();
+                    }
+                });
+                conn.on('error', () => {
+                    if(!resolved) { resolved = true; resolve(); }
+                });
+                setTimeout(() => {
+                    if(!resolved) { resolved = true; resolve(); }
+                }, 3000); // 3 sec timeout
+            });
+        }
+
+        if (conn && conn.open) {
+            console.log("Transmitting encrypted P2P Binary over Internet");
+            conn.send(payload);
+            return true;
+        } else {
+            console.warn("Remote peer offline or unreachable. Payload stored locally.");
+            return false;
+        }
+    }
+}
+
 window.VisionCrypto = VisionCrypto;
 window.VisionStore = VisionStore;
+window.VisionNetwork = VisionNetwork;

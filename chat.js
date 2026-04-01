@@ -44,6 +44,11 @@ async function initChat() {
             };
         }
 
+        // Initialize P2P Tunneling (Zero-Backend)
+        if (window.VisionNetwork) {
+            window.VisionNetwork.init(session.email);
+        }
+
         // "API-less" Tab Sync via Standard Storage Events
         window.addEventListener('storage', (e) => {
             if (e.key === 'waec_chat_signal') {
@@ -249,8 +254,19 @@ async function updateInfoPanel(user) {
     }
 
     const role = user.roboticsRole || user.role || "Systems Architect";
-    const status = ["Analyzing Hardware", "Idle", "Busy", "Testing Sync"][Math.floor(Math.random() * 4)];
-    const isOnline = Math.random() > 0.3;
+
+    // Detect actual P2P Link Status
+    let isP2PConnected = false;
+    if (window.VisionNetwork && window.VisionNetwork.peer) {
+        let hash = 0;
+        for (let i = 0; i < user.email.length; i++) {
+            hash = ((hash << 5) - hash) + user.email.charCodeAt(i);
+            hash |= 0; 
+        }
+        const targetId = "vision_hq_v2_" + Math.abs(hash).toString(36);
+        const conn = window.VisionNetwork.connections[targetId];
+        isP2PConnected = (conn && conn.open);
+    }
 
     content.innerHTML = `
         <div class="intelligence-card">
@@ -260,13 +276,13 @@ async function updateInfoPanel(user) {
         </div>
 
         <div class="intelligence-card">
-            <div class="card-label">Operational Status</div>
+            <div class="card-label">P2P Network Link</div>
             <div style="display: flex; align-items: center; gap: 8px;">
-                <span class="telemetry-pip ${isOnline ? 'active' : 'idle'}"></span>
-                <span style="font-size: 0.9rem; color: white;">${isOnline ? 'ONLINE' : 'OFFLINE'}</span>
+                <span class="telemetry-pip ${isP2PConnected ? 'active' : 'idle'}"></span>
+                <span style="font-size: 0.9rem; color: white;">${isP2PConnected ? 'UPLINK SECURED' : 'LOCAL CACHE ONLY'}</span>
             </div>
             <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 8px;">
-                Current Task: ${isOnline ? status : 'Sleep Mode'}
+                Status: ${isP2PConnected ? 'Direct Device-to-Device Tunnel Actvated.' : 'Remote peer offline. Messages will queue locally.'}
             </div>
         </div>
 
@@ -367,6 +383,11 @@ async function sendMessage() {
         await window.VisionStore.saveMessage(msgObj);
         await renderMessage(msgObj);
         
+        // Beam payload across WebRTC Tunnel
+        if (window.VisionNetwork) {
+            window.VisionNetwork.broadcast(msgObj);
+        }
+        
         input.value = "";
         input.style.height = 'auto';
         renderContacts(); // Update preview
@@ -404,6 +425,11 @@ async function handleFileSelect(event) {
 
         await window.VisionStore.saveMessage(msgObj);
         await renderMessage(msgObj);
+        
+        // Beam payload across WebRTC Tunnel
+        if (window.VisionNetwork) {
+            window.VisionNetwork.broadcast(msgObj);
+        }
         renderContacts();
     };
     reader.readAsArrayBuffer(file);
@@ -590,6 +616,12 @@ async function sendVoiceNote(blob) {
 
         await window.VisionStore.saveMessage(msgObj);
         await renderMessage(msgObj);
+        
+        // Beam payload across WebRTC Tunnel
+        if (window.VisionNetwork) {
+            window.VisionNetwork.broadcast(msgObj);
+        }
+        
         renderContacts(); // updates sidebar to show attachment icon
     };
     reader.readAsArrayBuffer(blob);
