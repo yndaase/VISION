@@ -499,6 +499,266 @@ const DATABASE = {
     workings: "(n-2) * 180 = (5-2) * 180 = 3 * 180 = 540.",
     distractorLogic: "B = quadrilateral. D = hexagon.",
     protip: "Examiner's Secret: Every extra side adds 180 degrees to the sum."
+  },
+  {
+    id: 31,
+    difficulty: "medium",
+    topic: "Matrices · Business Logistics",
+    context: "daily",
+    contextIcon: "📦",
+    question: "A delivery company uses matrices to track packages. If Matrix A = [[2, 3], [5, 1]] represents morning loads and B = [[4, 0], [1, 6]] represents afternoon loads, find the total daily load matrix A + B.",
+    options: { A: "[[6, 3], [6, 7]]", B: "[[8, 0], [5, 6]]", C: "[[6, 0], [4, 7]]", D: "[[2, 3], [4, 5]]" },
+    correct: "A",
+    workings: "Addition of matrices: [2+4, 3+0] and [5+1, 1+6] = [[6, 3], [6, 7]].",
+    distractorLogic: "B multiplies the first row. C uses subtraction by mistake.",
+    protip: "Examiner's Secret: Only add elements in the EXACT same position (row and column)."
+  },
+  {
+    id: 32,
+    difficulty: "medium",
+    topic: "Vectors · Drone Mapping",
+    context: "agritech",
+    contextIcon: "🛰️",
+    question: "A drone flies along a vector <strong>v = (6i + 8j)</strong> meters. Calculate the magnitude (distance) of the drone's displacement.",
+    options: { A: "14m", B: "10m", C: "48m", D: "2m" },
+    correct: "B",
+    workings: "|v| = √(6² + 8²) = √(36 + 64) = √100 = 10m.",
+    distractorLogic: "A (14) just adds 6 and 8. C multiplies 6 and 8.",
+    protip: "Examiner's Secret: Magnitude is always the square root of the sum of squares—it's just Pythagoras in vector form!"
+  },
+  {
+    id: 33,
+    difficulty: "medium",
+    topic: "Trigonometry · Telecom Mast Height",
+    context: "utilities",
+    contextIcon: "📶",
+    question: "A repairman stands 20m from the base of a telecom mast. The angle of elevation to the transmitter is 45°. How high is the transmitter?",
+    options: { A: "10m", B: "20m", C: "20√2 m", D: "40m" },
+    correct: "B",
+    workings: "tan(45°) = h / 20. Since tan(45°) = 1, then 1 = h / 20 -> h = 20m.",
+    distractorLogic: "C uses the hypotenuse formula. A halves the distance.",
+    protip: "Examiner's Secret: When the angle of elevation is 45°, the height and the horizontal distance are always EQUAL."
+  },
+  {
+    id: 34,
+    difficulty: "hard",
+    topic: "Bearings · Marine Navigation",
+    context: "daily",
+    contextIcon: "🚢",
+    question: "A fishing boat travels on a bearing of <strong>060°</strong> from Tema Harbor to a point P. It then turns and travels due South to a point Q which is east of Tema. What is the bearing of Q from Tema?",
+    options: { A: "090°", B: "120°", C: "060°", D: "180°" },
+    correct: "A",
+    workings: "Since Q is 'East' of Tema Harbor, the bearing from Tema toward any point directly East is always 090°.",
+    distractorLogic: "B (120°) assumes another turn was made. D is South.",
+    protip: "Examiner's Secret: Directional terms like 'Due East' translate directly to three-figure bearings (090°)."
+  },
+  {
+    id: 35,
+    difficulty: "hard",
+    topic: "Venn Diagrams · Market Survey",
+    context: "daily",
+    contextIcon: "📊",
+    question: "In a survey of 100 shoppers, 50 buy Kenkey, 40 buy Waakye, and 20 buy both. If 15 people buy NEITHER, how many buy ONLY Kenkey?",
+    options: { A: "30", B: "50", C: "20", D: "35" },
+    correct: "A",
+    workings: "Only Kenkey = Total Kenkey (50) - Both (20) = 30.",
+    distractorLogic: "B is the total Kenkey group. C is the 'both' group.",
+    protip: "Examiner's Secret: 'Only X' ALWAYS means you must subtract the 'Both' group from the 'Total X' group."
+  },
+  {
+    id: 36,
+    difficulty: "hard",
+    topic: "Latitude/Longitude · Air Travel",
+    context: "daily",
+    contextIcon: "✈️",
+    question: "Two towns A(40°N, 10°E) and B(40°N, 50°E) are on the same latitude. Find their longitude difference.",
+    options: { A: "30°", B: "40°", C: "50°", D: "60°" },
+    correct: "B",
+    workings: "BothTowns are East. Difference = 50° - 10° = 40°.",
+    distractorLogic: "A is 40-10=30? No, 50-10=40. D is 50+10=60 (if one was West).",
+    protip: "Examiner's Secret: SAME direction (E-E or W-W)? Subtract. DIFFERENT direction (E-W)? Add."
+  },
+  {
+    id: 37,
+    difficulty: "medium",
+    topic: "Statistics · Crop Yields",
+    context: "agritech",
+    contextIcon: "🌽",
+    question: "The weight of five harvested yams are: 3.2kg, 4.5kg, 3.8kg, 4.5kg, and 5.0kg. Find the mode.",
+    options: { A: "4.5kg", B: "4.2kg", C: "5.0kg", D: "3.8kg" },
+    correct: "A",
+    workings: "The value 4.5 appears twice; all others appear once. Mode = 4.5kg.",
+    distractorLogic: "B might be an estimated mean. C is the highest value.",
+    protip: "Examiner's Secret: Mode is simply the most 'Fashionable' (most frequent) number. Don't calculate—just count!"
+  },
+  {
+    id: 38,
+    difficulty: "hard",
+    topic: "Probability · Quality Control",
+    context: "agritech",
+    contextIcon: "🍎",
+    question: "A crate contains 20 oranges, 4 of which are rotten. If two oranges are picked at random <strong>without replacement</strong>, what is the probability that both are rotten?",
+    options: { A: "3/95", B: "1/25", C: "4/20", D: "1/5" },
+    correct: "A",
+    workings: "P(1st rotten) = 4/20 = 1/5. P(2nd rotten) = 3/19. Total = (1/5) * (3/19) = 3/95.",
+    distractorLogic: "B (1/25) assumes replacement (1/5 * 1/5). D is just the first pick's probability.",
+    protip: "Examiner's Secret: 'Without replacement' means the denominator MUST decrease for the second pick."
+  },
+  {
+    id: 39,
+    difficulty: "medium",
+    topic: "Transformation · Graphic Design",
+    context: "daily",
+    contextIcon: "🎨",
+    question: "A point P(2, -3) is translated by a vector <strong>T = (4, 5)</strong>. Find the coordinates of the image P'.",
+    options: { A: "(6, 2)", B: "(-2, -8)", C: "(8, -15)", D: "(6, 8)" },
+    correct: "A",
+    workings: "P' = (2+4, -3+5) = (6, 2).",
+    distractorLogic: "B subtracts the vector. C multiplies. D misses the negative sign logic.",
+    protip: "Examiner's Secret: Translation is just addition: Point + Vector = Image."
+  },
+  {
+    id: 40,
+    difficulty: "easy",
+    topic: "Indices · Population Growth",
+    context: "daily",
+    contextIcon: "📈",
+    question: "Evaluate <strong>(27)⅔</strong>",
+    options: { A: "9", B: "3", C: "18", D: "81" },
+    correct: "A",
+    workings: "27⅔ = (∛27)² = 3² = 9.",
+    distractorLogic: "B is just the cube root. C is 27 * 2/3. D is 27 * 3.",
+    protip: "Examiner's Secret: Root the bottom (denominator), then Power the top (numerator)."
+  },
+  {
+    id: 41,
+    difficulty: "medium",
+    topic: "Variation · Pumping Speed",
+    context: "utilities",
+    contextIcon: "🚰",
+    question: "The time (T) it takes to fill a tank varies inversely as the number of pumps (P). If 2 pumps take 6 hours, how many hours will 4 pumps take?",
+    options: { A: "3 hours", B: "12 hours", C: "4 hours", D: "2 hours" },
+    correct: "A",
+    workings: "T = k/P -> 6 = k/2 -> k=12. T = 12/4 = 3 hours.",
+    distractorLogic: "B (12) is direct variation. C is just a guess.",
+    protip: "Examiner's Secret: Inverse Variation means: More pumps = Less time. Check if your answer makes sense!"
+  },
+  {
+    id: 42,
+    difficulty: "hard",
+    topic: "Sequences · Viral Marketing",
+    context: "fintech",
+    contextIcon: "📱",
+    question: "A viral video starts with 5 views. Each hour, the views triple (Geometric Progression). How many views at the start of the 4th hour?",
+    options: { A: "135", B: "405", C: "20", D: "45" },
+    correct: "A",
+    workings: "a=5, r=3, n=4. U₄ = arⁿ⁻¹ = 5 * 3³ = 5 * 27 = 135.",
+    distractorLogic: "B is for n=5. D is for n=3.",
+    protip: "Examiner's Secret: Check the term carefully! Week 4 uses power (4-1=3)."
+  },
+  {
+    id: 43,
+    difficulty: "hard",
+    topic: "Logarithms · Decibel Increase",
+    context: "daily",
+    contextIcon: "🔊",
+    question: "Solve for x: <strong>log₂(x) + log₂(3) = log₂(15)</strong>",
+    options: { A: "5", B: "12", C: "18", D: "45" },
+    correct: "A",
+    workings: "log₂(3x) = log₂(15) -> 3x = 15 -> x = 5.",
+    distractorLogic: "B (12) comes from 15-3. C comes from 15+3.",
+    protip: "Examiner's Secret: Addition outside a log becomes MULTIPLICATION inside: log(A) + log(B) = log(A × B)."
+  },
+  {
+    id: 44,
+    difficulty: "medium",
+    topic: "Surds · Geometric Precision",
+    context: "daily",
+    contextIcon: "📐",
+    question: "Simplify <strong>√12 + √27</strong>",
+    options: { A: "5√3", B: "√39", C: "6√3", D: "3√13" },
+    correct: "A",
+    workings: "√12 = 2√3. √27 = 3√3. Sum = (2+3)√3 = 5√3.",
+    distractorLogic: "B just adds the numbers under the root (illegal!). D also avoids the factorization.",
+    protip: "Examiner's Secret: You can only add surds if the 'root part' is the same. Simplify them first!"
+  },
+  {
+    id: 45,
+    difficulty: "hard",
+    topic: "Mensuration · Silo Capacity",
+    context: "agritech",
+    contextIcon: "🏗️",
+    question: "A square-based pyramid of height 12m has a base length of 10m. Find its volume.",
+    options: { A: "400 m³", B: "1,200 m³", C: "600 m³", D: "200 m³" },
+    correct: "A",
+    workings: "V = 1/3 * Base Area * Height = 1/3 * (10*10) * 12 = 1/3 * 100 * 12 = 400 m³.",
+    distractorLogic: "B (1200) forgets the 1/3. C (600) uses 1/2 instead.",
+    protip: "Examiner's Secret: Pyramids and Cones are always 'One-Third' of their corresponding blocks (prism/cylinder)."
+  },
+  {
+    id: 46,
+    difficulty: "medium",
+    topic: "Circle Theorems · Satellite Orbit",
+    context: "daily",
+    contextIcon: "⭕",
+    question: "Angle subtended by a diameter at the circumference of a circle is always:",
+    options: { A: "90°", B: "180°", C: "45°", D: "60°" },
+    correct: "A",
+    workings: "Standard theorem: Angle in a semi-circle is 90°.",
+    distractorLogic: "B is the angle at the center. C is half of 90.",
+    protip: "Examiner's Secret: If the line goes through the center O (Diameter), any angle it makes on the edge is a right angle."
+  },
+  {
+    id: 47,
+    difficulty: "hard",
+    topic: "Circle Theorems · Structural Tension",
+    context: "daily",
+    contextIcon: "🎡",
+    question: "In a cyclic quadrilateral ABCD, angle A = 85°. Find angle C.",
+    options: { A: "95°", B: "85°", C: "175°", D: "5°" },
+    correct: "A",
+    workings: "Opposite angles of a cyclic quadrilateral add to 180°. C = 180 - 85 = 95°.",
+    distractorLogic: "B assumes they are equal. C is almost 180.",
+    protip: "Examiner's Secret: 'Opposite angles add to 180'—this only works if all 4 corners touch the circle!"
+  },
+  {
+    id: 48,
+    difficulty: "medium",
+    topic: "Logical Reasoning · Exam Prep",
+    context: "daily",
+    contextIcon: "🤔",
+    question: "If P: 'It is raining' and Q: 'I am using an umbrella', what is the negation of P (~P)?",
+    options: { A: "It is not raining", B: "I am using an umbrella", C: "It is sunny", D: "I am not using an umbrella" },
+    correct: "A",
+    workings: "~P is the logical opposite of P.",
+    distractorLogic: "C is a contextual opposite, but 'Not' is the logical requirement.",
+    protip: "Examiner's Secret: Negation is just adding 'Not'—don't look for antonyms like 'Sunny' vs 'Raining'."
+  },
+  {
+    id: 49,
+    difficulty: "hard",
+    topic: "Quadratic Equations · Projectile Motion",
+    context: "daily",
+    contextIcon: "⚽",
+    question: "Find the roots of <strong>x² - 5x + 6 = 0</strong>",
+    options: { A: "2 and 3", B: "-2 and -3", C: "1 and 6", D: "-1 and -6" },
+    correct: "A",
+    workings: "(x - 2)(x - 3) = 0. x = 2 or x = 3.",
+    distractorLogic: "B has wrong signs. C has wrong product/sum logic.",
+    protip: "Examiner's Secret: Factors must MULTIPLY to +6 and ADD to -5. Only -2 and -3 work."
+  },
+  {
+    id: 50,
+    difficulty: "hard",
+    topic: "Calculus · Vehicle Velocity",
+    context: "daily",
+    contextIcon: "🚗",
+    question: "The displacement of a car is s = 3t² + 2t. Find the velocity at t = 2s.",
+    options: { A: "14 m/s", B: "8 m/s", C: "16 m/s", D: "12 m/s" },
+    correct: "A",
+    workings: "v = ds/dt = 6t + 2. At t=2: v = 6(2) + 2 = 14 m/s.",
+    distractorLogic: "D (12) forgets to add the 2. B is 3(2)+2.",
+    protip: "Examiner's Secret: Velocity is the FIRST derivative of displacement. Differentiate first!"
   }
   ],
 
@@ -1002,5 +1262,20 @@ const DATABASE = {
         contextIcon: "🇬🇭"
       }
     ]
+  }
+};
+
+// ============================================================
+// MOCK EXAM REGISTRY
+// ============================================================
+const MOCK_EXAMS = {
+  math_mock_a: {
+    id: "math_mock_a",
+    subject: "maths",
+    title: "Core Mathematics Mock A",
+    description: "Full-length 50-question simulation focusing on the 2026 WASSCE syllabus core topics.",
+    timeLimit: 150, // 2.5 hours in minutes
+    questionCount: 50,
+    questions: [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50]
   }
 };
