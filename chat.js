@@ -82,15 +82,6 @@ async function initChat() {
         }
     }
 }
-            for (const item of items) {
-                if (item.querySelector("p") && item.querySelector("h4").textContent.includes(targetUser.name)) {
-                    selectUser(targetUser, item);
-                    break;
-                }
-            }
-        }
-    }
-}
 
 /**
  * Sync logic when background activity detected
@@ -203,7 +194,18 @@ async function selectUser(user, element) {
     document.getElementById("headerAvatar").textContent = user.name.charAt(0);
     
     document.querySelectorAll(".contact-item").forEach(i => i.classList.remove("active"));
-    element.classList.add("active");
+    if (element) element.classList.add("active");
+
+    // --- Enterprise Auto-Provisioning (Demo Polish) ---
+    // Automatically generate cryptographic keys for offline/seeded team members
+    const registry = JSON.parse(localStorage.getItem(IDENTITIES_KEY) || "{}");
+    if (!registry[user.email]) {
+        console.log(`Auto-provisioning secure identity for: ${user.email}`);
+        const identity = await window.VisionCrypto.generateIdentity();
+        registry[user.email] = identity.publicKey;
+        localStorage.setItem(IDENTITIES_KEY, JSON.stringify(registry));
+        localStorage.setItem(PRIVATE_KEY_PREFIX + user.email, JSON.stringify(identity.privateKey));
+    }
 
     const session = getSession();
     const threadId = [session.email, user.email].sort().join("<->");
