@@ -241,30 +241,44 @@ function openSettings() {
   const modal = document.getElementById('settingsModal');
   if (!modal) return;
   
-  // Populate info
+  // Populate user info
   const nameEl  = document.getElementById('settingsName');
   const emailEl = document.getElementById('settingsEmail');
   const avEl    = document.getElementById('settingsAvatar');
-  
   if (nameEl)  nameEl.textContent  = session.name;
   if (emailEl) emailEl.textContent = session.email;
   if (avEl)    avEl.textContent    = session.name.charAt(0).toUpperCase();
   
-  // Set 2FA toggle state from database/session
+  // Sync 2FA toggle state
   const enabled = is2FAEnabled(session.email);
   updateSecurityStatusUI(enabled);
   
-  modal.style.display = 'flex';
-  setTimeout(() => modal.classList.add('visible'), 10);
+  // Sync theme button icon in settings
+  const themeBtn = document.getElementById('settingsThemeBtn');
+  if (themeBtn && window.getTheme) {
+    themeBtn.textContent = getTheme() === 'light' ? '\uD83C\uDF19' : '\u2600\uFE0F';
+  }
+
+  // Show modal
+  modal.classList.add('visible');
+  document.body.style.overflow = 'hidden';
 }
 
 function closeSettings() {
   const modal = document.getElementById('settingsModal');
   if (modal) {
     modal.classList.remove('visible');
-    setTimeout(() => modal.style.display = 'none', 300);
+    document.body.style.overflow = '';
   }
 }
+
+function handleModalOutsideClick(event) {
+  if (event.target === document.getElementById('settingsModal')) {
+    closeSettings();
+  }
+}
+
+
 
 // ─── Google Sign-In callback (GIS) ───────────────────
 function handleGoogleCredential(response) {

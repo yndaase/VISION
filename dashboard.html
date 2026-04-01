@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -488,12 +488,15 @@
     <p class="footer-note">Practice tool only. Consult official syllabuses at <strong>waecgh.org</strong>.</p>
   </footer>
 
-  <!-- ── SETTINGS MODAL ── -->
-  <div class="modal-overlay" id="settingsModal">
-    <div class="settings-modal shadow-2xl">
+  <!-- SETTINGS MODAL -->
+  <div class="modal-overlay" id="settingsModal" onclick="handleModalOutsideClick(event)">
+    <div class="settings-modal" onclick="event.stopPropagation()">
       <div class="modal-header">
-        <h3 class="modal-title">Settings & Security</h3>
-        <button class="close-modal-btn" onclick="closeSettings()">&times;</button>
+        <div style="display:flex;align-items:center;gap:10px;">
+          <span style="font-size:1.3rem;">&#9881;&#65039;</span>
+          <h3 class="modal-title">Settings &amp; Security</h3>
+        </div>
+        <button class="close-modal-btn" onclick="closeSettings()" aria-label="Close">&#215;</button>
       </div>
       <div class="modal-content">
         <div class="settings-user-card">
@@ -501,36 +504,46 @@
           <div class="settings-info">
             <h4 id="settingsName">Student Name</h4>
             <p id="settingsEmail">student@visionedu.online</p>
+            <div class="security-status" id="securityStatus">
+              <span class="status-warn">&#9888;&#65039; Level 1 &mdash; Standard</span>
+            </div>
           </div>
         </div>
-
-        <div class="security-status" id="securityStatus">
-          <span class="status-secure">🛡️ Level 1 Protected</span>
-        </div>
-
         <div class="setting-row">
           <div class="setting-label-wrap">
-            <span class="setting-label">Two-Factor Authentication</span>
-            <span class="setting-desc">Add an extra layer of security. A code will be required at every login.</span>
+            <span class="setting-label">&#127769; Interface Theme</span>
+            <span class="setting-desc">Switch between dark and light mode.</span>
           </div>
-          <div class="toggle-switch" id="tfaToggle" onclick="handle2FAToggle()"></div>
+          <button class="theme-toggle-btn" onclick="toggleTheme()" id="settingsThemeBtn" title="Toggle Theme">&#9728;&#65039;</button>
         </div>
-
-        <div class="setting-row" style="border-bottom: 1px solid rgba(255,255,255,0.05); margin-bottom: 1.5rem;">
+        <div class="setting-row">
           <div class="setting-label-wrap">
-            <span class="setting-label">Sync Questions Daily</span>
-            <span class="setting-desc">Automatically fetch the latest AI-curated exam questions every 24h.</span>
+            <span class="setting-label">&#128737;&#65039; Two-Factor Authentication</span>
+            <span class="setting-desc">A code will be emailed on every login for extra security.</span>
           </div>
-          <div class="toggle-switch active" style="pointer-events:none; opacity:0.6;"></div>
+          <div class="toggle-switch" id="tfaToggle" onclick="handle2FAToggle()" role="switch" aria-checked="false"></div>
         </div>
-
-        <button class="auth-submit-btn" onclick="closeSettings()" style="margin-top: 1rem; background: var(--gold); color: #000;">
-          <span>Save Changes</span>
-        </button>
+        <div class="setting-row">
+          <div class="setting-label-wrap">
+            <span class="setting-label">&#128260; Daily Question Sync</span>
+            <span class="setting-desc">Auto-fetch new AI-curated questions every 24h.</span>
+          </div>
+          <div class="toggle-switch active" style="pointer-events:none;opacity:0.5;"></div>
+        </div>
+        <p class="setting-section-title">Change Password</p>
+        <div class="setting-password-block">
+          <input class="setting-input" type="password" id="setCurrentPass" placeholder="Current password" autocomplete="current-password">
+          <input class="setting-input" type="password" id="setNewPass" placeholder="New password (min 6 chars)" autocomplete="new-password">
+          <input class="setting-input" type="password" id="setConfirmPass" placeholder="Confirm new password" autocomplete="new-password">
+          <div id="passChangeMsg" class="pass-change-msg" style="display:none;"></div>
+        </div>
+        <div class="modal-footer-btns">
+          <button class="modal-btn modal-btn-primary" onclick="unifiedChangePassword()">Update Password</button>
+          <button class="modal-btn modal-btn-ghost" onclick="closeSettings()">Done</button>
+        </div>
       </div>
     </div>
   </div>
-
   </div> <!-- /main-wrapper -->
 
   <script src="auth.js"></script>
