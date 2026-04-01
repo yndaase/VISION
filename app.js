@@ -553,6 +553,17 @@ function initNavUserChip() {
   
   if (heroHeading) {
     heroHeading.innerHTML = `Master <span class="gradient-text">${titleText}</span>`;
+    // If it's not the default landing, shrink the hero to save space
+    if (currentSubjectStr !== 'maths') {
+      document.querySelector('.hero').style.padding = "60px 20px";
+      document.querySelector('.hero').style.minHeight = "auto";
+    }
+  }
+
+  const navLabel = document.querySelector('.nav-subject-label');
+  const subjectIcons = { maths: "📐", cs: "💻", science: "🔬", english: "📖" };
+  if (navLabel) {
+    navLabel.innerHTML = `${subjectIcons[currentSubjectStr] || '📝'} ${titleText}`;
   }
 }
 
