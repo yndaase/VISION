@@ -1,1424 +1,617 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>System & Security | Vision Admin</title>
-    <meta name="robots" content="noindex, nofollow" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap"
-      rel="stylesheet"
-    />
-    <link rel="stylesheet" href="style.css" />
-    <link rel="stylesheet" href="theme.css" />
-    <script src="theme.js"></script>
-    <script src="auth.js"></script>
-    <script src="materials.js"></script>
-    <style>
-      :root {
-        --admin-primary: #6366f1;
-        --admin-success: #22c55e;
-        --admin-danger: #ef4444;
-        --admin-warning: #f59e0b;
-        --admin-bg-dark: #0f172a;
-        --admin-card-dark: #1e293b;
-      }
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>System Architecture | Vision Admin Portal</title>
+  <meta name="robots" content="noindex, nofollow" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="theme.css" />
+  <script src="theme.js"></script>
+  <script src="auth.js"></script>
+  <script src="materials.js"></script>
+  <style>
+    :root {
+      --admin-primary: #6366f1;
+      --admin-primary-hover: #818cf8;
+      --admin-bg: #05080f;
+      --admin-card: #0d1117;
+      --admin-sidebar: #080b12;
+      --admin-border: rgba(255, 255, 255, 0.08);
+      --admin-text: #f1f5f9;
+      --admin-text-muted: #94a3b8;
+      --admin-success: #10b981;
+      --admin-danger: #f43f5e;
+      --admin-warning: #f59e0b;
+    }
 
-      *,
-      *::before,
-      *::after {
-        box-sizing: border-box;
-        margin: 0;
-        padding: 0;
-      }
-      body {
-        font-family: var(--font-main);
-        background: var(--bg);
-        color: var(--text-primary);
-        min-height: 100vh;
-        overflow-x: hidden;
-      }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Outfit', sans-serif;
+      background: var(--admin-bg);
+      color: var(--admin-text);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
 
-      /*  AUTH SCREEN  */
-      #adminAuth {
-        min-height: 100vh;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        background:
-          radial-gradient(
-            circle at 100% 0%,
-            rgba(99, 102, 241, 0.12),
-            transparent 40%
-          ),
-          radial-gradient(
-            circle at 0% 100%,
-            rgba(139, 92, 246, 0.12),
-            transparent 40%
-          ),
-          var(--bg);
-        position: relative;
-      }
-      .secure-backdrop {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        pointer-events: none;
-        background: url("https://www.transparenttextures.com/patterns/carbon-fibre.png");
-        opacity: 0.03;
-      }
+    /* --- AUTH SCREEN --- */
+    #adminAuth {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: radial-gradient(circle at top right, rgba(99, 102, 241, 0.15), transparent 400px),
+                  radial-gradient(circle at bottom left, rgba(139, 92, 246, 0.1), transparent 400px);
+    }
+    .auth-card {
+      background: var(--admin-card);
+      border: 1px solid var(--admin-border);
+      border-radius: 24px;
+      padding: 3.5rem 3rem;
+      width: 100%;
+      max-width: 440px;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+      position: relative;
+    }
+    .auth-header { text-align: center; margin-bottom: 2.5rem; }
+    .auth-header h1 { font-size: 2rem; font-weight: 800; letter-spacing: -0.02em; margin-bottom: 0.5rem; }
+    .auth-header h1 span { color: var(--admin-primary); }
+    .auth-header p { color: var(--admin-text-muted); font-size: 0.9rem; }
+    
+    .field { margin-bottom: 1.5rem; }
+    .label { display: block; font-size: 0.75rem; font-weight: 700; color: var(--admin-text-muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px; }
+    .input {
+      width: 100%;
+      padding: 14px 16px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--admin-border);
+      border-radius: 12px;
+      color: #fff;
+      font-size: 0.95rem;
+      outline: none;
+      transition: all 0.2s;
+    }
+    .input:focus { border-color: var(--admin-primary); box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1); }
+    
+    .btn-auth {
+      width: 100%;
+      padding: 16px;
+      background: var(--admin-primary);
+      color: #fff;
+      font-weight: 800;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.2s;
+      margin-top: 1rem;
+    }
+    .btn-auth:hover { background: var(--admin-primary-hover); transform: translateY(-1px); box-shadow: 0 10px 20px rgba(99, 102, 241, 0.2); }
 
-      .admin-login-card {
-        background: var(--bg-card);
-        border: 1px solid var(--border-accent);
-        border-radius: 24px;
-        padding: 3rem 2.5rem;
-        width: 100%;
-        max-width: 440px;
-        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-        position: relative;
-        overflow: hidden;
-        backdrop-filter: blur(10px);
-      }
-      .admin-login-card::before {
-        content: "";
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 4px;
-        background: linear-gradient(90deg, var(--admin-primary), #8b5cf6);
-      }
+    /* --- PORTAL LAYOUT --- */
+    #adminPortal { display: none; min-height: 100vh; grid-template-columns: 280px 1fr; }
+    #adminPortal.visible { display: grid; }
 
-      .secure-badge {
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-        background: rgba(34, 197, 94, 0.1);
-        border: 1px solid rgba(34, 197, 94, 0.3);
-        color: #4ade80;
-        font-size: 0.65rem;
-        font-weight: 800;
-        text-transform: uppercase;
-        padding: 4px 10px;
-        border-radius: 100px;
-        margin-bottom: 2rem;
-        letter-spacing: 0.1em;
-      }
+    .sidebar {
+      background: var(--admin-sidebar);
+      border-right: 1px solid var(--admin-border);
+      padding: 2rem 1.5rem;
+      display: flex;
+      flex-direction: column;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+    }
+    .brand { display: flex; align-items: center; gap: 12px; font-weight: 800; font-size: 1.25rem; margin-bottom: 3rem; }
+    .brand svg { color: var(--admin-primary); }
 
-      .admin-login-logo {
-        margin-bottom: 2.5rem;
-      }
-      .admin-login-logo h1 {
-        font-size: 1.75rem;
-        font-weight: 800;
-        letter-spacing: -0.02em;
-      }
-      .admin-login-logo h1 em {
-        color: var(--admin-primary);
-        font-style: normal;
-      }
-      .admin-login-logo p {
-        color: var(--text-muted);
-        font-size: 0.85rem;
-        margin-top: 6px;
-      }
+    .nav-group { margin-bottom: 2rem; }
+    .nav-label { font-size: 0.65rem; font-weight: 800; color: var(--admin-text-muted); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 12px; padding-left: 12px; }
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 14px;
+      border-radius: 12px;
+      color: var(--admin-text-muted);
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 600;
+      transition: all 0.2s;
+      background: transparent;
+      border: none;
+      width: 100%;
+      text-align: left;
+      cursor: pointer;
+      margin-bottom: 4px;
+    }
+    .nav-item:hover, .nav-item.active { background: rgba(99, 102, 241, 0.1); color: var(--admin-primary); }
+    .nav-item svg { width: 20px; height: 20px; }
 
-      .admin-field {
-        margin-bottom: 1.5rem;
-      }
-      .admin-label {
-        display: block;
-        font-size: 0.75rem;
-        font-weight: 700;
-        color: var(--text-muted);
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
-        margin-bottom: 8px;
-      }
-      .admin-input {
-        width: 100%;
-        padding: 14px 16px;
-        background: var(--bg-input);
-        border: 1.5px solid var(--border-bright);
-        border-radius: 12px;
-        color: var(--text-primary);
-        font-size: 0.95rem;
-        font-family: var(--font-main);
-        outline: none;
-        transition: all 0.2s;
-      }
-      .admin-input:focus {
-        border-color: var(--admin-primary);
-        box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
-      }
+    .main { padding: 3rem; overflow-y: auto; }
+    .header-bar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 3rem; }
+    .page-title h2 { font-size: 1.75rem; font-weight: 800; letter-spacing: -0.02em; }
+    .page-title p { color: var(--admin-text-muted); font-size: 0.9rem; margin-top: 4px; }
 
-      .admin-sign-btn {
-        width: 100%;
-        padding: 16px;
-        background: linear-gradient(135deg, var(--admin-primary), #8b5cf6);
-        color: #fff;
-        font-size: 1rem;
-        font-weight: 800;
-        border: none;
-        border-radius: 12px;
-        cursor: pointer;
-        margin-top: 1rem;
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 10px;
-      }
-      .admin-sign-btn:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 10px 20px -5px rgba(99, 102, 241, 0.4);
-        opacity: 0.95;
-      }
-      .admin-err {
-        color: var(--admin-danger);
-        font-size: 0.8rem;
-        font-weight: 600;
-        text-align: center;
-        margin-top: 1rem;
-        display: none;
-      }
+    .security-status {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: rgba(16, 185, 129, 0.08);
+      border: 1px solid rgba(16, 185, 129, 0.2);
+      padding: 8px 16px;
+      border-radius: 100px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--admin-success);
+    }
+    .pulse { width: 8px; height: 8px; background: var(--admin-success); border-radius: 50%; box-shadow: 0 0 12px var(--admin-success); animation: pulse-anim 2s infinite; }
+    @keyframes pulse-anim { 0% { transform: scale(0.95); opacity: 1; } 70% { transform: scale(1.4); opacity: 0; } 100% { transform: scale(0.95); opacity: 0; } }
 
-      /*  PORTAL LAYOUT  */
-      #adminPortal {
-        display: none;
-        min-height: 100vh;
-        flex-direction: column;
-      }
-      #adminPortal.visible {
-        display: flex;
-      }
+    /* --- STATS --- */
+    .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5rem; margin-bottom: 3rem; }
+    .stat-card { background: var(--admin-card); border: 1px solid var(--admin-border); padding: 1.75rem; border-radius: 20px; position: relative; overflow: hidden; }
+    .stat-card::after { content: ''; position: absolute; top: 0; right: 0; width: 80px; height: 80px; background: linear-gradient(135deg, rgba(99, 102, 241, 0.05), transparent); border-radius: 0 0 0 100%; }
+    .stat-lbl { font-size: 0.75rem; font-weight: 700; color: var(--admin-text-muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 12px; display: block; }
+    .stat-val { font-size: 2rem; font-weight: 800; color: var(--admin-text); line-height: 1; }
 
-      .admin-topbar {
-        background: var(--bg-card);
-        border-bottom: 1px solid var(--border);
-        padding: 0 2rem;
-        height: 70px;
-        display: flex;
-        align-items: center;
-        gap: 1rem;
-        position: sticky;
-        top: 0;
-        z-index: 100;
-        backdrop-filter: blur(12px);
-      }
-      .admin-topbar-brand {
-        font-size: 1.25rem;
-        font-weight: 800;
-        color: var(--admin-primary);
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        flex: 1;
-      }
-      .sec-session-pill {
-        background: rgba(34, 197, 94, 0.1);
-        color: #22c55e;
-        border: 1px solid rgba(34, 197, 94, 0.2);
-        font-size: 0.65rem;
-        font-weight: 800;
-        padding: 4px 10px;
-        border-radius: 100px;
-        display: flex;
-        align-items: center;
-        gap: 6px;
-      }
-      .sec-session-pill .pulse {
-        width: 6px;
-        height: 6px;
-        background: #22c55e;
-        border-radius: 50%;
-        box-shadow: 0 0 10px #22c55e;
-        animation: pulse 2s infinite;
-      }
-      @keyframes pulse {
-        0% {
-          transform: scale(0.9);
-          opacity: 1;
-        }
-        70% {
-          transform: scale(3);
-          opacity: 0;
-        }
-        100% {
-          transform: scale(0.9);
-          opacity: 0;
-        }
-      }
+    /* --- CONTENT AREA --- */
+    .admin-section { display: none; animation: fadeIn 0.4s ease; }
+    .admin-section.active { display: block; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-      .admin-logout-btn {
-        background: rgba(239, 68, 68, 0.1);
-        border: 1px solid rgba(239, 68, 68, 0.2);
-        color: var(--admin-danger);
-        padding: 8px 16px;
-        border-radius: 10px;
-        font-size: 0.8rem;
-        font-weight: 700;
-        cursor: pointer;
-        transition: all 0.2s;
-      }
-      .admin-logout-btn:hover {
-        background: var(--admin-danger);
-        color: #fff;
-      }
+    .card { background: var(--admin-card); border: 1px solid var(--admin-border); border-radius: 24px; overflow: hidden; margin-bottom: 2rem; }
+    .card-header { padding: 1.5rem 2rem; border-bottom: 1px solid var(--admin-border); display: flex; align-items: center; justify-content: space-between; }
+    .card-title { font-size: 1.1rem; font-weight: 700; }
+    .card-body { padding: 2rem; }
 
-      .admin-body {
-        display: flex;
-        flex: 1;
-      }
+    .table { width: 100%; border-collapse: collapse; }
+    .table th { text-align: left; background: rgba(255, 255, 255, 0.02); padding: 1rem 1.5rem; font-size: 0.75rem; color: var(--admin-text-muted); font-weight: 700; text-transform: uppercase; }
+    .table td { padding: 1.25rem 1.5rem; border-bottom: 1px solid var(--admin-border); font-size: 0.9rem; }
+    .table tr:last-child td { border-bottom: none; }
+    .table tr:hover { background: rgba(255, 255, 255, 0.01); }
 
-      /* Sidebar */
-      .admin-sidebar {
-        width: 260px;
-        background: var(--bg-sidebar);
-        border-right: 1px solid var(--border);
-        padding: 2rem 1.25rem;
-        flex-shrink: 0;
-        position: sticky;
-        top: 70px;
-        height: calc(100vh - 70px);
-      }
-      .admin-nav-group {
-        margin-bottom: 2rem;
-      }
-      .admin-nav-label {
-        font-size: 0.65rem;
-        font-weight: 800;
-        color: var(--text-muted);
-        text-transform: uppercase;
-        letter-spacing: 0.1em;
-        margin-bottom: 12px;
-        margin-left: 12px;
-      }
-      .admin-nav-item {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        padding: 12px 14px;
-        border-radius: 12px;
-        text-decoration: none;
-        color: var(--text-secondary);
-        font-size: 0.9rem;
-        font-weight: 600;
-        cursor: pointer;
-        border: none;
-        background: none;
-        width: 100%;
-        text-align: left;
-        transition: all 0.2s;
-        margin-bottom: 2px;
-      }
-      .admin-nav-item:hover {
-        background: var(--primary-dim);
-        color: var(--admin-primary);
-      }
-      .admin-nav-item.active {
-        background: var(--primary-dim);
-        color: var(--admin-primary);
-        font-weight: 700;
-      }
+    .btn { padding: 10px 20px; border-radius: 10px; font-weight: 700; cursor: pointer; transition: all 0.2s; border: 1px solid transparent; display: inline-flex; align-items: center; gap: 8px; font-size: 0.85rem; }
+    .btn-primary { background: var(--admin-primary); color: #fff; }
+    .btn-primary:hover { background: var(--admin-primary-hover); transform: translateY(-1px); }
+    .btn-danger { background: rgba(244, 63, 94, 0.1); color: var(--admin-danger); border-color: rgba(244, 63, 94, 0.2); }
+    .btn-danger:hover { background: var(--admin-danger); color: #fff; }
 
-      /* Content Area */
-      .admin-main {
-        flex: 1;
-        padding: 2.5rem;
-      }
-      .admin-section {
-        display: none;
-      }
-      .admin-section.active {
-        display: block;
-        animation: fadeIn 0.3s ease;
-      }
-      @keyframes fadeIn {
-        from {
-          opacity: 0;
-          transform: translateY(10px);
-        }
-        to {
-          opacity: 1;
-          transform: translateY(0);
-        }
-      }
+    /* --- AUDIT TIMELINE --- */
+    .audit-timeline { position: relative; padding-left: 24px; }
+    .audit-timeline::before { content: ''; position: absolute; left: 8px; top: 0; bottom: 0; width: 2px; background: var(--admin-border); }
+    .audit-item { position: relative; padding-bottom: 1.5rem; }
+    .audit-dot { position: absolute; left: -20px; top: 6px; width: 10px; height: 10px; border-radius: 50%; background: var(--admin-primary); border: 2px solid var(--admin-bg); }
+    .audit-time { font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; color: var(--admin-text-muted); margin-bottom: 4px; display: block; }
+    .audit-content { font-size: 0.9rem; color: var(--admin-text); }
+    .audit-action { font-weight: 700; color: var(--admin-primary); margin-right: 8px; }
 
-      /* Overview Stats */
-      .stats-container {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-        gap: 1.5rem;
-        margin-bottom: 2.5rem;
-      }
-      .stat-card {
-        background: var(--bg-card);
-        border: 1px solid var(--border);
-        border-radius: 20px;
-        padding: 1.75rem;
-        display: flex;
-        flex-direction: column;
-        gap: 8px;
-        position: relative;
-        overflow: hidden;
-      }
-      .stat-icon {
-        position: absolute;
-        right: -10px;
-        bottom: -10px;
-        font-size: 4rem;
-        opacity: 0.05;
-        pointer-events: none;
-      }
-      .stat-label {
-        font-size: 0.8rem;
-        font-weight: 700;
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
-        color: var(--text-muted);
-      }
-      .stat-value {
-        font-size: 2.5rem;
-        font-weight: 800;
-        color: var(--text-primary);
-        line-height: 1;
-      }
-      .stat-diff {
-        font-size: 0.75rem;
-        display: flex;
-        align-items: center;
-        gap: 4px;
-      }
-      .diff-up {
-        color: #22c55e;
-      }
+    .toast {
+      position: fixed; bottom: 2rem; right: 2rem;
+      background: #fff; color: #000;
+      padding: 1rem 2rem; border-radius: 12px; font-weight: 700;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+      transform: translateY(100px); opacity: 0; transition: all 0.3s cubic-bezier(0.17, 0.84, 0.44, 1);
+      z-index: 2000;
+    }
+    .toast.show { transform: translateY(0); opacity: 1; }
 
-      /* Tables & Cards */
-      .admin-card {
-        background: var(--bg-card);
-        border: 1px solid var(--border);
-        border-radius: 20px;
-        overflow: hidden;
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-      }
-      .admin-card-header {
-        padding: 1.5rem 2rem;
-        border-bottom: 1px solid var(--border);
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 1rem;
-      }
-      .admin-card-title {
-        font-size: 1.1rem;
-        font-weight: 800;
-      }
-      .admin-card-body {
-        padding: 0;
-      }
+    /* --- MODAL --- */
+    .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(8px); display: none; align-items: center; justify-content: center; z-index: 3000; padding: 1.5rem; }
+    .modal-overlay.visible { display: flex; }
+    .modal-card { background: var(--admin-card); border: 1px solid var(--admin-border); border-radius: 32px; width: 100%; max-width: 540px; padding: 3rem; }
+    .modal-header { margin-bottom: 2rem; }
+    .modal-header h3 { font-size: 1.5rem; font-weight: 800; letter-spacing: -0.02em; }
+  </style>
+</head>
+<body>
 
-      .admin-table {
-        width: 100%;
-        border-collapse: collapse;
-      }
-      .admin-table th {
-        background: var(--bg-sidebar);
-        text-align: left;
-        font-size: 0.75rem;
-        font-weight: 700;
-        color: var(--text-muted);
-        padding: 1rem 1.5rem;
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
-      }
-      .admin-table td {
-        padding: 1.25rem 1.5rem;
-        border-bottom: 1px solid var(--border);
-        font-size: 0.9rem;
-        vertical-align: middle;
-      }
-      .admin-table tr:hover {
-        background: rgba(255, 255, 255, 0.02);
-      }
+  <!-- --- AUTH SCREEN --- -->
+  <div id="adminAuth">
+    <div class="auth-card">
+      <div class="auth-header">
+        <h1>Vision <span>Admin</span></h1>
+        <p>Expert Portal & System Architecture</p>
+      </div>
+      <div class="field">
+        <label class="label">System Identity</label>
+        <input class="input" type="email" id="adminEmail" placeholder="admin@visionedu.online" autocomplete="username" />
+      </div>
+      <div class="field">
+        <label class="label">Access Protocol</label>
+        <input class="input" type="password" id="adminPass" placeholder="••••••••" autocomplete="current-password" />
+      </div>
+      <button class="btn-auth" id="loginBtn">Initialize Access Sequence</button>
+      <p id="adminErr" style="color: var(--admin-danger); font-size: 0.8rem; text-align: center; margin-top: 1rem; display: none;">Credential mismatch detected.</p>
+    </div>
+  </div>
 
-      /* Material Items */
-      .mat-group {
-        margin-bottom: 2rem;
-      }
-      .mat-header {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        margin-bottom: 1rem;
-        border-left: 4px solid var(--admin-primary);
-        padding-left: 1rem;
-      }
-      .mat-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-        gap: 1rem;
-      }
-      .mat-card {
-        background: var(--bg-card);
-        border: 1px solid var(--border);
-        border-radius: 16px;
-        padding: 1.25rem;
-        display: flex;
-        gap: 12px;
-        align-items: center;
-        transition: all 0.2s;
-      }
-      .mat-card:hover {
-        border-color: var(--admin-primary);
-        transform: translateY(-2px);
-      }
+  <!-- --- SYSTEM PORTAL --- -->
+  <div id="adminPortal">
+    <aside class="sidebar">
+      <div class="brand">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 21v-8.25M15.75 21v-8.25M8.25 21v-8.25M3 9l9-6 9 6m-1.5 12V10.332A4.839 4.839 0 0012 9a4.839 4.839 0 00-7.5 1.332V21" /></svg>
+        <span>Architect Core</span>
+      </div>
 
-      /* Buttons */
-      .act-btn {
-        padding: 8px 12px;
-        border-radius: 8px;
-        font-weight: 700;
-        font-size: 0.75rem;
-        cursor: pointer;
-        border: 1px solid transparent;
-        transition: all 0.2s;
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-      }
-      .act-primary {
-        background: var(--admin-primary);
-        color: #fff;
-      }
-      .act-danger {
-        background: rgba(239, 68, 68, 0.1);
-        border-color: rgba(239, 68, 68, 0.2);
-        color: var(--admin-danger);
-      }
-      .act-ghost {
-        background: var(--bg-input);
-        border-color: var(--border);
-        color: var(--text-secondary);
-      }
-
-      /* Audit Log */
-      .audit-list {
-        padding: 1rem;
-      }
-      .audit-item {
-        display: flex;
-        gap: 12px;
-        padding: 12px;
-        border-bottom: 1px solid var(--border);
-        font-size: 0.85rem;
-      }
-      .audit-dot {
-        width: 8px;
-        height: 8px;
-        border-radius: 50%;
-        margin-top: 6px;
-        flex-shrink: 0;
-      }
-      .audit-time {
-        font-family: var(--font-mono);
-        color: var(--text-muted);
-        width: 140px;
-        flex-shrink: 0;
-      }
-      .audit-action {
-        font-weight: 700;
-        color: var(--admin-primary);
-        width: 100px;
-        flex-shrink: 0;
-      }
-
-      /* Toast */
-      .admin-toast.show {
-        transform: translateY(0);
-        opacity: 1;
-      }
-
-      /* Modal */
-      .modal-overlay {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0, 0, 0, 0.7);
-        backdrop-filter: blur(4px);
-        display: none;
-        align-items: center;
-        justify-content: center;
-        z-index: 1000;
-      }
-      .modal-overlay.visible {
-        display: flex;
-      }
-      .modal-card {
-        background: var(--bg-card);
-        border: 1px solid var(--border-accent);
-        border-radius: 24px;
-        width: 100%;
-        max-width: 500px;
-        padding: 2.5rem;
-        position: relative;
-      }
-
-      @media (max-width: 1024px) {
-        .admin-sidebar {
-          width: 80px;
-          padding: 2rem 0.5rem;
-        }
-        .admin-nav-label,
-        .admin-nav-item span {
-          display: none;
-        }
-        .admin-nav-item {
-          justify-content: center;
-        }
-      }
-    </style>
-  </head>
-  <body>
-    <!--  AUTH SCREEN  -->
-    <div id="adminAuth">
-      <div class="secure-backdrop"></div>
-      <div class="admin-login-card">
-        <div class="secure-badge">Encrypted Access (SHA-256)</div>
-        <div class="admin-login-logo">
-          <h1>Vision <em>Admin</em></h1>
-          <p>Secure system portal for educational administrators.</p>
-        </div>
-        <div class="admin-field">
-          <label class="admin-label">Identity (Email)</label>
-          <input
-            class="admin-input"
-            type="email"
-            id="adminEmail"
-            placeholder="admin@visionedu.online"
-            autocomplete="username"
-          />
-        </div>
-        <div class="admin-field">
-          <label class="admin-label">Access Key</label>
-          <input
-            class="admin-input"
-            type="password"
-            id="adminPass"
-            placeholder=""
-            autocomplete="current-password"
-          />
-        </div>
-        <button class="admin-sign-btn" id="loginBtn">
-          Authorize Access <span style="font-size: 1.2rem">→</span>
+      <div class="nav-group">
+        <p class="nav-label">General</p>
+        <button class="nav-item active" onclick="navTo('overview', this)">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25h-2.25a2.25 2.25 0 01-2.25-2.25v-2.25z" /></svg>
+          <span>Dashboard</span>
         </button>
-        <p class="admin-err" id="adminErr">
-          Authentication failed. Check credentials.
-        </p>
+        <button class="nav-item" onclick="navTo('materials', this)">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18c-2.305 0-4.408.867-6 2.292m0-14.25v14.25" /></svg>
+          <span>Materials</span>
+        </button>
+      </div>
+
+      <div class="nav-group">
+        <p class="nav-label">Security & Access</p>
+        <button class="nav-item" onclick="navTo('users', this)">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a5.971 5.971 0 00-.941 3.197m0 0a5.995 5.995 0 005.058 2.772 5.995 5.995 0 005.058-2.772zM12 12.75a4.5 4.5 0 100-9 4.5 4.5 0 000 9z" /></svg>
+          <span>Learners</span>
+        </button>
+        <button class="nav-item" onclick="navTo('announce', this)">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M10.34 15.84c-.688-.06-1.386-.09-2.09-.09H7.5a4.5 4.5 0 110-9h.75c.704 0 1.402-.03 2.09-.09m0 9.18c.253.962.584 1.892.985 2.783.247.55.06 1.21-.463 1.511l-.657.38c-.551.318-1.26.117-1.527-.448a20.821 20.821 0 01-1.442-4.226m4.092-9.193a5.007 5.007 0 00-.13 5.41m0-5.41c.19-.64.456-1.259.791-1.848.24-.424.756-.547 1.144-.275l.81.57c.303.214.412.616.25.945a7.147 7.147 0 00-.671 2.45" /></svg>
+          <span>Broadcasts</span>
+        </button>
+      </div>
+
+      <div style="margin-top: auto;">
+        <button class="nav-item" style="color: var(--admin-danger);" onclick="handleLogout()">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15m3 0l3-3m0 0l-3-3m3 3H9" /></svg>
+          <span>End Session</span>
+        </button>
+      </div>
+    </aside>
+
+    <main class="main">
+      <div class="header-bar">
+        <div class="page-title">
+          <h2 id="pageTitleText">System Overview</h2>
+          <p id="pageSubText">Architect-level control & platform metrics</p>
+        </div>
+        <div class="security-status">
+          <div class="pulse"></div>
+          <span>Expert Encryption Active (256-bit)</span>
+        </div>
+      </div>
+
+      <!-- --- OVERVIEW --- -->
+      <section class="admin-section active" id="sec-overview">
+        <div class="stats-grid" id="statsGrid">
+          <!-- Rendered via JS -->
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1.8fr 1fr; gap: 2rem; align-items: start;">
+          <div class="card">
+            <div class="card-header"><span class="card-title">Audit Log Timeline</span></div>
+            <div class="card-body">
+              <div class="audit-timeline" id="auditList"></div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-header"><span class="card-title">Infrastructure Status</span></div>
+            <div class="card-body">
+              <div style="display: flex; flex-direction: column; gap: 1rem;">
+                <div style="display: flex; justify-content: space-between; font-size: 0.85rem; padding: 12px; background: rgba(255,255,255,0.02); border-radius: 12px; border: 1px solid var(--admin-border);">
+                  <span style="color: var(--admin-text-muted);">Database Integrity</span>
+                  <span style="color: var(--admin-success); font-weight: 700;">OPTIONAL-LOCAL</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; font-size: 0.85rem; padding: 12px; background: rgba(255,255,255,0.02); border-radius: 12px; border: 1px solid var(--admin-border);">
+                  <span style="color: var(--admin-text-muted);">Auth Protocol</span>
+                  <span style="color: var(--admin-success); font-weight: 700;">SHA-256 ENFORCED</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- --- MATERIALS --- -->
+      <section class="admin-section" id="sec-materials">
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">Expert-Curated Learning Materials</span>
+            <button class="btn btn-primary" onclick="openMatModal()">+ Register New Resource</button>
+          </div>
+          <div class="card-body" id="matDisplay"></div>
+        </div>
+      </section>
+
+      <!-- --- USERS --- -->
+      <section class="admin-section" id="sec-users">
+        <div class="card">
+          <div class="card-header"><span class="card-title">Architect New Account</span></div>
+          <div class="card-body">
+            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem;">
+              <div class="field"><label class="label">Legal Name</label><input class="input" id="newUserName" placeholder="Student Name" /></div>
+              <div class="field"><label class="label">System Email</label><input class="input" id="newUserEmail" placeholder="student@visionedu.online" /></div>
+              <div class="field"><label class="label">Secure Entry Key</label><input class="input" type="password" id="newUserPass" placeholder="••••••••" /></div>
+            </div>
+            <div style="display: flex; align-items: flex-end; gap: 1.5rem;">
+              <div class="field" style="flex: 1; margin-bottom: 0;">
+                <label class="label">Access Authorization Level</label>
+                <select class="input" id="newUserRole">
+                  <option value="student">Student (Standard Access)</option>
+                  <option value="pro">PRO (Advanced Engineering)</option>
+                  <option value="admin">Admin (Full System Protocol)</option>
+                </select>
+              </div>
+              <button class="btn btn-primary" onclick="createUser()" style="height: 50px; padding: 0 40px;">Authorize Account</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">User Architecture Directory</span>
+            <input type="text" placeholder="Filter identities..." id="userSearch" oninput="renderUsers()" class="input" style="width: 280px; padding: 10px 16px; font-size: 0.85rem;" />
+          </div>
+          <div class="card-body" style="padding: 0;">
+            <table class="table">
+              <thead><tr><th>Identity</th><th>System Access</th><th>Authorization</th><th style="text-align: right;">Protocol</th></tr></thead>
+              <tbody id="allUsersTbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- --- BROADCASTS --- -->
+      <section class="admin-section" id="sec-announce">
+        <div class="card">
+          <div class="card-header"><span class="card-title">Global Frequency Broadcast</span></div>
+          <div class="card-body">
+            <div class="field"><label class="label">Broadcast Title</label><input class="input" id="annTitle" placeholder="System Alert Title" /></div>
+            <div class="field"><label class="label">Message Content</label><textarea class="input" id="annMsg" rows="6" style="resize: none;"></textarea></div>
+            <button class="btn btn-primary" onclick="postAnn()" style="padding: 14px 40px;">Initialize Broadcast Sequence</button>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- --- MODALS --- -->
+  <div class="modal-overlay" id="matModal">
+    <div class="modal-card">
+      <div class="modal-header"><h3>Register Educational Capital</h3><p style="color: var(--admin-text-muted); font-size: 0.85rem; margin-top: 4px;">Link new Syllabus-Aligned resources to the system core.</p></div>
+      <div class="field"><label class="label">Domain (Subject)</label><select class="input" id="matSubject"><script>document.write(SUBJECTS_META.map(s => `<option value="${s.id}">${s.name}</option>`).join(''));</script></select></div>
+      <div class="field"><label class="label">Resource Designation</label><input class="input" id="matTitle" placeholder="e.g. 2026 Core Maths Schema" /></div>
+      <div class="field"><label class="label">Data Protocol (Type)</label><select class="input" id="matType"><option value="PDF">PDF Schema</option><option value="VIDEO">Loom/Video Session</option><option value="DOC">Structured Document</option><option value="SLIDE">Lecture Deck</option><option value="LINK">System Node (Link)</option></select></div>
+      <div class="field"><label class="label">Resource Data Source (URL)</label><input class="input" id="matUrl" placeholder="https://..." /></div>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 2.5rem;">
+        <button class="btn" style="background: rgba(255,255,255,0.05); color: #fff;" onclick="closeMatModal()">Abort Sequence</button>
+        <button class="btn btn-primary" onclick="saveNewMaterial()">Commit to Core</button>
       </div>
     </div>
+  </div>
 
-    <!--  SYSTEM PORTAL  -->
-    <div id="adminPortal">
-      <header class="admin-topbar">
-        <div class="admin-topbar-brand">
-          <span style="font-size: 1.5rem"></span> System Core
-        </div>
-        <div class="admin-topbar-right">
-          <div class="sec-session-pill">
-            <span class="pulse"></span> Secure Session Active
-          </div>
-          <button onclick="toggleTheme()" class="theme-toggle-btn"></button>
-          <button class="admin-logout-btn" id="logoutBtn">End Session</button>
-        </div>
-      </header>
+  <div class="toast" id="toast"></div>
 
-      <div class="admin-body">
-        <nav class="admin-sidebar">
-          <div class="admin-nav-group">
-            <p class="admin-nav-label">System</p>
-            <button
-              class="admin-nav-item active"
-              onclick="navTo('overview', this)"
-            >
-              <span>Dashboard</span>
-            </button>
-            <button class="admin-nav-item" onclick="navTo('materials', this)">
-              <span>Materials</span>
-            </button>
-          </div>
-          <div class="admin-nav-group">
-            <p class="admin-nav-label">Management</p>
-            <button class="admin-nav-item" onclick="navTo('users', this)">
-              <span>Learners</span>
-            </button>
-            <button class="admin-nav-item" onclick="navTo('announce', this)">
-              <span>Broadcasts</span>
-            </button>
-          </div>
-        </nav>
+  <script src="auth.js"></script>
+  <script>
+    const ADMIN_SESSION_KEY = "vision_admin_at";
 
-        <main class="admin-main">
-          <!--  OVERVIEW  -->
-          <section class="admin-section active" id="sec-overview">
-            <div class="admin-page-header">
-              <h2 style="font-size: 1.5rem; font-weight: 800">
-                System Health Overview
-              </h2>
-              <p style="color: var(--text-muted); font-size: 0.85rem">
-                Platform snapshot as of <span id="timeRef"></span>
-              </p>
-            </div>
+    function logAction(action) {
+      const logs = JSON.parse(localStorage.getItem("vision_audit_log") || "[]");
+      logs.unshift({ action, time: new Date().toISOString() });
+      localStorage.setItem("vision_audit_log", JSON.stringify(logs.slice(0, 50)));
+      if (document.getElementById("sec-overview").classList.contains("active")) renderAudit();
+    }
 
-            <div class="stats-container" id="statsGrid"></div>
+    async function adminInit() {
+      const users = getUsers();
+      const adminEmail = "admin@visionedu.online";
+      const admin = users.find(u => u.email === adminEmail);
+      const expectedHash = await sha256("VisionAdmin2026!");
 
-            <div
-              style="
-                display: grid;
-                grid-template-columns: 1.8fr 1fr;
-                gap: 1.5rem;
-              "
-            >
-              <div class="admin-card">
-                <div class="admin-card-header">
-                  <span class="admin-card-title">Recent Activity Log</span>
-                </div>
-                <div class="admin-card-body">
-                  <div class="audit-list" id="auditList"></div>
-                </div>
-              </div>
-              <div class="admin-card">
-                <div class="admin-card-header">
-                  <span class="admin-card-title">Security Status</span>
-                </div>
-                <div class="admin-card-body" style="padding: 1.5rem">
-                  <div style="display: flex; flex-direction: column; gap: 12px">
-                    <div
-                      style="
-                        background: var(--bg-sidebar);
-                        border: 1px solid var(--border);
-                        border-radius: 12px;
-                        padding: 12px;
-                        display: flex;
-                        justify-content: space-between;
-                        align-items: center;
-                      "
-                    >
-                      <span style="font-size: 0.8rem; font-weight: 700"
-                        >Password Hashing</span
-                      >
-                      <span
-                        style="
-                          font-size: 0.7rem;
-                          background: #22c55e22;
-                          color: #22c55e;
-                          padding: 2px 8px;
-                          border-radius: 4px;
-                          font-weight: 800;
-                        "
-                        >SHA-256</span
-                      >
-                    </div>
-                    <div
-                      style="
-                        background: var(--bg-sidebar);
-                        border: 1px solid var(--border);
-                        border-radius: 12px;
-                        padding: 12px;
-                        display: flex;
-                        justify-content: space-between;
-                        align-items: center;
-                      "
-                    >
-                      <span style="font-size: 0.8rem; font-weight: 700"
-                        >Session Check</span
-                      >
-                      <span
-                        style="
-                          font-size: 0.7rem;
-                          background: #22c55e22;
-                          color: #22c55e;
-                          padding: 2px 8px;
-                          border-radius: 4px;
-                          font-weight: 800;
-                        "
-                        >PERFORMANCE</span
-                      >
-                    </div>
-                    <div
-                      style="
-                        background: var(--bg-sidebar);
-                        border: 1px solid var(--border);
-                        border-radius: 12px;
-                        padding: 12px;
-                        display: flex;
-                        justify-content: space-between;
-                        align-items: center;
-                      "
-                    >
-                      <span style="font-size: 0.8rem; font-weight: 700"
-                        >Admin Role</span
-                      >
-                      <span
-                        style="
-                          font-size: 0.7rem;
-                          background: #22c55e22;
-                          color: #22c55e;
-                          padding: 2px 8px;
-                          border-radius: 4px;
-                          font-weight: 800;
-                        "
-                        >ENFORCED</span
-                      >
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </section>
-
-          <!--  MATERIALS  -->
-          <section class="admin-section" id="sec-materials">
-            <div class="admin-page-header">
-              <h2 style="font-size: 1.5rem; font-weight: 800">
-                Manage Learning Materials
-              </h2>
-              <p style="color: var(--text-muted); font-size: 0.85rem">
-                Upload and manage Google Drive links for all subjects.
-              </p>
-            </div>
-
-            <button
-              class="act-btn act-primary"
-              onclick="openMatModal()"
-              style="padding: 12px 20px; font-size: 0.9rem; margin-bottom: 2rem"
-            >
-              + New Material Entry
-            </button>
-
-            <div id="matDisplay"></div>
-          </section>
-
-          <!--  USERS & BROADCASTS  -->
-          <section class="admin-section" id="sec-users">
-            <div class="admin-page-header">
-              <h2 style="font-size: 1.5rem; font-weight: 800">
-                User Directory & Roles
-              </h2>
-              <p style="color: var(--text-muted); font-size: 0.85rem">
-                Create new accounts and manage access roles (Student, PRO,
-                Admin).
-              </p>
-            </div>
-
-            <div class="admin-card" style="margin-bottom: 2rem">
-              <div class="admin-card-header">
-                <span class="admin-card-title">Create New Account</span>
-              </div>
-              <div class="admin-card-body" style="padding: 2rem">
-                <div
-                  style="
-                    display: grid;
-                    grid-template-columns: 1fr 1fr 1fr;
-                    gap: 15px;
-                  "
-                >
-                  <div class="admin-field">
-                    <label class="admin-label">Full Name</label>
-                    <input
-                      class="admin-input"
-                      id="newUserName"
-                      placeholder="Full Name"
-                    />
-                  </div>
-                  <div class="admin-field">
-                    <label class="admin-label">Email Address</label>
-                    <input
-                      class="admin-input"
-                      id="newUserEmail"
-                      placeholder="email@visionedu.online"
-                    />
-                  </div>
-                  <div class="admin-field">
-                    <label class="admin-label">Initial Password</label>
-                    <input
-                      class="admin-input"
-                      type="password"
-                      id="newUserPass"
-                      placeholder=""
-                    />
-                  </div>
-                </div>
-                <div
-                  style="
-                    display: flex;
-                    align-items: flex-end;
-                    gap: 15px;
-                    margin-top: 10px;
-                  "
-                >
-                  <div class="admin-field" style="margin-bottom: 0; flex: 1">
-                    <label class="admin-label">Assign Role</label>
-                    <select class="admin-input" id="newUserRole">
-                      <option value="student">Student (Standard)</option>
-                      <option value="pro">PRO (Premium Access)</option>
-                      <option value="admin">Admin (System Control)</option>
-                    </select>
-                  </div>
-                  <button
-                    class="act-btn act-primary"
-                    onclick="createUser()"
-                    style="height: 48px; padding: 0 30px"
-                  >
-                    Create Account
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            <div class="admin-card">
-              <div class="admin-card-header">
-                <span class="admin-card-title">All Registered Users</span>
-                <input
-                  type="text"
-                  placeholder="Search learners..."
-                  id="userSearch"
-                  oninput="renderUsers()"
-                  style="
-                    background: var(--bg-input);
-                    border: 1px solid var(--border);
-                    padding: 8px 15px;
-                    border-radius: 10px;
-                    color: var(--text-primary);
-                    font-size: 0.85rem;
-                    width: 250px;
-                  "
-                />
-              </div>
-              <div class="admin-card-body" style="padding: 0; overflow-x: auto">
-                <table class="admin-table">
-                  <thead>
-                    <tr>
-                      <th>Learner</th>
-                      <th>Email</th>
-                      <th>Role Access</th>
-                      <th>Action</th>
-                    </tr>
-                  </thead>
-                  <tbody id="allUsersTbody"></tbody>
-                </table>
-              </div>
-            </div>
-          </section>
-
-          <section class="admin-section" id="sec-announce">
-            <div class="admin-page-header">
-              <h2 style="font-size: 1.5rem; font-weight: 800">
-                Broadcast Center
-              </h2>
-            </div>
-            <div class="admin-card">
-              <div class="admin-card-header">
-                <span class="admin-card-title">Send New Message</span>
-              </div>
-              <div class="admin-card-body" style="padding: 2rem">
-                <div class="admin-field">
-                  <label class="admin-label">Announcement Title</label>
-                  <input
-                    class="admin-input"
-                    id="annTitle"
-                    placeholder="e.g. Physics Formula Sheet Updated"
-                  />
-                </div>
-                <div class="admin-field">
-                  <label class="admin-label">Message Content</label>
-                  <textarea
-                    class="admin-input"
-                    id="annMsg"
-                    rows="4"
-                    style="resize: none"
-                  ></textarea>
-                </div>
-                <button
-                  class="act-btn act-primary"
-                  onclick="postAnn()"
-                  style="padding: 12px 24px"
-                >
-                  Broadcast Now
-                </button>
-              </div>
-            </div>
-          </section>
-        </main>
-      </div>
-    </div>
-
-    <div class="admin-toast" id="toast"></div>
-
-    <!--  MODAL: NEW MATERIAL  -->
-    <div class="modal-overlay" id="matModal">
-      <div class="modal-card">
-        <div
-          style="
-            font-size: 1.25rem;
-            font-weight: 800;
-            margin-bottom: 1.5rem;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-          "
-        >
-          <span></span> Add Learning Material
-        </div>
-        <div class="admin-field">
-          <label class="admin-label">Subject</label>
-          <select class="admin-input" id="matSubject">
-            <script>
-              document.write(
-                SUBJECTS_META.map(
-                  (s) => `<option value="${s.id}">${s.icon} ${s.name}</option>`,
-                ).join(""),
-              );
-            </script>
-          </select>
-        </div>
-        <div class="admin-field">
-          <label class="admin-label">Title / Description</label>
-          <input
-            class="admin-input"
-            id="matTitle"
-            placeholder="e.g. 2026 Core Maths Revision Guide"
-          />
-        </div>
-        <div class="admin-field">
-          <label class="admin-label">Material Type</label>
-          <select class="admin-input" id="matType">
-            <option value="PDF">PDF Document</option>
-            <option value="VIDEO">Video Lesson</option>
-            <option value="DOC">Word/Doc</option>
-            <option value="SLIDE">Presentation</option>
-            <option value="LINK">External Link</option>
-          </select>
-        </div>
-        <div class="admin-field">
-          <label class="admin-label">Google Drive / Resource URL</label>
-          <input
-            class="admin-input"
-            id="matUrl"
-            placeholder="https://drive.google.com/..."
-          />
-        </div>
-        <div
-          style="
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-            margin-top: 2rem;
-          "
-        >
-          <button class="act-btn act-ghost" onclick="closeMatModal()">
-            Cancel
-          </button>
-          <button
-            class="act-btn act-primary"
-            onclick="saveNewMaterial()"
-            style="padding: 12px"
-          >
-            Save Entry
-          </button>
-        </div>
-      </div>
-    </div>
-
-    <script>
-      //  SECURITY ENGINE
-      const ADMIN_SESSION_KEY = "vision_admin_at";
-
-      function logAction(action) {
-        const logs = JSON.parse(
-          localStorage.getItem("vision_audit_log") || "[]",
-        );
-        logs.unshift({ action, time: new Date().toISOString() });
-        localStorage.setItem(
-          "vision_audit_log",
-          JSON.stringify(logs.slice(0, 50)),
-        );
-        if (
-          document.getElementById("sec-overview").classList.contains("active")
-        )
-          renderAudit();
-      }
-
-      //  AUTH
-      async function adminInit() {
-        const users = getUsers();
-        const adminEmail = "admin@visionedu.online";
-        const admin = users.find((u) => u.email === adminEmail);
-        const expectedHash = await sha256("VisionAdmin2026!");
-
-        if (!admin) {
-          users.push({
-            name: "System Admin",
-            email: adminEmail,
-            hash: expectedHash,
-            role: "admin",
-            createdAt: Date.now(),
-            provider: "email",
-          });
-          saveUsers(users);
-        } else if (admin.hash.length < 60) {
-          // Old hash detection
-          admin.hash = expectedHash;
-          admin.role = "admin";
-          saveUsers(users);
-        }
-
-        const session = sessionStorage.getItem(ADMIN_SESSION_KEY);
-        if (session) showDash();
-      }
-
-      document.getElementById("loginBtn").onclick = async () => {
-        const email = document
-          .getElementById("adminEmail")
-          .value.trim()
-          .toLowerCase();
-        const pass = document.getElementById("adminPass").value;
-        const hash = await sha256(pass);
-        const users = getUsers();
-        const user = users.find(
-          (u) => u.email === email && u.hash === hash && u.role === "admin",
-        );
-
-        if (user) {
-          sessionStorage.setItem(ADMIN_SESSION_KEY, Date.now());
-          logAction("LOGON_SUCCESS");
-          showDash();
-        } else {
-          document.getElementById("adminErr").style.display = "block";
-          logAction("LOGON_FAILURE");
-        }
-      };
-
-      document.getElementById("logoutBtn").onclick = () => {
-        sessionStorage.removeItem(ADMIN_SESSION_KEY);
-        location.reload();
-      };
-
-      function showDash() {
-        document.getElementById("adminAuth").style.display = "none";
-        document.getElementById("adminPortal").style.display = "flex";
-        document.getElementById("adminPortal").classList.add("visible");
-        renderStats();
-        renderAudit();
-      }
-
-      //  NAVIGATION
-      function navTo(secId, btn) {
-        document
-          .querySelectorAll(".admin-section")
-          .forEach((s) => s.classList.remove("active"));
-        document.getElementById("sec-" + secId).classList.add("active");
-        document
-          .querySelectorAll(".admin-nav-item")
-          .forEach((b) => b.classList.remove("active"));
-        btn.classList.add("active");
-        if (secId === "materials") renderMats();
-        if (secId === "users") renderUsers();
-      }
-
-      //  CONTENT RENDERING
-      function renderStats() {
-        const users = getUsers();
-        const mats = getMaterials();
-        const grid = document.getElementById("statsGrid");
-
-        const items = [
-          { l: "Registered Learners", v: users.length, i: "" },
-          { l: "Study Materials", v: mats.length, i: "" },
-          { l: "Security Score", v: "High", i: "" },
-          { l: "Active Modules", v: 8, i: "" },
-        ];
-
-        grid.innerHTML = items
-          .map(
-            (it) => `
-      <div class="stat-card">
-        <span class="stat-icon">${it.i}</span>
-        <span class="stat-label">${it.l}</span>
-        <span class="stat-value">${it.v}</span>
-      </div>
-    `,
-          )
-          .join("");
-        document.getElementById("timeRef").innerText =
-          new Date().toLocaleString();
-      }
-
-      function renderAudit() {
-        const logs = JSON.parse(
-          localStorage.getItem("vision_audit_log") || "[]",
-        );
-        const list = document.getElementById("auditList");
-        list.innerHTML = logs
-          .map(
-            (l) => `
-      <div class="audit-item">
-        <span class="audit-dot" style="background:${l.action.includes("FAIL") ? "red" : l.action.includes("DEL") ? "orange" : "var(--admin-primary)"}"></span>
-        <span class="audit-time">${new Date(l.time).toLocaleTimeString()}</span>
-        <span class="audit-action">${l.action}</span>
-        <span style="color:var(--text-secondary)">System log event generated</span>
-      </div>
-    `,
-          )
-          .join("");
-      }
-
-      function renderMats() {
-        const mats = getMaterials();
-        const container = document.getElementById("matDisplay");
-
-        const subjects = {};
-        SUBJECTS_META.forEach((s) => (subjects[s.id] = []));
-        mats.forEach((m) => {
-          if (subjects[m.subject]) subjects[m.subject].push(m);
-        });
-
-        container.innerHTML = SUBJECTS_META.map((s) => {
-          const subjMats = subjects[s.id];
-          if (!subjMats.length) return "";
-          return `
-        <div class="mat-group">
-          <div class="mat-header">
-            <span>${s.icon}</span>
-            <span style="font-weight:800;">${s.name}</span>
-          </div>
-          <div class="mat-grid">
-            ${subjMats
-              .map(
-                (m) => `
-              <div class="mat-card">
-                <span style="font-size:1.5rem;"></span>
-                <div style="flex:1; overflow:hidden;">
-                  <div style="font-weight:700; white-space:nowrap; text-overflow:ellipsis; overflow:hidden;">${m.title}</div>
-                  <div style="font-size:0.7rem; color:var(--text-muted);">${m.type} · ${m.uploadedAt || "New"}</div>
-                </div>
-                <button class="act-btn act-danger" onclick="deleteMat('${m.id}')">Delete</button>
-              </div>
-            `,
-              )
-              .join("")}
-          </div>
-        </div>
-      `;
-        }).join("");
-      }
-
-      function openMatModal() {
-        document.getElementById("matModal").classList.add("visible");
-      }
-      function closeMatModal() {
-        document.getElementById("matModal").classList.remove("visible");
-      }
-
-      function saveNewMaterial() {
-        const sub = document.getElementById("matSubject").value;
-        const title = document.getElementById("matTitle").value.trim();
-        const type = document.getElementById("matType").value;
-        const url = document.getElementById("matUrl").value.trim();
-
-        if (!title || !url) {
-          showToast("Please fill all fields");
-          return;
-        }
-
-        const entry = {
-          id: genMatId(),
-          subject: sub,
-          title,
-          type,
-          url,
-          uploadedAt: new Date().toISOString().split("T")[0],
-          uploadedBy: "admin",
-        };
-
-        upsertMaterial(entry);
-        logAction("MATERIAL_ADDED: " + title);
-        closeMatModal();
-        renderMats();
-        showToast("New material published!");
-
-        // Clear inputs
-        document.getElementById("matTitle").value = "";
-        document.getElementById("matUrl").value = "";
-      }
-
-      function postAnn() {
-        const title = document.getElementById("annTitle").value.trim();
-        const body = document.getElementById("annMsg").value.trim();
-        if (!title || !body) {
-          showToast("Broadcast requires title and body");
-          return;
-        }
-
-        const anns = JSON.parse(
-          localStorage.getItem("vision_announcements") || "[]",
-        );
-        anns.unshift({ title, body, date: new Date().toISOString() });
-        localStorage.setItem(
-          "vision_announcements",
-          JSON.stringify(anns.slice(0, 5)),
-        );
-
-        logAction("BROADCAST_SENT: " + title);
-        showToast("Message broadcasted to all students!");
-        document.getElementById("annTitle").value = "";
-        document.getElementById("annMsg").value = "";
-      }
-
-      function deleteMat(id) {
-        if (!confirm("Permanently remove this material?")) return;
-        deleteMaterial(id);
-        logAction("MATERIAL_DEL");
-        renderMats();
-        showToast("Material removed");
-      }
-
-      async function createUser() {
-        const name = document.getElementById("newUserName").value.trim();
-        const email = document
-          .getElementById("newUserEmail")
-          .value.trim()
-          .toLowerCase();
-        const pass = document.getElementById("newUserPass").value;
-        const role = document.getElementById("newUserRole").value;
-
-        if (!name || !email || !pass) {
-          showToast("All fields required", "error");
-          return;
-        }
-        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-          showToast("Invalid email format", "error");
-          return;
-        }
-        if (pass.length < 6) {
-          showToast("Password must be at least 6 chars", "error");
-          return;
-        }
-
-        const users = getUsers();
-        if (users.some((u) => u.email === email)) {
-          showToast("Email already in use", "error");
-          return;
-        }
-
-        const hash = await sha256(pass);
-        users.push({
-          name,
-          email,
-          hash,
-          role,
-          provider: "email",
-          createdAt: Date.now(),
-          status: "active",
-        });
+      if (!admin) {
+        users.push({ name: "System Admin", email: adminEmail, hash: expectedHash, role: "admin", createdAt: Date.now(), provider: "email" });
         saveUsers(users);
-
-        // Clear form
-        ["newUserName", "newUserEmail", "newUserPass"].forEach(
-          (id) => (document.getElementById(id).value = ""),
-        );
-        logAction("USER_CREATED: " + email);
-        renderUsers();
-        showToast("Account created: " + name);
+      } else if (admin.hash.length < 60) {
+        admin.hash = expectedHash;
+        admin.role = "admin";
+        saveUsers(users);
       }
 
-      function renderUsers() {
-        const users = getUsers();
-        const q = document.getElementById("userSearch").value.toLowerCase();
-        const tbody = document.getElementById("allUsersTbody");
+      if (sessionStorage.getItem(ADMIN_SESSION_KEY)) showDash();
+    }
 
-        const filtered = users.filter(
-          (u) =>
-            u.name.toLowerCase().includes(q) ||
-            u.email.toLowerCase().includes(q),
-        );
+    document.getElementById("loginBtn").onclick = async () => {
+      const email = document.getElementById("adminEmail").value.trim().toLowerCase();
+      const pass = document.getElementById("adminPass").value;
+      const hash = await sha256(pass);
+      const users = getUsers();
+      const user = users.find(u => u.email === email && u.hash === hash && u.role === "admin");
 
-        tbody.innerHTML = filtered
-          .map(
-            (u) => `
-      <tr>
-        <td>
-          <div style="display:flex; align-items:center; gap:10px;">
-            <div style="width:32px; height:32px; background:var(--admin-primary); border-radius:50%; display:flex; align-items:center; justify-content:center; color:#fff; font-weight:800; font-size:0.75rem;">${u.name[0].toUpperCase()}</div>
-            <div style="line-height:1.2;">
-              <div style="font-weight:700;">${u.name}</div>
-              <div style="font-size:0.65rem; color:var(--text-muted);">${new Date(u.createdAt).toLocaleDateString()}</div>
+      if (user) {
+        sessionStorage.setItem(ADMIN_SESSION_KEY, Date.now());
+        logAction("AUTH_SUCCESS");
+        showDash();
+      } else {
+        document.getElementById("adminErr").style.display = "block";
+        logAction("AUTH_FAILURE");
+      }
+    };
+
+    function handleLogout() {
+      sessionStorage.removeItem(ADMIN_SESSION_KEY);
+      location.reload();
+    }
+
+    function showDash() {
+      document.getElementById("adminAuth").style.display = "none";
+      const portal = document.getElementById("adminPortal");
+      portal.style.display = "grid";
+      portal.classList.add("visible");
+      renderStats();
+      renderAudit();
+    }
+
+    function navTo(secId, btn) {
+      document.querySelectorAll(".admin-section").forEach(s => s.classList.remove("active"));
+      document.getElementById("sec-" + secId).classList.add("active");
+      document.querySelectorAll(".nav-item").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+
+      const titles = { overview: "System Architecture", materials: "Educational Assets", users: "Identity Protocol", announce: "Broadcast Frequency" };
+      const subs = { overview: "Architect-level control & platform metrics", materials: "Manage expert-curated learning nodes", users: "Authorize access levels & system identities", announce: "Initialize global system broadcast" };
+      
+      document.getElementById("pageTitleText").innerText = titles[secId] || "Vision Core";
+      document.getElementById("pageSubText").innerText = subs[secId] || "Platform Management";
+
+      if (secId === "materials") renderMats();
+      if (secId === "users") renderUsers();
+    }
+
+    function renderStats() {
+      const users = getUsers();
+      const mats = getMaterials();
+      const grid = document.getElementById("statsGrid");
+      const items = [
+        { label: "Authorized Learners", val: users.length },
+        { label: "Educational Assets", val: mats.length },
+        { label: "Network Reliability", val: "100.0%" },
+        { label: "System Nodes", val: "Expert" }
+      ];
+      grid.innerHTML = items.map(it => `<div class="stat-card"><span class="stat-lbl">${it.label}</span><span class="stat-val">${it.val}</span></div>`).join("");
+    }
+
+    function renderAudit() {
+      const logs = JSON.parse(localStorage.getItem("vision_audit_log") || "[]");
+      const list = document.getElementById("auditList");
+      list.innerHTML = logs.map(l => `
+        <div class="audit-item">
+          <div class="audit-dot" style="background: ${l.action.includes('FAIL') ? 'var(--admin-danger)' : 'var(--admin-primary)'}"></div>
+          <span class="audit-time">${new Date(l.time).toLocaleTimeString()} · SEC-LOG-001</span>
+          <div class="audit-content"><span class="audit-action">${l.action}</span> Initialized by System Core</div>
+        </div>
+      `).join("");
+    }
+
+    function renderMats() {
+      const mats = getMaterials();
+      const container = document.getElementById("matDisplay");
+      const subjects = {};
+      SUBJECTS_META.forEach(s => subjects[s.id] = []);
+      mats.forEach(m => { if (subjects[m.subject]) subjects[m.subject].push(m); });
+
+      container.innerHTML = SUBJECTS_META.map(s => {
+        const subjMats = subjects[s.id];
+        if (!subjMats.length) return "";
+        return `
+          <div style="margin-bottom: 2rem;">
+            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 1rem; padding-bottom: 8px; border-bottom: 1px solid var(--admin-border);">
+              <span style="font-weight: 800; font-size: 0.95rem; color: var(--admin-primary);">${s.name}</span>
+              <span style="font-size: 0.7rem; background: rgba(99,102,241,0.1); padding: 2px 8px; border-radius: 4px;">${subjMats.length} Assets</span>
+            </div>
+            <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1rem;">
+              ${subjMats.map(m => `
+                <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--admin-border); padding: 1.25rem; border-radius: 16px; display: flex; align-items: center; gap: 12px;">
+                  <div style="flex: 1; min-width: 0;">
+                    <div style="font-weight: 700; white-space: nowrap; text-overflow: ellipsis; overflow: hidden; font-size: 0.9rem;">${m.title}</div>
+                    <div style="font-size: 0.7rem; color: var(--admin-text-muted); margin-top: 4px;">${m.type} · Resource Node</div>
+                  </div>
+                  <button class="btn btn-danger" style="padding: 6px 12px; font-size: 0.7rem;" onclick="deleteMat('${m.id}')">Purge</button>
+                </div>
+              `).join("")}
             </div>
           </div>
-        </td>
-        <td style="font-family:var(--font-mono); font-size:0.8rem;">${u.email}</td>
-        <td>
-          <select style="background:var(--bg-input); border:1px solid var(--border); color:var(--text-primary); padding:6px 10px; border-radius:8px; font-size:0.75rem; font-weight:700; outline:none; cursor:pointer;" onchange="updateRole('${u.email}', this.value)">
-            <option value="student" ${u.role === "student" ? "selected" : ""}>STUDENT</option>
-            <option value="pro" ${u.role === "pro" ? "selected" : ""}>PRO</option>
-            <option value="admin" ${u.role === "admin" ? "selected" : ""}>ADMIN</option>
-          </select>
-        </td>
-        <td style="text-align:right;">
-          <button class="act-btn act-danger" onclick="deleteUserAccount('${u.email}')" ${u.email === "admin@visionedu.online" ? "disabled" : ""} title="Delete Account"></button>
-        </td>
-      </tr>
-    `,
-          )
-          .join("");
-      }
+        `;
+      }).join("");
+    }
 
-      function updateRole(email, newRole) {
-        const users = getUsers();
-        const idx = users.findIndex((u) => u.email === email);
-        if (idx !== -1) {
-          const oldRole = users[idx].role;
-          users[idx].role = newRole;
-          saveUsers(users);
-          logAction(`ROLE_CHANGE: ${email} (${oldRole} -> ${newRole})`);
-          showToast(`Role updated: ${newRole.toUpperCase()}`);
+    function openMatModal() { document.getElementById("matModal").classList.add("visible"); }
+    function closeMatModal() { document.getElementById("matModal").classList.remove("visible"); }
 
-          // Update session if editing self
-          const session = getSession();
-          if (session && session.email === email) {
-            session.role = newRole;
-            setSession(session);
-          }
-        }
-      }
+    function saveNewMaterial() {
+      const sub = document.getElementById("matSubject").value;
+      const title = document.getElementById("matTitle").value.trim();
+      const type = document.getElementById("matType").value;
+      const url = document.getElementById("matUrl").value.trim();
+      if (!title || !url) return showToast("Protocol error: Required fields missing");
 
-      function deleteUserAccount(email) {
-        if (email === "admin@visionedu.online") return;
-        if (!confirm("Permanent deletion of account " + email + "?")) return;
+      const entry = { id: Date.now().toString(36), subject: sub, title, type, url, uploadedAt: new Date().toISOString().split("T")[0], uploadedBy: "admin" };
+      upsertMaterial(entry);
+      logAction("ASSET_REGISTERED: " + title);
+      closeMatModal(); renderMats(); showToast("Asset committed to core database");
+      ["matTitle", "matUrl"].forEach(id => document.getElementById(id).value = "");
+    }
 
-        const users = getUsers();
-        const filtered = users.filter((u) => u.email !== email);
-        saveUsers(filtered);
-        logAction("USER_DELETED: " + email);
-        renderUsers();
-        showToast("Account deleted");
-      }
+    function deleteMat(id) {
+      if (!confirm("Confirm infrastructure purge of this asset?")) return;
+      deleteMaterial(id); logAction("ASSET_PURGED"); renderMats(); showToast("Asset purged from memory");
+    }
 
-      function showToast(msg) {
-        const t = document.getElementById("toast");
-        t.innerText = " " + msg;
-        t.classList.add("show");
-        setTimeout(() => t.classList.remove("show"), 3000);
-      }
+    function postAnn() {
+      const title = document.getElementById("annTitle").value.trim();
+      const body = document.getElementById("annMsg").value.trim();
+      if (!title || !body) return showToast("Protocol error: Null title/body broadcast");
+      const anns = JSON.parse(localStorage.getItem("vision_announcements") || "[]");
+      anns.unshift({ title, body, date: new Date().toISOString() });
+      localStorage.setItem("vision_announcements", JSON.stringify(anns.slice(0, 5)));
+      logAction("BROADCAST_INITIALIZED: " + title);
+      showToast("Broadcast sequence successful at 100% frequency");
+      ["annTitle", "annMsg"].forEach(id => document.getElementById(id).value = "");
+    }
 
-      adminInit();
-    </script>
-  </body>
+    async function createUser() {
+      const name = document.getElementById("newUserName").value.trim();
+      const email = document.getElementById("newUserEmail").value.trim().toLowerCase();
+      const pass = document.getElementById("newUserPass").value;
+      const role = document.getElementById("newUserRole").value;
+
+      if (!name || !email || !pass) return showToast("Protocol error: Missing identity parameters");
+      if (pass.length < 6) return showToast("Insecure key: Min 6 character protocol required");
+
+      const users = getUsers();
+      if (users.some(u => u.email === email)) return showToast("Identity conflict: Email registry exists");
+
+      const hash = await sha256(pass);
+      users.push({ name, email, hash, role, provider: "email", createdAt: Date.now(), status: "active" });
+      saveUsers(users);
+      logAction("IDENTITY_AUTHORIZED: " + email);
+      renderUsers(); showToast("Identity authorized & hashed");
+      ["newUserName", "newUserEmail", "newUserPass"].forEach(id => document.getElementById(id).value = "");
+    }
+
+    function renderUsers() {
+      const users = getUsers();
+      const q = document.getElementById("userSearch").value.toLowerCase();
+      const tbody = document.getElementById("allUsersTbody");
+      const filtered = users.filter(u => u.name.toLowerCase().includes(q) || u.email.toLowerCase().includes(q));
+
+      tbody.innerHTML = filtered.map(u => `
+        <tr>
+          <td><div style="font-weight: 700;">${u.name}</div><div style="font-size: 0.7rem; color: var(--admin-text-muted);">${new Date(u.createdAt).toLocaleDateString()}</div></td>
+          <td style="font-family: 'JetBrains Mono'; font-size: 0.8rem;">${u.email}</td>
+          <td><select class="input" style="padding: 6px 12px; font-size: 0.75rem; width: auto;" onchange="updateRole('${u.email}', this.value)"><option value="student" ${u.role === 'student' ? 'selected' : ''}>STUDENT</option><option value="pro" ${u.role === 'pro' ? 'selected' : ''}>ARCHITECT-PRO</option><option value="admin" ${u.role === 'admin' ? 'selected' : ''}>ADMIN-CORE</option></select></td>
+          <td style="text-align: right;"><button class="btn btn-danger" style="padding: 8px;" onclick="deleteUserAccount('${u.email}')" ${u.email === 'admin@visionedu.online' ? 'disabled' : ''}><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" /></svg></button></td>
+        </tr>
+      `).join("");
+    }
+
+    function updateRole(email, newRole) {
+      const users = getUsers(); const idx = users.findIndex(u => u.email === email);
+      if (idx !== -1) { users[idx].role = newRole; saveUsers(users); logAction(`ROLE_MODIFIED: ${email} -> ${newRole}`); showToast("Protocol authorization updated"); }
+    }
+
+    function deleteUserAccount(email) {
+      if (email === "admin@visionedu.online") return;
+      if (!confirm("Terminate identity node: " + email + "?")) return;
+      const users = getUsers().filter(u => u.email !== email);
+      saveUsers(users); logAction("IDENTITY_TERMINATED: " + email); renderUsers(); showToast("Identity node successfully terminated");
+    }
+
+    function showToast(msg) {
+      const t = document.getElementById("toast"); t.innerText = msg; t.classList.add("show");
+      setTimeout(() => t.classList.remove("show"), 3000);
+    }
+
+    adminInit();
+  </script>
+</body>
 </html>
