@@ -21,6 +21,10 @@ export default async function handler(req, res) {
     ? 'A secondary security sign-in was requested from your account.' 
     : 'You requested to reset your password for the Vision Education platform.';
 
+  // Default to Resend's onboarding address if no domain is verified yet.
+  // In "Testing" mode, Resend only allows sending to the account owner's email.
+  const fromEmail = process.env.RESEND_FROM_EMAIL || 'onboarding@resend.dev';
+
   const html = `
     <!DOCTYPE html>
     <html>
@@ -59,7 +63,7 @@ export default async function handler(req, res) {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        from: 'Vision Education <auth@visionedu.online>',
+        from: `Vision Education <${fromEmail}>`,
         to: email,
         subject: subject,
         html: html,
@@ -71,11 +75,14 @@ export default async function handler(req, res) {
     if (response.ok) {
       return res.status(200).json({ success: true, id: data.id });
     } else {
-      console.error('Resend API error:', data);
-      return res.status(response.status).json({ error: data.message || 'Failed to send email' });
+      console.error('Resend API error detail:', JSON.stringify(data, null, 2));
+      return res.status(response.status).json({ 
+        error: data.message || 'Failed to send email',
+        detail: data
+      });
     }
   } catch (error) {
     console.error('Fetch error:', error);
-    return res.status(500).json({ error: 'Internal server error' });
+    return res.status(500).json({ error: 'Internal server error', detail: error.message });
   }
 }

@@ -339,10 +339,10 @@ function handleLogin(e) {
     const sendBtn = document.getElementById('loginSubmit');
     if (sendBtn) sendBtn.innerHTML = '<span>Verifying Identity...</span>';
     
-    sendEmailCode(user.email, code, '2fa', user.name).then(sent => {
+    sendEmailCode(user.email, code, '2fa', user.name).then(result => {
       if (sendBtn) sendBtn.innerHTML = '<span>Sign In</span>';
       switchTab('2fa');
-      if (!sent) {
+      if (!result.success) {
         const fallbackBox = document.getElementById('2faCodeFallback');
         if (fallbackBox) {
           fallbackBox.textContent = 'Identity Code: ' + code;
@@ -562,10 +562,13 @@ async function sendEmailCode(email, code, type = 'reset', name = '') {
       body: JSON.stringify({ email, code, type, name })
     });
     const result = await response.json();
-    return !!result.success;
+    if (!result.success) {
+      console.warn('Email sending failed:', result.error, result.detail);
+    }
+    return result;
   } catch (err) {
-    console.error('Send code failed:', err);
-    return false;
+    console.error('Send code network failure:', err);
+    return { success: false, error: 'Network failure' };
   }
 }
 
@@ -628,7 +631,7 @@ async function handleForgotPassword(e) {
   if (btnText) btnText.textContent = 'Sending...';
   if (btnArrow) btnArrow.style.display = 'none';
   if (submitBtn) submitBtn.disabled = true;
-  const sent = await sendEmailCode(email, code, 'reset', user.name);
+  const result = await sendEmailCode(email, code, 'reset', user.name);
   
   if (btnText) btnText.textContent = 'Send Recovery Code';
   if (btnArrow) btnArrow.style.display = 'inline';
@@ -636,7 +639,7 @@ async function handleForgotPassword(e) {
 
   switchTab('reset');
   
-  if (sent) {
+  if (result.success) {
     showAuthSuccess('Reset code sent to ' + email + '! Check your inbox.');
   } else {
     showAuthSuccess('Email service busy — use the code below.');
