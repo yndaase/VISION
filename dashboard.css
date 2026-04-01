@@ -19,7 +19,7 @@
   top: 0;
   bottom: 0;
   width: 250px;
-  background: rgba(10, 13, 20, 0.95);
+  background: var(--bg-sidebar);
   backdrop-filter: blur(20px);
   border-right: 1px solid var(--border);
   z-index: 300;
@@ -28,6 +28,7 @@
   padding: 1.5rem 0.75rem;
   transition: transform 0.3s ease;
 }
+
 
 .side-nav-logo {
   display: flex;
@@ -90,13 +91,14 @@
   bottom: 0;
   left: 0;
   right: 0;
-  background: rgba(10, 13, 20, 0.9);
+  background: var(--bg-sidebar);
   backdrop-filter: blur(20px);
   border-top: 1px solid var(--border);
   height: 64px;
   z-index: 400;
   padding: 0 0.5rem;
 }
+
 
 .bottom-nav-item {
   flex: 1;
@@ -148,10 +150,11 @@
   position: sticky;
   top: 0;
   z-index: 200;
-  background: rgba(2, 6, 23, 0.8); /* Slate 950 */
+  background: var(--bg-sidebar);
   backdrop-filter: blur(20px);
   border-bottom: 1px solid var(--border);
 }
+
 .dash-nav-inner {
   max-width: 1200px;
   margin: 0 auto;
@@ -202,13 +205,21 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  background: rgba(255,255,255,0.05);
+  background: var(--bg-input);
   border: 1px solid var(--border);
   border-radius: 100px;
   padding: 5px 14px 5px 6px;
   font-size: 0.82rem;
+  cursor: pointer;
+  user-select: none;
+  transition: all 0.2s;
   animation: fadeInUp 0.3s ease;
 }
+.nav-user-chip:hover {
+  background: var(--primary-dim);
+  border-color: var(--border-accent);
+}
+
 .nav-avatar {
   width: 28px; height: 28px;
   background: var(--primary);
@@ -256,11 +267,12 @@
 ═══════════════════════════════════════════════ */
 .dash-hero {
   position: relative;
-  background: var(--bg-dark);
+  background: var(--bg-hero);
   padding: 5rem 2rem 4rem;
   border-bottom: 1px solid var(--border);
   overflow: hidden;
 }
+
 .dash-hero-orbs { display: none; }
 
 .dash-hero-content {
@@ -299,8 +311,77 @@
 .welcome-sub {
   font-size: 1.05rem;
   color: var(--text-secondary);
-  margin-bottom: 2.5rem;
+  margin-bottom: 2rem;
   line-height: 1.7;
+}
+
+/* ─── Hero Action Buttons ─── */
+.hero-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 2.5rem;
+}
+.hero-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 13px 24px;
+  border-radius: var(--radius-sm);
+  font-family: var(--font-main);
+  font-size: 0.95rem;
+  font-weight: 700;
+  text-decoration: none;
+  transition: all 0.25s;
+  cursor: pointer;
+}
+.hero-btn-primary {
+  background: linear-gradient(135deg, var(--primary) 0%, #8b5cf6 100%);
+  color: #fff;
+  box-shadow: 0 4px 20px rgba(99,102,241,0.35);
+}
+.hero-btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px rgba(99,102,241,0.5);
+  opacity: 0.92;
+}
+.hero-btn-secondary {
+  background: var(--bg-card);
+  color: var(--text-primary);
+  border: 1.5px solid var(--border-accent);
+}
+.hero-btn-secondary:hover {
+  background: var(--primary-dim);
+  border-color: var(--primary);
+  color: var(--primary);
+  transform: translateY(-2px);
+}
+.hero-btn-icon { font-size: 1.1rem; }
+.hero-btn-arrow { font-size: 1rem; transition: transform 0.2s; }
+.hero-btn-primary:hover .hero-btn-arrow { transform: translateX(4px); }
+
+/* ─── Trusted Schools Section ─── */
+.trusted-schools {
+  text-align: center;
+  padding: 2rem 1.5rem;
+  background: var(--bg-card);
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+.trusted-label {
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: var(--text-muted);
+  margin-bottom: 1.25rem;
+}
+.trusted-pills {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1.5rem;
+  flex-wrap: wrap;
 }
 
 /* Stats row */
@@ -320,10 +401,16 @@
   align-items: center;
   gap: 3px;
   backdrop-filter: blur(12px);
-  transition: border-color 0.3s, transform 0.3s;
+  transition: border-color 0.3s, transform 0.3s, box-shadow 0.3s;
   animation: fadeInUp 0.5s ease both;
+  box-shadow: var(--shadow-sm);
 }
-.dash-stat-chip:hover { border-color: var(--border-bright); transform: translateY(-3px); }
+.dash-stat-chip:hover {
+  border-color: var(--border-bright);
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-md);
+}
+
 .dash-stat-num { 
   font-size: 2rem; 
   font-weight: 800; 
@@ -389,16 +476,16 @@
   z-index: 2;
 }
 
-/* Available card */
 .subject-card.available {
   cursor: pointer;
-  border-color: rgba(255,255,255,0.12);
+  border-color: var(--border-bright);
 }
 .subject-card.available:hover {
-  border-color: rgba(251,191,36,0.45);
+  border-color: var(--border-accent);
   transform: translateY(-5px);
-  box-shadow: 0 12px 40px rgba(0,0,0,0.4);
+  box-shadow: var(--shadow-lg);
 }
+
 .subject-card.available::before {
   content: '';
   position: absolute;
@@ -496,7 +583,7 @@
   margin-bottom: 1.25rem;
 }
 .meta-chip {
-  background: rgba(255,255,255,0.05);
+  background: var(--bg-input);
   border: 1px solid var(--border);
   border-radius: 100px;
   padding: 3px 10px;
@@ -504,6 +591,7 @@
   color: var(--text-muted);
   font-weight: 600;
 }
+
 .meta-chip.difficulty-hard {
   background: rgba(248,113,113,0.1);
   border-color: rgba(248,113,113,0.25);
@@ -535,9 +623,25 @@
 .subjects-grid > *:nth-child(7) { animation-delay: 0.35s; }
 .subjects-grid > *:nth-child(8) { animation-delay: 0.40s; }
 
-/* ═══════════════════════════════════════════════
-   SETTINGS MODAL & 2FA TOGGLE
-   ═══════════════════════════════════════════════ */
+/* ─── Institution Pill (Trusted Schools) ─── */
+.institution-pill {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  padding: 8px 16px;
+  border-radius: 100px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  box-shadow: var(--shadow-sm);
+}
+.institution-avatar {
+  font-size: 1rem;
+}
+
+/* ─── Modal Overlay ─── */
 .modal-overlay {
   position: fixed;
   inset: 0;
