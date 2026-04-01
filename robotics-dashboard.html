@@ -1,1200 +1,2600 @@
-﻿<!DOCTYPE html>
+﻿<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
-  <script defer src="/_vercel/insights/script.js"></script>
-  <script>window.si = window.si || function () { (window.siq = window.siq || []).push(arguments); };</script>
-  <script defer src="/_vercel/speed-insights/script.js"></script>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Robotics Team Hub | Augusco Engineering</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css" />
-  <link rel="stylesheet" href="dashboard.css" />
-  <link rel="stylesheet" href="theme.css" />
-  <script src="theme.js"></script>
-  <script src="https://accounts.google.com/gsi/client" async defer></script>
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="upgrade-insecure-requests"
+    />
+    <script defer src="/_vercel/insights/script.js"></script>
+    <script>
+      window.si =
+        window.si ||
+        function () {
+          (window.siq = window.siq || []).push(arguments);
+        };
+    </script>
+    <script defer src="/_vercel/speed-insights/script.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Robotics Team Hub | Augusco Engineering</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="dashboard.css" />
+    <link rel="stylesheet" href="theme.css" />
+    <script src="theme.js"></script>
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
 
-  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
-  <style>
-    body { background: var(--bg); color: var(--text-primary); font-family: 'Outfit', sans-serif; overflow-x: hidden; }
-
-    
-    /* ── DASHBOARD LAYOUT ── */
-    .robot-layout { 
-      display: grid; 
-      grid-template-columns: 280px 1fr 340px; 
-      min-height: 100vh; 
-      position: relative; 
-      background: var(--bg-dark);
-    }
-    
-    @media (max-width: 1200px) { 
-      .robot-layout { grid-template-columns: 1fr; }
-      .robot-sidebar { 
-        position: fixed; 
-        left: -280px; 
-        top: 0; 
-        bottom: 0; 
-        width: 280px; 
-        z-index: 1000; 
-        transition: 0.3s ease; 
-        box-shadow: 20px 0 50px rgba(0,0,0,0.5);
+    <script
+      type="text/javascript"
+      src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"
+    ></script>
+    <style>
+      body {
+        background: var(--bg);
+        color: var(--text-primary);
+        font-family: "Outfit", sans-serif;
+        overflow-x: hidden;
       }
-      .robot-sidebar.open { left: 0; }
-      .chat-panel { 
-        position: fixed; 
-        right: -340px; 
-        top: 0; 
-        bottom: 0; 
-        width: 340px; 
-        z-index: 1000; 
-        transition: 0.3s ease;
+
+      /* ── DASHBOARD LAYOUT ── */
+      .robot-layout {
+        display: grid;
+        grid-template-columns: 280px 1fr 340px;
+        min-height: 100vh;
+        position: relative;
+        background: var(--bg-dark);
       }
-      .chat-panel.open { right: 0; }
-      .robot-main { padding: 5rem 1.5rem 2rem; }
-    }
 
-    /* ── MOBILE TOGGLES ── */
-    .mobile-nav-toggle {
-      display: none;
-      position: fixed;
-      top: 1.5rem;
-      left: 1.5rem;
-      z-index: 1100;
-      background: var(--primary);
-      color: #fff;
-      border: none;
-      width: 44px;
-      height: 44px;
-      border-radius: var(--radius-sm);
-      font-size: 1.2rem;
-      cursor: pointer;
-      box-shadow: 0 4px 15px rgba(180, 83, 9, 0.3);
-    }
-    .mobile-chat-toggle {
-      display: none;
-      position: fixed;
-      top: 1.5rem;
-      right: 1.5rem;
-      z-index: 1100;
-      background: #0f172a;
-      color: #4ade80;
-      border: 1px solid rgba(34, 197, 94, 0.3);
-      width: 44px;
-      height: 44px;
-      border-radius: 12px;
-      font-size: 1.2rem;
-      cursor: pointer;
-    }
+      @media (max-width: 1200px) {
+        .robot-layout {
+          grid-template-columns: 1fr;
+        }
+        .robot-sidebar {
+          position: fixed;
+          left: -280px;
+          top: 0;
+          bottom: 0;
+          width: 280px;
+          z-index: 1000;
+          transition: 0.3s ease;
+          box-shadow: 20px 0 50px rgba(0, 0, 0, 0.5);
+        }
+        .robot-sidebar.open {
+          left: 0;
+        }
+        .chat-panel {
+          position: fixed;
+          right: -340px;
+          top: 0;
+          bottom: 0;
+          width: 340px;
+          z-index: 1000;
+          transition: 0.3s ease;
+        }
+        .chat-panel.open {
+          right: 0;
+        }
+        .robot-main {
+          padding: 5rem 1.5rem 2rem;
+        }
+      }
 
-    @media (max-width: 1200px) {
-      .mobile-nav-toggle, .mobile-chat-toggle { display: flex; align-items: center; justify-content: center; }
-    }
-    
-    /* ── SIDEBAR ── */
-    .robot-sidebar { background: var(--bg-card); border-right: 1px solid var(--border); padding: 2rem 1.5rem; display: flex; flex-direction: column; gap: 2rem; }
-    .nav-link { display: flex; align-items: center; gap: 12px; padding: 0.75rem 1rem; border-radius: var(--radius-sm); color: var(--text-secondary); text-decoration: none; transition: 0.2s; font-weight: 700; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 0.05em; }
-    .nav-link:hover, .nav-link.active { background: var(--primary-dim); color: var(--primary); }
-    .nav-link.active { border-left: 3px solid var(--primary); }
-    
-    /* ── MAIN CONTENT ── */
-    .robot-main { padding: 2rem 3rem; overflow-y: auto; height: 100vh; }
-    .page-section { display: none; animation: fadeIn 0.4s ease-out; }
-    .page-section.active { display: block; }
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+      /* ── MOBILE TOGGLES ── */
+      .mobile-nav-toggle {
+        display: none;
+        position: fixed;
+        top: 1.5rem;
+        left: 1.5rem;
+        z-index: 1100;
+        background: var(--primary);
+        color: #fff;
+        border: none;
+        width: 44px;
+        height: 44px;
+        border-radius: var(--radius-sm);
+        font-size: 1.2rem;
+        cursor: pointer;
+        box-shadow: 0 4px 15px rgba(180, 83, 9, 0.3);
+      }
+      .mobile-chat-toggle {
+        display: none;
+        position: fixed;
+        top: 1.5rem;
+        right: 1.5rem;
+        z-index: 1100;
+        background: #0f172a;
+        color: #4ade80;
+        border: 1px solid rgba(34, 197, 94, 0.3);
+        width: 44px;
+        height: 44px;
+        border-radius: 12px;
+        font-size: 1.2rem;
+        cursor: pointer;
+      }
 
-    /* ── MODULE CARDS ── */
-    .module-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.5rem; margin-top: 2rem; }
-    .module-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 1.5rem; transition: 0.3s; position: relative; overflow: hidden; cursor: pointer; box-shadow: var(--shadow-sm); }
-    .module-card:hover { transform: translateY(-5px); border-color: var(--primary); box-shadow: var(--shadow-premium); }
-    .module-icon { font-size: 2.5rem; margin-bottom: 1rem; display: block; filter: grayscale(1) brightness(1.5); }
-    .module-card h3 { font-size: 1.25rem; margin-bottom: 0.5rem; color: var(--text-primary); font-weight: 800; }
-    .module-card p { color: var(--text-secondary); font-size: 0.9rem; line-height: 1.6; }
-    .status-badge { position: absolute; top: 1.5rem; right: 1.5rem; padding: 4px 12px; border-radius: var(--radius-sm); font-size: 0.65rem; font-weight: 800; text-transform: uppercase; border: 1px solid var(--border-accent); }
-    .status-active { background: var(--primary-dim); color: var(--primary); }
-    
-    /* ── CHAT PANEL ── */
-    .chat-panel { background: #0f172a; border-left: 1px solid rgba(255,255,255,0.05); display: flex; flex-direction: column; height: 100vh; }
-    .chat-header { padding: 1.5rem; border-bottom: 1px solid rgba(255,255,255,0.05); }
-    .chat-messages { flex: 1; padding: 1rem; overflow-y: auto; display: flex; flex-direction: column; gap: 1rem; }
-    .msg { padding: 0.75rem 1rem; border-radius: 12px; max-width: 85%; font-size: 0.9rem; line-height: 1.4; position: relative; }
-    .msg-received { background: rgba(255,255,255,0.03); align-self: flex-start; color: #cbd5e1; border: 1px solid rgba(255,255,255,0.05); }
-    .msg-sent { background: #1e3a8a; align-self: flex-end; color: #fff; margin-left: auto; }
-    .msg-user { font-size: 0.7rem; color: #4ade80; font-weight: 700; margin-bottom: 4px; display: block; }
-    .chat-input-area { padding: 1.5rem; border-top: 1px solid rgba(255,255,255,0.05); display: flex; gap: 8px; }
-    .chat-input { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 100px; padding: 0.75rem 1.25rem; color: #fff; flex: 1; outline: none; transition: 0.2s; }
-    .chat-input:focus { border-color: #22c55e; }
-    
-    /* ── GOOGLE MEET HUB ── */
-    .meet-hero { background: linear-gradient(135deg, #1e3a8a 0%, #1e1b4b 100%); border-radius: 24px; padding: 3rem; text-align: center; margin-top: 2rem; position: relative; overflow: hidden; border: 1px solid rgba(59, 130, 246, 0.3); }
-    .meet-btn { background: #fff; color: #1e3a8a; padding: 1rem 2.5rem; border-radius: 100px; font-weight: 700; text-decoration: none; display: inline-flex; align-items: center; gap: 10px; margin-top: 2rem; transition: 0.3s; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
-    .meet-btn:hover { transform: scale(1.05); box-shadow: 0 15px 40px rgba(0,0,0,0.4); }
-    
-    /* ── BRANDING ── */
-    .brand-wrap { display: flex; align-items: center; gap: 14px; margin-bottom: 1rem; }
-    .brand-crest { width: 40px; height: 40px; background: #fff; border-radius: 50%; padding: 4px; object-fit: contain; }
+      @media (max-width: 1200px) {
+        .mobile-nav-toggle,
+        .mobile-chat-toggle {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+      }
 
-    /* ── GOOGLE MEET ── */
-    .meet-hub {
-      background: rgba(15,23,42,0.7);
-      border: 1px solid rgba(66,133,244,0.25);
-      border-radius: 24px;
-      padding: 2rem;
-      margin-top: 1.5rem;
-      text-align: center;
-    }
-    .meet-logo { font-size: 3.5rem; margin-bottom: 1rem; }
-    .meet-status {
-      display: inline-flex; align-items: center; gap: 8px;
-      background: rgba(66,133,244,0.08); border: 1px solid rgba(66,133,244,0.2);
-      border-radius: 100px; padding: 0.4rem 1rem;
-      font-size: 0.8rem; font-weight: 600; color: #93c5fd;
-      margin-bottom: 1.5rem;
-    }
-    .meet-status .dot { width: 6px; height: 6px; border-radius: 50%; background: #4285f4; animation: pulse 1.5s infinite; }
-    .meet-room-card {
-      background: rgba(66,133,244,0.06);
-      border: 1.5px solid rgba(66,133,244,0.2);
-      border-radius: 18px;
-      padding: 1.5rem;
-      margin-top: 1rem;
-      display: none;
-    }
-    .meet-room-card.visible { display: block; }
-    .meet-code {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 2rem;
-      font-weight: 800;
-      color: #fff;
-      letter-spacing: 0.1em;
-      background: rgba(255,255,255,0.05);
-      border-radius: 12px;
-      padding: 0.75rem 1.5rem;
-      display: inline-block;
-      margin: 0.75rem 0;
-    }
-    .btn-google-meet {
-      display: inline-flex; align-items: center; gap: 10px;
-      background: #4285f4;
-      color: #fff;
-      border: none;
-      padding: 0.875rem 2rem;
-      border-radius: 100px;
-      font-weight: 700;
-      font-size: 1rem;
-      cursor: pointer;
-      text-decoration: none;
-      transition: 0.2s;
-      margin: 0.5rem;
-    }
-    .btn-google-meet:hover { background: #1a73e8; transform: scale(1.03); box-shadow: 0 8px 24px rgba(66,133,244,0.4); }
-    .btn-create-meet {
-      display: inline-flex; align-items: center; gap: 10px;
-      background: linear-gradient(90deg, #22c55e, #16a34a);
-      color: #000; border: none;
-      padding: 0.875rem 2rem; border-radius: 100px;
-      font-weight: 800; font-size: 1rem; cursor: pointer;
-      transition: 0.2s; margin: 0.5rem;
-    }
-    .btn-create-meet:hover { transform: scale(1.05); box-shadow: 0 8px 24px rgba(34,197,94,0.3); }
-    .meet-session-card {
-      background: rgba(15,23,42,0.6);
-      border: 1px solid rgba(255,255,255,0.05);
-      border-radius: 14px;
-      padding: 1rem 1.25rem;
-      display: flex; align-items: center; gap: 1rem;
-    }
-    .meet-session-card .join-btn {
-      background: #4285f4; color: #fff; border: none;
-      padding: 0.5rem 1rem; border-radius: 100px;
-      font-size: 0.8rem; font-weight: 700; cursor: pointer;
-      white-space: nowrap; transition: 0.2s;
-    }
-    .meet-session-card .join-btn:hover { background: #1a73e8; }
-    .meet-auth-notice {
-      background: rgba(251,191,36,0.06);
-      border: 1px solid rgba(251,191,36,0.2);
-      border-radius: 14px;
-      padding: 1.25rem 1.5rem;
-      margin-top: 1rem;
-      font-size: 0.88rem;
-      color: #fbbf24;
-      line-height: 1.6;
-    }
-    @media (max-width: 640px) {
-      .meet-code { font-size: 1.3rem; padding: 0.5rem 1rem; }
-      .btn-google-meet, .btn-create-meet { padding: 0.75rem 1.25rem; font-size: 0.9rem; }
-    }
+      /* ── SIDEBAR ── */
+      .robot-sidebar {
+        background: var(--bg-card);
+        border-right: 1px solid var(--border);
+        padding: 2rem 1.5rem;
+        display: flex;
+        flex-direction: column;
+        gap: 2rem;
+      }
+      .nav-link {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 0.75rem 1rem;
+        border-radius: var(--radius-sm);
+        color: var(--text-secondary);
+        text-decoration: none;
+        transition: 0.2s;
+        font-weight: 700;
+        text-transform: uppercase;
+        font-size: 0.8rem;
+        letter-spacing: 0.05em;
+      }
+      .nav-link:hover,
+      .nav-link.active {
+        background: var(--primary-dim);
+        color: var(--primary);
+      }
+      .nav-link.active {
+        border-left: 3px solid var(--primary);
+      }
 
-    /* ── TIMETABLE MOBILE ── */
-    .tt-row {
-      background: rgba(15,23,42,0.7);
-      border: 1px solid rgba(255,255,255,0.06);
-      border-radius: 16px;
-      overflow: hidden;
-      display: grid;
-      grid-template-columns: 90px 1fr;
-    }
-    .tt-day {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 1rem 0.5rem;
-      border-right: 1px solid rgba(255,255,255,0.06);
-    }
-    .tt-body { padding: 1rem 1.25rem; }
-    .tt-title-row {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      flex-wrap: wrap;
-      margin-bottom: 0.4rem;
-    }
-    @media (max-width: 500px) {
-      .tt-row { grid-template-columns: 1fr; }
+      /* ── MAIN CONTENT ── */
+      .robot-main {
+        padding: 2rem 3rem;
+        overflow-y: auto;
+        height: 100vh;
+      }
+      .page-section {
+        display: none;
+        animation: fadeIn 0.4s ease-out;
+      }
+      .page-section.active {
+        display: block;
+      }
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      /* ── MODULE CARDS ── */
+      .module-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 1.5rem;
+        margin-top: 2rem;
+      }
+      .module-card {
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-md);
+        padding: 1.5rem;
+        transition: 0.3s;
+        position: relative;
+        overflow: hidden;
+        cursor: pointer;
+        box-shadow: var(--shadow-sm);
+      }
+      .module-card:hover {
+        transform: translateY(-5px);
+        border-color: var(--primary);
+        box-shadow: var(--shadow-premium);
+      }
+      .module-icon {
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+        display: block;
+        filter: grayscale(1) brightness(1.5);
+      }
+      .module-card h3 {
+        font-size: 1.25rem;
+        margin-bottom: 0.5rem;
+        color: var(--text-primary);
+        font-weight: 800;
+      }
+      .module-card p {
+        color: var(--text-secondary);
+        font-size: 0.9rem;
+        line-height: 1.6;
+      }
+      .status-badge {
+        position: absolute;
+        top: 1.5rem;
+        right: 1.5rem;
+        padding: 4px 12px;
+        border-radius: var(--radius-sm);
+        font-size: 0.65rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        border: 1px solid var(--border-accent);
+      }
+      .status-active {
+        background: var(--primary-dim);
+        color: var(--primary);
+      }
+
+      /* ── CHAT PANEL ── */
+      .chat-panel {
+        background: #0f172a;
+        border-left: 1px solid rgba(255, 255, 255, 0.05);
+        display: flex;
+        flex-direction: column;
+        height: 100vh;
+      }
+      .chat-header {
+        padding: 1.5rem;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      }
+      .chat-messages {
+        flex: 1;
+        padding: 1rem;
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+      }
+      .msg {
+        padding: 0.75rem 1rem;
+        border-radius: 12px;
+        max-width: 85%;
+        font-size: 0.9rem;
+        line-height: 1.4;
+        position: relative;
+      }
+      .msg-received {
+        background: rgba(255, 255, 255, 0.03);
+        align-self: flex-start;
+        color: #cbd5e1;
+        border: 1px solid rgba(255, 255, 255, 0.05);
+      }
+      .msg-sent {
+        background: #1e3a8a;
+        align-self: flex-end;
+        color: #fff;
+        margin-left: auto;
+      }
+      .msg-user {
+        font-size: 0.7rem;
+        color: #4ade80;
+        font-weight: 700;
+        margin-bottom: 4px;
+        display: block;
+      }
+      .chat-input-area {
+        padding: 1.5rem;
+        border-top: 1px solid rgba(255, 255, 255, 0.05);
+        display: flex;
+        gap: 8px;
+      }
+      .chat-input {
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 100px;
+        padding: 0.75rem 1.25rem;
+        color: #fff;
+        flex: 1;
+        outline: none;
+        transition: 0.2s;
+      }
+      .chat-input:focus {
+        border-color: #22c55e;
+      }
+
+      /* ── GOOGLE MEET HUB ── */
+      .meet-hero {
+        background: linear-gradient(135deg, #1e3a8a 0%, #1e1b4b 100%);
+        border-radius: 24px;
+        padding: 3rem;
+        text-align: center;
+        margin-top: 2rem;
+        position: relative;
+        overflow: hidden;
+        border: 1px solid rgba(59, 130, 246, 0.3);
+      }
+      .meet-btn {
+        background: #fff;
+        color: #1e3a8a;
+        padding: 1rem 2.5rem;
+        border-radius: 100px;
+        font-weight: 700;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        margin-top: 2rem;
+        transition: 0.3s;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+      }
+      .meet-btn:hover {
+        transform: scale(1.05);
+        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
+      }
+
+      /* ── BRANDING ── */
+      .brand-wrap {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        margin-bottom: 1rem;
+      }
+      .brand-crest {
+        width: 40px;
+        height: 40px;
+        background: #fff;
+        border-radius: 50%;
+        padding: 4px;
+        object-fit: contain;
+      }
+
+      /* ── GOOGLE MEET ── */
+      .meet-hub {
+        background: rgba(15, 23, 42, 0.7);
+        border: 1px solid rgba(66, 133, 244, 0.25);
+        border-radius: 24px;
+        padding: 2rem;
+        margin-top: 1.5rem;
+        text-align: center;
+      }
+      .meet-logo {
+        font-size: 3.5rem;
+        margin-bottom: 1rem;
+      }
+      .meet-status {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: rgba(66, 133, 244, 0.08);
+        border: 1px solid rgba(66, 133, 244, 0.2);
+        border-radius: 100px;
+        padding: 0.4rem 1rem;
+        font-size: 0.8rem;
+        font-weight: 600;
+        color: #93c5fd;
+        margin-bottom: 1.5rem;
+      }
+      .meet-status .dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: #4285f4;
+        animation: pulse 1.5s infinite;
+      }
+      .meet-room-card {
+        background: rgba(66, 133, 244, 0.06);
+        border: 1.5px solid rgba(66, 133, 244, 0.2);
+        border-radius: 18px;
+        padding: 1.5rem;
+        margin-top: 1rem;
+        display: none;
+      }
+      .meet-room-card.visible {
+        display: block;
+      }
+      .meet-code {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 2rem;
+        font-weight: 800;
+        color: #fff;
+        letter-spacing: 0.1em;
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 12px;
+        padding: 0.75rem 1.5rem;
+        display: inline-block;
+        margin: 0.75rem 0;
+      }
+      .btn-google-meet {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        background: #4285f4;
+        color: #fff;
+        border: none;
+        padding: 0.875rem 2rem;
+        border-radius: 100px;
+        font-weight: 700;
+        font-size: 1rem;
+        cursor: pointer;
+        text-decoration: none;
+        transition: 0.2s;
+        margin: 0.5rem;
+      }
+      .btn-google-meet:hover {
+        background: #1a73e8;
+        transform: scale(1.03);
+        box-shadow: 0 8px 24px rgba(66, 133, 244, 0.4);
+      }
+      .btn-create-meet {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        background: linear-gradient(90deg, #22c55e, #16a34a);
+        color: #000;
+        border: none;
+        padding: 0.875rem 2rem;
+        border-radius: 100px;
+        font-weight: 800;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: 0.2s;
+        margin: 0.5rem;
+      }
+      .btn-create-meet:hover {
+        transform: scale(1.05);
+        box-shadow: 0 8px 24px rgba(34, 197, 94, 0.3);
+      }
+      .meet-session-card {
+        background: rgba(15, 23, 42, 0.6);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        border-radius: 14px;
+        padding: 1rem 1.25rem;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+      }
+      .meet-session-card .join-btn {
+        background: #4285f4;
+        color: #fff;
+        border: none;
+        padding: 0.5rem 1rem;
+        border-radius: 100px;
+        font-size: 0.8rem;
+        font-weight: 700;
+        cursor: pointer;
+        white-space: nowrap;
+        transition: 0.2s;
+      }
+      .meet-session-card .join-btn:hover {
+        background: #1a73e8;
+      }
+      .meet-auth-notice {
+        background: rgba(251, 191, 36, 0.06);
+        border: 1px solid rgba(251, 191, 36, 0.2);
+        border-radius: 14px;
+        padding: 1.25rem 1.5rem;
+        margin-top: 1rem;
+        font-size: 0.88rem;
+        color: #fbbf24;
+        line-height: 1.6;
+      }
+      @media (max-width: 640px) {
+        .meet-code {
+          font-size: 1.3rem;
+          padding: 0.5rem 1rem;
+        }
+        .btn-google-meet,
+        .btn-create-meet {
+          padding: 0.75rem 1.25rem;
+          font-size: 0.9rem;
+        }
+      }
+
+      /* ── TIMETABLE MOBILE ── */
+      .tt-row {
+        background: rgba(15, 23, 42, 0.7);
+        border: 1px solid rgba(255, 255, 255, 0.06);
+        border-radius: 16px;
+        overflow: hidden;
+        display: grid;
+        grid-template-columns: 90px 1fr;
+      }
       .tt-day {
-        flex-direction: row;
-        justify-content: flex-start;
-        gap: 0.75rem;
-        padding: 0.6rem 1rem;
-        border-right: none;
-        border-bottom: 1px solid rgba(255,255,255,0.06);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 1rem 0.5rem;
+        border-right: 1px solid rgba(255, 255, 255, 0.06);
       }
-      .tt-body { padding: 0.75rem 1rem; }
-    }
-    .team-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 1.25rem; margin-top: 2rem; }
-    .team-card {
-      background: rgba(15,23,42,0.7);
-      border: 1px solid rgba(255,255,255,0.07);
-      border-radius: 18px;
-      padding: 1.5rem;
-      text-align: center;
-      transition: 0.3s;
-    }
-    .team-card:hover { transform: translateY(-4px); border-color: #4ade80; box-shadow: 0 8px 30px rgba(34,197,94,0.12); }
-    .team-avatar {
-      width: 64px; height: 64px;
-      border-radius: 50%;
-      display: flex; align-items: center; justify-content: center;
-      font-weight: 900; font-size: 1.5rem; color: #000;
-      margin: 0 auto 1rem;
-    }
-    .team-role { font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; padding: 3px 10px; border-radius: 100px; margin-bottom: 0.6rem; display: inline-block; }
-    .role-president { background: rgba(251,191,36,0.15); color: #fbbf24; }
-    .role-vp { background: rgba(96,165,250,0.15); color: #60a5fa; }
-    .role-pro { background: rgba(167,139,250,0.15); color: #a78bfa; }
-    .role-engineer { background: rgba(34,197,94,0.1); color: #4ade80; }
+      .tt-body {
+        padding: 1rem 1.25rem;
+      }
+      .tt-title-row {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-wrap: wrap;
+        margin-bottom: 0.4rem;
+      }
+      @media (max-width: 500px) {
+        .tt-row {
+          grid-template-columns: 1fr;
+        }
+        .tt-day {
+          flex-direction: row;
+          justify-content: flex-start;
+          gap: 0.75rem;
+          padding: 0.6rem 1rem;
+          border-right: none;
+          border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+        }
+        .tt-body {
+          padding: 0.75rem 1rem;
+        }
+      }
+      .team-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+        gap: 1.25rem;
+        margin-top: 2rem;
+      }
+      .team-card {
+        background: rgba(15, 23, 42, 0.7);
+        border: 1px solid rgba(255, 255, 255, 0.07);
+        border-radius: 18px;
+        padding: 1.5rem;
+        text-align: center;
+        transition: 0.3s;
+      }
+      .team-card:hover {
+        transform: translateY(-4px);
+        border-color: #4ade80;
+        box-shadow: 0 8px 30px rgba(34, 197, 94, 0.12);
+      }
+      .team-avatar {
+        width: 64px;
+        height: 64px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 900;
+        font-size: 1.5rem;
+        color: #000;
+        margin: 0 auto 1rem;
+      }
+      .team-role {
+        font-size: 0.7rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        padding: 3px 10px;
+        border-radius: 100px;
+        margin-bottom: 0.6rem;
+        display: inline-block;
+      }
+      .role-president {
+        background: rgba(251, 191, 36, 0.15);
+        color: #fbbf24;
+      }
+      .role-vp {
+        background: rgba(96, 165, 250, 0.15);
+        color: #60a5fa;
+      }
+      .role-pro {
+        background: rgba(167, 139, 250, 0.15);
+        color: #a78bfa;
+      }
+      .role-engineer {
+        background: rgba(34, 197, 94, 0.1);
+        color: #4ade80;
+      }
 
-    /* ── SETTINGS REDESIGN ── */
-    .settings-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-      gap: 1.5rem;
-      margin-top: 2rem;
-    }
-    .settings-card {
-      background: rgba(15, 23, 42, 0.4);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      border-radius: 24px;
-      padding: 2rem;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-      transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s;
-      display: flex;
-      flex-direction: column;
-    }
-    .settings-card:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), inset 0 0 0 1px rgba(74, 222, 128, 0.2);
-      border-color: rgba(74, 222, 128, 0.3);
-    }
-    .settings-header {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 1.5rem;
-      padding-bottom: 1rem;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-    }
-    .settings-header h3 {
-      font-size: 1.1rem;
-      font-weight: 800;
-      color: #f8fafc;
-      margin: 0;
-    }
-    .settings-icon {
-      font-size: 1.4rem;
-      background: rgba(255, 255, 255, 0.05);
-      border-radius: 12px;
-      width: 40px;
-      height: 40px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    /* Input Fields */
-    .input-group {
-      margin-bottom: 1.25rem;
-      position: relative;
-    }
-    .input-group label {
-      display: block;
-      font-size: 0.8rem;
-      font-weight: 600;
-      color: #94a3b8;
-      margin-bottom: 0.5rem;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-    }
-    .settings-input {
-      width: 100%;
-      background: rgba(15, 23, 42, 0.6);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      border-radius: 12px;
-      padding: 0.8rem 1rem;
-      color: #fff;
-      font-family: inherit;
-      font-size: 0.95rem;
-      transition: all 0.2s ease;
-      outline: none;
-      box-sizing: border-box;
-    }
-    .settings-input:focus {
-      border-color: #4ade80;
-      background: rgba(15, 23, 42, 0.8);
-      box-shadow: 0 0 0 3px rgba(74, 222, 128, 0.15);
-    }
-    /* Toggles */
-    .toggle-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 1rem;
-      padding: 0.75rem 0;
-    }
-    .toggle-switch {
-      position: relative;
-      width: 50px;
-      height: 28px;
-      cursor: pointer;
-    }
-    .toggle-switch input { opacity: 0; width: 0; height: 0; }
-    .toggle-track {
-      position: absolute; inset: 0;
-      background: rgba(255, 255, 255, 0.1);
-      border-radius: 100px;
-      transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-      box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
-    }
-    .toggle-track::before {
-      content: '';
-      position: absolute; width: 20px; height: 20px;
-      left: 4px; bottom: 4px;
-      background: #fff;
-      border-radius: 50%;
-      transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-      box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-    }
-    .toggle-switch input:checked + .toggle-track {
-      background: #22c55e;
-    }
-    .toggle-switch input:checked + .toggle-track::before {
-      transform: translateX(22px);
-    }
-    /* Buttons */
-    .settings-btn {
-      background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
-      color: #000;
-      border: none;
-      padding: 0.875rem 1.5rem;
-      border-radius: 12px;
-      font-weight: 800;
-      font-size: 0.95rem;
-      cursor: pointer;
-      width: 100%;
-      transition: all 0.3s ease;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      margin-top: auto;
-    }
-    .settings-btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 10px 20px rgba(34, 197, 94, 0.3);
-    }
-    .settings-btn:active {
-      transform: translateY(0);
-    }
-    /* Profile Avatar section */
-    .profile-avatar-wrap {
-      display: flex;
-      align-items: center;
-      gap: 1.5rem;
-      margin-bottom: 2rem;
-    }
-    .profile-avatar-lg {
-      width: 80px;
-      height: 80px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, #3b82f6, #8b5cf6);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 2rem;
-      font-weight: 900;
-      color: #fff;
-      border: 4px solid rgba(255, 255, 255, 0.1);
-      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-    }
-    .profile-info h4 {
-      margin: 0 0 0.25rem 0;
-      font-size: 1.25rem;
-      font-weight: 800;
-      color: #f8fafc;
-    }
-    .profile-info p {
-      margin: 0;
-      font-size: 0.9rem;
-      color: #94a3b8;
-    }
-    /* Session Info specific */
-    .session-item {
-      display: flex;
-      align-items: flex-start;
-      gap: 12px;
-      padding: 1rem;
-      background: rgba(255, 255, 255, 0.03);
-      border-radius: 12px;
-      margin-bottom: 1rem;
-      border: 1px solid rgba(255,255,255,0.05);
-    }
-    .session-icon {
-      font-size: 1.2rem;
-      background: rgba(59, 130, 246, 0.1);
-      color: #60a5fa;
-      padding: 8px;
-      border-radius: 10px;
-    }
-    .session-details p { margin: 0; }
-    .session-main { font-weight: 700; color: #e2e8f0; font-size: 0.95rem; }
-    .session-sub { font-size: 0.8rem; color: #64748b; margin-top: 2px !important; }
-    .badge-current { font-size: 0.7rem; background: rgba(34, 197, 94, 0.15); color: #4ade80; padding: 2px 8px; border-radius: 100px; font-weight: 700; margin-left: 8px; vertical-align: middle; }
-  </style>
-</head>
-<body onload="initDashboard()">
+      /* ── SETTINGS REDESIGN ── */
+      .settings-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+        gap: 1.5rem;
+        margin-top: 2rem;
+      }
+      .settings-card {
+        background: rgba(15, 23, 42, 0.4);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 24px;
+        padding: 2rem;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        transition:
+          transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+          box-shadow 0.3s;
+        display: flex;
+        flex-direction: column;
+      }
+      .settings-card:hover {
+        transform: translateY(-4px);
+        box-shadow:
+          0 20px 40px rgba(0, 0, 0, 0.4),
+          inset 0 0 0 1px rgba(74, 222, 128, 0.2);
+        border-color: rgba(74, 222, 128, 0.3);
+      }
+      .settings-header {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 1.5rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      }
+      .settings-header h3 {
+        font-size: 1.1rem;
+        font-weight: 800;
+        color: #f8fafc;
+        margin: 0;
+      }
+      .settings-icon {
+        font-size: 1.4rem;
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 12px;
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      /* Input Fields */
+      .input-group {
+        margin-bottom: 1.25rem;
+        position: relative;
+      }
+      .input-group label {
+        display: block;
+        font-size: 0.8rem;
+        font-weight: 600;
+        color: #94a3b8;
+        margin-bottom: 0.5rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+      }
+      .settings-input {
+        width: 100%;
+        background: rgba(15, 23, 42, 0.6);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 12px;
+        padding: 0.8rem 1rem;
+        color: #fff;
+        font-family: inherit;
+        font-size: 0.95rem;
+        transition: all 0.2s ease;
+        outline: none;
+        box-sizing: border-box;
+      }
+      .settings-input:focus {
+        border-color: #4ade80;
+        background: rgba(15, 23, 42, 0.8);
+        box-shadow: 0 0 0 3px rgba(74, 222, 128, 0.15);
+      }
+      /* Toggles */
+      .toggle-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+        padding: 0.75rem 0;
+      }
+      .toggle-switch {
+        position: relative;
+        width: 50px;
+        height: 28px;
+        cursor: pointer;
+      }
+      .toggle-switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+      }
+      .toggle-track {
+        position: absolute;
+        inset: 0;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 100px;
+        transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
+      }
+      .toggle-track::before {
+        content: "";
+        position: absolute;
+        width: 20px;
+        height: 20px;
+        left: 4px;
+        bottom: 4px;
+        background: #fff;
+        border-radius: 50%;
+        transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+      }
+      .toggle-switch input:checked + .toggle-track {
+        background: #22c55e;
+      }
+      .toggle-switch input:checked + .toggle-track::before {
+        transform: translateX(22px);
+      }
+      /* Buttons */
+      .settings-btn {
+        background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+        color: #000;
+        border: none;
+        padding: 0.875rem 1.5rem;
+        border-radius: 12px;
+        font-weight: 800;
+        font-size: 0.95rem;
+        cursor: pointer;
+        width: 100%;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        margin-top: auto;
+      }
+      .settings-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 20px rgba(34, 197, 94, 0.3);
+      }
+      .settings-btn:active {
+        transform: translateY(0);
+      }
+      /* Profile Avatar section */
+      .profile-avatar-wrap {
+        display: flex;
+        align-items: center;
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+      }
+      .profile-avatar-lg {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2rem;
+        font-weight: 900;
+        color: #fff;
+        border: 4px solid rgba(255, 255, 255, 0.1);
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+      }
+      .profile-info h4 {
+        margin: 0 0 0.25rem 0;
+        font-size: 1.25rem;
+        font-weight: 800;
+        color: #f8fafc;
+      }
+      .profile-info p {
+        margin: 0;
+        font-size: 0.9rem;
+        color: #94a3b8;
+      }
+      /* Session Info specific */
+      .session-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+        padding: 1rem;
+        background: rgba(255, 255, 255, 0.03);
+        border-radius: 12px;
+        margin-bottom: 1rem;
+        border: 1px solid rgba(255, 255, 255, 0.05);
+      }
+      .session-icon {
+        font-size: 1.2rem;
+        background: rgba(59, 130, 246, 0.1);
+        color: #60a5fa;
+        padding: 8px;
+        border-radius: 10px;
+      }
+      .session-details p {
+        margin: 0;
+      }
+      .session-main {
+        font-weight: 700;
+        color: #e2e8f0;
+        font-size: 0.95rem;
+      }
+      .session-sub {
+        font-size: 0.8rem;
+        color: #64748b;
+        margin-top: 2px !important;
+      }
+      .badge-current {
+        font-size: 0.7rem;
+        background: rgba(34, 197, 94, 0.15);
+        color: #4ade80;
+        padding: 2px 8px;
+        border-radius: 100px;
+        font-weight: 700;
+        margin-left: 8px;
+        vertical-align: middle;
+      }
+    </style>
+  </head>
+  <body onload="initDashboard()">
+    <button class="mobile-nav-toggle" onclick="toggleSidebar()">☰</button>
+    <button class="mobile-chat-toggle" onclick="toggleChat()"></button>
+    <button
+      onclick="toggleTheme()"
+      class="theme-toggle-btn"
+      title="Toggle Theme"
+      style="
+        position: fixed;
+        top: 1rem;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 1200;
+      "
+    >
+      &#9728;&#65039;
+    </button>
 
-  <button class="mobile-nav-toggle" onclick="toggleSidebar()">☰</button>
-  <button class="mobile-chat-toggle" onclick="toggleChat()">💬</button>
-  <button onclick="toggleTheme()" class="theme-toggle-btn" title="Toggle Theme" style="position:fixed;top:1rem;left:50%;transform:translateX(-50%);z-index:1200;">&#9728;&#65039;</button>
-
-  <div class="robot-layout">
-    
-    <!-- ── SIDEBAR ── -->
-    <aside class="robot-sidebar">
-      <div class="brand-wrap">
-        <img src="assets/augusco_crest.png" alt="Augusco" class="brand-crest" onerror="this.src='https://via.placeholder.com/40'">
-        <span style="font-weight: 800; font-size: 1.2rem; color: #fff;">Vision <span style="color:#4ade80;">Robotics</span></span>
-      </div>
-      
-      <nav style="display: flex; flex-direction: column; gap: 0.5rem; flex: 1;">
-        <a href="#" class="nav-link active" onclick="showSection('training', this)"><span>🏗️</span> Training Tracks</a>
-        <a href="#" class="nav-link" onclick="showSection('meet', this)"><span>🎥</span> Live Lab Meet</a>
-        <a href="#" class="nav-link" onclick="showSection('timetable', this)"><span>🗓️</span> Timetable</a>
-        <a href="#" class="nav-link" onclick="showSection('team', this)"><span>👥</span> Team Members</a>
-        <a href="#" class="nav-link" onclick="showSection('docs', this)"><span>📄</span> Schematics</a>
-        <a href="#" class="nav-link" onclick="showSection('settings', this)"><span>⚙️</span> Settings</a>
-      </nav>
-
-      <div style="border-top: 1px solid rgba(255,255,255,0.05); padding-top: 1.5rem;">
-        <div style="display:flex; align-items:center; gap:10px; margin-bottom:0.5rem;">
-          <div id="userAvatar" style="width:34px; height:34px; border-radius:50%; background:#4ade80; color:#000; display:flex; align-items:center; justify-content:center; font-weight:800; font-size:0.85rem; flex-shrink:0;">?</div>
-          <div style="min-width:0;">
-            <p id="userName" style="font-size:0.88rem; font-weight:700; color:var(--text-primary); margin:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">Loading...</p>
-            <p id="userRoleLabel" style="font-size:0.72rem; color:#4ade80; margin:0;">Augusco Team</p>
-          </div>
+    <div class="robot-layout">
+      <!-- ── SIDEBAR ── -->
+      <aside class="robot-sidebar">
+        <div class="brand-wrap">
+          <img
+            src="assets/augusco_crest.png"
+            alt="Augusco"
+            class="brand-crest"
+            onerror="this.src = 'https://via.placeholder.com/40'"
+          />
+          <span style="font-weight: 800; font-size: 1.2rem; color: #fff"
+            >Vision <span style="color: #4ade80">Robotics</span></span
+          >
         </div>
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-top:0.5rem;">
-          <a href="robotics-login.html" onclick="handleLogout()" style="text-decoration:none; color:#f87171; font-size:0.82rem; font-weight:600;">System Logout ↩</a>
-          <button onclick="toggleTheme()" class="theme-toggle-btn" title="Toggle Theme" style="flex-shrink:0;">&#9728;&#65039;</button>
-        </div>
-      </div>
-    </aside>
 
-    <!-- ── MAIN ── -->
-    <main class="robot-main">
+        <nav
+          style="display: flex; flex-direction: column; gap: 0.5rem; flex: 1"
+        >
+          <a
+            href="#"
+            class="nav-link active"
+            onclick="showSection('training', this)"
+            ><span>️</span> Training Tracks</a
+          >
+          <a href="#" class="nav-link" onclick="showSection('meet', this)"
+            ><span></span> Live Lab Meet</a
+          >
+          <a href="#" class="nav-link" onclick="showSection('timetable', this)"
+            ><span>️</span> Timetable</a
+          >
+          <a href="#" class="nav-link" onclick="showSection('team', this)"
+            ><span></span> Team Members</a
+          >
+          <a href="#" class="nav-link" onclick="showSection('docs', this)"
+            ><span></span> Schematics</a
+          >
+          <a href="#" class="nav-link" onclick="showSection('settings', this)"
+            ><span>️</span> Settings</a
+          >
+        </nav>
 
-      <!-- Welcome Banner -->
-      <div id="welcomeBanner" style="background:linear-gradient(90deg,rgba(34,197,94,0.1),rgba(96,165,250,0.06)); border:1px solid rgba(34,197,94,0.18); border-radius:14px; padding:1rem 1.5rem; margin-bottom:1.5rem; display:flex; align-items:center; gap:1rem; flex-wrap:wrap;">
-        <div id="welcomeAvatar" style="width:44px; height:44px; border-radius:50%; background:linear-gradient(135deg,#4ade80,#22c55e); color:#000; display:flex; align-items:center; justify-content:center; font-weight:900; font-size:1.15rem; flex-shrink:0; box-shadow:0 0 0 3px rgba(34,197,94,0.2);">?</div>
-        <div style="min-width:0;">
-          <p style="font-weight:800; color:#fff; font-size:1.05rem; margin:0 0 0.1rem;">Welcome, <span id="welcomeFirstName" style="color:#4ade80;">...</span>! 👋</p>
-          <p style="font-size:0.75rem; color:#64748b; margin:0;"><span id="welcomeFullName"></span>&nbsp;<span id="welcomeRole" style="color:#4ade80; font-weight:600;"></span></p>
-        </div>
-      </div>
-
-      <!-- Training Section -->
-      <section id="training" class="page-section active">
-        <div class="section-header">
-          <h1 style="font-size: 2.5rem; font-weight: 800;">E-Learning <span class="gradient-text">Tracks</span></h1>
-          <p style="color: #94a3b8; font-size: 1.1rem; margin-top: 0.5rem;">Select your track to begin hardware and software certification.</p>
-        </div>
-
-        <!-- Course Detail Modal -->
-        <div id="courseModal" onclick="if(event.target===this)closeCourse()" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.75); z-index:999; align-items:center; justify-content:center; padding:1rem;">
-          <div style="background:#0f172a; border:1px solid rgba(255,255,255,0.1); border-radius:20px; max-width:580px; width:100%; max-height:88vh; overflow-y:auto; padding:2rem; position:relative; box-shadow:0 25px 80px rgba(0,0,0,0.7);">
-            <button onclick="closeCourse()" style="position:absolute; top:1rem; right:1rem; background:rgba(255,255,255,0.06); border:none; color:#94a3b8; font-size:1.2rem; width:32px; height:32px; border-radius:50%; cursor:pointer;">&times;</button>
-            <div id="courseModalContent"></div>
-          </div>
-        </div>
-
-        <div class="module-grid">
-
-          <!-- SPIKE Prime -->
-          <div class="module-card" onclick="openCourse('spike')" style="cursor:pointer; transition:transform 0.2s, box-shadow 0.2s;" onmouseover="this.style.transform='translateY(-4px)';this.style.boxShadow='0 12px 40px rgba(34,197,94,0.15)'" onmouseout="this.style.transform='';this.style.boxShadow='';">
-            <span class="status-badge status-active">Active Track</span>
-            <span class="module-icon">🛰️</span>
-            <h3>SPIKE Prime</h3>
-            <p>Master Python-based autonomous navigation. Sensors, motors, and competition-ready code.</p>
-            <div style="margin-top:1.5rem; display:flex; align-items:center; gap:10px;">
-              <div style="flex:1; height:4px; background:rgba(255,255,255,0.1); border-radius:10px;">
-                <div style="width:45%; height:100%; background:#4ade80; border-radius:10px;"></div>
-              </div>
-              <span style="font-size:0.75rem; color:#4ade80; font-weight:700;">45%</span>
+        <div
+          style="
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            padding-top: 1.5rem;
+          "
+        >
+          <div
+            style="
+              display: flex;
+              align-items: center;
+              gap: 10px;
+              margin-bottom: 0.5rem;
+            "
+          >
+            <div
+              id="userAvatar"
+              style="
+                width: 34px;
+                height: 34px;
+                border-radius: 50%;
+                background: #4ade80;
+                color: #000;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-weight: 800;
+                font-size: 0.85rem;
+                flex-shrink: 0;
+              "
+            >
+              ?
             </div>
-            <div style="margin-top:1.25rem; background:rgba(34,197,94,0.08); border:1px solid rgba(34,197,94,0.2); border-radius:8px; padding:0.5rem 0.75rem; font-size:0.78rem; color:#4ade80; text-align:center; font-weight:600;">Click to explore course →</div>
-          </div>
-
-          <!-- Arduino C++ -->
-          <div class="module-card" onclick="openCourse('arduino')" style="cursor:pointer; transition:transform 0.2s, box-shadow 0.2s;" onmouseover="this.style.transform='translateY(-4px)';this.style.boxShadow='0 12px 40px rgba(96,165,250,0.15)'" onmouseout="this.style.transform='';this.style.boxShadow='';">
-            <span class="status-badge" style="background:rgba(59,130,246,0.1); color:#60a5fa;">Engineering</span>
-            <span class="module-icon">🔌</span>
-            <h3>Arduino C++</h3>
-            <p>From Blink to PID controllers. Microprocessor architecture, circuits, and sensor interfacing.</p>
-            <div style="margin-top:1.5rem; display:flex; align-items:center; gap:10px;">
-              <div style="flex:1; height:4px; background:rgba(255,255,255,0.1); border-radius:10px;">
-                <div style="width:12%; height:100%; background:#60a5fa; border-radius:10px;"></div>
-              </div>
-              <span style="font-size:0.75rem; color:#60a5fa; font-weight:700;">12%</span>
+            <div style="min-width: 0">
+              <p
+                id="userName"
+                style="
+                  font-size: 0.88rem;
+                  font-weight: 700;
+                  color: var(--text-primary);
+                  margin: 0;
+                  white-space: nowrap;
+                  overflow: hidden;
+                  text-overflow: ellipsis;
+                "
+              >
+                Loading...
+              </p>
+              <p
+                id="userRoleLabel"
+                style="font-size: 0.72rem; color: #4ade80; margin: 0"
+              >
+                Augusco Team
+              </p>
             </div>
-            <div style="margin-top:1.25rem; background:rgba(96,165,250,0.08); border:1px solid rgba(96,165,250,0.2); border-radius:8px; padding:0.5rem 0.75rem; font-size:0.78rem; color:#60a5fa; text-align:center; font-weight:600;">Click to explore course →</div>
           </div>
-
-          <!-- Mindstorms EV3 -->
-          <div class="module-card" onclick="openCourse('ev3')" style="cursor:pointer; transition:transform 0.2s, box-shadow 0.2s;" onmouseover="this.style.transform='translateY(-4px)';this.style.boxShadow='0 12px 40px rgba(250,204,21,0.1)'" onmouseout="this.style.transform='';this.style.boxShadow='';">
-            <span class="status-badge" style="background:rgba(234,179,8,0.1); color:#facc15;">Advanced</span>
-            <span class="module-icon">🏗️</span>
-            <h3>Mindstorms EV3</h3>
-            <p>Legacy systems and competition logic. Advanced mechanical builds for WRO preparations.</p>
-            <div style="margin-top:1.5rem; display:flex; align-items:center; gap:10px;">
-              <div style="flex:1; height:4px; background:rgba(255,255,255,0.1); border-radius:10px;">
-                <div style="width:5%; height:100%; background:#facc15; border-radius:10px;"></div>
-              </div>
-              <span style="font-size:0.75rem; color:#facc15; font-weight:700;">5%</span>
-            </div>
-            <div style="margin-top:1.25rem; background:rgba(250,204,21,0.06); border:1px solid rgba(250,204,21,0.2); border-radius:8px; padding:0.5rem 0.75rem; font-size:0.78rem; color:#facc15; text-align:center; font-weight:600;">Click to explore course →</div>
-          </div>
-
-        </div><!-- /module-grid -->
-
-        <!-- Quick Launch Strip -->
-        <div style="background:rgba(34,197,94,0.08); border:1px solid rgba(34,197,94,0.2); border-radius:16px; padding:1.25rem 1.5rem; margin-top:1.5rem; display:flex; align-items:center; gap:1rem; flex-wrap:wrap;">
-          <span style="font-size:1.4rem;">📹</span>
-          <div style="flex:1;">
-            <p style="font-weight:700; color:#fff; font-size:0.95rem; margin:0;">Live Lab Session</p>
-            <p style="font-size:0.8rem; color:#4ade80; margin:0;">Augusco Robotics · Google Meet API</p>
-          </div>
-          <button onclick="showSection('meet', document.querySelector('[onclick*=meet]'))" style="background:#4285f4; color:#fff; border:none; padding:0.6rem 1.25rem; border-radius:100px; font-weight:700; font-size:0.85rem; cursor:pointer;">Open Meet 🎥</button>
-        </div>
-      </section>
-
-      <!-- Meet Section -->
-      <section id="meet" class="page-section">
-        <h1 style="font-size: 2.5rem; font-weight: 800;">Google Meet <span class="gradient-text">Lab</span></h1>
-        <p style="color: #94a3b8; font-size: 1.1rem; margin-top: 0.5rem;">Start or join a Google Meet session. Your room opens instantly — no setup needed.</p>
-
-        <!-- Meet Hub Card -->
-        <div class="meet-hub">
-
-          <!-- Google Logo -->
-          <div class="meet-logo">
-            <svg width="52" height="52" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
-              <path fill="#4285F4" d="M34 24c0-1.7-.3-3.3-.8-4.8L24 24l9.2 4.8c.5-1.5.8-3.1.8-4.8z"/>
-              <path fill="#34A853" d="m34.8 28.8-9.2-4.8-9.2 4.8 4.6 7.9c1.4.4 2.9.5 4.4.5s3-.2 4.4-.5l5-7.9z"/>
-              <path fill="#FBBC04" d="m15.2 28.8-4.6-7.9c-.4-1.4-.6-2.9-.6-4.4s.2-3 .6-4.4l4.6-7.9L24 9l-8.8 19.8z"/>
-              <path fill="#EA4335" d="M24 8.4c2.2 0 4.2.7 5.8 1.9l5.3-5.4C32.4 2.7 28.4 1 24 1 17.5 1 11.8 4.6 8.9 10l6.3 10.9L24 8.4z"/>
-              <path fill="#4285F4" d="M24 39.6c-3 0-5.7-.8-8.1-2.2L8.9 48c2.9 5.4 8.6 9 15.1 9 4.4 0 8.5-1.6 11.6-4.3l-6.3-10.9c-1.6 1.2-3.6 1.8-5.3 1.8z"/>
-            </svg>
-          </div>
-
-          <h2 style="color:#fff; font-weight:800; font-size:1.5rem; margin-bottom:0.3rem;">Augusco Robotics Lab</h2>
-          <p style="color:#94a3b8; font-size:0.88rem; margin-bottom:1.5rem;">Start or join a Google Meet session. Your room is ready instantly.</p>
-
-          <!-- Primary Actions -->
-          <div style="display:flex; flex-wrap:wrap; justify-content:center; gap:0.5rem; margin-bottom:1.25rem;">
-            <button class="btn-create-meet" id="btnCreateRoom" onclick="handleCreateRoom()">
-              🎥 Start Team Meeting
+          <div
+            style="
+              display: flex;
+              align-items: center;
+              justify-content: space-between;
+              margin-top: 0.5rem;
+            "
+          >
+            <a
+              href="robotics-login.html"
+              onclick="handleLogout()"
+              style="
+                text-decoration: none;
+                color: #f87171;
+                font-size: 0.82rem;
+                font-weight: 600;
+              "
+              >System Logout
+            </a>
+            <button
+              onclick="toggleTheme()"
+              class="theme-toggle-btn"
+              title="Toggle Theme"
+              style="flex-shrink: 0"
+            >
+              &#9728;&#65039;
             </button>
-            <a class="btn-google-meet" href="https://meet.google.com/new" target="_blank" rel="noopener">
-              ⚡ Quick Start
-            </a>
           </div>
+        </div>
+      </aside>
 
-          <!-- Room Output Card -->
-          <div class="meet-room-card" id="meetRoomCard">
-            <p style="font-size:0.82rem; color:#93c5fd; margin:0 0 0.5rem 0;">✅ Your meeting room is ready:</p>
-            <div class="meet-code" id="meetRoomCode">—</div>
-            <a class="btn-google-meet" id="meetJoinBtn" href="#" target="_blank" rel="noopener" style="font-size:1rem; padding:0.9rem 2rem; margin-top:0.75rem;">
-              📹 Open Google Meet
-            </a>
-            <p style="font-size:0.72rem; color:rgba(255,255,255,0.3); margin-top:0.75rem;">Share this link with your teammates so they can join.</p>
+      <!-- ── MAIN ── -->
+      <main class="robot-main">
+        <!-- Welcome Banner -->
+        <div
+          id="welcomeBanner"
+          style="
+            background: linear-gradient(
+              90deg,
+              rgba(34, 197, 94, 0.1),
+              rgba(96, 165, 250, 0.06)
+            );
+            border: 1px solid rgba(34, 197, 94, 0.18);
+            border-radius: 14px;
+            padding: 1rem 1.5rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+          "
+        >
+          <div
+            id="welcomeAvatar"
+            style="
+              width: 44px;
+              height: 44px;
+              border-radius: 50%;
+              background: linear-gradient(135deg, #4ade80, #22c55e);
+              color: #000;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              font-weight: 900;
+              font-size: 1.15rem;
+              flex-shrink: 0;
+              box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.2);
+            "
+          >
+            ?
           </div>
-
-          <!-- Spinner -->
-          <div id="meetSpinner" style="display:none; margin-top:1.25rem;">
-            <div style="width:28px; height:28px; border:3px solid rgba(66,133,244,0.2); border-top-color:#4285f4; border-radius:50%; animation:spin 0.8s linear infinite; margin:auto;"></div>
-            <p style="color:#93c5fd; font-size:0.82rem; margin-top:0.6rem;">Connecting…</p>
-          </div>
-
-          <p id="meetApiError" style="display:none; color:#f87171; font-size:0.82rem; margin-top:0.75rem;"></p>
-
-          <!-- Info tip -->
-          <div style="background:rgba(66,133,244,0.06); border:1px solid rgba(66,133,244,0.15); border-radius:10px; padding:0.75rem 1rem; margin-top:1rem; font-size:0.78rem; color:#93c5fd; text-align:left; line-height:1.5;">
-            💡 <strong>How it works:</strong> Click &ldquo;Start Team Meeting&rdquo; — Google Meet opens automatically. Sign in with your Google account, then share the link in the team chat.
+          <div style="min-width: 0">
+            <p
+              style="
+                font-weight: 800;
+                color: #fff;
+                font-size: 1.05rem;
+                margin: 0 0 0.1rem;
+              "
+            >
+              Welcome,
+              <span id="welcomeFirstName" style="color: #4ade80">...</span>!
+            </p>
+            <p style="font-size: 0.75rem; color: #64748b; margin: 0">
+              <span id="welcomeFullName"></span>&nbsp;<span
+                id="welcomeRole"
+                style="color: #4ade80; font-weight: 600"
+              ></span>
+            </p>
           </div>
         </div>
 
-        <!-- Scheduled Sessions -->
-        <div style="margin-top:2rem;">
-          <h3 style="font-size:1.05rem; font-weight:700; color:#cbd5e1; margin-bottom:1rem;">📌 Scheduled Sessions — Click to join</h3>
-          <div style="display:flex; flex-direction:column; gap:0.75rem;">
+        <!-- Training Section -->
+        <section id="training" class="page-section active">
+          <div class="section-header">
+            <h1 style="font-size: 2.5rem; font-weight: 800">
+              E-Learning <span class="gradient-text">Tracks</span>
+            </h1>
+            <p style="color: #94a3b8; font-size: 1.1rem; margin-top: 0.5rem">
+              Select your track to begin hardware and software certification.
+            </p>
+          </div>
 
-            <div class="meet-session-card">
-              <span style="font-size:1.5rem;">🛰️</span>
-              <div style="flex:1;">
-                <p style="font-weight:700; color:#fff; margin:0; font-size:0.95rem;">SPIKE Prime Build Review</p>
-                <p style="font-size:0.8rem; color:#94a3b8; margin:0;">Mon · 3:00 PM · Lead: Capt. Kwame</p>
+          <!-- Course Detail Modal -->
+          <div
+            id="courseModal"
+            onclick="if (event.target === this) closeCourse();"
+            style="
+              display: none;
+              position: fixed;
+              inset: 0;
+              background: rgba(0, 0, 0, 0.75);
+              z-index: 999;
+              align-items: center;
+              justify-content: center;
+              padding: 1rem;
+            "
+          >
+            <div
+              style="
+                background: #0f172a;
+                border: 1px solid rgba(255, 255, 255, 0.1);
+                border-radius: 20px;
+                max-width: 580px;
+                width: 100%;
+                max-height: 88vh;
+                overflow-y: auto;
+                padding: 2rem;
+                position: relative;
+                box-shadow: 0 25px 80px rgba(0, 0, 0, 0.7);
+              "
+            >
+              <button
+                onclick="closeCourse()"
+                style="
+                  position: absolute;
+                  top: 1rem;
+                  right: 1rem;
+                  background: rgba(255, 255, 255, 0.06);
+                  border: none;
+                  color: #94a3b8;
+                  font-size: 1.2rem;
+                  width: 32px;
+                  height: 32px;
+                  border-radius: 50%;
+                  cursor: pointer;
+                "
+              >
+                &times;
+              </button>
+              <div id="courseModalContent"></div>
+            </div>
+          </div>
+
+          <div class="module-grid">
+            <!-- SPIKE Prime -->
+            <div
+              class="module-card"
+              onclick="openCourse('spike')"
+              style="
+                cursor: pointer;
+                transition:
+                  transform 0.2s,
+                  box-shadow 0.2s;
+              "
+              onmouseover="
+                this.style.transform = 'translateY(-4px)';
+                this.style.boxShadow = '0 12px 40px rgba(34,197,94,0.15)';
+              "
+              onmouseout="
+                this.style.transform = '';
+                this.style.boxShadow = '';
+              "
+            >
+              <span class="status-badge status-active">Active Track</span>
+              <span class="module-icon">️</span>
+              <h3>SPIKE Prime</h3>
+              <p>
+                Master Python-based autonomous navigation. Sensors, motors, and
+                competition-ready code.
+              </p>
+              <div
+                style="
+                  margin-top: 1.5rem;
+                  display: flex;
+                  align-items: center;
+                  gap: 10px;
+                "
+              >
+                <div
+                  style="
+                    flex: 1;
+                    height: 4px;
+                    background: rgba(255, 255, 255, 0.1);
+                    border-radius: 10px;
+                  "
+                >
+                  <div
+                    style="
+                      width: 45%;
+                      height: 100%;
+                      background: #4ade80;
+                      border-radius: 10px;
+                    "
+                  ></div>
+                </div>
+                <span
+                  style="font-size: 0.75rem; color: #4ade80; font-weight: 700"
+                  >45%</span
+                >
               </div>
-              <button class="join-btn" onclick="joinOrCreateSession('spike-review')">🎥 Join</button>
+              <div
+                style="
+                  margin-top: 1.25rem;
+                  background: rgba(34, 197, 94, 0.08);
+                  border: 1px solid rgba(34, 197, 94, 0.2);
+                  border-radius: 8px;
+                  padding: 0.5rem 0.75rem;
+                  font-size: 0.78rem;
+                  color: #4ade80;
+                  text-align: center;
+                  font-weight: 600;
+                "
+              >
+                Click to explore course →
+              </div>
             </div>
 
-            <div class="meet-session-card">
-              <span style="font-size:1.5rem;">🔌</span>
-              <div style="flex:1;">
-                <p style="font-weight:700; color:#fff; margin:0; font-size:0.95rem;">Arduino Sensor Lab</p>
-                <p style="font-size:0.8rem; color:#94a3b8; margin:0;">Tue · 3:00 PM · Lead: Engineer Ama</p>
+            <!-- Arduino C++ -->
+            <div
+              class="module-card"
+              onclick="openCourse('arduino')"
+              style="
+                cursor: pointer;
+                transition:
+                  transform 0.2s,
+                  box-shadow 0.2s;
+              "
+              onmouseover="
+                this.style.transform = 'translateY(-4px)';
+                this.style.boxShadow = '0 12px 40px rgba(96,165,250,0.15)';
+              "
+              onmouseout="
+                this.style.transform = '';
+                this.style.boxShadow = '';
+              "
+            >
+              <span
+                class="status-badge"
+                style="background: rgba(59, 130, 246, 0.1); color: #60a5fa"
+                >Engineering</span
+              >
+              <span class="module-icon"></span>
+              <h3>Arduino C++</h3>
+              <p>
+                From Blink to PID controllers. Microprocessor architecture,
+                circuits, and sensor interfacing.
+              </p>
+              <div
+                style="
+                  margin-top: 1.5rem;
+                  display: flex;
+                  align-items: center;
+                  gap: 10px;
+                "
+              >
+                <div
+                  style="
+                    flex: 1;
+                    height: 4px;
+                    background: rgba(255, 255, 255, 0.1);
+                    border-radius: 10px;
+                  "
+                >
+                  <div
+                    style="
+                      width: 12%;
+                      height: 100%;
+                      background: #60a5fa;
+                      border-radius: 10px;
+                    "
+                  ></div>
+                </div>
+                <span
+                  style="font-size: 0.75rem; color: #60a5fa; font-weight: 700"
+                  >12%</span
+                >
               </div>
-              <button class="join-btn" style="background:#60a5fa;" onclick="joinOrCreateSession('arduino-lab')">🎥 Join</button>
+              <div
+                style="
+                  margin-top: 1.25rem;
+                  background: rgba(96, 165, 250, 0.08);
+                  border: 1px solid rgba(96, 165, 250, 0.2);
+                  border-radius: 8px;
+                  padding: 0.5rem 0.75rem;
+                  font-size: 0.78rem;
+                  color: #60a5fa;
+                  text-align: center;
+                  font-weight: 600;
+                "
+              >
+                Click to explore course →
+              </div>
             </div>
 
-            <div class="meet-session-card">
-              <span style="font-size:1.5rem;">🏅</span>
-              <div style="flex:1;">
-                <p style="font-weight:700; color:#fff; margin:0; font-size:0.95rem;">WRO Strategy Planning</p>
-                <p style="font-size:0.8rem; color:#94a3b8; margin:0;">Fri · 3:00 PM · All Hands · Led by Joel</p>
+            <!-- Mindstorms EV3 -->
+            <div
+              class="module-card"
+              onclick="openCourse('ev3')"
+              style="
+                cursor: pointer;
+                transition:
+                  transform 0.2s,
+                  box-shadow 0.2s;
+              "
+              onmouseover="
+                this.style.transform = 'translateY(-4px)';
+                this.style.boxShadow = '0 12px 40px rgba(250,204,21,0.1)';
+              "
+              onmouseout="
+                this.style.transform = '';
+                this.style.boxShadow = '';
+              "
+            >
+              <span
+                class="status-badge"
+                style="background: rgba(234, 179, 8, 0.1); color: #facc15"
+                >Advanced</span
+              >
+              <span class="module-icon">️</span>
+              <h3>Mindstorms EV3</h3>
+              <p>
+                Legacy systems and competition logic. Advanced mechanical builds
+                for WRO preparations.
+              </p>
+              <div
+                style="
+                  margin-top: 1.5rem;
+                  display: flex;
+                  align-items: center;
+                  gap: 10px;
+                "
+              >
+                <div
+                  style="
+                    flex: 1;
+                    height: 4px;
+                    background: rgba(255, 255, 255, 0.1);
+                    border-radius: 10px;
+                  "
+                >
+                  <div
+                    style="
+                      width: 5%;
+                      height: 100%;
+                      background: #facc15;
+                      border-radius: 10px;
+                    "
+                  ></div>
+                </div>
+                <span
+                  style="font-size: 0.75rem; color: #facc15; font-weight: 700"
+                  >5%</span
+                >
               </div>
-              <button class="join-btn" style="background:#a78bfa;" onclick="joinOrCreateSession('wro-planning')">🎥 Join</button>
+              <div
+                style="
+                  margin-top: 1.25rem;
+                  background: rgba(250, 204, 21, 0.06);
+                  border: 1px solid rgba(250, 204, 21, 0.2);
+                  border-radius: 8px;
+                  padding: 0.5rem 0.75rem;
+                  font-size: 0.78rem;
+                  color: #facc15;
+                  text-align: center;
+                  font-weight: 600;
+                "
+              >
+                Click to explore course →
+              </div>
+            </div>
+          </div>
+          <!-- /module-grid -->
+
+          <!-- Quick Launch Strip -->
+          <div
+            style="
+              background: rgba(34, 197, 94, 0.08);
+              border: 1px solid rgba(34, 197, 94, 0.2);
+              border-radius: 16px;
+              padding: 1.25rem 1.5rem;
+              margin-top: 1.5rem;
+              display: flex;
+              align-items: center;
+              gap: 1rem;
+              flex-wrap: wrap;
+            "
+          >
+            <span style="font-size: 1.4rem"></span>
+            <div style="flex: 1">
+              <p
+                style="
+                  font-weight: 700;
+                  color: #fff;
+                  font-size: 0.95rem;
+                  margin: 0;
+                "
+              >
+                Live Lab Session
+              </p>
+              <p style="font-size: 0.8rem; color: #4ade80; margin: 0">
+                Augusco Robotics · Google Meet API
+              </p>
+            </div>
+            <button
+              onclick="
+                showSection('meet', document.querySelector('[onclick*=meet]'))
+              "
+              style="
+                background: #4285f4;
+                color: #fff;
+                border: none;
+                padding: 0.6rem 1.25rem;
+                border-radius: 100px;
+                font-weight: 700;
+                font-size: 0.85rem;
+                cursor: pointer;
+              "
+            >
+              Open Meet
+            </button>
+          </div>
+        </section>
+
+        <!-- Meet Section -->
+        <section id="meet" class="page-section">
+          <h1 style="font-size: 2.5rem; font-weight: 800">
+            Google Meet <span class="gradient-text">Lab</span>
+          </h1>
+          <p style="color: #94a3b8; font-size: 1.1rem; margin-top: 0.5rem">
+            Start or join a Google Meet session. Your room opens instantly — no
+            setup needed.
+          </p>
+
+          <!-- Meet Hub Card -->
+          <div class="meet-hub">
+            <!-- Google Logo -->
+            <div class="meet-logo">
+              <svg
+                width="52"
+                height="52"
+                viewBox="0 0 48 48"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  fill="#4285F4"
+                  d="M34 24c0-1.7-.3-3.3-.8-4.8L24 24l9.2 4.8c.5-1.5.8-3.1.8-4.8z"
+                />
+                <path
+                  fill="#34A853"
+                  d="m34.8 28.8-9.2-4.8-9.2 4.8 4.6 7.9c1.4.4 2.9.5 4.4.5s3-.2 4.4-.5l5-7.9z"
+                />
+                <path
+                  fill="#FBBC04"
+                  d="m15.2 28.8-4.6-7.9c-.4-1.4-.6-2.9-.6-4.4s.2-3 .6-4.4l4.6-7.9L24 9l-8.8 19.8z"
+                />
+                <path
+                  fill="#EA4335"
+                  d="M24 8.4c2.2 0 4.2.7 5.8 1.9l5.3-5.4C32.4 2.7 28.4 1 24 1 17.5 1 11.8 4.6 8.9 10l6.3 10.9L24 8.4z"
+                />
+                <path
+                  fill="#4285F4"
+                  d="M24 39.6c-3 0-5.7-.8-8.1-2.2L8.9 48c2.9 5.4 8.6 9 15.1 9 4.4 0 8.5-1.6 11.6-4.3l-6.3-10.9c-1.6 1.2-3.6 1.8-5.3 1.8z"
+                />
+              </svg>
             </div>
 
-            <div class="meet-session-card">
-              <span style="font-size:1.5rem;">💬</span>
-              <div style="flex:1;">
-                <p style="font-weight:700; color:#fff; margin:0; font-size:0.95rem;">All-Hands Strategy Meeting</p>
-                <p style="font-size:0.8rem; color:#94a3b8; margin:0;">Wed · 2:00 PM · Lead: Joel Yevu Nicholas (President)</p>
-              </div>
-              <button class="join-btn" style="background:#fbbf24; color:#000;" onclick="joinOrCreateSession('all-hands')">🎥 Join</button>
+            <h2
+              style="
+                color: #fff;
+                font-weight: 800;
+                font-size: 1.5rem;
+                margin-bottom: 0.3rem;
+              "
+            >
+              Augusco Robotics Lab
+            </h2>
+            <p
+              style="color: #94a3b8; font-size: 0.88rem; margin-bottom: 1.5rem"
+            >
+              Start or join a Google Meet session. Your room is ready instantly.
+            </p>
+
+            <!-- Primary Actions -->
+            <div
+              style="
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 0.5rem;
+                margin-bottom: 1.25rem;
+              "
+            >
+              <button
+                class="btn-create-meet"
+                id="btnCreateRoom"
+                onclick="handleCreateRoom()"
+              >
+                Start Team Meeting
+              </button>
+              <a
+                class="btn-google-meet"
+                href="https://meet.google.com/new"
+                target="_blank"
+                rel="noopener"
+              >
+                Quick Start
+              </a>
             </div>
 
+            <!-- Room Output Card -->
+            <div class="meet-room-card" id="meetRoomCard">
+              <p
+                style="font-size: 0.82rem; color: #93c5fd; margin: 0 0 0.5rem 0"
+              >
+                Your meeting room is ready:
+              </p>
+              <div class="meet-code" id="meetRoomCode">—</div>
+              <a
+                class="btn-google-meet"
+                id="meetJoinBtn"
+                href="#"
+                target="_blank"
+                rel="noopener"
+                style="
+                  font-size: 1rem;
+                  padding: 0.9rem 2rem;
+                  margin-top: 0.75rem;
+                "
+              >
+                Open Google Meet
+              </a>
+              <p
+                style="
+                  font-size: 0.72rem;
+                  color: rgba(255, 255, 255, 0.3);
+                  margin-top: 0.75rem;
+                "
+              >
+                Share this link with your teammates so they can join.
+              </p>
+            </div>
+
+            <!-- Spinner -->
+            <div id="meetSpinner" style="display: none; margin-top: 1.25rem">
+              <div
+                style="
+                  width: 28px;
+                  height: 28px;
+                  border: 3px solid rgba(66, 133, 244, 0.2);
+                  border-top-color: #4285f4;
+                  border-radius: 50%;
+                  animation: spin 0.8s linear infinite;
+                  margin: auto;
+                "
+              ></div>
+              <p style="color: #93c5fd; font-size: 0.82rem; margin-top: 0.6rem">
+                Connecting…
+              </p>
+            </div>
+
+            <p
+              id="meetApiError"
+              style="
+                display: none;
+                color: #f87171;
+                font-size: 0.82rem;
+                margin-top: 0.75rem;
+              "
+            ></p>
+
+            <!-- Info tip -->
+            <div
+              style="
+                background: rgba(66, 133, 244, 0.06);
+                border: 1px solid rgba(66, 133, 244, 0.15);
+                border-radius: 10px;
+                padding: 0.75rem 1rem;
+                margin-top: 1rem;
+                font-size: 0.78rem;
+                color: #93c5fd;
+                text-align: left;
+                line-height: 1.5;
+              "
+            >
+              <strong>How it works:</strong> Click &ldquo;Start Team
+              Meeting&rdquo; — Google Meet opens automatically. Sign in with
+              your Google account, then share the link in the team chat.
+            </div>
+          </div>
+
+          <!-- Scheduled Sessions -->
+          <div style="margin-top: 2rem">
+            <h3
+              style="
+                font-size: 1.05rem;
+                font-weight: 700;
+                color: #cbd5e1;
+                margin-bottom: 1rem;
+              "
+            >
+              Scheduled Sessions — Click to join
+            </h3>
+            <div style="display: flex; flex-direction: column; gap: 0.75rem">
+              <div class="meet-session-card">
+                <span style="font-size: 1.5rem">️</span>
+                <div style="flex: 1">
+                  <p
+                    style="
+                      font-weight: 700;
+                      color: #fff;
+                      margin: 0;
+                      font-size: 0.95rem;
+                    "
+                  >
+                    SPIKE Prime Build Review
+                  </p>
+                  <p style="font-size: 0.8rem; color: #94a3b8; margin: 0">
+                    Mon · 3:00 PM · Lead: Capt. Kwame
+                  </p>
+                </div>
+                <button
+                  class="join-btn"
+                  onclick="joinOrCreateSession('spike-review')"
+                >
+                  Join
+                </button>
+              </div>
+
+              <div class="meet-session-card">
+                <span style="font-size: 1.5rem"></span>
+                <div style="flex: 1">
+                  <p
+                    style="
+                      font-weight: 700;
+                      color: #fff;
+                      margin: 0;
+                      font-size: 0.95rem;
+                    "
+                  >
+                    Arduino Sensor Lab
+                  </p>
+                  <p style="font-size: 0.8rem; color: #94a3b8; margin: 0">
+                    Tue · 3:00 PM · Lead: Engineer Ama
+                  </p>
+                </div>
+                <button
+                  class="join-btn"
+                  style="background: #60a5fa"
+                  onclick="joinOrCreateSession('arduino-lab')"
+                >
+                  Join
+                </button>
+              </div>
+
+              <div class="meet-session-card">
+                <span style="font-size: 1.5rem"></span>
+                <div style="flex: 1">
+                  <p
+                    style="
+                      font-weight: 700;
+                      color: #fff;
+                      margin: 0;
+                      font-size: 0.95rem;
+                    "
+                  >
+                    WRO Strategy Planning
+                  </p>
+                  <p style="font-size: 0.8rem; color: #94a3b8; margin: 0">
+                    Fri · 3:00 PM · All Hands · Led by Joel
+                  </p>
+                </div>
+                <button
+                  class="join-btn"
+                  style="background: #a78bfa"
+                  onclick="joinOrCreateSession('wro-planning')"
+                >
+                  Join
+                </button>
+              </div>
+
+              <div class="meet-session-card">
+                <span style="font-size: 1.5rem"></span>
+                <div style="flex: 1">
+                  <p
+                    style="
+                      font-weight: 700;
+                      color: #fff;
+                      margin: 0;
+                      font-size: 0.95rem;
+                    "
+                  >
+                    All-Hands Strategy Meeting
+                  </p>
+                  <p style="font-size: 0.8rem; color: #94a3b8; margin: 0">
+                    Wed · 2:00 PM · Lead: Joel Yevu Nicholas (President)
+                  </p>
+                </div>
+                <button
+                  class="join-btn"
+                  style="background: #fbbf24; color: #000"
+                  onclick="joinOrCreateSession('all-hands')"
+                >
+                  Join
+                </button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Docs Section -->
+        <section id="docs" class="page-section">
+          <h1 style="font-size: 2.5rem; font-weight: 800">
+            Technical <span class="gradient-text">Docs</span>
+          </h1>
+          <p style="color: #94a3b8; font-size: 1.1rem; margin-top: 0.5rem">
+            Access internal schematics and code repositories.
+          </p>
+          <div
+            style="
+              margin-top: 3rem;
+              color: #f87171;
+              font-weight: 600;
+              text-align: center;
+              padding: 4rem;
+              border: 1px dashed #f87171;
+              border-radius: 20px;
+            "
+          >
+            RESTRICTED ACCESS: Higher clearance required for schematics.
+          </div>
+        </section>
+
+        <!-- Timetable Section -->
+        <section id="timetable" class="page-section">
+          <h1 style="font-size: 2.5rem; font-weight: 800">
+            Lab <span class="gradient-text">Timetable</span>
+          </h1>
+          <p style="color: #94a3b8; font-size: 1.1rem; margin-top: 0.5rem">
+            Weekly training schedule for the Augusco Robotics Engineering Team.
+          </p>
+
+          <div
+            style="
+              background: linear-gradient(
+                135deg,
+                rgba(34, 197, 94, 0.08) 0%,
+                rgba(16, 163, 74, 0.04) 100%
+              );
+              border: 1px solid rgba(34, 197, 94, 0.2);
+              border-radius: 16px;
+              padding: 1rem 1.5rem;
+              margin-top: 1.5rem;
+              display: flex;
+              align-items: center;
+              gap: 1rem;
+            "
+          >
+            <span style="font-size: 1.5rem"></span>
+            <div>
+              <p
+                style="
+                  font-weight: 700;
+                  color: #4ade80;
+                  font-size: 0.95rem;
+                  margin: 0;
+                "
+              >
+                Current Term: Term 2, 2026
+              </p>
+              <p style="font-size: 0.8rem; color: #64748b; margin: 0">
+                All sessions held at the Science & Technology Lab, St.
+                Augustine's College
+              </p>
+            </div>
+          </div>
+
+          <!-- Schedule Grid -->
+          <div
+            style="
+              display: flex;
+              flex-direction: column;
+              gap: 0.75rem;
+              margin-top: 1.5rem;
+            "
+          >
+            <!-- Monday -->
+            <div class="tt-row">
+              <div class="tt-day" style="background: rgba(34, 197, 94, 0.12)">
+                <p
+                  style="
+                    font-weight: 800;
+                    color: #4ade80;
+                    font-size: 1.1rem;
+                    margin: 0;
+                  "
+                >
+                  MON
+                </p>
+                <p style="font-size: 0.7rem; color: #64748b; margin: 0">
+                  Weekly
+                </p>
+              </div>
+              <div class="tt-body">
+                <div class="tt-title-row">
+                  <span style="font-size: 1.2rem">️</span>
+                  <p style="font-weight: 700; color: #fff; margin: 0">
+                    SPIKE Prime Python
+                  </p>
+                  <span
+                    style="
+                      background: rgba(34, 197, 94, 0.1);
+                      color: #4ade80;
+                      font-size: 0.7rem;
+                      font-weight: 700;
+                      padding: 2px 8px;
+                      border-radius: 100px;
+                    "
+                    >Active Track</span
+                  >
+                </div>
+                <p style="font-size: 0.82rem; color: #94a3b8; margin: 0">
+                  3:00 PM – 5:00 PM &nbsp;·&nbsp; Lead: Capt. Kwame
+                  &nbsp;·&nbsp; Room: Tech Lab 1
+                </p>
+              </div>
+            </div>
+
+            <!-- Tuesday -->
+            <div class="tt-row">
+              <div class="tt-day" style="background: rgba(96, 165, 250, 0.08)">
+                <p
+                  style="
+                    font-weight: 800;
+                    color: #60a5fa;
+                    font-size: 1.1rem;
+                    margin: 0;
+                  "
+                >
+                  TUE
+                </p>
+                <p style="font-size: 0.7rem; color: #64748b; margin: 0">
+                  Weekly
+                </p>
+              </div>
+              <div class="tt-body">
+                <div class="tt-title-row">
+                  <span style="font-size: 1.2rem"></span>
+                  <p style="font-weight: 700; color: #fff; margin: 0">
+                    Arduino C++ Workshop
+                  </p>
+                  <span
+                    style="
+                      background: rgba(96, 165, 250, 0.1);
+                      color: #60a5fa;
+                      font-size: 0.7rem;
+                      font-weight: 700;
+                      padding: 2px 8px;
+                      border-radius: 100px;
+                    "
+                    >Engineering</span
+                  >
+                </div>
+                <p style="font-size: 0.82rem; color: #94a3b8; margin: 0">
+                  3:00 PM – 5:00 PM &nbsp;·&nbsp; Lead: Engineer Ama
+                  &nbsp;·&nbsp; Room: Tech Lab 2
+                </p>
+              </div>
+            </div>
+
+            <!-- Wednesday -->
+            <div class="tt-row">
+              <div class="tt-day" style="background: rgba(251, 191, 36, 0.08)">
+                <p
+                  style="
+                    font-weight: 800;
+                    color: #fbbf24;
+                    font-size: 1.1rem;
+                    margin: 0;
+                  "
+                >
+                  WED
+                </p>
+                <p style="font-size: 0.7rem; color: #64748b; margin: 0">
+                  Weekly
+                </p>
+              </div>
+              <div class="tt-body">
+                <div class="tt-title-row">
+                  <span style="font-size: 1.2rem"></span>
+                  <p style="font-weight: 700; color: #fff; margin: 0">
+                    Strategy & Team Meeting
+                  </p>
+                  <span
+                    style="
+                      background: rgba(251, 191, 36, 0.1);
+                      color: #fbbf24;
+                      font-size: 0.7rem;
+                      font-weight: 700;
+                      padding: 2px 8px;
+                      border-radius: 100px;
+                    "
+                    >All Hands</span
+                  >
+                </div>
+                <p style="font-size: 0.82rem; color: #94a3b8; margin: 0">
+                  2:00 PM – 4:00 PM &nbsp;·&nbsp; Lead: Joel Yevu Nicholas
+                  (President) &nbsp;·&nbsp; Room: Conference Hall
+                </p>
+              </div>
+            </div>
+
+            <!-- Thursday -->
+            <div class="tt-row">
+              <div class="tt-day" style="background: rgba(167, 139, 250, 0.08)">
+                <p
+                  style="
+                    font-weight: 800;
+                    color: #a78bfa;
+                    font-size: 1.1rem;
+                    margin: 0;
+                  "
+                >
+                  THU
+                </p>
+                <p style="font-size: 0.7rem; color: #64748b; margin: 0">
+                  Weekly
+                </p>
+              </div>
+              <div class="tt-body">
+                <div class="tt-title-row">
+                  <span style="font-size: 1.2rem">️</span>
+                  <p style="font-weight: 700; color: #fff; margin: 0">
+                    EV3 Mindstorms Advanced
+                  </p>
+                  <span
+                    style="
+                      background: rgba(167, 139, 250, 0.1);
+                      color: #a78bfa;
+                      font-size: 0.7rem;
+                      font-weight: 700;
+                      padding: 2px 8px;
+                      border-radius: 100px;
+                    "
+                    >Advanced</span
+                  >
+                </div>
+                <p style="font-size: 0.82rem; color: #94a3b8; margin: 0">
+                  3:30 PM – 5:30 PM &nbsp;·&nbsp; Lead: Senior Engineer
+                  &nbsp;·&nbsp; Room: Tech Lab 1
+                </p>
+              </div>
+            </div>
+
+            <!-- Friday -->
+            <div class="tt-row">
+              <div class="tt-day" style="background: rgba(248, 113, 113, 0.08)">
+                <p
+                  style="
+                    font-weight: 800;
+                    color: #f87171;
+                    font-size: 1.1rem;
+                    margin: 0;
+                  "
+                >
+                  FRI
+                </p>
+                <p style="font-size: 0.7rem; color: #64748b; margin: 0">
+                  Weekly
+                </p>
+              </div>
+              <div class="tt-body">
+                <div class="tt-title-row">
+                  <span style="font-size: 1.2rem">️</span>
+                  <p style="font-weight: 700; color: #fff; margin: 0">
+                    Full Build Review & Testing
+                  </p>
+                  <span
+                    style="
+                      background: rgba(248, 113, 113, 0.1);
+                      color: #f87171;
+                      font-size: 0.7rem;
+                      font-weight: 700;
+                      padding: 2px 8px;
+                      border-radius: 100px;
+                    "
+                    >Build Day</span
+                  >
+                </div>
+                <p style="font-size: 0.82rem; color: #94a3b8; margin: 0">
+                  2:00 PM – 6:00 PM &nbsp;·&nbsp; Full Team &nbsp;·&nbsp; Room:
+                  Engineering Workshop
+                </p>
+              </div>
+            </div>
+
+            <!-- Saturday -->
+            <div class="tt-row">
+              <div class="tt-day" style="background: rgba(34, 197, 94, 0.05)">
+                <p
+                  style="
+                    font-weight: 800;
+                    color: #4ade80;
+                    font-size: 1.1rem;
+                    margin: 0;
+                  "
+                >
+                  SAT
+                </p>
+                <p style="font-size: 0.7rem; color: #64748b; margin: 0">
+                  Bi-weekly
+                </p>
+              </div>
+              <div class="tt-body">
+                <div class="tt-title-row">
+                  <span style="font-size: 1.2rem"></span>
+                  <p style="font-weight: 700; color: #fff; margin: 0">
+                    WRO Competition Prep
+                  </p>
+                  <span
+                    style="
+                      background: rgba(34, 197, 94, 0.1);
+                      color: #4ade80;
+                      font-size: 0.7rem;
+                      font-weight: 700;
+                      padding: 2px 8px;
+                      border-radius: 100px;
+                    "
+                    >Optional</span
+                  >
+                </div>
+                <p style="font-size: 0.82rem; color: #94a3b8; margin: 0">
+                  9:00 AM – 12:00 PM &nbsp;·&nbsp; Competition Squad
+                  &nbsp;·&nbsp; WRO Rules Apply
+                </p>
+              </div>
+            </div>
+          </div>
+          <!-- /schedule -->
+        </section>
+
+        <!-- Team Members Section -->
+        <section id="team" class="page-section">
+          <h1 style="font-size: 2.5rem; font-weight: 800">
+            The <span class="gradient-text">Engineering Team</span>
+          </h1>
+          <p style="color: #94a3b8; font-size: 1.1rem; margin-top: 0.5rem">
+            Official team roster for Augusco Robotics 2025/26. All registered
+            members are shown below.
+          </p>
+
+          <div class="team-grid" id="teamGrid">
+            <!-- Cards rendered by JS -->
+          </div>
+        </section>
+
+        <!-- Settings Section -->
+        <section id="settings" class="page-section">
+          <div
+            style="
+              display: flex;
+              align-items: flex-end;
+              justify-content: space-between;
+              flex-wrap: wrap;
+              gap: 1rem;
+            "
+          >
+            <div>
+              <h1 style="font-size: 2.5rem; font-weight: 800">
+                Account <span class="gradient-text">Settings</span>
+              </h1>
+              <p style="color: #94a3b8; font-size: 1.1rem; margin-top: 0.5rem">
+                Manage your profile, security, and preferences.
+              </p>
+            </div>
+            <button
+              style="
+                background: rgba(255, 255, 255, 0.05);
+                color: #fff;
+                border: 1px solid rgba(255, 255, 255, 0.1);
+                padding: 0.75rem 1.5rem;
+                border-radius: 100px;
+                font-weight: 600;
+                font-size: 0.9rem;
+                cursor: pointer;
+                transition: 0.2s;
+              "
+              onmouseover="this.style.background = 'rgba(255,255,255,0.1)'"
+              onmouseout="this.style.background = 'rgba(255,255,255,0.05)'"
+            >
+              Export My Data
+            </button>
+          </div>
+
+          <div class="settings-grid">
+            <!-- Profile Card -->
+            <div class="settings-card">
+              <div class="settings-header">
+                <div class="settings-icon"></div>
+                <h3>Profile Details</h3>
+              </div>
+
+              <div class="profile-avatar-wrap">
+                <div class="profile-avatar-lg" id="settingsAvatar">?</div>
+                <div class="profile-info">
+                  <h4 id="settingsName">Loading...</h4>
+                  <p id="settingsRole">Augusco Member</p>
+                </div>
+              </div>
+
+              <div class="input-group">
+                <label>Public Display Name</label>
+                <input
+                  type="text"
+                  class="settings-input"
+                  id="setDisplayName"
+                  placeholder="e.g. Capt. Kwame"
+                  disabled
+                />
+              </div>
+              <div class="input-group">
+                <label>Registered Email</label>
+                <input
+                  type="email"
+                  class="settings-input"
+                  id="setEmailDisplay"
+                  disabled
+                />
+              </div>
+
+              <p
+                style="
+                  font-size: 0.75rem;
+                  color: #64748b;
+                  margin-top: auto;
+                  line-height: 1.5;
+                "
+              >
+                Names and emails are mapped to the roster. Contact the admin to
+                request a change.
+              </p>
+            </div>
+
+            <!-- Security / Passphrase -->
+            <div class="settings-card">
+              <div class="settings-header">
+                <div class="settings-icon"></div>
+                <h3>Security &amp; Passphrase</h3>
+              </div>
+
+              <div class="input-group">
+                <label>Current Passphrase</label>
+                <input
+                  type="password"
+                  class="settings-input"
+                  id="setCurrentPass"
+                  placeholder="••••••••"
+                />
+              </div>
+              <div class="input-group">
+                <label>New Passphrase</label>
+                <input
+                  type="password"
+                  class="settings-input"
+                  id="setNewPass"
+                  placeholder="Minimum 6 characters"
+                />
+              </div>
+              <div class="input-group">
+                <label>Confirm New Passphrase</label>
+                <input
+                  type="password"
+                  class="settings-input"
+                  id="setConfirmPass"
+                  placeholder="Repeat new passphrase"
+                />
+              </div>
+
+              <button class="settings-btn" onclick="unifiedChangePassword()">
+                Update Passphrase <span>→</span>
+              </button>
+              <p
+                id="passChangeMsg"
+                style="
+                  font-size: 0.85rem;
+                  margin-top: 0.75rem;
+                  text-align: center;
+                  display: none;
+                "
+              ></p>
+            </div>
+
+            <!-- Preferences & Sessions -->
+            <div class="settings-card">
+              <div class="settings-header">
+                <div class="settings-icon">️</div>
+                <h3>Preferences</h3>
+              </div>
+
+              <!-- 2FA -->
+              <div class="toggle-row">
+                <div>
+                  <p
+                    style="
+                      font-weight: 700;
+                      color: #e2e8f0;
+                      font-size: 0.95rem;
+                      margin: 0;
+                    "
+                  >
+                    Two-Factor Auth
+                  </p>
+                  <p
+                    style="
+                      font-size: 0.8rem;
+                      color: #64748b;
+                      margin: 0;
+                      margin-top: 4px;
+                    "
+                  >
+                    Require email code on login.
+                  </p>
+                </div>
+                <label class="toggle-switch">
+                  <input
+                    type="checkbox"
+                    id="toggle2FACheck"
+                    onchange="unifiedToggle2FA(this.checked)"
+                  />
+                  <span class="toggle-track"></span>
+                </label>
+              </div>
+              <p
+                id="twoFAMsg"
+                style="
+                  font-size: 0.82rem;
+                  margin-top: 0.5rem;
+                  display: none;
+                  padding: 0.5rem 0.75rem;
+                  border-radius: 8px;
+                  line-height: 1.4;
+                "
+              ></p>
+
+              <div
+                style="
+                  height: 1px;
+                  background: rgba(255, 255, 255, 0.05);
+                  margin: 1.25rem 0;
+                "
+              ></div>
+
+              <!-- Active Sessions -->
+              <div>
+                <p
+                  style="
+                    font-weight: 600;
+                    color: #94a3b8;
+                    font-size: 0.8rem;
+                    text-transform: uppercase;
+                    letter-spacing: 0.05em;
+                    margin-bottom: 1rem;
+                  "
+                >
+                  Active Sessions
+                </p>
+
+                <div class="session-item">
+                  <div class="session-icon"></div>
+                  <div class="session-details">
+                    <p class="session-main">
+                      Windows · Edge <span class="badge-current">Current</span>
+                    </p>
+                    <p class="session-sub">Accra, GH · Last active: Just now</p>
+                  </div>
+                </div>
+
+                <!-- Extra Mock session -->
+                <div class="session-item" style="opacity: 0.6">
+                  <div class="session-icon"></div>
+                  <div class="session-details">
+                    <p class="session-main">iOS · Safari</p>
+                    <p class="session-sub">Cape Coast, GH · Active 3 hrs ago</p>
+                  </div>
+                </div>
+
+                <div id="sessionInfo" style="display: none"></div>
+                <!-- For backwards compatibility with logic if necessary -->
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <!-- ── CHAT ── -->
+      <aside class="chat-panel">
+        <div class="chat-header">
+          <h3 style="font-size: 1.1rem; font-weight: 800">
+            Hardware <span style="color: #4ade80">Comm</span>
+          </h3>
+          <p style="font-size: 0.75rem; color: #94a3b8">
+            Team-wide encrypted relay
+          </p>
+        </div>
+
+        <div class="chat-messages" id="chatRelay">
+          <div class="msg msg-received">
+            <span class="msg-user">Capt. Kwame (SPIKE Team)</span>
+            Has anyone finished the PID loop for the color sensor alignment? The
+            turn is still overshooting 2 degrees.
+          </div>
+          <div class="msg msg-received">
+            <span class="msg-user">Engineer Ama</span>
+            Try reducing the integral constant to 0.05. I had the same issue on
+            the EV3 build last year.
+          </div>
+          <div class="msg msg-sent">
+            Checking the hex code now. I'll push the fix to the portal.
           </div>
         </div>
-      </section>
 
-      <!-- Docs Section -->
-      <section id="docs" class="page-section">
-        <h1 style="font-size: 2.5rem; font-weight: 800;">Technical <span class="gradient-text">Docs</span></h1>
-        <p style="color: #94a3b8; font-size: 1.1rem; margin-top: 0.5rem;">Access internal schematics and code repositories.</p>
-        <div style="margin-top: 3rem; color:#f87171; font-weight:600; text-align:center; padding: 4rem; border:1px dashed #f87171; border-radius:20px;">
-          ⚠ RESTRICTED ACCESS: Higher clearance required for schematics.
-        </div>
-      </section>
-
-      <!-- Timetable Section -->
-      <section id="timetable" class="page-section">
-        <h1 style="font-size: 2.5rem; font-weight: 800;">Lab <span class="gradient-text">Timetable</span></h1>
-        <p style="color: #94a3b8; font-size: 1.1rem; margin-top: 0.5rem;">Weekly training schedule for the Augusco Robotics Engineering Team.</p>
-
-          <div style="background:linear-gradient(135deg,rgba(34,197,94,0.08) 0%,rgba(16,163,74,0.04) 100%); border:1px solid rgba(34,197,94,0.2); border-radius:16px; padding:1rem 1.5rem; margin-top:1.5rem; display:flex; align-items:center; gap:1rem;">
-          <span style="font-size:1.5rem;">📅</span>
-          <div>
-            <p style="font-weight:700; color:#4ade80; font-size:0.95rem; margin:0;">Current Term: Term 2, 2026</p>
-            <p style="font-size:0.8rem; color:#64748b; margin:0;">All sessions held at the Science & Technology Lab, St. Augustine's College</p>
-          </div>
-        </div>
-
-        <!-- Schedule Grid -->
-        <div style="display:flex; flex-direction:column; gap:0.75rem; margin-top:1.5rem;">
-
-          <!-- Monday -->
-          <div class="tt-row">
-            <div class="tt-day" style="background:rgba(34,197,94,0.12);">
-              <p style="font-weight:800; color:#4ade80; font-size:1.1rem; margin:0;">MON</p>
-              <p style="font-size:0.7rem; color:#64748b; margin:0;">Weekly</p>
-            </div>
-            <div class="tt-body">
-              <div class="tt-title-row">
-                <span style="font-size:1.2rem;">🛰️</span>
-                <p style="font-weight:700; color:#fff; margin:0;">SPIKE Prime Python</p>
-                <span style="background:rgba(34,197,94,0.1); color:#4ade80; font-size:0.7rem; font-weight:700; padding:2px 8px; border-radius:100px;">Active Track</span>
-              </div>
-              <p style="font-size:0.82rem; color:#94a3b8; margin:0;">3:00 PM – 5:00 PM &nbsp;·&nbsp; Lead: Capt. Kwame &nbsp;·&nbsp; Room: Tech Lab 1</p>
-            </div>
-          </div>
-
-          <!-- Tuesday -->
-          <div class="tt-row">
-            <div class="tt-day" style="background:rgba(96,165,250,0.08);">
-              <p style="font-weight:800; color:#60a5fa; font-size:1.1rem; margin:0;">TUE</p>
-              <p style="font-size:0.7rem; color:#64748b; margin:0;">Weekly</p>
-            </div>
-            <div class="tt-body">
-              <div class="tt-title-row">
-                <span style="font-size:1.2rem;">🔌</span>
-                <p style="font-weight:700; color:#fff; margin:0;">Arduino C++ Workshop</p>
-                <span style="background:rgba(96,165,250,0.1); color:#60a5fa; font-size:0.7rem; font-weight:700; padding:2px 8px; border-radius:100px;">Engineering</span>
-              </div>
-              <p style="font-size:0.82rem; color:#94a3b8; margin:0;">3:00 PM – 5:00 PM &nbsp;·&nbsp; Lead: Engineer Ama &nbsp;·&nbsp; Room: Tech Lab 2</p>
-            </div>
-          </div>
-
-          <!-- Wednesday -->
-          <div class="tt-row">
-            <div class="tt-day" style="background:rgba(251,191,36,0.08);">
-              <p style="font-weight:800; color:#fbbf24; font-size:1.1rem; margin:0;">WED</p>
-              <p style="font-size:0.7rem; color:#64748b; margin:0;">Weekly</p>
-            </div>
-            <div class="tt-body">
-              <div class="tt-title-row">
-                <span style="font-size:1.2rem;">💬</span>
-                <p style="font-weight:700; color:#fff; margin:0;">Strategy & Team Meeting</p>
-                <span style="background:rgba(251,191,36,0.1); color:#fbbf24; font-size:0.7rem; font-weight:700; padding:2px 8px; border-radius:100px;">All Hands</span>
-              </div>
-              <p style="font-size:0.82rem; color:#94a3b8; margin:0;">2:00 PM – 4:00 PM &nbsp;·&nbsp; Lead: Joel Yevu Nicholas (President) &nbsp;·&nbsp; Room: Conference Hall</p>
-            </div>
-          </div>
-
-          <!-- Thursday -->
-          <div class="tt-row">
-            <div class="tt-day" style="background:rgba(167,139,250,0.08);">
-              <p style="font-weight:800; color:#a78bfa; font-size:1.1rem; margin:0;">THU</p>
-              <p style="font-size:0.7rem; color:#64748b; margin:0;">Weekly</p>
-            </div>
-            <div class="tt-body">
-              <div class="tt-title-row">
-                <span style="font-size:1.2rem;">🏗️</span>
-                <p style="font-weight:700; color:#fff; margin:0;">EV3 Mindstorms Advanced</p>
-                <span style="background:rgba(167,139,250,0.1); color:#a78bfa; font-size:0.7rem; font-weight:700; padding:2px 8px; border-radius:100px;">Advanced</span>
-              </div>
-              <p style="font-size:0.82rem; color:#94a3b8; margin:0;">3:30 PM – 5:30 PM &nbsp;·&nbsp; Lead: Senior Engineer &nbsp;·&nbsp; Room: Tech Lab 1</p>
-            </div>
-          </div>
-
-          <!-- Friday -->
-          <div class="tt-row">
-            <div class="tt-day" style="background:rgba(248,113,113,0.08);">
-              <p style="font-weight:800; color:#f87171; font-size:1.1rem; margin:0;">FRI</p>
-              <p style="font-size:0.7rem; color:#64748b; margin:0;">Weekly</p>
-            </div>
-            <div class="tt-body">
-              <div class="tt-title-row">
-                <span style="font-size:1.2rem;">🛠️</span>
-                <p style="font-weight:700; color:#fff; margin:0;">Full Build Review & Testing</p>
-                <span style="background:rgba(248,113,113,0.1); color:#f87171; font-size:0.7rem; font-weight:700; padding:2px 8px; border-radius:100px;">Build Day</span>
-              </div>
-              <p style="font-size:0.82rem; color:#94a3b8; margin:0;">2:00 PM – 6:00 PM &nbsp;·&nbsp; Full Team &nbsp;·&nbsp; Room: Engineering Workshop</p>
-            </div>
-          </div>
-
-          <!-- Saturday -->
-          <div class="tt-row">
-            <div class="tt-day" style="background:rgba(34,197,94,0.05);">
-              <p style="font-weight:800; color:#4ade80; font-size:1.1rem; margin:0;">SAT</p>
-              <p style="font-size:0.7rem; color:#64748b; margin:0;">Bi-weekly</p>
-            </div>
-            <div class="tt-body">
-              <div class="tt-title-row">
-                <span style="font-size:1.2rem;">🏆</span>
-                <p style="font-weight:700; color:#fff; margin:0;">WRO Competition Prep</p>
-                <span style="background:rgba(34,197,94,0.1); color:#4ade80; font-size:0.7rem; font-weight:700; padding:2px 8px; border-radius:100px;">Optional</span>
-              </div>
-              <p style="font-size:0.82rem; color:#94a3b8; margin:0;">9:00 AM – 12:00 PM &nbsp;·&nbsp; Competition Squad &nbsp;·&nbsp; WRO Rules Apply</p>
-            </div>
-          </div>
-
-        </div><!-- /schedule -->
-      </section>
-
-      <!-- Team Members Section -->
-      <section id="team" class="page-section">
-        <h1 style="font-size: 2.5rem; font-weight: 800;">The <span class="gradient-text">Engineering Team</span></h1>
-        <p style="color: #94a3b8; font-size: 1.1rem; margin-top: 0.5rem;">Official team roster for Augusco Robotics 2025/26. All registered members are shown below.</p>
-
-        <div class="team-grid" id="teamGrid">
-          <!-- Cards rendered by JS -->
-        </div>
-      </section>
-
-      <!-- Settings Section -->
-      <section id="settings" class="page-section">
-        <div style="display: flex; align-items: flex-end; justify-content: space-between; flex-wrap: wrap; gap: 1rem;">
-          <div>
-            <h1 style="font-size: 2.5rem; font-weight: 800;">Account <span class="gradient-text">Settings</span></h1>
-            <p style="color: #94a3b8; font-size: 1.1rem; margin-top: 0.5rem;">Manage your profile, security, and preferences.</p>
-          </div>
-          <button style="background: rgba(255,255,255,0.05); color: #fff; border: 1px solid rgba(255,255,255,0.1); padding: 0.75rem 1.5rem; border-radius: 100px; font-weight: 600; font-size: 0.9rem; cursor: pointer; transition: 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.1)'" onmouseout="this.style.background='rgba(255,255,255,0.05)'">
-            Export My Data
+        <div class="chat-input-area">
+          <input
+            type="text"
+            class="chat-input"
+            id="chatInput"
+            placeholder="Send relay message..."
+          />
+          <button
+            onclick="sendMessage()"
+            style="
+              background: #22c55e;
+              color: #000;
+              border: none;
+              width: 40px;
+              height: 40px;
+              border-radius: 50%;
+              font-weight: 900;
+              cursor: pointer;
+            "
+          >
+            ↑
           </button>
         </div>
+      </aside>
+    </div>
 
-        <div class="settings-grid">
-          
-          <!-- Profile Card -->
-          <div class="settings-card">
-            <div class="settings-header">
-              <div class="settings-icon">👤</div>
-              <h3>Profile Details</h3>
-            </div>
-            
-            <div class="profile-avatar-wrap">
-              <div class="profile-avatar-lg" id="settingsAvatar">?</div>
-              <div class="profile-info">
-                <h4 id="settingsName">Loading...</h4>
-                <p id="settingsRole">Augusco Member</p>
-              </div>
-            </div>
+    <script src="auth.js"></script>
+    <script>
+      // ── EmailJS Config ──────────────────────────────────
+      // ── Role accounts seed ───────────────────────────────
+      const SEED_VERSION = "v3-joel-2026"; // bumped: forces name refresh
+      const ROLE_ACCOUNTS = [
+        {
+          name: "Joel Yevu Nicholas",
+          role: "President",
+          email: "joelyevu@visionedu.online",
+          hash: simpleHash("Joel1234"),
+          provider: "email",
+          roboticsRole: "President",
+        },
+        {
+          name: "Vice President",
+          role: "Vice President",
+          email: "vp@augusco.team",
+          hash: simpleHash("Augusco2026!"),
+          provider: "email",
+          roboticsRole: "Vice President",
+        },
+        {
+          name: "Public Relations Officer",
+          role: "PRO",
+          email: "pro@augusco.team",
+          hash: simpleHash("Augusco2026!"),
+          provider: "email",
+          roboticsRole: "PRO",
+        },
+      ];
 
-            <div class="input-group">
-              <label>Public Display Name</label>
-              <input type="text" class="settings-input" id="setDisplayName" placeholder="e.g. Capt. Kwame" disabled>
-            </div>
-            <div class="input-group">
-              <label>Registered Email</label>
-              <input type="email" class="settings-input" id="setEmailDisplay" disabled>
-            </div>
-            
-            <p style="font-size: 0.75rem; color: #64748b; margin-top: auto; line-height: 1.5;">Names and emails are mapped to the roster. Contact the admin to request a change.</p>
-          </div>
-
-          <!-- Security / Passphrase -->
-          <div class="settings-card">
-            <div class="settings-header">
-              <div class="settings-icon">🔒</div>
-              <h3>Security &amp; Passphrase</h3>
-            </div>
-            
-            <div class="input-group">
-              <label>Current Passphrase</label>
-              <input type="password" class="settings-input" id="setCurrentPass" placeholder="••••••••" />
-            </div>
-            <div class="input-group">
-              <label>New Passphrase</label>
-              <input type="password" class="settings-input" id="setNewPass" placeholder="Minimum 6 characters" />
-            </div>
-            <div class="input-group">
-              <label>Confirm New Passphrase</label>
-              <input type="password" class="settings-input" id="setConfirmPass" placeholder="Repeat new passphrase" />
-            </div>
-            
-            <button class="settings-btn" onclick="unifiedChangePassword()">
-              Update Passphrase <span>→</span>
-            </button>
-            <p id="passChangeMsg" style="font-size:0.85rem; margin-top:0.75rem; text-align: center; display:none;"></p>
-          </div>
-
-          <!-- Preferences & Sessions -->
-          <div class="settings-card">
-            <div class="settings-header">
-              <div class="settings-icon">⚙️</div>
-              <h3>Preferences</h3>
-            </div>
-            
-            <!-- 2FA -->
-            <div class="toggle-row">
-              <div>
-                <p style="font-weight:700; color:#e2e8f0; font-size:0.95rem; margin:0;">Two-Factor Auth</p>
-                <p style="font-size:0.8rem; color:#64748b; margin:0; margin-top:4px;">Require email code on login.</p>
-              </div>
-              <label class="toggle-switch">
-                <input type="checkbox" id="toggle2FACheck" onchange="unifiedToggle2FA(this.checked)" />
-                <span class="toggle-track"></span>
-              </label>
-            </div>
-            <p id="twoFAMsg" style="font-size:0.82rem; margin-top:0.5rem; display:none; padding:0.5rem 0.75rem; border-radius:8px; line-height: 1.4;"></p>
-
-            <div style="height: 1px; background: rgba(255,255,255,0.05); margin: 1.25rem 0;"></div>
-
-            <!-- Active Sessions -->
-            <div>
-              <p style="font-weight:600; color:#94a3b8; font-size:0.8rem; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:1rem;">Active Sessions</p>
-              
-              <div class="session-item">
-                <div class="session-icon">💻</div>
-                <div class="session-details">
-                  <p class="session-main">Windows · Edge <span class="badge-current">Current</span></p>
-                  <p class="session-sub">Accra, GH · Last active: Just now</p>
-                </div>
-              </div>
-
-              <!-- Extra Mock session -->
-              <div class="session-item" style="opacity: 0.6;">
-                <div class="session-icon">📱</div>
-                <div class="session-details">
-                  <p class="session-main">iOS · Safari</p>
-                  <p class="session-sub">Cape Coast, GH · Active 3 hrs ago</p>
-                </div>
-              </div>
-              
-              <div id="sessionInfo" style="display:none;"></div> <!-- For backwards compatibility with logic if necessary -->
-            </div>
-          </div>
-
-        </div>
-      </section>
-
-    </main>
-
-    <!-- ── CHAT ── -->
-    <aside class="chat-panel">
-      <div class="chat-header">
-        <h3 style="font-size: 1.1rem; font-weight: 800;">Hardware <span style="color:#4ade80;">Comm</span></h3>
-        <p style="font-size: 0.75rem; color: #94a3b8;">Team-wide encrypted relay</p>
-      </div>
-      
-      <div class="chat-messages" id="chatRelay">
-        <div class="msg msg-received">
-          <span class="msg-user">Capt. Kwame (SPIKE Team)</span>
-          Has anyone finished the PID loop for the color sensor alignment? The turn is still overshooting 2 degrees.
-        </div>
-        <div class="msg msg-received">
-          <span class="msg-user">Engineer Ama</span>
-          Try reducing the integral constant to 0.05. I had the same issue on the EV3 build last year.
-        </div>
-        <div class="msg msg-sent">
-          Checking the hex code now. I'll push the fix to the portal.
-        </div>
-      </div>
-
-      <div class="chat-input-area">
-        <input type="text" class="chat-input" id="chatInput" placeholder="Send relay message...">
-        <button onclick="sendMessage()" style="background:#22c55e; color:#000; border:none; width:40px; height:40px; border-radius:50%; font-weight:900; cursor:pointer;">↑</button>
-      </div>
-    </aside>
-
-  </div>
-
-  <script src="auth.js"></script>
-  <script>
-    // ── EmailJS Config ──────────────────────────────────
-    // ── Role accounts seed ───────────────────────────────
-    const SEED_VERSION = 'v3-joel-2026';  // bumped: forces name refresh
-    const ROLE_ACCOUNTS = [
-      { name: 'Joel Yevu Nicholas',      role: 'President',          email: 'joelyevu@visionedu.online', hash: simpleHash('Joel1234'),     provider: 'email', roboticsRole: 'President' },
-      { name: 'Vice President',           role: 'Vice President',      email: 'vp@augusco.team',           hash: simpleHash('Augusco2026!'), provider: 'email', roboticsRole: 'Vice President' },
-      { name: 'Public Relations Officer', role: 'PRO',                 email: 'pro@augusco.team',          hash: simpleHash('Augusco2026!'), provider: 'email', roboticsRole: 'PRO' },
-    ];
-
-    function seedRoleAccounts() {
-      const users = getUsers();
-      const seeded = localStorage.getItem('rolesSeedVersion');
-      if (seeded === SEED_VERSION) return;
-      ROLE_ACCOUNTS.forEach(ra => {
-        const idx = users.findIndex(u => u.email === ra.email);
-        if (idx === -1) users.push({ ...ra, createdAt: Date.now() });
-        else users[idx] = { ...users[idx], ...ra }; // force-update name/role
-      });
-      saveUsers(users);
-      localStorage.setItem('rolesSeedVersion', SEED_VERSION);
-    }
-
-    // ── Resilient welcome setter ─────────────────────────
-    function setWelcome() {
-      try {
-        const session = getSession();
-        if (!session) { console.warn('setWelcome: no session'); return; }
-
-        // Always look up the freshest user record by email
-        const allUsers = getUsers();
-        let userRecord = allUsers.find(u => u.email === session.email);
-
-        // INLINE FALLBACK: if record missing, seed Joel's account right now
-        if (!userRecord && session.email === 'joelyevu@visionedu.online') {
-          userRecord = { name: 'Joel Yevu Nicholas', email: 'joelyevu@visionedu.online', roboticsRole: 'President', provider: 'email' };
-        }
-
-        const fullName = (userRecord && userRecord.name && userRecord.name.trim())
-                      || (session.name && session.name.trim())
-                      || (session.email ? session.email.split('@')[0] : 'Engineer');
-        const firstName = fullName.split(' ')[0] || fullName;
-        const role = (userRecord && userRecord.roboticsRole) || (session.provider === 'google' ? 'Google Member' : 'Engineer');
-        const roleDisplay = { 'President': 'President \ud83d\udc51', 'Vice President': 'Vice President', 'PRO': 'PRO', 'Google Member': 'Google Member', 'Engineer': 'Engineer' }[role] || role;
-
-        console.log('[setWelcome] name:', fullName, '| role:', role);
-
-        // Refresh the stored session so future loads are instant
-        if (userRecord && (!session.name || session.name !== fullName)) {
-          setSession({ ...session, name: fullName, roboticsRole: role });
-        }
-
-        const ids = {
-          welcomeFirstName: firstName,
-          welcomeFullName:  fullName,
-          welcomeRole:      '\u00b7 ' + roleDisplay,
-          welcomeAvatar:    firstName.charAt(0).toUpperCase(),
-          userAvatar:       firstName.charAt(0).toUpperCase(),
-          userName:         fullName,
-          userRoleLabel:    roleDisplay,
-        };
-        Object.entries(ids).forEach(([id, val]) => {
-          const el = document.getElementById(id);
-          if (el) el.textContent = val;
+      function seedRoleAccounts() {
+        const users = getUsers();
+        const seeded = localStorage.getItem("rolesSeedVersion");
+        if (seeded === SEED_VERSION) return;
+        ROLE_ACCOUNTS.forEach((ra) => {
+          const idx = users.findIndex((u) => u.email === ra.email);
+          if (idx === -1) users.push({ ...ra, createdAt: Date.now() });
+          else users[idx] = { ...users[idx], ...ra }; // force-update name/role
         });
-      } catch(e) {
-        console.error('setWelcome error:', e);
-      }
-    }
-
-    function initDashboard() {
-      seedRoleAccounts();
-      if (document.readyState === 'complete') { initMeetClient(); }
-      else { window.addEventListener('load', initMeetClient); }
-
-      const session = checkAuth();
-      if (!session) return;
-
-      setWelcome();
-
-      // Re-look up user for 2FA + session info
-      const allUsers = getUsers();
-      const user = allUsers.find(u => u.email === session.email);
-
-      if (user) {
-        const el = document.getElementById('toggle2FACheck');
-        if (el) el.checked = !!user.twoFAEnabled;
+        saveUsers(users);
+        localStorage.setItem("rolesSeedVersion", SEED_VERSION);
       }
 
-      // Session info panel and new settings UI hooks
-      const si = document.getElementById('sessionInfo');
-      const role = (user && user.roboticsRole) ? user.roboticsRole : 'Engineer';
-      
-      if (si) {
-        si.innerHTML = `
-          <span style="color:#fff;font-weight:600;">Name:</span> ${user ? user.name : (session.name || 'N/A')}<br>
-          <span style="color:#fff;font-weight:600;">Email:</span> ${session.email || 'N/A'}<br>
+      // ── Resilient welcome setter ─────────────────────────
+      function setWelcome() {
+        try {
+          const session = getSession();
+          if (!session) {
+            console.warn("setWelcome: no session");
+            return;
+          }
+
+          // Always look up the freshest user record by email
+          const allUsers = getUsers();
+          let userRecord = allUsers.find((u) => u.email === session.email);
+
+          // INLINE FALLBACK: if record missing, seed Joel's account right now
+          if (!userRecord && session.email === "joelyevu@visionedu.online") {
+            userRecord = {
+              name: "Joel Yevu Nicholas",
+              email: "joelyevu@visionedu.online",
+              roboticsRole: "President",
+              provider: "email",
+            };
+          }
+
+          const fullName =
+            (userRecord && userRecord.name && userRecord.name.trim()) ||
+            (session.name && session.name.trim()) ||
+            (session.email ? session.email.split("@")[0] : "Engineer");
+          const firstName = fullName.split(" ")[0] || fullName;
+          const role =
+            (userRecord && userRecord.roboticsRole) ||
+            (session.provider === "google" ? "Google Member" : "Engineer");
+          const roleDisplay =
+            {
+              President: "President \ud83d\udc51",
+              "Vice President": "Vice President",
+              PRO: "PRO",
+              "Google Member": "Google Member",
+              Engineer: "Engineer",
+            }[role] || role;
+
+          console.log("[setWelcome] name:", fullName, "| role:", role);
+
+          // Refresh the stored session so future loads are instant
+          if (userRecord && (!session.name || session.name !== fullName)) {
+            setSession({ ...session, name: fullName, roboticsRole: role });
+          }
+
+          const ids = {
+            welcomeFirstName: firstName,
+            welcomeFullName: fullName,
+            welcomeRole: "\u00b7 " + roleDisplay,
+            welcomeAvatar: firstName.charAt(0).toUpperCase(),
+            userAvatar: firstName.charAt(0).toUpperCase(),
+            userName: fullName,
+            userRoleLabel: roleDisplay,
+          };
+          Object.entries(ids).forEach(([id, val]) => {
+            const el = document.getElementById(id);
+            if (el) el.textContent = val;
+          });
+        } catch (e) {
+          console.error("setWelcome error:", e);
+        }
+      }
+
+      function initDashboard() {
+        seedRoleAccounts();
+        if (document.readyState === "complete") {
+          initMeetClient();
+        } else {
+          window.addEventListener("load", initMeetClient);
+        }
+
+        const session = checkAuth();
+        if (!session) return;
+
+        setWelcome();
+
+        // Re-look up user for 2FA + session info
+        const allUsers = getUsers();
+        const user = allUsers.find((u) => u.email === session.email);
+
+        if (user) {
+          const el = document.getElementById("toggle2FACheck");
+          if (el) el.checked = !!user.twoFAEnabled;
+        }
+
+        // Session info panel and new settings UI hooks
+        const si = document.getElementById("sessionInfo");
+        const role = user && user.roboticsRole ? user.roboticsRole : "Engineer";
+
+        if (si) {
+          si.innerHTML = `
+          <span style="color:#fff;font-weight:600;">Name:</span> ${user ? user.name : session.name || "N/A"}<br>
+          <span style="color:#fff;font-weight:600;">Email:</span> ${session.email || "N/A"}<br>
           <span style="color:#fff;font-weight:600;">Role:</span> ${role}<br>
-          <span style="color:#fff;font-weight:600;">Auth Provider:</span> ${session.provider || 'email'}<br>
+          <span style="color:#fff;font-weight:600;">Auth Provider:</span> ${session.provider || "email"}<br>
           <span style="color:#fff;font-weight:600;">2FA:</span> ${user && user.twoFAEnabled ? '<span style="color:#4ade80;">Enabled ✓</span>' : '<span style="color:#f87171;">Disabled</span>'}
         `;
+        }
+
+        // Populate new fancy settings UI
+        const sName = document.getElementById("settingsName");
+        const sRole = document.getElementById("settingsRole");
+        const sAvatar = document.getElementById("settingsAvatar");
+        const sInputName = document.getElementById("setDisplayName");
+        const sInputEmail = document.getElementById("setEmailDisplay");
+
+        const displayName = user ? user.name : session.name || "N/A";
+        if (sName) sName.textContent = displayName;
+        if (sRole) sRole.textContent = role;
+        if (sAvatar) sAvatar.textContent = displayName.charAt(0).toUpperCase();
+        if (sInputName) sInputName.value = displayName;
+        if (sInputEmail) sInputEmail.value = session.email || "N/A";
+
+        renderTeam();
+        initChat();
       }
 
-      // Populate new fancy settings UI
-      const sName = document.getElementById('settingsName');
-      const sRole = document.getElementById('settingsRole');
-      const sAvatar = document.getElementById('settingsAvatar');
-      const sInputName = document.getElementById('setDisplayName');
-      const sInputEmail = document.getElementById('setEmailDisplay');
-      
-      const displayName = user ? user.name : (session.name || 'N/A');
-      if (sName) sName.textContent = displayName;
-      if (sRole) sRole.textContent = role;
-      if (sAvatar) sAvatar.textContent = displayName.charAt(0).toUpperCase();
-      if (sInputName) sInputName.value = displayName;
-      if (sInputEmail) sInputEmail.value = session.email || 'N/A';
-      
-      renderTeam();
-      initChat();
-    }
+      // ── Course Modal ──────────────────────────────────────────────────
+      const COURSES = {
+        spike: {
+          icon: "",
+          color: "#4ade80",
+          badge: "Active Track",
+          title: "LEGO SPIKE Prime — Python Track",
+          description:
+            "SPIKE Prime is LEGO\u2019s flagship robotics platform for competitive robotic engineering. This course teaches you to write clean, modular Python code to control motors, read sensor data, and build autonomous robots that can compete at WRO and FLL level.",
+          topics: [
+            "\ud83d\udc0d Python fundamentals: variables, loops, functions, classes",
+            "\u2699\ufe0f Motor control: single, dual, and synchronized drive systems",
+            "\ud83d\udcf6 Sensor integration: color, ultrasonic, force, and gyro sensors",
+            "\ud83e\uddfe Line following algorithms and PID tuning",
+            "\ud83e\udd16 Autonomous mission planning for WRO tables",
+            "\ud83d\udee0\ufe0f Mechanical design: gear ratios, attachments, and modularity",
+            "\ud83c\udfc6 Competition strategy: time management and run sequencing",
+          ],
+          difficulty: "Intermediate",
+          time: "~40 hours",
+          tools: "SPIKE Prime Hub, LEGO Education SPIKE App, Python 3",
+          links: [
+            {
+              label: "\ud83d\udcd8 LEGO Education SPIKE App",
+              url: "https://education.lego.com/en-us/downloads/spike-app/software/",
+            },
+            {
+              label: "\ud83d\udc0d SPIKE Prime Python Docs",
+              url: "https://lego.github.io/SPIKE-Prime-documentation/",
+            },
+            {
+              label: "\ud83c\udf93 WRO Official Rules & Resources",
+              url: "https://www.worldrobotolympiad.org/",
+            },
+            {
+              label: "\ud83d\udcfa YouTube: SPIKE Prime Tutorials",
+              url: "https://www.youtube.com/results?search_query=LEGO+SPIKE+Prime+python+tutorial",
+            },
+            {
+              label: "\ud83e\udde0 FLL Challenge Hub",
+              url: "https://www.firstlegoleague.org/season",
+            },
+          ],
+        },
+        arduino: {
+          icon: "\ud83d\udd0c",
+          color: "#60a5fa",
+          badge: "Engineering Track",
+          title: "Arduino C++ — Hardware Engineering",
+          description:
+            "Arduino is the world\u2019s most popular open-source microcontroller platform. This track takes you from your first blink sketch to advanced topics like PID controllers, communication protocols (I2C, SPI, Serial), and full robot control systems using C++.",
+          topics: [
+            "\ud83d\udca1 Arduino IDE setup and sketch structure",
+            "\ud83d\udd0c GPIO: digital & analog pins, PWM output",
+            "\ud83d\udcd0 Circuit basics: resistors, LEDs, transistors, relays",
+            "\ud83d\udcf6 Sensor interfacing: ultrasonic, IR, servo, DHT11, MPU-6050",
+            "\u23f1\ufe0f Timers, interrupts, and multitasking concepts",
+            "\ud83d\udd04 Communication: I2C, SPI, UART serial between devices",
+            "\ud83e\udd16 PID controller design and motor driver integration (L298N)",
+            "\ud83d\udee0\ufe0f Building line followers, arm robots, and maze solvers",
+          ],
+          difficulty: "Beginner \u2192 Advanced",
+          time: "~60 hours",
+          tools: "Arduino Uno/Mega, Arduino IDE, Tinkercad for simulation",
+          links: [
+            {
+              label: "\ud83d\udcd8 Arduino Official Reference",
+              url: "https://www.arduino.cc/reference/en/",
+            },
+            {
+              label: "\ud83e\uddea Tinkercad Circuit Simulator",
+              url: "https://www.tinkercad.com/circuits",
+            },
+            {
+              label: "\ud83c\udf93 Arduino Project Hub",
+              url: "https://projecthub.arduino.cc/",
+            },
+            {
+              label: "\ud83d\udcfa YouTube: Arduino for Beginners",
+              url: "https://www.youtube.com/results?search_query=arduino+c%2B%2B+tutorial+beginners",
+            },
+            {
+              label: "\ud83d\udcda Last Minute Engineers \u2014 Sensor Guides",
+              url: "https://lastminuteengineers.com/",
+            },
+          ],
+        },
+        ev3: {
+          icon: "\ud83c\udfd7\ufe0f",
+          color: "#facc15",
+          badge: "Advanced Track",
+          title: "LEGO Mindstorms EV3 — Competition Engineering",
+          description:
+            "Mindstorms EV3 is a powerful legacy robotics system still used extensively in WRO and FLL competitions. This advanced track focuses on mechanical engineering precision, multi-motor synchronization, and competitive strategy planning for international competitions.",
+          topics: [
+            "\u2699\ufe0f EV3 Brick architecture: sensors, motors, and ports",
+            "\ud83d\udcbb EV3-G block programming and EV3 MicroPython",
+            "\ud83d\udd27 Large & medium motor synchronization and PID tuning",
+            "\ud83d\udcd0 Gear trains: torque vs speed trade-offs for competition builds",
+            "\ud83d\udcf6 Touch, ultrasonic, color, and gyro sensor deep dives",
+            "\ud83e\udd16 Autonomous navigation: dead reckoning and sensor fusion",
+            "\ud83c\udfc6 WRO competition table analysis and mission scoring",
+            "\ud83d\udee0\ufe0f Advanced build techniques: suspension, differential steering",
+          ],
+          difficulty: "Advanced",
+          time: "~50 hours",
+          tools: "EV3 Intelligent Brick, EV3 Classroom App, MicroPython",
+          links: [
+            {
+              label: "\ud83d\udcd8 EV3 MicroPython Docs",
+              url: "https://pybricks.com/ev3-micropython/",
+            },
+            {
+              label: "\ud83c\udf93 LEGO Education EV3 Lessons",
+              url: "https://education.lego.com/en-us/lessons/?products=mindstorms-ev3",
+            },
+            {
+              label: "\ud83c\udfc6 WRO 2025 Mission Rules",
+              url: "https://www.worldrobotolympiad.org/season-2025",
+            },
+            {
+              label: "\ud83d\udcfa YouTube: EV3 Programming Guide",
+              url: "https://www.youtube.com/results?search_query=lego+mindstorms+ev3+tutorial+python",
+            },
+            {
+              label: "\ud83d\udcda EV3Dev Linux OS for Hackers",
+              url: "https://www.ev3dev.org/",
+            },
+          ],
+        },
+      };
 
-    // ── Course Modal ──────────────────────────────────────────────────
-    const COURSES = {
-      spike: {
-        icon: '🚀', color: '#4ade80', badge: 'Active Track',
-        title: 'LEGO SPIKE Prime — Python Track',
-        description: 'SPIKE Prime is LEGO\u2019s flagship robotics platform for competitive robotic engineering. This course teaches you to write clean, modular Python code to control motors, read sensor data, and build autonomous robots that can compete at WRO and FLL level.',
-        topics: [
-          '\ud83d\udc0d Python fundamentals: variables, loops, functions, classes',
-          '\u2699\ufe0f Motor control: single, dual, and synchronized drive systems',
-          '\ud83d\udcf6 Sensor integration: color, ultrasonic, force, and gyro sensors',
-          '\ud83e\uddfe Line following algorithms and PID tuning',
-          '\ud83e\udd16 Autonomous mission planning for WRO tables',
-          '\ud83d\udee0\ufe0f Mechanical design: gear ratios, attachments, and modularity',
-          '\ud83c\udfc6 Competition strategy: time management and run sequencing',
-        ],
-        difficulty: 'Intermediate', time: '~40 hours', tools: 'SPIKE Prime Hub, LEGO Education SPIKE App, Python 3',
-        links: [
-          { label: '\ud83d\udcd8 LEGO Education SPIKE App', url: 'https://education.lego.com/en-us/downloads/spike-app/software/' },
-          { label: '\ud83d\udc0d SPIKE Prime Python Docs', url: 'https://lego.github.io/SPIKE-Prime-documentation/' },
-          { label: '\ud83c\udf93 WRO Official Rules & Resources', url: 'https://www.worldrobotolympiad.org/' },
-          { label: '\ud83d\udcfa YouTube: SPIKE Prime Tutorials', url: 'https://www.youtube.com/results?search_query=LEGO+SPIKE+Prime+python+tutorial' },
-          { label: '\ud83e\udde0 FLL Challenge Hub', url: 'https://www.firstlegoleague.org/season' },
-        ]
-      },
-      arduino: {
-        icon: '\ud83d\udd0c', color: '#60a5fa', badge: 'Engineering Track',
-        title: 'Arduino C++ — Hardware Engineering',
-        description: 'Arduino is the world\u2019s most popular open-source microcontroller platform. This track takes you from your first blink sketch to advanced topics like PID controllers, communication protocols (I2C, SPI, Serial), and full robot control systems using C++.',
-        topics: [
-          '\ud83d\udca1 Arduino IDE setup and sketch structure',
-          '\ud83d\udd0c GPIO: digital & analog pins, PWM output',
-          '\ud83d\udcd0 Circuit basics: resistors, LEDs, transistors, relays',
-          '\ud83d\udcf6 Sensor interfacing: ultrasonic, IR, servo, DHT11, MPU-6050',
-          '\u23f1\ufe0f Timers, interrupts, and multitasking concepts',
-          '\ud83d\udd04 Communication: I2C, SPI, UART serial between devices',
-          '\ud83e\udd16 PID controller design and motor driver integration (L298N)',
-          '\ud83d\udee0\ufe0f Building line followers, arm robots, and maze solvers',
-        ],
-        difficulty: 'Beginner \u2192 Advanced', time: '~60 hours', tools: 'Arduino Uno/Mega, Arduino IDE, Tinkercad for simulation',
-        links: [
-          { label: '\ud83d\udcd8 Arduino Official Reference', url: 'https://www.arduino.cc/reference/en/' },
-          { label: '\ud83e\uddea Tinkercad Circuit Simulator', url: 'https://www.tinkercad.com/circuits' },
-          { label: '\ud83c\udf93 Arduino Project Hub', url: 'https://projecthub.arduino.cc/' },
-          { label: '\ud83d\udcfa YouTube: Arduino for Beginners', url: 'https://www.youtube.com/results?search_query=arduino+c%2B%2B+tutorial+beginners' },
-          { label: '\ud83d\udcda Last Minute Engineers \u2014 Sensor Guides', url: 'https://lastminuteengineers.com/' },
-        ]
-      },
-      ev3: {
-        icon: '\ud83c\udfd7\ufe0f', color: '#facc15', badge: 'Advanced Track',
-        title: 'LEGO Mindstorms EV3 — Competition Engineering',
-        description: 'Mindstorms EV3 is a powerful legacy robotics system still used extensively in WRO and FLL competitions. This advanced track focuses on mechanical engineering precision, multi-motor synchronization, and competitive strategy planning for international competitions.',
-        topics: [
-          '\u2699\ufe0f EV3 Brick architecture: sensors, motors, and ports',
-          '\ud83d\udcbb EV3-G block programming and EV3 MicroPython',
-          '\ud83d\udd27 Large & medium motor synchronization and PID tuning',
-          '\ud83d\udcd0 Gear trains: torque vs speed trade-offs for competition builds',
-          '\ud83d\udcf6 Touch, ultrasonic, color, and gyro sensor deep dives',
-          '\ud83e\udd16 Autonomous navigation: dead reckoning and sensor fusion',
-          '\ud83c\udfc6 WRO competition table analysis and mission scoring',
-          '\ud83d\udee0\ufe0f Advanced build techniques: suspension, differential steering',
-        ],
-        difficulty: 'Advanced', time: '~50 hours', tools: 'EV3 Intelligent Brick, EV3 Classroom App, MicroPython',
-        links: [
-          { label: '\ud83d\udcd8 EV3 MicroPython Docs', url: 'https://pybricks.com/ev3-micropython/' },
-          { label: '\ud83c\udf93 LEGO Education EV3 Lessons', url: 'https://education.lego.com/en-us/lessons/?products=mindstorms-ev3' },
-          { label: '\ud83c\udfc6 WRO 2025 Mission Rules', url: 'https://www.worldrobotolympiad.org/season-2025' },
-          { label: '\ud83d\udcfa YouTube: EV3 Programming Guide', url: 'https://www.youtube.com/results?search_query=lego+mindstorms+ev3+tutorial+python' },
-          { label: '\ud83d\udcda EV3Dev Linux OS for Hackers', url: 'https://www.ev3dev.org/' },
-        ]
-      }
-    };
-
-    function openCourse(key) {
-      const c = COURSES[key];
-      if (!c) return;
-      const modal = document.getElementById('courseModal');
-      document.getElementById('courseModalContent').innerHTML = `
+      function openCourse(key) {
+        const c = COURSES[key];
+        if (!c) return;
+        const modal = document.getElementById("courseModal");
+        document.getElementById("courseModalContent").innerHTML = `
         <div style="display:flex; align-items:center; gap:1rem; margin-bottom:1.25rem;">
           <span style="font-size:2.5rem;">${c.icon}</span>
           <div>
@@ -1221,352 +2621,390 @@
 
         <h4 style="color:#fff; font-size:0.9rem; font-weight:700; margin-bottom:0.75rem;">\ud83d\udccc What You\u2019ll Learn</h4>
         <ul style="list-style:none; padding:0; margin:0 0 1.5rem; display:flex; flex-direction:column; gap:0.4rem;">
-          ${c.topics.map(t => `<li style="font-size:0.85rem; color:#cbd5e1; background:rgba(255,255,255,0.03); border-radius:8px; padding:0.5rem 0.75rem;">${t}</li>`).join('')}
+          ${c.topics.map((t) => `<li style="font-size:0.85rem; color:#cbd5e1; background:rgba(255,255,255,0.03); border-radius:8px; padding:0.5rem 0.75rem;">${t}</li>`).join("")}
         </ul>
 
         <h4 style="color:#fff; font-size:0.9rem; font-weight:700; margin-bottom:0.75rem;">\ud83d\udd17 Learning Resources</h4>
         <div style="display:flex; flex-direction:column; gap:0.5rem; margin-bottom:1.5rem;">
-          ${c.links.map(l => `<a href="${l.url}" target="_blank" rel="noopener" style="display:flex; align-items:center; gap:0.5rem; background:rgba(${key==='spike'?'34,197,94':key==='arduino'?'96,165,250':'250,204,21'},0.06); border:1px solid rgba(${key==='spike'?'34,197,94':key==='arduino'?'96,165,250':'250,204,21'},0.15); border-radius:10px; padding:0.65rem 1rem; color:${c.color}; font-size:0.85rem; font-weight:600; text-decoration:none; transition:background 0.2s;" onmouseover="this.style.background='rgba(${key==='spike'?'34,197,94':key==='arduino'?'96,165,250':'250,204,21'},0.12)'" onmouseout="this.style.background='rgba(${key==='spike'?'34,197,94':key==='arduino'?'96,165,250':'250,204,21'},0.06)'">${l.label} <span style="margin-left:auto; opacity:0.5;">\u2197</span></a>`).join('')}
+          ${c.links.map((l) => `<a href="${l.url}" target="_blank" rel="noopener" style="display:flex; align-items:center; gap:0.5rem; background:rgba(${key === "spike" ? "34,197,94" : key === "arduino" ? "96,165,250" : "250,204,21"},0.06); border:1px solid rgba(${key === "spike" ? "34,197,94" : key === "arduino" ? "96,165,250" : "250,204,21"},0.15); border-radius:10px; padding:0.65rem 1rem; color:${c.color}; font-size:0.85rem; font-weight:600; text-decoration:none; transition:background 0.2s;" onmouseover="this.style.background='rgba(${key === "spike" ? "34,197,94" : key === "arduino" ? "96,165,250" : "250,204,21"},0.12)'" onmouseout="this.style.background='rgba(${key === "spike" ? "34,197,94" : key === "arduino" ? "96,165,250" : "250,204,21"},0.06)'">${l.label} <span style="margin-left:auto; opacity:0.5;">\u2197</span></a>`).join("")}
         </div>
 
         <p style="font-size:0.72rem; color:#475569; margin:0; text-align:center;">Tools required: ${c.tools}</p>
       `;
-      modal.style.display = 'flex';
-      document.body.style.overflow = 'hidden';
-    }
-
-    function closeCourse() {
-      document.getElementById('courseModal').style.display = 'none';
-      document.body.style.overflow = '';
-    }
-
-    // Close on Escape key
-    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeCourse(); });
-
-    function renderTeam() {
-      const grid = document.getElementById('teamGrid');
-      if (!grid) return;
-
-      const roleColors = { 'President': '#fbbf24', 'Vice President': '#60a5fa', 'PRO': '#a78bfa' };
-      const roleOrder  = { 'President': 0, 'Vice President': 1, 'PRO': 2 };
-      const roleLabels = {
-        'President': 'President',
-        'Vice President': 'Vice President',
-        'PRO': 'Public Relations Officer',
-        'Google Member': 'Google Member',
-        'Engineer': 'Engineer'
-      };
-      const roleBadges = {
-        'President': 'role-president',
-        'Vice President': 'role-vp',
-        'PRO': 'role-pro',
-      };
-
-      // Get all users from localStorage
-      const allUsers = getUsers();
-
-      // Sort: role accounts first (President, VP, PRO), then alphabetical
-      const sorted = [...allUsers].sort((a, b) => {
-        const oA = roleOrder[a.roboticsRole] ?? 99;
-        const oB = roleOrder[b.roboticsRole] ?? 99;
-        if (oA !== oB) return oA - oB;
-        return (a.name || '').localeCompare(b.name || '');
-      });
-
-      if (sorted.length === 0) {
-        grid.innerHTML = '<p style="color:#64748b; text-align:center; grid-column:1/-1;">No members yet. Team accounts will appear here.</p>';
-        return;
+        modal.style.display = "flex";
+        document.body.style.overflow = "hidden";
       }
 
-      grid.innerHTML = sorted.map(u => {
-        const role    = u.roboticsRole || (u.provider === 'google' ? 'Google Member' : 'Engineer');
-        const color   = roleColors[role] || '#4ade80';
-        const badge   = roleBadges[role] || 'role-engineer';
-        const label   = roleLabels[role] || role;
-        const initial = (u.name || '?').charAt(0).toUpperCase();
-        const isOnline = true; // in future: check against sessions
-        return `
+      function closeCourse() {
+        document.getElementById("courseModal").style.display = "none";
+        document.body.style.overflow = "";
+      }
+
+      // Close on Escape key
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") closeCourse();
+      });
+
+      function renderTeam() {
+        const grid = document.getElementById("teamGrid");
+        if (!grid) return;
+
+        const roleColors = {
+          President: "#fbbf24",
+          "Vice President": "#60a5fa",
+          PRO: "#a78bfa",
+        };
+        const roleOrder = { President: 0, "Vice President": 1, PRO: 2 };
+        const roleLabels = {
+          President: "President",
+          "Vice President": "Vice President",
+          PRO: "Public Relations Officer",
+          "Google Member": "Google Member",
+          Engineer: "Engineer",
+        };
+        const roleBadges = {
+          President: "role-president",
+          "Vice President": "role-vp",
+          PRO: "role-pro",
+        };
+
+        // Get all users from localStorage
+        const allUsers = getUsers();
+
+        // Sort: role accounts first (President, VP, PRO), then alphabetical
+        const sorted = [...allUsers].sort((a, b) => {
+          const oA = roleOrder[a.roboticsRole] ?? 99;
+          const oB = roleOrder[b.roboticsRole] ?? 99;
+          if (oA !== oB) return oA - oB;
+          return (a.name || "").localeCompare(b.name || "");
+        });
+
+        if (sorted.length === 0) {
+          grid.innerHTML =
+            '<p style="color:#64748b; text-align:center; grid-column:1/-1;">No members yet. Team accounts will appear here.</p>';
+          return;
+        }
+
+        grid.innerHTML = sorted
+          .map((u) => {
+            const role =
+              u.roboticsRole ||
+              (u.provider === "google" ? "Google Member" : "Engineer");
+            const color = roleColors[role] || "#4ade80";
+            const badge = roleBadges[role] || "role-engineer";
+            const label = roleLabels[role] || role;
+            const initial = (u.name || "?").charAt(0).toUpperCase();
+            const isOnline = true; // in future: check against sessions
+            return `
           <div class="team-card">
             <div class="team-avatar" style="background:${color};">${initial}</div>
             <span class="team-role ${badge}">${label}</span>
-            <h3 style="color:#f1f5f9; font-size:1rem; margin:0.25rem 0 0;">${u.name || 'Unknown'}</h3>
-            <p style="font-size:0.78rem; color:#64748b; margin:4px 0 0.75rem;">${u.email || 'via Google'}</p>
+            <h3 style="color:#f1f5f9; font-size:1rem; margin:0.25rem 0 0;">${u.name || "Unknown"}</h3>
+            <p style="font-size:0.78rem; color:#64748b; margin:4px 0 0.75rem;">${u.email || "via Google"}</p>
             <div style="display:flex; align-items:center; justify-content:center; gap:5px;">
               <div style="width:7px;height:7px;background:#22c55e;border-radius:50%;"></div>
               <span style="font-size:0.7rem; color:#4ade80;">Active</span>
             </div>
           </div>
         `;
-      }).join('');
-    }
-
-    // (Local 2FA and Password logic removed; using unified functions in auth.js)
-
-    function showSection(id, btn) {
-      const target = document.getElementById(id);
-      if (!target) { console.warn('showSection: no section with id:', id); return; }
-      document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
-      target.classList.add('active');
-      document.querySelectorAll('.nav-link').forEach(n => n.classList.remove('active'));
-      if (btn && btn.classList) btn.classList.add('active');
-      if (id === 'team') renderTeam();
-      // Close sidebar on mobile after nav
-      if (window.innerWidth <= 900) {
-        document.querySelector('.robot-sidebar')?.classList.remove('open');
-        document.querySelector('.mobile-overlay')?.classList.remove('active');
+          })
+          .join("");
       }
-    }
 
-    function sendMessage() {
-      const input = document.getElementById('chatInput');
-      const text = input.value.trim();
-      if (!text) return;
-      const session = getSession();
-      const msg = {
-        user: session ? session.name : 'Engineer',
-        email: session ? session.email : '',
-        text,
-        time: Date.now()
-      };
-      appendMessage(msg, true);
-      const history = JSON.parse(localStorage.getItem(CHAT_KEY) || '[]');
-      history.push(msg);
-      localStorage.setItem(CHAT_KEY, JSON.stringify(history));
-      lastChatLen = history.length;
-      if (chatChannel) chatChannel.postMessage({ type: 'new_message', msg });
-      input.value = '';
-    }
+      // (Local 2FA and Password logic removed; using unified functions in auth.js)
 
-    function toggleSidebar() {
-      document.querySelector('.robot-sidebar').classList.toggle('open');
-    }
-
-    function toggleChat() {
-      document.querySelector('.chat-panel').classList.toggle('open');
-    }
-
-    // ── Google Meet Integration ──────────────────────────────
-    const GOOGLE_CLIENT_ID = '378999569796-v8bj9miq61sggvpea5sbslc24dr9t71s.apps.googleusercontent.com';
-    const MEET_SCOPE = 'https://www.googleapis.com/auth/meetings.space.created';
-    const MEET_API  = 'https://meet.googleapis.com/v2/spaces';
-    let meetTokenClient = null;
-    let meetAccessToken = null;
-    let pendingSpaceKey = null;
-    const SESSION_SPACES = {};
-
-    // Persistent room URLs per session (deterministic so same session = same link)
-    const SESSION_URLS = {
-      'main':         'https://meet.google.com/new',
-      'spike-review': 'https://meet.google.com/new',
-      'arduino-lab':  'https://meet.google.com/new',
-      'wro-planning': 'https://meet.google.com/new',
-      'all-hands':    'https://meet.google.com/new'
-    };
-
-    function initMeetClient() {
-      if (window.google && window.google.accounts && window.google.accounts.oauth2) {
-        try {
-          meetTokenClient = google.accounts.oauth2.initTokenClient({
-            client_id: GOOGLE_CLIENT_ID,
-            scope: MEET_SCOPE,
-            callback: (tokenResponse) => {
-              if (tokenResponse.error) {
-                // API auth failed — fall back to direct open
-                console.warn('Meet OAuth error:', tokenResponse.error);
-                openMeetDirectly(pendingSpaceKey || 'main');
-                return;
-              }
-              meetAccessToken = tokenResponse.access_token;
-              if (pendingSpaceKey) { createMeetingSpaceViaAPI(pendingSpaceKey); }
-            }
-          });
-        } catch(e) {
-          console.warn('initTokenClient failed:', e);
+      function showSection(id, btn) {
+        const target = document.getElementById(id);
+        if (!target) {
+          console.warn("showSection: no section with id:", id);
+          return;
         }
-      } else {
-        setTimeout(initMeetClient, 600);
-      }
-    }
-
-    function handleCreateRoom() {
-      // Try API first; always fall back to direct open
-      if (meetTokenClient && !meetAccessToken) {
-        pendingSpaceKey = 'main';
-        meetTokenClient.requestAccessToken();
-      } else if (meetAccessToken) {
-        createMeetingSpaceViaAPI('main');
-      } else {
-        // GIS not ready or not configured — just open Google Meet directly
-        openMeetDirectly('main');
-      }
-    }
-
-    function openMeetDirectly(key) {
-      // If we already created a room for this key earlier, reuse it
-      if (SESSION_SPACES[key]) {
-        showMeetRoom(SESSION_SPACES[key].meetingUri, SESSION_SPACES[key].meetingCode);
-        window.open(SESSION_SPACES[key].meetingUri, '_blank');
-        return;
-      }
-      // Open Google Meet new room — always works
-      const meeting = window.open('https://meet.google.com/new', '_blank');
-      showMeetRoom('https://meet.google.com/new', 'Opens in Google Meet');
-    }
-
-    async function createMeetingSpaceViaAPI(key) {
-      document.getElementById('meetSpinner').style.display = 'block';
-      document.getElementById('meetRoomCard').classList.remove('visible');
-      document.getElementById('meetApiError').style.display = 'none';
-      pendingSpaceKey = null;
-      try {
-        const res = await fetch(MEET_API, {
-          method: 'POST',
-          headers: {
-            'Authorization': 'Bearer ' + meetAccessToken,
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({})
-        });
-        if (!res.ok) {
-          const err = await res.json().catch(() => ({}));
-          throw new Error(err?.error?.message || ('HTTP ' + res.status));
+        document
+          .querySelectorAll(".page-section")
+          .forEach((s) => s.classList.remove("active"));
+        target.classList.add("active");
+        document
+          .querySelectorAll(".nav-link")
+          .forEach((n) => n.classList.remove("active"));
+        if (btn && btn.classList) btn.classList.add("active");
+        if (id === "team") renderTeam();
+        // Close sidebar on mobile after nav
+        if (window.innerWidth <= 900) {
+          document.querySelector(".robot-sidebar")?.classList.remove("open");
+          document.querySelector(".mobile-overlay")?.classList.remove("active");
         }
-        const data = await res.json();
-        SESSION_SPACES[key] = { meetingUri: data.meetingUri, meetingCode: data.meetingCode };
-        showMeetRoom(data.meetingUri, data.meetingCode);
-      } catch(e) {
-        console.warn('Meet API error — falling back to direct open:', e.message);
-        // API failed — silently fall back to opening meet.google.com/new
-        openMeetDirectly(key);
-      } finally {
-        document.getElementById('meetSpinner').style.display = 'none';
       }
-    }
 
-    function showMeetRoom(uri, code) {
-      const card = document.getElementById('meetRoomCard');
-      document.getElementById('meetRoomCode').textContent = code || 'Click to join';
-      document.getElementById('meetJoinBtn').href = uri;
-      card.classList.add('visible');
-    }
-
-    function showMeetError(msg) {
-      const el = document.getElementById('meetApiError');
-      el.textContent = '⚠️ ' + msg;
-      el.style.display = 'block';
-      document.getElementById('meetSpinner').style.display = 'none';
-    }
-
-    // ── Real-time cross-tab chat ─────────────────────────
-    const CHAT_KEY = 'team_chat';
-    let lastChatLen = 0;
-    let chatChannel = null;
-
-    function initChat() {
-      // BroadcastChannel for cross-tab real-time
-      if ('BroadcastChannel' in window) {
-        chatChannel = new BroadcastChannel('augusco_team_chat');
-        chatChannel.onmessage = (e) => {
-          if (e.data && e.data.type === 'new_message') {
-            appendMessage(e.data.msg, false);
-          }
+      function sendMessage() {
+        const input = document.getElementById("chatInput");
+        const text = input.value.trim();
+        if (!text) return;
+        const session = getSession();
+        const msg = {
+          user: session ? session.name : "Engineer",
+          email: session ? session.email : "",
+          text,
+          time: Date.now(),
         };
+        appendMessage(msg, true);
+        const history = JSON.parse(localStorage.getItem(CHAT_KEY) || "[]");
+        history.push(msg);
+        localStorage.setItem(CHAT_KEY, JSON.stringify(history));
+        lastChatLen = history.length;
+        if (chatChannel) chatChannel.postMessage({ type: "new_message", msg });
+        input.value = "";
       }
-      // Storage event for cross-tab: chat updates + new user registrations
-      window.addEventListener('storage', (e) => {
-        if (e.key === CHAT_KEY) {
-          const all = JSON.parse(e.newValue || '[]');
-          if (all.length > lastChatLen) {
-            const newMsgs = all.slice(lastChatLen);
-            newMsgs.forEach(m => appendMessage(m, false));
-            lastChatLen = all.length;
-          }
-        }
-        // Auto-refresh team page when a new user registers
-        if (e.key === 'waec_users') {
-          renderTeam();
-        }
-      });
-      loadMessages();
-    }
 
-    function appendMessage(m, isMine) {
-      const session = getSession();
-      const relay = document.getElementById('chatRelay');
-      const isOwn = isMine || (session && m.email === session.email);
-      const div = document.createElement('div');
-      div.className = isOwn ? 'msg msg-sent' : 'msg msg-received';
-      if (!isOwn) {
-        const s = document.createElement('span');
-        s.className = 'msg-user';
-        s.textContent = m.user || 'Unknown';
-        div.appendChild(s);
+      function toggleSidebar() {
+        document.querySelector(".robot-sidebar").classList.toggle("open");
       }
-      div.appendChild(document.createTextNode(m.text));
-      relay.appendChild(div);
-      relay.scrollTop = relay.scrollHeight;
-    }
 
-    function sendMessage() {
-      const input = document.getElementById('chatInput');
-      const text = input.value.trim();
-      if (!text) return;
-      const session = getSession();
-      const msg = {
-        user: session ? session.name : 'Engineer',
-        email: session ? session.email : '',
-        text,
-        time: Date.now()
+      function toggleChat() {
+        document.querySelector(".chat-panel").classList.toggle("open");
+      }
+
+      // ── Google Meet Integration ──────────────────────────────
+      const GOOGLE_CLIENT_ID =
+        "378999569796-v8bj9miq61sggvpea5sbslc24dr9t71s.apps.googleusercontent.com";
+      const MEET_SCOPE =
+        "https://www.googleapis.com/auth/meetings.space.created";
+      const MEET_API = "https://meet.googleapis.com/v2/spaces";
+      let meetTokenClient = null;
+      let meetAccessToken = null;
+      let pendingSpaceKey = null;
+      const SESSION_SPACES = {};
+
+      // Persistent room URLs per session (deterministic so same session = same link)
+      const SESSION_URLS = {
+        main: "https://meet.google.com/new",
+        "spike-review": "https://meet.google.com/new",
+        "arduino-lab": "https://meet.google.com/new",
+        "wro-planning": "https://meet.google.com/new",
+        "all-hands": "https://meet.google.com/new",
       };
-      // Append immediately as own message
-      appendMessage(msg, true);
-      // Persist to localStorage
-      const history = JSON.parse(localStorage.getItem(CHAT_KEY) || '[]');
-      history.push(msg);
-      localStorage.setItem(CHAT_KEY, JSON.stringify(history));
-      lastChatLen = history.length;
-      // Broadcast to other tabs
-      if (chatChannel) chatChannel.postMessage({ type: 'new_message', msg });
-      input.value = '';
-    }
 
-    function loadMessages() {
-      const relay = document.getElementById('chatRelay');
-      relay.innerHTML = ''; // clear
-      const session = getSession();
-      const history = JSON.parse(localStorage.getItem(CHAT_KEY) || '[]');
-      lastChatLen = history.length;
-      history.forEach(m => {
-        const isOwn = session && m.email === session.email;
-        appendMessage(m, isOwn);
-      });
-    }
-
-    document.getElementById('chatInput').addEventListener('keypress', function(e) {
-      if (e.key === 'Enter') sendMessage();
-    });
-
-    // ── Mobile Toggles ──
-    function toggleSidebar() {
-      const sidebar = document.querySelector('.robot-sidebar');
-      const chat = document.querySelector('.chat-panel');
-      sidebar.classList.toggle('open');
-      if (sidebar.classList.contains('open')) {
-        chat.classList.remove('open'); // prevent overlap
+      function initMeetClient() {
+        if (
+          window.google &&
+          window.google.accounts &&
+          window.google.accounts.oauth2
+        ) {
+          try {
+            meetTokenClient = google.accounts.oauth2.initTokenClient({
+              client_id: GOOGLE_CLIENT_ID,
+              scope: MEET_SCOPE,
+              callback: (tokenResponse) => {
+                if (tokenResponse.error) {
+                  // API auth failed — fall back to direct open
+                  console.warn("Meet OAuth error:", tokenResponse.error);
+                  openMeetDirectly(pendingSpaceKey || "main");
+                  return;
+                }
+                meetAccessToken = tokenResponse.access_token;
+                if (pendingSpaceKey) {
+                  createMeetingSpaceViaAPI(pendingSpaceKey);
+                }
+              },
+            });
+          } catch (e) {
+            console.warn("initTokenClient failed:", e);
+          }
+        } else {
+          setTimeout(initMeetClient, 600);
+        }
       }
-    }
 
-    function toggleChat() {
-      const chat = document.querySelector('.chat-panel');
-      const sidebar = document.querySelector('.robot-sidebar');
-      chat.classList.toggle('open');
-      if (chat.classList.contains('open')) {
-        sidebar.classList.remove('open'); // prevent overlap
+      function handleCreateRoom() {
+        // Try API first; always fall back to direct open
+        if (meetTokenClient && !meetAccessToken) {
+          pendingSpaceKey = "main";
+          meetTokenClient.requestAccessToken();
+        } else if (meetAccessToken) {
+          createMeetingSpaceViaAPI("main");
+        } else {
+          // GIS not ready or not configured — just open Google Meet directly
+          openMeetDirectly("main");
+        }
       }
-    }
 
-    // START DASHBOARD
-    initDashboard();
-  </script>
-</body>
+      function openMeetDirectly(key) {
+        // If we already created a room for this key earlier, reuse it
+        if (SESSION_SPACES[key]) {
+          showMeetRoom(
+            SESSION_SPACES[key].meetingUri,
+            SESSION_SPACES[key].meetingCode,
+          );
+          window.open(SESSION_SPACES[key].meetingUri, "_blank");
+          return;
+        }
+        // Open Google Meet new room — always works
+        const meeting = window.open("https://meet.google.com/new", "_blank");
+        showMeetRoom("https://meet.google.com/new", "Opens in Google Meet");
+      }
+
+      async function createMeetingSpaceViaAPI(key) {
+        document.getElementById("meetSpinner").style.display = "block";
+        document.getElementById("meetRoomCard").classList.remove("visible");
+        document.getElementById("meetApiError").style.display = "none";
+        pendingSpaceKey = null;
+        try {
+          const res = await fetch(MEET_API, {
+            method: "POST",
+            headers: {
+              Authorization: "Bearer " + meetAccessToken,
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({}),
+          });
+          if (!res.ok) {
+            const err = await res.json().catch(() => ({}));
+            throw new Error(err?.error?.message || "HTTP " + res.status);
+          }
+          const data = await res.json();
+          SESSION_SPACES[key] = {
+            meetingUri: data.meetingUri,
+            meetingCode: data.meetingCode,
+          };
+          showMeetRoom(data.meetingUri, data.meetingCode);
+        } catch (e) {
+          console.warn(
+            "Meet API error — falling back to direct open:",
+            e.message,
+          );
+          // API failed — silently fall back to opening meet.google.com/new
+          openMeetDirectly(key);
+        } finally {
+          document.getElementById("meetSpinner").style.display = "none";
+        }
+      }
+
+      function showMeetRoom(uri, code) {
+        const card = document.getElementById("meetRoomCard");
+        document.getElementById("meetRoomCode").textContent =
+          code || "Click to join";
+        document.getElementById("meetJoinBtn").href = uri;
+        card.classList.add("visible");
+      }
+
+      function showMeetError(msg) {
+        const el = document.getElementById("meetApiError");
+        el.textContent = "️ " + msg;
+        el.style.display = "block";
+        document.getElementById("meetSpinner").style.display = "none";
+      }
+
+      // ── Real-time cross-tab chat ─────────────────────────
+      const CHAT_KEY = "team_chat";
+      let lastChatLen = 0;
+      let chatChannel = null;
+
+      function initChat() {
+        // BroadcastChannel for cross-tab real-time
+        if ("BroadcastChannel" in window) {
+          chatChannel = new BroadcastChannel("augusco_team_chat");
+          chatChannel.onmessage = (e) => {
+            if (e.data && e.data.type === "new_message") {
+              appendMessage(e.data.msg, false);
+            }
+          };
+        }
+        // Storage event for cross-tab: chat updates + new user registrations
+        window.addEventListener("storage", (e) => {
+          if (e.key === CHAT_KEY) {
+            const all = JSON.parse(e.newValue || "[]");
+            if (all.length > lastChatLen) {
+              const newMsgs = all.slice(lastChatLen);
+              newMsgs.forEach((m) => appendMessage(m, false));
+              lastChatLen = all.length;
+            }
+          }
+          // Auto-refresh team page when a new user registers
+          if (e.key === "waec_users") {
+            renderTeam();
+          }
+        });
+        loadMessages();
+      }
+
+      function appendMessage(m, isMine) {
+        const session = getSession();
+        const relay = document.getElementById("chatRelay");
+        const isOwn = isMine || (session && m.email === session.email);
+        const div = document.createElement("div");
+        div.className = isOwn ? "msg msg-sent" : "msg msg-received";
+        if (!isOwn) {
+          const s = document.createElement("span");
+          s.className = "msg-user";
+          s.textContent = m.user || "Unknown";
+          div.appendChild(s);
+        }
+        div.appendChild(document.createTextNode(m.text));
+        relay.appendChild(div);
+        relay.scrollTop = relay.scrollHeight;
+      }
+
+      function sendMessage() {
+        const input = document.getElementById("chatInput");
+        const text = input.value.trim();
+        if (!text) return;
+        const session = getSession();
+        const msg = {
+          user: session ? session.name : "Engineer",
+          email: session ? session.email : "",
+          text,
+          time: Date.now(),
+        };
+        // Append immediately as own message
+        appendMessage(msg, true);
+        // Persist to localStorage
+        const history = JSON.parse(localStorage.getItem(CHAT_KEY) || "[]");
+        history.push(msg);
+        localStorage.setItem(CHAT_KEY, JSON.stringify(history));
+        lastChatLen = history.length;
+        // Broadcast to other tabs
+        if (chatChannel) chatChannel.postMessage({ type: "new_message", msg });
+        input.value = "";
+      }
+
+      function loadMessages() {
+        const relay = document.getElementById("chatRelay");
+        relay.innerHTML = ""; // clear
+        const session = getSession();
+        const history = JSON.parse(localStorage.getItem(CHAT_KEY) || "[]");
+        lastChatLen = history.length;
+        history.forEach((m) => {
+          const isOwn = session && m.email === session.email;
+          appendMessage(m, isOwn);
+        });
+      }
+
+      document
+        .getElementById("chatInput")
+        .addEventListener("keypress", function (e) {
+          if (e.key === "Enter") sendMessage();
+        });
+
+      // ── Mobile Toggles ──
+      function toggleSidebar() {
+        const sidebar = document.querySelector(".robot-sidebar");
+        const chat = document.querySelector(".chat-panel");
+        sidebar.classList.toggle("open");
+        if (sidebar.classList.contains("open")) {
+          chat.classList.remove("open"); // prevent overlap
+        }
+      }
+
+      function toggleChat() {
+        const chat = document.querySelector(".chat-panel");
+        const sidebar = document.querySelector(".robot-sidebar");
+        chat.classList.toggle("open");
+        if (chat.classList.contains("open")) {
+          sidebar.classList.remove("open"); // prevent overlap
+        }
+      }
+
+      // START DASHBOARD
+      initDashboard();
+    </script>
+  </body>
 </html>

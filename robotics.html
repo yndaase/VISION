@@ -1,228 +1,269 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <script defer src="/_vercel/insights/script.js"></script>
-  <script defer src="/_vercel/speed-insights/script.js"></script>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Vision Robotics | Powered by Augusco</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css" />
-  <style>
-    @media (max-width: 700px) {
-      .robotics-hero {
-        padding: 1rem;
-        min-height: 70vh;
+  <head>
+    <meta charset="UTF-8" />
+    <script defer src="/_vercel/insights/script.js"></script>
+    <script defer src="/_vercel/speed-insights/script.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Vision Robotics | Powered by Augusco</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="style.css" />
+    <style>
+      @media (max-width: 700px) {
+        .robotics-hero {
+          padding: 1rem;
+          min-height: 70vh;
+        }
+        .robotics-title {
+          font-size: 2.2rem;
+        }
+        .robotics-desc {
+          font-size: 1rem;
+        }
+        .robotics-content {
+          padding: 0.5rem;
+        }
+        .robotics-cta,
+        .robotics-secondary {
+          width: 100%;
+          justify-content: center;
+          font-size: 1rem;
+          padding: 0.8rem 1.2rem;
+        }
+        .robotics-btns {
+          flex-direction: column;
+          gap: 1rem;
+        }
       }
-      .robotics-title {
-        font-size: 2.2rem;
-      }
-      .robotics-desc {
-        font-size: 1rem;
-      }
-      .robotics-content {
-        padding: 0.5rem;
-      }
-      .robotics-cta, .robotics-secondary {
+      .robotics-hero-img {
         width: 100%;
-        justify-content: center;
-        font-size: 1rem;
-        padding: 0.8rem 1.2rem;
+        max-width: 420px;
+        margin: 0 auto 2rem auto;
+        border-radius: 24px;
+        box-shadow: 0 8px 40px rgba(14, 165, 233, 0.15);
+        z-index: 2;
+        position: relative;
+        display: block;
       }
       .robotics-btns {
-        flex-direction: column;
-        gap: 1rem;
+        display: flex;
+        gap: 1.5rem;
+        justify-content: center;
+        margin-bottom: 2rem;
+        flex-wrap: wrap;
       }
-    }
-    .robotics-hero-img {
-      width: 100%;
-      max-width: 420px;
-      margin: 0 auto 2rem auto;
-      border-radius: 24px;
-      box-shadow: 0 8px 40px rgba(14,165,233,0.15);
-      z-index: 2;
-      position: relative;
-      display: block;
-    }
-    .robotics-btns {
-      display: flex;
-      gap: 1.5rem;
-      justify-content: center;
-      margin-bottom: 2rem;
-      flex-wrap: wrap;
-    }
-    .robotics-secondary {
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-      background: #0ea5e9;
-      color: #fff;
-      font-weight: 700;
-      font-size: 1.1rem;
-      padding: 1rem 2.5rem;
-      border-radius: 100px;
-      text-decoration: none;
-      transition: all 0.3s;
-      box-shadow: 0 0 30px rgba(14, 165, 233, 0.2);
-    }
-    .robotics-secondary:hover {
-      background: #38bdf8;
-      color: #050608;
-      transform: translateY(-2px);
-      box-shadow: 0 0 50px rgba(14, 165, 233, 0.4);
-    }
-  </style>
-  <style>
-    body {
-      background: #050608;
-      color: #e2e8f0;
-    }
-    .robotics-hero {
-      min-height: 80vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      padding: 2rem;
-      position: relative;
-      overflow: hidden;
-    }
-    .robotics-orb {
-      position: absolute;
-      border-radius: 50%;
-      filter: blur(80px);
-      z-index: 0;
-      opacity: 0.4;
-    }
-    .orb-green { background: #22c55e; width: 400px; height: 400px; top: -100px; left: -100px; }
-    .orb-blue { background: #0ea5e9; width: 300px; height: 300px; bottom: 100px; right: -50px; }
-    
-    .robotics-content {
-      z-index: 10;
-      max-width: 800px;
-      margin: 0 auto;
-    }
-    
-    .powered-by {
-      display: inline-flex;
-      align-items: center;
-      gap: 12px;
-      background: rgba(34, 197, 94, 0.1);
-      border: 1px solid rgba(34, 197, 94, 0.2);
-      padding: 10px 24px;
-      border-radius: 100px;
-      margin-bottom: 2rem;
-    }
-    
-    .augusco-crest {
-      width: 40px;
-      height: 40px;
-      object-fit: contain;
-      background: #fff;
-      border-radius: 50%;
-      padding: 4px;
-    }
-    
-    .powered-text {
-      color: #4ade80;
-      font-size: 0.9rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-    }
-    
-    .robotics-title {
-      font-size: clamp(3rem, 8vw, 5rem);
-      font-weight: 800;
-      line-height: 1.1;
-      margin-bottom: 1.5rem;
-      background: linear-gradient(to right, #ffffff, #93c5fd);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      letter-spacing: -0.03em;
-    }
-    
-    .robotics-desc {
-      font-size: 1.25rem;
-      color: #94a3b8;
-      line-height: 1.6;
-      margin-bottom: 3rem;
-      max-width: 600px;
-      margin-inline: auto;
-    }
-    
-    .robotics-cta {
-      display: inline-flex;
-      align-items: center;
-      gap: 12px;
-      background: #22c55e;
-      color: #050608;
-      font-weight: 700;
-      font-size: 1.1rem;
-      padding: 1rem 2.5rem;
-      border-radius: 100px;
-      text-decoration: none;
-      transition: all 0.3s;
-      box-shadow: 0 0 30px rgba(34, 197, 94, 0.3);
-    }
-    
-    .robotics-cta:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 0 50px rgba(34, 197, 94, 0.5);
-      background: #4ade80;
-    }
-    
-    .nav-top {
-      position: absolute;
-      top: 0; left: 0; right: 0;
-      padding: 1.5rem 2rem;
-      display: flex;
-      justify-content: flex-start;
-      z-index: 20;
-    }
-    
-    .back-btn {
-      color: #94a3b8;
-      text-decoration: none;
-      font-weight: 500;
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      transition: color 0.2s;
-    }
-    .back-btn:hover { color: #fff; }
-  </style>
-</head>
-<body>
+      .robotics-secondary {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        background: #0ea5e9;
+        color: #fff;
+        font-weight: 700;
+        font-size: 1.1rem;
+        padding: 1rem 2.5rem;
+        border-radius: 100px;
+        text-decoration: none;
+        transition: all 0.3s;
+        box-shadow: 0 0 30px rgba(14, 165, 233, 0.2);
+      }
+      .robotics-secondary:hover {
+        background: #38bdf8;
+        color: #050608;
+        transform: translateY(-2px);
+        box-shadow: 0 0 50px rgba(14, 165, 233, 0.4);
+      }
+    </style>
+    <style>
+      body {
+        background: #050608;
+        color: #e2e8f0;
+      }
+      .robotics-hero {
+        min-height: 80vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        padding: 2rem;
+        position: relative;
+        overflow: hidden;
+      }
+      .robotics-orb {
+        position: absolute;
+        border-radius: 50%;
+        filter: blur(80px);
+        z-index: 0;
+        opacity: 0.4;
+      }
+      .orb-green {
+        background: #22c55e;
+        width: 400px;
+        height: 400px;
+        top: -100px;
+        left: -100px;
+      }
+      .orb-blue {
+        background: #0ea5e9;
+        width: 300px;
+        height: 300px;
+        bottom: 100px;
+        right: -50px;
+      }
 
-  <div class="nav-top">
-    <a href="dashboard.html" class="back-btn">← Back to Dashboard</a>
-  </div>
+      .robotics-content {
+        z-index: 10;
+        max-width: 800px;
+        margin: 0 auto;
+      }
 
-  <section class="robotics-hero">
-    <div class="robotics-orb orb-green"></div>
-    <div class="robotics-orb orb-blue"></div>
-    <div class="robotics-content">
-      <div class="powered-by">
-        <img src="assets/augusco_crest.png" alt="Augusco Crest" class="augusco-crest" onerror="this.onerror=null;this.parentElement.innerHTML='<span style=\'color:#1e4d28;font-weight:900;\'>S.A.C</span>';"/>
-        <span class="powered-text">Powered by Augusco Robotics</span>
-      </div>
-      <img src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80" alt="Robotics Team" class="robotics-hero-img" loading="lazy"/>
-      <h1 class="robotics-title">Vision Education<br/>Robotics</h1>
-      <p class="robotics-desc">
-        <strong>Empowering the next generation of Ghanaian engineers.</strong><br>
-        We bridge the gap between abstract physics and hands-on mechanical, electrical, and software engineering.<br>
-        <em>Join the St. Augustine's College initiative to build, code, and deploy intelligent autonomous systems.</em>
-      </p>
-      <div class="robotics-btns">
-        <a href="robotics-login.html" class="robotics-cta">Join Team <span>→</span></a>
-        <a href="robotics-dashboard.html" class="robotics-secondary">View Dashboard <span>→</span></a>
-      </div>
+      .powered-by {
+        display: inline-flex;
+        align-items: center;
+        gap: 12px;
+        background: rgba(34, 197, 94, 0.1);
+        border: 1px solid rgba(34, 197, 94, 0.2);
+        padding: 10px 24px;
+        border-radius: 100px;
+        margin-bottom: 2rem;
+      }
+
+      .augusco-crest {
+        width: 40px;
+        height: 40px;
+        object-fit: contain;
+        background: #fff;
+        border-radius: 50%;
+        padding: 4px;
+      }
+
+      .powered-text {
+        color: #4ade80;
+        font-size: 0.9rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+      }
+
+      .robotics-title {
+        font-size: clamp(3rem, 8vw, 5rem);
+        font-weight: 800;
+        line-height: 1.1;
+        margin-bottom: 1.5rem;
+        background: linear-gradient(to right, #ffffff, #93c5fd);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        letter-spacing: -0.03em;
+      }
+
+      .robotics-desc {
+        font-size: 1.25rem;
+        color: #94a3b8;
+        line-height: 1.6;
+        margin-bottom: 3rem;
+        max-width: 600px;
+        margin-inline: auto;
+      }
+
+      .robotics-cta {
+        display: inline-flex;
+        align-items: center;
+        gap: 12px;
+        background: #22c55e;
+        color: #050608;
+        font-weight: 700;
+        font-size: 1.1rem;
+        padding: 1rem 2.5rem;
+        border-radius: 100px;
+        text-decoration: none;
+        transition: all 0.3s;
+        box-shadow: 0 0 30px rgba(34, 197, 94, 0.3);
+      }
+
+      .robotics-cta:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 0 50px rgba(34, 197, 94, 0.5);
+        background: #4ade80;
+      }
+
+      .nav-top {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        padding: 1.5rem 2rem;
+        display: flex;
+        justify-content: flex-start;
+        z-index: 20;
+      }
+
+      .back-btn {
+        color: #94a3b8;
+        text-decoration: none;
+        font-weight: 500;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        transition: color 0.2s;
+      }
+      .back-btn:hover {
+        color: #fff;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="nav-top">
+      <a href="dashboard.html" class="back-btn">← Back to Dashboard</a>
     </div>
-  </section>
 
-</body>
+    <section class="robotics-hero">
+      <div class="robotics-orb orb-green"></div>
+      <div class="robotics-orb orb-blue"></div>
+      <div class="robotics-content">
+        <div class="powered-by">
+          <img
+            src="assets/augusco_crest.png"
+            alt="Augusco Crest"
+            class="augusco-crest"
+            onerror="
+              this.onerror = null;
+              this.parentElement.innerHTML =
+                '<span style=\'color:#1e4d28;font-weight:900;\'>S.A.C</span>';
+            "
+          />
+          <span class="powered-text">Powered by Augusco Robotics</span>
+        </div>
+        <img
+          src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80"
+          alt="Robotics Team"
+          class="robotics-hero-img"
+          loading="lazy"
+        />
+        <h1 class="robotics-title">Vision Education<br />Robotics</h1>
+        <p class="robotics-desc">
+          <strong>Empowering the next generation of Ghanaian engineers.</strong
+          ><br />
+          We bridge the gap between abstract physics and hands-on mechanical,
+          electrical, and software engineering.<br />
+          <em
+            >Join the St. Augustine's College initiative to build, code, and
+            deploy intelligent autonomous systems.</em
+          >
+        </p>
+        <div class="robotics-btns">
+          <a href="robotics-login.html" class="robotics-cta"
+            >Join Team <span>→</span></a
+          >
+          <a href="robotics-dashboard.html" class="robotics-secondary"
+            >View Dashboard <span>→</span></a
+          >
+        </div>
+      </div>
+    </section>
+  </body>
 </html>

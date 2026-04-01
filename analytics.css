@@ -48,7 +48,6 @@
   transform: translateY(-1px);
 }
 
-
 /* ─── Top Stats Grid ─── */
 .top-stats-grid {
   display: flex;
@@ -94,7 +93,9 @@
   gap: 2rem;
 }
 @media (max-width: 900px) {
-  .analytics-layout { grid-template-columns: 1fr; }
+  .analytics-layout {
+    grid-template-columns: 1fr;
+  }
 }
 
 /* ─── Detail Cards ─── */
@@ -128,7 +129,9 @@
   border-bottom: 1px solid var(--border);
 }
 
-.subject-matrix-row:last-child { border-bottom: none; }
+.subject-matrix-row:last-child {
+  border-bottom: none;
+}
 .matrix-name {
   font-weight: 700;
   display: flex;
@@ -137,10 +140,13 @@
   font-size: 1.05rem;
 }
 .matrix-icon {
-  width: 36px; height: 36px;
+  width: 36px;
+  height: 36px;
   background: var(--bg-input);
   border-radius: 8px;
-  display: flex; align-items: center; justify-content: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   font-size: 1.2rem;
 }
 .matrix-score {
@@ -152,8 +158,14 @@
   background: var(--bg-card-hover);
 }
 
-.matrix-score.excellent { color: #10b981; border: 1px solid rgba(16,185,129,0.3); }
-.matrix-score.needs-work { color: #f87171; border: 1px solid rgba(248,113,113,0.3); }
+.matrix-score.excellent {
+  color: #10b981;
+  border: 1px solid rgba(16, 185, 129, 0.3);
+}
+.matrix-score.needs-work {
+  color: #f87171;
+  border: 1px solid rgba(248, 113, 113, 0.3);
+}
 
 /* ─── Weak Topics AI ─── */
 .weak-topics-list {
@@ -182,6 +194,12 @@
 
 /* Animations */
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }

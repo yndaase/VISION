@@ -1,202 +1,247 @@
-﻿<!DOCTYPE html>
+﻿<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Analytics | Vision Education · 2026 WASSCE</title>
-  <meta name="description" content="Track your WASSCE readiness and subject mastery." />
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css" />
-  <link rel="stylesheet" href="dashboard.css" />
-  <link rel="stylesheet" href="theme.css" />
-  <link rel="stylesheet" href="analytics.css" />
-  <script src="theme.js"></script>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Analytics | Vision Education · 2026 WASSCE</title>
+    <meta
+      name="description"
+      content="Track your WASSCE readiness and subject mastery."
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="dashboard.css" />
+    <link rel="stylesheet" href="theme.css" />
+    <link rel="stylesheet" href="analytics.css" />
+    <script src="theme.js"></script>
 
-  <script>
-    (function() {
-      const SESSION_KEY = 'waec_session';
-      const session = sessionStorage.getItem(SESSION_KEY) || localStorage.getItem(SESSION_KEY);
-      if (!session) {
-        window.location.href = 'login.html';
-      }
-    })();
-  </script>
-</head>
-<body class="analytics-page dashboard-page">
+    <script>
+      (function () {
+        const SESSION_KEY = "waec_session";
+        const session =
+          sessionStorage.getItem(SESSION_KEY) ||
+          localStorage.getItem(SESSION_KEY);
+        if (!session) {
+          window.location.href = "login.html";
+        }
+      })();
+    </script>
+  </head>
+  <body class="analytics-page dashboard-page">
+    <!-- ── SIDE NAVIGATION ── -->
+    <aside class="side-nav">
+      <a class="side-nav-logo" href="dashboard.html">
+        <span class="dash-logo-icon"></span>
+        <span>Vision Edu</span>
+      </a>
+      <nav class="side-nav-menu">
+        <a href="dashboard.html" class="nav-item">
+          <span class="nav-item-icon"></span>
+          <span>Dashboard</span>
+        </a>
+        <a href="mocks.html" class="nav-item">
+          <span class="nav-item-icon"></span>
+          <span>Mock Exams</span>
+        </a>
+        <a href="analytics.html" class="nav-item active">
+          <span class="nav-item-icon"></span>
+          <span>Performance</span>
+        </a>
+      </nav>
+      <div class="side-nav-footer">
+        <a
+          href="#"
+          class="nav-item"
+          onclick="
+            openSettings();
+            return false;
+          "
+        >
+          <span class="nav-item-icon">️</span>
+          <span>Settings</span>
+        </a>
+      </div>
+    </aside>
 
-  <!-- ── SIDE NAVIGATION ── -->
-  <aside class="side-nav">
-    <a class="side-nav-logo" href="dashboard.html">
-      <span class="dash-logo-icon">📐</span>
-      <span>Vision Edu</span>
-    </a>
-    <nav class="side-nav-menu">
-      <a href="dashboard.html" class="nav-item">
-        <span class="nav-item-icon">🏠</span>
-        <span>Dashboard</span>
+    <!-- ── BOTTOM NAVIGATION (Mobile) ── -->
+    <nav class="bottom-nav">
+      <a href="dashboard.html" class="bottom-nav-item">
+        <span class="bottom-icon"></span>
+        <span>Home</span>
       </a>
-      <a href="mocks.html" class="nav-item">
-        <span class="nav-item-icon">📝</span>
-        <span>Mock Exams</span>
+      <a href="mocks.html" class="bottom-nav-item">
+        <span class="bottom-icon"></span>
+        <span>Mocks</span>
       </a>
-      <a href="analytics.html" class="nav-item active">
-        <span class="nav-item-icon">📊</span>
-        <span>Performance</span>
+      <a href="analytics.html" class="bottom-nav-item active">
+        <span class="bottom-icon"></span>
+        <span>Stats</span>
       </a>
-    </nav>
-    <div class="side-nav-footer">
-      <a href="#" class="nav-item" onclick="openSettings(); return false;">
-        <span class="nav-item-icon">⚙️</span>
+      <a
+        href="#"
+        class="bottom-nav-item"
+        onclick="
+          openSettings();
+          return false;
+        "
+      >
+        <span class="bottom-icon">️</span>
         <span>Settings</span>
       </a>
-    </div>
-  </aside>
-
-  <!-- ── BOTTOM NAVIGATION (Mobile) ── -->
-  <nav class="bottom-nav">
-    <a href="dashboard.html" class="bottom-nav-item">
-      <span class="bottom-icon">🏠</span>
-      <span>Home</span>
-    </a>
-    <a href="mocks.html" class="bottom-nav-item">
-      <span class="bottom-icon">📝</span>
-      <span>Mocks</span>
-    </a>
-    <a href="analytics.html" class="bottom-nav-item active">
-      <span class="bottom-icon">📊</span>
-      <span>Stats</span>
-    </a>
-    <a href="#" class="bottom-nav-item" onclick="openSettings(); return false;">
-      <span class="bottom-icon">⚙️</span>
-      <span>Settings</span>
-    </a>
-  </nav>
-
-  <div class="main-wrapper">
-
-    <!-- ── NAVBAR ── -->
-    <nav class="dash-nav" id="dashNav">
-      <div class="dash-nav-inner">
-        <div class="dash-logo">
-          <span class="dash-logo-icon">📊</span>
-          <span class="dash-logo-text">Vision <span class="brand-accent">Analytics</span></span>
-        </div>
-        <div class="dash-nav-right">
-          <button class="theme-toggle-btn" onclick="toggleTheme()" title="Toggle Theme">☀️</button>
-          <div class="nav-user-chip">
-            <div class="nav-avatar" id="navAvatar">K</div>
-            <span class="nav-username" id="navUsername">Student</span>
-          </div>
-        </div>
-      </div>
     </nav>
 
+    <div class="main-wrapper">
+      <!-- ── NAVBAR ── -->
+      <nav class="dash-nav" id="dashNav">
+        <div class="dash-nav-inner">
+          <div class="dash-logo">
+            <span class="dash-logo-icon"></span>
+            <span class="dash-logo-text"
+              >Vision <span class="brand-accent">Analytics</span></span
+            >
+          </div>
+          <div class="dash-nav-right">
+            <button
+              class="theme-toggle-btn"
+              onclick="toggleTheme()"
+              title="Toggle Theme"
+            >
+              ️
+            </button>
+            <div class="nav-user-chip">
+              <div class="nav-avatar" id="navAvatar">K</div>
+              <span class="nav-username" id="navUsername">Student</span>
+            </div>
+          </div>
+        </div>
+      </nav>
 
-  <!-- ── ANALYTICS CONTENT ── -->
-  <main class="analytics-container">
-    <header class="analytics-header">
-      <div>
-        <h1 class="analytics-title">Performance Analytics</h1>
-        <p class="analytics-subtitle">Aggregated data from your recent WASSCE mock simulations and practice sets.</p>
-      </div>
-    </header>
+      <!-- ── ANALYTICS CONTENT ── -->
+      <main class="analytics-container">
+        <header class="analytics-header">
+          <div>
+            <h1 class="analytics-title">Performance Analytics</h1>
+            <p class="analytics-subtitle">
+              Aggregated data from your recent WASSCE mock simulations and
+              practice sets.
+            </p>
+          </div>
+        </header>
 
-    <!-- Top Stats -->
-    <div class="top-stats-grid">
-      <div class="stat-card" style="border-top: 3px solid var(--primary);">
-        <p class="stat-val" id="totalMocks">4</p>
-        <p class="stat-label">Proctored Mocks Taken</p>
-      </div>
-      <div class="stat-card" style="border-top: 3px solid #10b981;">
-        <p class="stat-val" id="avgAccuracy">78%</p>
-        <p class="stat-label">Global Accuracy Rate</p>
-      </div>
-      <div class="stat-card" style="border-top: 3px solid #f59e0b;">
-        <p class="stat-val" id="theoryScore">B2</p>
-        <p class="stat-label">Aggregated Theory Grade</p>
-      </div>
-      <div class="stat-card" style="border-top: 3px solid #8b5cf6;">
-        <p class="stat-val" id="totalQuestions">142</p>
-        <p class="stat-label">Total Questions Solved</p>
-      </div>
+        <!-- Top Stats -->
+        <div class="top-stats-grid">
+          <div class="stat-card" style="border-top: 3px solid var(--primary)">
+            <p class="stat-val" id="totalMocks">4</p>
+            <p class="stat-label">Proctored Mocks Taken</p>
+          </div>
+          <div class="stat-card" style="border-top: 3px solid #10b981">
+            <p class="stat-val" id="avgAccuracy">78%</p>
+            <p class="stat-label">Global Accuracy Rate</p>
+          </div>
+          <div class="stat-card" style="border-top: 3px solid #f59e0b">
+            <p class="stat-val" id="theoryScore">B2</p>
+            <p class="stat-label">Aggregated Theory Grade</p>
+          </div>
+          <div class="stat-card" style="border-top: 3px solid #8b5cf6">
+            <p class="stat-val" id="totalQuestions">142</p>
+            <p class="stat-label">Total Questions Solved</p>
+          </div>
+        </div>
+
+        <!-- Layout Data -->
+        <div class="analytics-layout">
+          <!-- Left Column: Master Matrix -->
+          <section class="detail-card">
+            <div class="detail-card-header">
+              <span> Subject Matrix Mastery</span>
+            </div>
+
+            <div class="subject-matrix-row">
+              <div class="matrix-name">
+                <span class="matrix-icon" style="color: #f59e0b"></span>
+                Core Mathematics
+              </div>
+              <div class="matrix-score" id="mathsMastery">—</div>
+            </div>
+
+            <div class="subject-matrix-row">
+              <div class="matrix-name">
+                <span class="matrix-icon" style="color: #60a5fa"></span>
+                English Language
+              </div>
+              <div class="matrix-score" id="englishMastery">—</div>
+            </div>
+
+            <div class="subject-matrix-row">
+              <div class="matrix-name">
+                <span class="matrix-icon" style="color: #10b981"></span>
+                Integrated Science
+              </div>
+              <div class="matrix-score" id="scienceMastery">—</div>
+            </div>
+
+            <div class="subject-matrix-row">
+              <div class="matrix-name">
+                <span class="matrix-icon" style="color: #a78bfa"></span>
+                Social Studies
+              </div>
+              <div class="matrix-score" id="socialMastery">—</div>
+            </div>
+          </section>
+
+          <!-- Right Column: Weak Topics AI -->
+          <aside class="detail-card">
+            <div class="detail-card-header">
+              <span> AI Diagnostic Flags</span>
+            </div>
+
+            <div class="weak-topics-list">
+              <div class="weak-topic-item">
+                <p class="weak-topic-title">Vector Geometry</p>
+                <p class="weak-topic-desc">
+                  You are consistently missing resolving coplanar vectors in
+                  Section B theory. Review resolving components.
+                </p>
+              </div>
+              <div class="weak-topic-item">
+                <p class="weak-topic-title">Genetics Crosses</p>
+                <p class="weak-topic-desc">
+                  Science: Difficulty interpreting dihybrid Punnett squares. 20%
+                  accuracy in recent mocks.
+                </p>
+              </div>
+              <div
+                class="weak-topic-item"
+                style="
+                  border-left-color: #fbbf24;
+                  background: rgba(251, 191, 36, 0.05);
+                "
+              >
+                <p class="weak-topic-title" style="color: #fcd34d">
+                  Commercial Arithmetic
+                </p>
+                <p class="weak-topic-desc">
+                  You are averaging 2.5 minutes per commercial math MCQ. This is
+                  slowing down your overall pace.
+                </p>
+              </div>
+            </div>
+          </aside>
+        </div>
+      </main>
     </div>
+    <!-- /main-wrapper -->
 
-    <!-- Layout Data -->
-    <div class="analytics-layout">
-      
-      <!-- Left Column: Master Matrix -->
-      <section class="detail-card">
-        <div class="detail-card-header">
-          <span>📊 Subject Matrix Mastery</span>
-        </div>
-        
-        <div class="subject-matrix-row">
-          <div class="matrix-name">
-            <span class="matrix-icon" style="color:#f59e0b;">📐</span>
-            Core Mathematics
-          </div>
-          <div class="matrix-score" id="mathsMastery">—</div>
-        </div>
-        
-        <div class="subject-matrix-row">
-          <div class="matrix-name">
-            <span class="matrix-icon" style="color:#60a5fa;">📖</span>
-            English Language
-          </div>
-          <div class="matrix-score" id="englishMastery">—</div>
-        </div>
-
-        <div class="subject-matrix-row">
-          <div class="matrix-name">
-            <span class="matrix-icon" style="color:#10b981;">🧬</span>
-            Integrated Science
-          </div>
-          <div class="matrix-score" id="scienceMastery">—</div>
-        </div>
-
-        <div class="subject-matrix-row">
-          <div class="matrix-name">
-            <span class="matrix-icon" style="color:#a78bfa;">🌍</span>
-            Social Studies
-          </div>
-          <div class="matrix-score" id="socialMastery">—</div>
-        </div>
-      </section>
-
-      <!-- Right Column: Weak Topics AI -->
-      <aside class="detail-card">
-        <div class="detail-card-header">
-          <span>🤖 AI Diagnostic Flags</span>
-        </div>
-        
-        <div class="weak-topics-list">
-          <div class="weak-topic-item">
-            <p class="weak-topic-title">Vector Geometry</p>
-            <p class="weak-topic-desc">You are consistently missing resolving coplanar vectors in Section B theory. Review resolving components.</p>
-          </div>
-          <div class="weak-topic-item">
-            <p class="weak-topic-title">Genetics Crosses</p>
-            <p class="weak-topic-desc">Science: Difficulty interpreting dihybrid Punnett squares. 20% accuracy in recent mocks.</p>
-          </div>
-          <div class="weak-topic-item" style="border-left-color: #fbbf24; background: rgba(251, 191, 36, 0.05);">
-            <p class="weak-topic-title" style="color: #fcd34d;">Commercial Arithmetic</p>
-            <p class="weak-topic-desc">You are averaging 2.5 minutes per commercial math MCQ. This is slowing down your overall pace.</p>
-          </div>
-        </div>
-      </aside>
-      
-    </div>
-  </main>
-
-  </div> <!-- /main-wrapper -->
-
-  <!-- Dummy local auth check -->
-  <script src="auth.js"></script>
-  <script src="analytics.js"></script>
-  <script>
-    function handleLogout() {
-      window.location.href = 'login.html';
-    }
-  </script>
-</body>
+    <!-- Dummy local auth check -->
+    <script src="auth.js"></script>
+    <script src="analytics.js"></script>
+    <script>
+      function handleLogout() {
+        window.location.href = "login.html";
+      }
+    </script>
+  </body>
 </html>

@@ -4,16 +4,16 @@
    Calculates trends and AI diagnostic flags
    ===================================================== */
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener("DOMContentLoaded", () => {
   // ─── 1. Auth & Session ──────────────────────────────
   const session = checkAuth();
   if (!session) return;
 
   // Populate User Chip (Top Nav)
-  const navAvatar = document.querySelector('.nav-avatar');
-  const navUsername = document.querySelector('.nav-username');
+  const navAvatar = document.querySelector(".nav-avatar");
+  const navUsername = document.querySelector(".nav-username");
   if (navAvatar) navAvatar.textContent = session.name.charAt(0).toUpperCase();
-  if (navUsername) navUsername.textContent = session.name || 'Student';
+  if (navUsername) navUsername.textContent = session.name || "Student";
 
   // ─── 2. Fetch User Stats ────────────────────────────
   const stats = getStats();
@@ -22,30 +22,30 @@ document.addEventListener('DOMContentLoaded', () => {
   const accuracy = answered > 0 ? Math.round((correct / answered) * 100) : 0;
 
   // ─── 3. Populate Overview Cards ─────────────────────
-  updateEl('totalQuestions', answered);
-  updateEl('avgAccuracy', accuracy + '%');
-  
+  updateEl("totalQuestions", answered);
+  updateEl("avgAccuracy", accuracy + "%");
+
   // Simulated data for "Mock" specific metrics (can be expanded later)
   const mocksTaken = Math.floor(answered / 15); // Assume 15 questions per simulated mock
-  updateEl('totalMocks', mocksTaken);
+  updateEl("totalMocks", mocksTaken);
 
   // Simple grade calculation based on accuracy
-  let grade = 'C4';
-  if (accuracy >= 80) grade = 'A1';
-  else if (accuracy >= 70) grade = 'B2';
-  else if (accuracy >= 60) grade = 'B3';
-  else if (accuracy >= 50) grade = 'C5';
-  else if (accuracy < 50) grade = 'F9';
-  updateEl('theoryScore', grade);
+  let grade = "C4";
+  if (accuracy >= 80) grade = "A1";
+  else if (accuracy >= 70) grade = "B2";
+  else if (accuracy >= 60) grade = "B3";
+  else if (accuracy >= 50) grade = "C5";
+  else if (accuracy < 50) grade = "F9";
+  updateEl("theoryScore", grade);
 
   // ─── 4. Subject Matrix Mastery ──────────────────────
   // (In a real app, these would be separate keys. For now, we scale based on overall stats)
-  updateEl('mathsMastery', accuracy + '%');
-  
+  updateEl("mathsMastery", accuracy + "%");
+
   // Set classes for colors
-  const mathsEl = document.getElementById('mathsMastery');
+  const mathsEl = document.getElementById("mathsMastery");
   if (mathsEl) {
-    mathsEl.className = 'matrix-score ' + getScoreClass(accuracy);
+    mathsEl.className = "matrix-score " + getScoreClass(accuracy);
   }
 
   // ─── 5. AI Diagnostic Flags ─────────────────────────
@@ -58,13 +58,13 @@ function updateEl(id, val) {
 }
 
 function getScoreClass(score) {
-  if (score >= 75) return 'excellent';
-  if (score >= 50) return 'average';
-  return 'needs-work';
+  if (score >= 75) return "excellent";
+  if (score >= 50) return "average";
+  return "needs-work";
 }
 
 function renderAIFlags(answered, accuracy) {
-  const container = document.querySelector('.weak-topics-list');
+  const container = document.querySelector(".weak-topics-list");
   if (!container) return;
 
   if (answered === 0) {
@@ -77,8 +77,8 @@ function renderAIFlags(answered, accuracy) {
     return;
   }
 
-  let flags = '';
-  
+  let flags = "";
+
   if (accuracy < 60) {
     flags += `
       <div class="weak-topic-item">

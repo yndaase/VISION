@@ -1,658 +1,1358 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>System & Security | Vision Admin</title>
-  <meta name="robots" content="noindex, nofollow" />
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css" />
-  <link rel="stylesheet" href="theme.css" />
-  <script src="theme.js"></script>
-  <script src="auth.js"></script>
-  <script src="materials.js"></script>
-  <style>
-    :root {
-      --admin-primary: #6366f1;
-      --admin-success: #22c55e;
-      --admin-danger: #ef4444;
-      --admin-warning: #f59e0b;
-      --admin-bg-dark: #0f172a;
-      --admin-card-dark: #1e293b;
-    }
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>System & Security | Vision Admin</title>
+    <meta name="robots" content="noindex, nofollow" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="theme.css" />
+    <script src="theme.js"></script>
+    <script src="auth.js"></script>
+    <script src="materials.js"></script>
+    <style>
+      :root {
+        --admin-primary: #6366f1;
+        --admin-success: #22c55e;
+        --admin-danger: #ef4444;
+        --admin-warning: #f59e0b;
+        --admin-bg-dark: #0f172a;
+        --admin-card-dark: #1e293b;
+      }
 
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: var(--font-main); background: var(--bg); color: var(--text-primary); min-height: 100vh; overflow-x: hidden; }
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        font-family: var(--font-main);
+        background: var(--bg);
+        color: var(--text-primary);
+        min-height: 100vh;
+        overflow-x: hidden;
+      }
 
-    /* ── AUTH SCREEN ── */
-    #adminAuth {
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: radial-gradient(circle at 100% 0%, rgba(99,102,241,0.12), transparent 40%),
-                  radial-gradient(circle at 0% 100%, rgba(139,92,246,0.12), transparent 40%),
-                  var(--bg);
-      position: relative;
-    }
-    .secure-backdrop { position: absolute; top:0; left:0; width:100%; height:100%; pointer-events:none; background: url('https://www.transparenttextures.com/patterns/carbon-fibre.png'); opacity: 0.03; }
+      /* ── AUTH SCREEN ── */
+      #adminAuth {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background:
+          radial-gradient(
+            circle at 100% 0%,
+            rgba(99, 102, 241, 0.12),
+            transparent 40%
+          ),
+          radial-gradient(
+            circle at 0% 100%,
+            rgba(139, 92, 246, 0.12),
+            transparent 40%
+          ),
+          var(--bg);
+        position: relative;
+      }
+      .secure-backdrop {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        background: url("https://www.transparenttextures.com/patterns/carbon-fibre.png");
+        opacity: 0.03;
+      }
 
-    .admin-login-card {
-      background: var(--bg-card);
-      border: 1px solid var(--border-accent);
-      border-radius: 24px;
-      padding: 3rem 2.5rem;
-      width: 100%;
-      max-width: 440px;
-      box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
-      position: relative;
-      overflow: hidden;
-      backdrop-filter: blur(10px);
-    }
-    .admin-login-card::before {
-      content: ''; position: absolute; top:0; left:0; width:100%; height:4px;
-      background: linear-gradient(90deg, var(--admin-primary), #8b5cf6);
-    }
+      .admin-login-card {
+        background: var(--bg-card);
+        border: 1px solid var(--border-accent);
+        border-radius: 24px;
+        padding: 3rem 2.5rem;
+        width: 100%;
+        max-width: 440px;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        position: relative;
+        overflow: hidden;
+        backdrop-filter: blur(10px);
+      }
+      .admin-login-card::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 4px;
+        background: linear-gradient(90deg, var(--admin-primary), #8b5cf6);
+      }
 
-    .secure-badge {
-      display: inline-flex; align-items:center; gap:6px; background: rgba(34,197,94,0.1);
-      border: 1px solid rgba(34,197,94,0.3); color: #4ade80; font-size: 0.65rem;
-      font-weight:800; text-transform: uppercase; padding: 4px 10px; border-radius: 100px;
-      margin-bottom: 2rem; letter-spacing: 0.1em;
-    }
+      .secure-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: rgba(34, 197, 94, 0.1);
+        border: 1px solid rgba(34, 197, 94, 0.3);
+        color: #4ade80;
+        font-size: 0.65rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        padding: 4px 10px;
+        border-radius: 100px;
+        margin-bottom: 2rem;
+        letter-spacing: 0.1em;
+      }
 
-    .admin-login-logo { margin-bottom: 2.5rem; }
-    .admin-login-logo h1 { font-size: 1.75rem; font-weight: 800; letter-spacing: -0.02em; }
-    .admin-login-logo h1 em { color: var(--admin-primary); font-style: normal; }
-    .admin-login-logo p { color: var(--text-muted); font-size: 0.85rem; margin-top: 6px; }
+      .admin-login-logo {
+        margin-bottom: 2.5rem;
+      }
+      .admin-login-logo h1 {
+        font-size: 1.75rem;
+        font-weight: 800;
+        letter-spacing: -0.02em;
+      }
+      .admin-login-logo h1 em {
+        color: var(--admin-primary);
+        font-style: normal;
+      }
+      .admin-login-logo p {
+        color: var(--text-muted);
+        font-size: 0.85rem;
+        margin-top: 6px;
+      }
 
-    .admin-field { margin-bottom: 1.5rem; }
-    .admin-label { display: block; font-size: 0.75rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px; }
-    .admin-input {
-      width:100%; padding: 14px 16px; background: var(--bg-input); border: 1.5px solid var(--border-bright);
-      border-radius: 12px; color: var(--text-primary); font-size: 0.95rem; font-family: var(--font-main);
-      outline: none; transition: all 0.2s;
-    }
-    .admin-input:focus { border-color: var(--admin-primary); box-shadow: 0 0 0 4px rgba(99,102,241,0.1); }
+      .admin-field {
+        margin-bottom: 1.5rem;
+      }
+      .admin-label {
+        display: block;
+        font-size: 0.75rem;
+        font-weight: 700;
+        color: var(--text-muted);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        margin-bottom: 8px;
+      }
+      .admin-input {
+        width: 100%;
+        padding: 14px 16px;
+        background: var(--bg-input);
+        border: 1.5px solid var(--border-bright);
+        border-radius: 12px;
+        color: var(--text-primary);
+        font-size: 0.95rem;
+        font-family: var(--font-main);
+        outline: none;
+        transition: all 0.2s;
+      }
+      .admin-input:focus {
+        border-color: var(--admin-primary);
+        box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+      }
 
-    .admin-sign-btn {
-      width: 100%; padding: 16px; background: linear-gradient(135deg, var(--admin-primary), #8b5cf6);
-      color: #fff; font-size: 1rem; font-weight: 800; border: none; border-radius: 12px;
-      cursor: pointer; margin-top: 1rem; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      display: flex; align-items:center; justify-content: center; gap: 10px;
-    }
-    .admin-sign-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 20px -5px rgba(99,102,241,0.4); opacity: 0.95; }
-    .admin-err { color: var(--admin-danger); font-size: 0.8rem; font-weight: 600; text-align: center; margin-top: 1rem; display: none; }
+      .admin-sign-btn {
+        width: 100%;
+        padding: 16px;
+        background: linear-gradient(135deg, var(--admin-primary), #8b5cf6);
+        color: #fff;
+        font-size: 1rem;
+        font-weight: 800;
+        border: none;
+        border-radius: 12px;
+        cursor: pointer;
+        margin-top: 1rem;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+      }
+      .admin-sign-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 20px -5px rgba(99, 102, 241, 0.4);
+        opacity: 0.95;
+      }
+      .admin-err {
+        color: var(--admin-danger);
+        font-size: 0.8rem;
+        font-weight: 600;
+        text-align: center;
+        margin-top: 1rem;
+        display: none;
+      }
 
-    /* ── PORTAL LAYOUT ── */
-    #adminPortal { display: none; min-height: 100vh; flex-direction: column; }
-    #adminPortal.visible { display: flex; }
+      /* ── PORTAL LAYOUT ── */
+      #adminPortal {
+        display: none;
+        min-height: 100vh;
+        flex-direction: column;
+      }
+      #adminPortal.visible {
+        display: flex;
+      }
 
-    .admin-topbar {
-      background: var(--bg-card); border-bottom: 1px solid var(--border);
-      padding: 0 2rem; height: 70px; display: flex; align-items: center; gap: 1rem;
-      position: sticky; top:0; z-index: 100; backdrop-filter: blur(12px);
-    }
-    .admin-topbar-brand { font-size: 1.25rem; font-weight: 800; color: var(--admin-primary); display: flex; align-items: center; gap: 10px; flex: 1; }
-    .sec-session-pill { background: rgba(34,197,94,0.1); color: #22c55e; border: 1px solid rgba(34,197,94,0.2); font-size: 0.65rem; font-weight: 800; padding: 4px 10px; border-radius: 100px; display: flex; align-items: center; gap: 6px; }
-    .sec-session-pill .pulse { width: 6px; height: 6px; background: #22c55e; border-radius: 50%; box-shadow: 0 0 10px #22c55e; animation: pulse 2s infinite; }
-    @keyframes pulse { 0% { transform: scale(0.9); opacity: 1; } 70% { transform: scale(3); opacity: 0; } 100% { transform: scale(0.9); opacity: 0; } }
+      .admin-topbar {
+        background: var(--bg-card);
+        border-bottom: 1px solid var(--border);
+        padding: 0 2rem;
+        height: 70px;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        backdrop-filter: blur(12px);
+      }
+      .admin-topbar-brand {
+        font-size: 1.25rem;
+        font-weight: 800;
+        color: var(--admin-primary);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex: 1;
+      }
+      .sec-session-pill {
+        background: rgba(34, 197, 94, 0.1);
+        color: #22c55e;
+        border: 1px solid rgba(34, 197, 94, 0.2);
+        font-size: 0.65rem;
+        font-weight: 800;
+        padding: 4px 10px;
+        border-radius: 100px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .sec-session-pill .pulse {
+        width: 6px;
+        height: 6px;
+        background: #22c55e;
+        border-radius: 50%;
+        box-shadow: 0 0 10px #22c55e;
+        animation: pulse 2s infinite;
+      }
+      @keyframes pulse {
+        0% {
+          transform: scale(0.9);
+          opacity: 1;
+        }
+        70% {
+          transform: scale(3);
+          opacity: 0;
+        }
+        100% {
+          transform: scale(0.9);
+          opacity: 0;
+        }
+      }
 
-    .admin-logout-btn {
-      background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.2); color: var(--admin-danger);
-      padding: 8px 16px; border-radius: 10px; font-size: 0.8rem; font-weight: 700; cursor: pointer; transition: all 0.2s;
-    }
-    .admin-logout-btn:hover { background: var(--admin-danger); color: #fff; }
+      .admin-logout-btn {
+        background: rgba(239, 68, 68, 0.1);
+        border: 1px solid rgba(239, 68, 68, 0.2);
+        color: var(--admin-danger);
+        padding: 8px 16px;
+        border-radius: 10px;
+        font-size: 0.8rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+      .admin-logout-btn:hover {
+        background: var(--admin-danger);
+        color: #fff;
+      }
 
-    .admin-body { display: flex; flex: 1; }
+      .admin-body {
+        display: flex;
+        flex: 1;
+      }
 
-    /* Sidebar */
-    .admin-sidebar {
-      width: 260px; background: var(--bg-sidebar); border-right: 1px solid var(--border);
-      padding: 2rem 1.25rem; flex-shrink: 0; position: sticky; top: 70px; height: calc(100vh - 70px);
-    }
-    .admin-nav-group { margin-bottom: 2rem; }
-    .admin-nav-label { font-size: 0.65rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 12px; margin-left: 12px; }
-    .admin-nav-item {
-      display: flex; align-items: center; gap: 12px; padding: 12px 14px;
-      border-radius: 12px; text-decoration: none; color: var(--text-secondary);
-      font-size: 0.9rem; font-weight: 600; cursor: pointer; border: none; background: none;
-      width: 100%; text-align: left; transition: all 0.2s; margin-bottom: 2px;
-    }
-    .admin-nav-item:hover { background: var(--primary-dim); color: var(--admin-primary); }
-    .admin-nav-item.active { background: var(--primary-dim); color: var(--admin-primary); font-weight: 700; }
+      /* Sidebar */
+      .admin-sidebar {
+        width: 260px;
+        background: var(--bg-sidebar);
+        border-right: 1px solid var(--border);
+        padding: 2rem 1.25rem;
+        flex-shrink: 0;
+        position: sticky;
+        top: 70px;
+        height: calc(100vh - 70px);
+      }
+      .admin-nav-group {
+        margin-bottom: 2rem;
+      }
+      .admin-nav-label {
+        font-size: 0.65rem;
+        font-weight: 800;
+        color: var(--text-muted);
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        margin-bottom: 12px;
+        margin-left: 12px;
+      }
+      .admin-nav-item {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 12px 14px;
+        border-radius: 12px;
+        text-decoration: none;
+        color: var(--text-secondary);
+        font-size: 0.9rem;
+        font-weight: 600;
+        cursor: pointer;
+        border: none;
+        background: none;
+        width: 100%;
+        text-align: left;
+        transition: all 0.2s;
+        margin-bottom: 2px;
+      }
+      .admin-nav-item:hover {
+        background: var(--primary-dim);
+        color: var(--admin-primary);
+      }
+      .admin-nav-item.active {
+        background: var(--primary-dim);
+        color: var(--admin-primary);
+        font-weight: 700;
+      }
 
-    /* Content Area */
-    .admin-main { flex: 1; padding: 2.5rem; }
-    .admin-section { display: none; }
-    .admin-section.active { display: block; animation: fadeIn 0.3s ease; }
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+      /* Content Area */
+      .admin-main {
+        flex: 1;
+        padding: 2.5rem;
+      }
+      .admin-section {
+        display: none;
+      }
+      .admin-section.active {
+        display: block;
+        animation: fadeIn 0.3s ease;
+      }
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
 
-    /* Overview Stats */
-    .stats-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.5rem; margin-bottom: 2.5rem; }
-    .stat-card {
-      background: var(--bg-card); border: 1px solid var(--border); border-radius: 20px; padding: 1.75rem;
-      display: flex; flex-direction: column; gap: 8px; position: relative; overflow: hidden;
-    }
-    .stat-icon { position: absolute; right: -10px; bottom: -10px; font-size: 4rem; opacity: 0.05; pointer-events: none; }
-    .stat-label { font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); }
-    .stat-value { font-size: 2.5rem; font-weight: 800; color: var(--text-primary); line-height: 1; }
-    .stat-diff { font-size: 0.75rem; display: flex; align-items:center; gap: 4px; }
-    .diff-up { color: #22c55e; }
+      /* Overview Stats */
+      .stats-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2.5rem;
+      }
+      .stat-card {
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: 20px;
+        padding: 1.75rem;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        position: relative;
+        overflow: hidden;
+      }
+      .stat-icon {
+        position: absolute;
+        right: -10px;
+        bottom: -10px;
+        font-size: 4rem;
+        opacity: 0.05;
+        pointer-events: none;
+      }
+      .stat-label {
+        font-size: 0.8rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: var(--text-muted);
+      }
+      .stat-value {
+        font-size: 2.5rem;
+        font-weight: 800;
+        color: var(--text-primary);
+        line-height: 1;
+      }
+      .stat-diff {
+        font-size: 0.75rem;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+      }
+      .diff-up {
+        color: #22c55e;
+      }
 
-    /* Tables & Cards */
-    .admin-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 20px; overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
-    .admin-card-header { padding: 1.5rem 2rem; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
-    .admin-card-title { font-size: 1.1rem; font-weight: 800; }
-    .admin-card-body { padding: 0; }
+      /* Tables & Cards */
+      .admin-card {
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      }
+      .admin-card-header {
+        padding: 1.5rem 2rem;
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+      }
+      .admin-card-title {
+        font-size: 1.1rem;
+        font-weight: 800;
+      }
+      .admin-card-body {
+        padding: 0;
+      }
 
-    .admin-table { width: 100%; border-collapse: collapse; }
-    .admin-table th { background: var(--bg-sidebar); text-align: left; font-size: 0.75rem; font-weight: 700; color: var(--text-muted); padding: 1rem 1.5rem; text-transform: uppercase; letter-spacing: 0.05em; }
-    .admin-table td { padding: 1.25rem 1.5rem; border-bottom: 1px solid var(--border); font-size: 0.9rem; vertical-align: middle; }
-    .admin-table tr:hover { background: rgba(255,255,255,0.02); }
+      .admin-table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+      .admin-table th {
+        background: var(--bg-sidebar);
+        text-align: left;
+        font-size: 0.75rem;
+        font-weight: 700;
+        color: var(--text-muted);
+        padding: 1rem 1.5rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+      }
+      .admin-table td {
+        padding: 1.25rem 1.5rem;
+        border-bottom: 1px solid var(--border);
+        font-size: 0.9rem;
+        vertical-align: middle;
+      }
+      .admin-table tr:hover {
+        background: rgba(255, 255, 255, 0.02);
+      }
 
-    /* Material Items */
-    .mat-group { margin-bottom: 2rem; }
-    .mat-header { display:flex; align-items:center; gap:12px; margin-bottom: 1rem; border-left: 4px solid var(--admin-primary); padding-left: 1rem; }
-    .mat-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1rem; }
-    .mat-card {
-      background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; padding: 1.25rem;
-      display: flex; gap: 12px; align-items: center; transition: all 0.2s;
-    }
-    .mat-card:hover { border-color: var(--admin-primary); transform: translateY(-2px); }
+      /* Material Items */
+      .mat-group {
+        margin-bottom: 2rem;
+      }
+      .mat-header {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 1rem;
+        border-left: 4px solid var(--admin-primary);
+        padding-left: 1rem;
+      }
+      .mat-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 1rem;
+      }
+      .mat-card {
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        padding: 1.25rem;
+        display: flex;
+        gap: 12px;
+        align-items: center;
+        transition: all 0.2s;
+      }
+      .mat-card:hover {
+        border-color: var(--admin-primary);
+        transform: translateY(-2px);
+      }
 
-    /* Buttons */
-    .act-btn { padding: 8px 12px; border-radius: 8px; font-weight: 700; font-size: 0.75rem; cursor: pointer; border: 1px solid transparent; transition: all 0.2s; display: inline-flex; align-items: center; gap: 6px; }
-    .act-primary { background: var(--admin-primary); color: #fff; }
-    .act-danger { background: rgba(239,68,68,0.1); border-color: rgba(239,68,68,0.2); color: var(--admin-danger); }
-    .act-ghost { background: var(--bg-input); border-color: var(--border); color: var(--text-secondary); }
+      /* Buttons */
+      .act-btn {
+        padding: 8px 12px;
+        border-radius: 8px;
+        font-weight: 700;
+        font-size: 0.75rem;
+        cursor: pointer;
+        border: 1px solid transparent;
+        transition: all 0.2s;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .act-primary {
+        background: var(--admin-primary);
+        color: #fff;
+      }
+      .act-danger {
+        background: rgba(239, 68, 68, 0.1);
+        border-color: rgba(239, 68, 68, 0.2);
+        color: var(--admin-danger);
+      }
+      .act-ghost {
+        background: var(--bg-input);
+        border-color: var(--border);
+        color: var(--text-secondary);
+      }
 
-    /* Audit Log */
-    .audit-list { padding: 1rem; }
-    .audit-item { display: flex; gap: 12px; padding: 12px; border-bottom: 1px solid var(--border); font-size: 0.85rem; }
-    .audit-dot { width: 8px; height: 8px; border-radius: 50%; margin-top: 6px; flex-shrink: 0; }
-    .audit-time { font-family: var(--font-mono); color: var(--text-muted); width: 140px; flex-shrink: 0; }
-    .audit-action { font-weight: 700; color: var(--admin-primary); width: 100px; flex-shrink: 0; }
+      /* Audit Log */
+      .audit-list {
+        padding: 1rem;
+      }
+      .audit-item {
+        display: flex;
+        gap: 12px;
+        padding: 12px;
+        border-bottom: 1px solid var(--border);
+        font-size: 0.85rem;
+      }
+      .audit-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        margin-top: 6px;
+        flex-shrink: 0;
+      }
+      .audit-time {
+        font-family: var(--font-mono);
+        color: var(--text-muted);
+        width: 140px;
+        flex-shrink: 0;
+      }
+      .audit-action {
+        font-weight: 700;
+        color: var(--admin-primary);
+        width: 100px;
+        flex-shrink: 0;
+      }
 
-    /* Toast */
-    .admin-toast.show { transform: translateY(0); opacity: 1; }
+      /* Toast */
+      .admin-toast.show {
+        transform: translateY(0);
+        opacity: 1;
+      }
 
-    /* Modal */
-    .modal-overlay { position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.7); backdrop-filter: blur(4px); display: none; align-items: center; justify-content: center; z-index: 1000; }
-    .modal-overlay.visible { display: flex; }
-    .modal-card { background: var(--bg-card); border: 1px solid var(--border-accent); border-radius: 24px; width: 100%; max-width: 500px; padding: 2.5rem; position: relative; }
+      /* Modal */
+      .modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.7);
+        backdrop-filter: blur(4px);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        z-index: 1000;
+      }
+      .modal-overlay.visible {
+        display: flex;
+      }
+      .modal-card {
+        background: var(--bg-card);
+        border: 1px solid var(--border-accent);
+        border-radius: 24px;
+        width: 100%;
+        max-width: 500px;
+        padding: 2.5rem;
+        position: relative;
+      }
 
-    @media (max-width: 1024px) {
-      .admin-sidebar { width: 80px; padding: 2rem 0.5rem; }
-      .admin-nav-label, .admin-nav-item span { display: none; }
-      .admin-nav-item { justify-content: center; }
-    }
-  </style>
-</head>
-<body>
-
-<!-- ── AUTH SCREEN ── -->
-<div id="adminAuth">
-  <div class="secure-backdrop"></div>
-  <div class="admin-login-card">
-    <div class="secure-badge">🛡️ Encrypted Access (SHA-256)</div>
-    <div class="admin-login-logo">
-      <h1>Vision <em>Admin</em></h1>
-      <p>Secure system portal for educational administrators.</p>
-    </div>
-    <div class="admin-field">
-      <label class="admin-label">Identity (Email)</label>
-      <input class="admin-input" type="email" id="adminEmail" placeholder="admin@visionedu.online" autocomplete="username">
-    </div>
-    <div class="admin-field">
-      <label class="admin-label">Access Key</label>
-      <input class="admin-input" type="password" id="adminPass" placeholder="••••••••" autocomplete="current-password">
-    </div>
-    <button class="admin-sign-btn" id="loginBtn">Authorize Access <span style="font-size: 1.2rem;">→</span></button>
-    <p class="admin-err" id="adminErr">Authentication failed. Check credentials.</p>
-  </div>
-</div>
-
-<!-- ── SYSTEM PORTAL ── -->
-<div id="adminPortal">
-  <header class="admin-topbar">
-    <div class="admin-topbar-brand">
-      <span style="font-size:1.5rem;">⚙️</span> System Core
-    </div>
-    <div class="admin-topbar-right">
-      <div class="sec-session-pill"><span class="pulse"></span> Secure Session Active</div>
-      <button onclick="toggleTheme()" class="theme-toggle-btn">☀️</button>
-      <button class="admin-logout-btn" id="logoutBtn">End Session</button>
-    </div>
-  </header>
-
-  <div class="admin-body">
-    <nav class="admin-sidebar">
-      <div class="admin-nav-group">
-        <p class="admin-nav-label">System</p>
-        <button class="admin-nav-item active" onclick="navTo('overview', this)">📊 <span>Dashboard</span></button>
-        <button class="admin-nav-item" onclick="navTo('materials', this)">📚 <span>Materials</span></button>
+      @media (max-width: 1024px) {
+        .admin-sidebar {
+          width: 80px;
+          padding: 2rem 0.5rem;
+        }
+        .admin-nav-label,
+        .admin-nav-item span {
+          display: none;
+        }
+        .admin-nav-item {
+          justify-content: center;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- ── AUTH SCREEN ── -->
+    <div id="adminAuth">
+      <div class="secure-backdrop"></div>
+      <div class="admin-login-card">
+        <div class="secure-badge">️ Encrypted Access (SHA-256)</div>
+        <div class="admin-login-logo">
+          <h1>Vision <em>Admin</em></h1>
+          <p>Secure system portal for educational administrators.</p>
+        </div>
+        <div class="admin-field">
+          <label class="admin-label">Identity (Email)</label>
+          <input
+            class="admin-input"
+            type="email"
+            id="adminEmail"
+            placeholder="admin@visionedu.online"
+            autocomplete="username"
+          />
+        </div>
+        <div class="admin-field">
+          <label class="admin-label">Access Key</label>
+          <input
+            class="admin-input"
+            type="password"
+            id="adminPass"
+            placeholder="••••••••"
+            autocomplete="current-password"
+          />
+        </div>
+        <button class="admin-sign-btn" id="loginBtn">
+          Authorize Access <span style="font-size: 1.2rem">→</span>
+        </button>
+        <p class="admin-err" id="adminErr">
+          Authentication failed. Check credentials.
+        </p>
       </div>
-      <div class="admin-nav-group">
-        <p class="admin-nav-label">Management</p>
-        <button class="admin-nav-item" onclick="navTo('users', this)">👥 <span>Learners</span></button>
-        <button class="admin-nav-item" onclick="navTo('announce', this)">📢 <span>Broadcasts</span></button>
+    </div>
+
+    <!-- ── SYSTEM PORTAL ── -->
+    <div id="adminPortal">
+      <header class="admin-topbar">
+        <div class="admin-topbar-brand">
+          <span style="font-size: 1.5rem">️</span> System Core
+        </div>
+        <div class="admin-topbar-right">
+          <div class="sec-session-pill">
+            <span class="pulse"></span> Secure Session Active
+          </div>
+          <button onclick="toggleTheme()" class="theme-toggle-btn">️</button>
+          <button class="admin-logout-btn" id="logoutBtn">End Session</button>
+        </div>
+      </header>
+
+      <div class="admin-body">
+        <nav class="admin-sidebar">
+          <div class="admin-nav-group">
+            <p class="admin-nav-label">System</p>
+            <button
+              class="admin-nav-item active"
+              onclick="navTo('overview', this)"
+            >
+              <span>Dashboard</span>
+            </button>
+            <button class="admin-nav-item" onclick="navTo('materials', this)">
+              <span>Materials</span>
+            </button>
+          </div>
+          <div class="admin-nav-group">
+            <p class="admin-nav-label">Management</p>
+            <button class="admin-nav-item" onclick="navTo('users', this)">
+              <span>Learners</span>
+            </button>
+            <button class="admin-nav-item" onclick="navTo('announce', this)">
+              <span>Broadcasts</span>
+            </button>
+          </div>
+        </nav>
+
+        <main class="admin-main">
+          <!-- ── OVERVIEW ── -->
+          <section class="admin-section active" id="sec-overview">
+            <div class="admin-page-header">
+              <h2 style="font-size: 1.5rem; font-weight: 800">
+                System Health Overview
+              </h2>
+              <p style="color: var(--text-muted); font-size: 0.85rem">
+                Platform snapshot as of <span id="timeRef"></span>
+              </p>
+            </div>
+
+            <div class="stats-container" id="statsGrid"></div>
+
+            <div
+              style="
+                display: grid;
+                grid-template-columns: 1.8fr 1fr;
+                gap: 1.5rem;
+              "
+            >
+              <div class="admin-card">
+                <div class="admin-card-header">
+                  <span class="admin-card-title">Recent Activity Log</span>
+                </div>
+                <div class="admin-card-body">
+                  <div class="audit-list" id="auditList"></div>
+                </div>
+              </div>
+              <div class="admin-card">
+                <div class="admin-card-header">
+                  <span class="admin-card-title">Security Status</span>
+                </div>
+                <div class="admin-card-body" style="padding: 1.5rem">
+                  <div style="display: flex; flex-direction: column; gap: 12px">
+                    <div
+                      style="
+                        background: var(--bg-sidebar);
+                        border: 1px solid var(--border);
+                        border-radius: 12px;
+                        padding: 12px;
+                        display: flex;
+                        justify-content: space-between;
+                        align-items: center;
+                      "
+                    >
+                      <span style="font-size: 0.8rem; font-weight: 700"
+                        >Password Hashing</span
+                      >
+                      <span
+                        style="
+                          font-size: 0.7rem;
+                          background: #22c55e22;
+                          color: #22c55e;
+                          padding: 2px 8px;
+                          border-radius: 4px;
+                          font-weight: 800;
+                        "
+                        >SHA-256</span
+                      >
+                    </div>
+                    <div
+                      style="
+                        background: var(--bg-sidebar);
+                        border: 1px solid var(--border);
+                        border-radius: 12px;
+                        padding: 12px;
+                        display: flex;
+                        justify-content: space-between;
+                        align-items: center;
+                      "
+                    >
+                      <span style="font-size: 0.8rem; font-weight: 700"
+                        >Session Check</span
+                      >
+                      <span
+                        style="
+                          font-size: 0.7rem;
+                          background: #22c55e22;
+                          color: #22c55e;
+                          padding: 2px 8px;
+                          border-radius: 4px;
+                          font-weight: 800;
+                        "
+                        >PERFORMANCE</span
+                      >
+                    </div>
+                    <div
+                      style="
+                        background: var(--bg-sidebar);
+                        border: 1px solid var(--border);
+                        border-radius: 12px;
+                        padding: 12px;
+                        display: flex;
+                        justify-content: space-between;
+                        align-items: center;
+                      "
+                    >
+                      <span style="font-size: 0.8rem; font-weight: 700"
+                        >Admin Role</span
+                      >
+                      <span
+                        style="
+                          font-size: 0.7rem;
+                          background: #22c55e22;
+                          color: #22c55e;
+                          padding: 2px 8px;
+                          border-radius: 4px;
+                          font-weight: 800;
+                        "
+                        >ENFORCED</span
+                      >
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- ── MATERIALS ── -->
+          <section class="admin-section" id="sec-materials">
+            <div class="admin-page-header">
+              <h2 style="font-size: 1.5rem; font-weight: 800">
+                Manage Learning Materials
+              </h2>
+              <p style="color: var(--text-muted); font-size: 0.85rem">
+                Upload and manage Google Drive links for all subjects.
+              </p>
+            </div>
+
+            <button
+              class="act-btn act-primary"
+              onclick="openMatModal()"
+              style="padding: 12px 20px; font-size: 0.9rem; margin-bottom: 2rem"
+            >
+              + New Material Entry
+            </button>
+
+            <div id="matDisplay"></div>
+          </section>
+
+          <!-- ── USERS & BROADCASTS ── -->
+          <section class="admin-section" id="sec-users">
+            <div class="admin-page-header">
+              <h2 style="font-size: 1.5rem; font-weight: 800">
+                User Directory & Roles
+              </h2>
+              <p style="color: var(--text-muted); font-size: 0.85rem">
+                Create new accounts and manage access roles (Student, PRO,
+                Admin).
+              </p>
+            </div>
+
+            <div class="admin-card" style="margin-bottom: 2rem">
+              <div class="admin-card-header">
+                <span class="admin-card-title">Create New Account</span>
+              </div>
+              <div class="admin-card-body" style="padding: 2rem">
+                <div
+                  style="
+                    display: grid;
+                    grid-template-columns: 1fr 1fr 1fr;
+                    gap: 15px;
+                  "
+                >
+                  <div class="admin-field">
+                    <label class="admin-label">Full Name</label>
+                    <input
+                      class="admin-input"
+                      id="newUserName"
+                      placeholder="Full Name"
+                    />
+                  </div>
+                  <div class="admin-field">
+                    <label class="admin-label">Email Address</label>
+                    <input
+                      class="admin-input"
+                      id="newUserEmail"
+                      placeholder="email@visionedu.online"
+                    />
+                  </div>
+                  <div class="admin-field">
+                    <label class="admin-label">Initial Password</label>
+                    <input
+                      class="admin-input"
+                      type="password"
+                      id="newUserPass"
+                      placeholder="••••••••"
+                    />
+                  </div>
+                </div>
+                <div
+                  style="
+                    display: flex;
+                    align-items: flex-end;
+                    gap: 15px;
+                    margin-top: 10px;
+                  "
+                >
+                  <div class="admin-field" style="margin-bottom: 0; flex: 1">
+                    <label class="admin-label">Assign Role</label>
+                    <select class="admin-input" id="newUserRole">
+                      <option value="student">Student (Standard)</option>
+                      <option value="pro">PRO (Premium Access)</option>
+                      <option value="admin">Admin (System Control)</option>
+                    </select>
+                  </div>
+                  <button
+                    class="act-btn act-primary"
+                    onclick="createUser()"
+                    style="height: 48px; padding: 0 30px"
+                  >
+                    Create Account ✓
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div class="admin-card">
+              <div class="admin-card-header">
+                <span class="admin-card-title">All Registered Users</span>
+                <input
+                  type="text"
+                  placeholder="Search learners..."
+                  id="userSearch"
+                  oninput="renderUsers()"
+                  style="
+                    background: var(--bg-input);
+                    border: 1px solid var(--border);
+                    padding: 8px 15px;
+                    border-radius: 10px;
+                    color: var(--text-primary);
+                    font-size: 0.85rem;
+                    width: 250px;
+                  "
+                />
+              </div>
+              <div class="admin-card-body" style="padding: 0; overflow-x: auto">
+                <table class="admin-table">
+                  <thead>
+                    <tr>
+                      <th>Learner</th>
+                      <th>Email</th>
+                      <th>Role Access</th>
+                      <th>Action</th>
+                    </tr>
+                  </thead>
+                  <tbody id="allUsersTbody"></tbody>
+                </table>
+              </div>
+            </div>
+          </section>
+
+          <section class="admin-section" id="sec-announce">
+            <div class="admin-page-header">
+              <h2 style="font-size: 1.5rem; font-weight: 800">
+                Broadcast Center
+              </h2>
+            </div>
+            <div class="admin-card">
+              <div class="admin-card-header">
+                <span class="admin-card-title">Send New Message</span>
+              </div>
+              <div class="admin-card-body" style="padding: 2rem">
+                <div class="admin-field">
+                  <label class="admin-label">Announcement Title</label>
+                  <input
+                    class="admin-input"
+                    id="annTitle"
+                    placeholder="e.g. Physics Formula Sheet Updated"
+                  />
+                </div>
+                <div class="admin-field">
+                  <label class="admin-label">Message Content</label>
+                  <textarea
+                    class="admin-input"
+                    id="annMsg"
+                    rows="4"
+                    style="resize: none"
+                  ></textarea>
+                </div>
+                <button
+                  class="act-btn act-primary"
+                  onclick="postAnn()"
+                  style="padding: 12px 24px"
+                >
+                  Broadcast Now
+                </button>
+              </div>
+            </div>
+          </section>
+        </main>
       </div>
-    </nav>
-
-    <main class="admin-main">
-      <!-- ── OVERVIEW ── -->
-      <section class="admin-section active" id="sec-overview">
-        <div class="admin-page-header">
-          <h2 style="font-size: 1.5rem; font-weight: 800;">System Health Overview</h2>
-          <p style="color: var(--text-muted); font-size: 0.85rem;">Platform snapshot as of <span id="timeRef"></span></p>
-        </div>
-        
-        <div class="stats-container" id="statsGrid"></div>
-
-        <div style="display: grid; grid-template-columns: 1.8fr 1fr; gap: 1.5rem;">
-          <div class="admin-card">
-            <div class="admin-card-header"><span class="admin-card-title">Recent Activity Log</span></div>
-            <div class="admin-card-body">
-              <div class="audit-list" id="auditList"></div>
-            </div>
-          </div>
-          <div class="admin-card">
-            <div class="admin-card-header"><span class="admin-card-title">Security Status</span></div>
-            <div class="admin-card-body" style="padding: 1.5rem;">
-              <div style="display:flex; flex-direction:column; gap:12px;">
-                <div style="background:var(--bg-sidebar); border:1px solid var(--border); border-radius:12px; padding:12px; display:flex; justify-content:space-between; align-items:center;">
-                  <span style="font-size:0.8rem; font-weight:700;">Password Hashing</span>
-                  <span style="font-size:0.7rem; background:#22c55e22; color:#22c55e; padding:2px 8px; border-radius:4px; font-weight:800;">SHA-256</span>
-                </div>
-                <div style="background:var(--bg-sidebar); border:1px solid var(--border); border-radius:12px; padding:12px; display:flex; justify-content:space-between; align-items:center;">
-                  <span style="font-size:0.8rem; font-weight:700;">Session Check</span>
-                  <span style="font-size:0.7rem; background:#22c55e22; color:#22c55e; padding:2px 8px; border-radius:4px; font-weight:800;">PERFORMANCE</span>
-                </div>
-                <div style="background:var(--bg-sidebar); border:1px solid var(--border); border-radius:12px; padding:12px; display:flex; justify-content:space-between; align-items:center;">
-                  <span style="font-size:0.8rem; font-weight:700;">Admin Role</span>
-                  <span style="font-size:0.7rem; background:#22c55e22; color:#22c55e; padding:2px 8px; border-radius:4px; font-weight:800;">ENFORCED</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- ── MATERIALS ── -->
-      <section class="admin-section" id="sec-materials">
-        <div class="admin-page-header">
-          <h2 style="font-size: 1.5rem; font-weight: 800;">📚 Manage Learning Materials</h2>
-          <p style="color: var(--text-muted); font-size: 0.85rem;">Upload and manage Google Drive links for all subjects.</p>
-        </div>
-        
-        <button class="act-btn act-primary" onclick="openMatModal()" style="padding:12px 20px; font-size:0.9rem; margin-bottom:2rem;">+ New Material Entry</button>
-        
-        <div id="matDisplay"></div>
-      </section>
-
-      <!-- ── USERS & BROADCASTS ── -->
-      <section class="admin-section" id="sec-users">
-        <div class="admin-page-header">
-          <h2 style="font-size: 1.5rem; font-weight: 800;">👥 User Directory & Roles</h2>
-          <p style="color: var(--text-muted); font-size: 0.85rem;">Create new accounts and manage access roles (Student, PRO, Admin).</p>
-        </div>
-
-        <div class="admin-card" style="margin-bottom: 2rem;">
-          <div class="admin-card-header"><span class="admin-card-title">Create New Account</span></div>
-          <div class="admin-card-body" style="padding: 2rem;">
-            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px;">
-              <div class="admin-field">
-                <label class="admin-label">Full Name</label>
-                <input class="admin-input" id="newUserName" placeholder="Full Name">
-              </div>
-              <div class="admin-field">
-                <label class="admin-label">Email Address</label>
-                <input class="admin-input" id="newUserEmail" placeholder="email@visionedu.online">
-              </div>
-              <div class="admin-field">
-                <label class="admin-label">Initial Password</label>
-                <input class="admin-input" type="password" id="newUserPass" placeholder="••••••••">
-              </div>
-            </div>
-            <div style="display: flex; align-items: flex-end; gap: 15px; margin-top: 10px;">
-              <div class="admin-field" style="margin-bottom:0; flex: 1;">
-                <label class="admin-label">Assign Role</label>
-                <select class="admin-input" id="newUserRole">
-                  <option value="student">Student (Standard)</option>
-                  <option value="pro">PRO (Premium Access)</option>
-                  <option value="admin">Admin (System Control)</option>
-                </select>
-              </div>
-              <button class="act-btn act-primary" onclick="createUser()" style="height: 48px; padding: 0 30px;">Create Account ✓</button>
-            </div>
-          </div>
-        </div>
-
-        <div class="admin-card">
-          <div class="admin-card-header">
-            <span class="admin-card-title">All Registered Users</span>
-            <input type="text" placeholder="Search learners..." id="userSearch" oninput="renderUsers()" style="background:var(--bg-input); border:1px solid var(--border); padding:8px 15px; border-radius:10px; color:var(--text-primary); font-size:0.85rem; width:250px;">
-          </div>
-          <div class="admin-card-body" style="padding:0; overflow-x:auto;">
-            <table class="admin-table">
-              <thead><tr><th>Learner</th><th>Email</th><th>Role Access</th><th>Action</th></tr></thead>
-              <tbody id="allUsersTbody"></tbody>
-            </table>
-          </div>
-        </div>
-      </section>
-
-      <section class="admin-section" id="sec-announce">
-        <div class="admin-page-header">
-          <h2 style="font-size: 1.5rem; font-weight: 800;">📢 Broadcast Center</h2>
-        </div>
-        <div class="admin-card">
-          <div class="admin-card-header"><span class="admin-card-title">Send New Message</span></div>
-          <div class="admin-card-body" style="padding:2rem;">
-            <div class="admin-field">
-              <label class="admin-label">Announcement Title</label>
-              <input class="admin-input" id="annTitle" placeholder="e.g. Physics Formula Sheet Updated">
-            </div>
-            <div class="admin-field">
-              <label class="admin-label">Message Content</label>
-              <textarea class="admin-input" id="annMsg" rows="4" style="resize:none;"></textarea>
-            </div>
-            <button class="act-btn act-primary" onclick="postAnn()" style="padding:12px 24px;">🚀 Broadcast Now</button>
-          </div>
-        </div>
-      </section>
-    </main>
-  </div>
-</div>
-
-<div class="admin-toast" id="toast"></div>
-
-<!-- ── MODAL: NEW MATERIAL ── -->
-<div class="modal-overlay" id="matModal">
-  <div class="modal-card">
-    <div style="font-size:1.25rem; font-weight:800; margin-bottom:1.5rem; display:flex; align-items:center; gap:10px;">
-      <span>📥</span> Add Learning Material
     </div>
-    <div class="admin-field">
-      <label class="admin-label">Subject</label>
-      <select class="admin-input" id="matSubject">
-        <script>
-          document.write(SUBJECTS_META.map(s => `<option value="${s.id}">${s.icon} ${s.name}</option>`).join(''));
-        </script>
-      </select>
+
+    <div class="admin-toast" id="toast"></div>
+
+    <!-- ── MODAL: NEW MATERIAL ── -->
+    <div class="modal-overlay" id="matModal">
+      <div class="modal-card">
+        <div
+          style="
+            font-size: 1.25rem;
+            font-weight: 800;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+          "
+        >
+          <span></span> Add Learning Material
+        </div>
+        <div class="admin-field">
+          <label class="admin-label">Subject</label>
+          <select class="admin-input" id="matSubject">
+            <script>
+              document.write(
+                SUBJECTS_META.map(
+                  (s) => `<option value="${s.id}">${s.icon} ${s.name}</option>`,
+                ).join(""),
+              );
+            </script>
+          </select>
+        </div>
+        <div class="admin-field">
+          <label class="admin-label">Title / Description</label>
+          <input
+            class="admin-input"
+            id="matTitle"
+            placeholder="e.g. 2026 Core Maths Revision Guide"
+          />
+        </div>
+        <div class="admin-field">
+          <label class="admin-label">Material Type</label>
+          <select class="admin-input" id="matType">
+            <option value="PDF">PDF Document</option>
+            <option value="VIDEO">Video Lesson</option>
+            <option value="DOC">Word/Doc</option>
+            <option value="SLIDE">Presentation</option>
+            <option value="LINK">External Link</option>
+          </select>
+        </div>
+        <div class="admin-field">
+          <label class="admin-label">Google Drive / Resource URL</label>
+          <input
+            class="admin-input"
+            id="matUrl"
+            placeholder="https://drive.google.com/..."
+          />
+        </div>
+        <div
+          style="
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-top: 2rem;
+          "
+        >
+          <button class="act-btn act-ghost" onclick="closeMatModal()">
+            Cancel
+          </button>
+          <button
+            class="act-btn act-primary"
+            onclick="saveNewMaterial()"
+            style="padding: 12px"
+          >
+            Save Entry
+          </button>
+        </div>
+      </div>
     </div>
-    <div class="admin-field">
-      <label class="admin-label">Title / Description</label>
-      <input class="admin-input" id="matTitle" placeholder="e.g. 2026 Core Maths Revision Guide">
-    </div>
-    <div class="admin-field">
-      <label class="admin-label">Material Type</label>
-      <select class="admin-input" id="matType">
-        <option value="PDF">📄 PDF Document</option>
-        <option value="VIDEO">🎬 Video Lesson</option>
-        <option value="DOC">📝 Word/Doc</option>
-        <option value="SLIDE">📊 Presentation</option>
-        <option value="LINK">🔗 External Link</option>
-      </select>
-    </div>
-    <div class="admin-field">
-      <label class="admin-label">Google Drive / Resource URL</label>
-      <input class="admin-input" id="matUrl" placeholder="https://drive.google.com/...">
-    </div>
-    <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:2rem;">
-      <button class="act-btn act-ghost" onclick="closeMatModal()">Cancel</button>
-      <button class="act-btn act-primary" onclick="saveNewMaterial()" style="padding:12px;">Save Entry</button>
-    </div>
-  </div>
-</div>
 
-<script>
-  // ─── SECURITY ENGINE ───
-  const ADMIN_SESSION_KEY = 'vision_admin_at';
-  
-  function logAction(action) {
-    const logs = JSON.parse(localStorage.getItem('vision_audit_log') || '[]');
-    logs.unshift({ action, time: new Date().toISOString() });
-    localStorage.setItem('vision_audit_log', JSON.stringify(logs.slice(0, 50)));
-    if (document.getElementById('sec-overview').classList.contains('active')) renderAudit();
-  }
+    <script>
+      // ─── SECURITY ENGINE ───
+      const ADMIN_SESSION_KEY = "vision_admin_at";
 
-  // ─── AUTH ───
-  async function adminInit() {
-    const users = getUsers();
-    const adminEmail = 'admin@visionedu.online';
-    const admin = users.find(u => u.email === adminEmail);
-    const expectedHash = await sha256('VisionAdmin2026!');
+      function logAction(action) {
+        const logs = JSON.parse(
+          localStorage.getItem("vision_audit_log") || "[]",
+        );
+        logs.unshift({ action, time: new Date().toISOString() });
+        localStorage.setItem(
+          "vision_audit_log",
+          JSON.stringify(logs.slice(0, 50)),
+        );
+        if (
+          document.getElementById("sec-overview").classList.contains("active")
+        )
+          renderAudit();
+      }
 
-    if (!admin) {
-      users.push({ name: 'System Admin', email: adminEmail, hash: expectedHash, role: 'admin', createdAt: Date.now(), provider: 'email' });
-      saveUsers(users);
-    } else if (admin.hash.length < 60) { // Old hash detection
-      admin.hash = expectedHash;
-      admin.role = 'admin';
-      saveUsers(users);
-    }
+      // ─── AUTH ───
+      async function adminInit() {
+        const users = getUsers();
+        const adminEmail = "admin@visionedu.online";
+        const admin = users.find((u) => u.email === adminEmail);
+        const expectedHash = await sha256("VisionAdmin2026!");
 
-    const session = sessionStorage.getItem(ADMIN_SESSION_KEY);
-    if (session) showDash();
-  }
+        if (!admin) {
+          users.push({
+            name: "System Admin",
+            email: adminEmail,
+            hash: expectedHash,
+            role: "admin",
+            createdAt: Date.now(),
+            provider: "email",
+          });
+          saveUsers(users);
+        } else if (admin.hash.length < 60) {
+          // Old hash detection
+          admin.hash = expectedHash;
+          admin.role = "admin";
+          saveUsers(users);
+        }
 
-  document.getElementById('loginBtn').onclick = async () => {
-    const email = document.getElementById('adminEmail').value.trim().toLowerCase();
-    const pass  = document.getElementById('adminPass').value;
-    const hash  = await sha256(pass);
-    const users = getUsers();
-    const user  = users.find(u => u.email === email && u.hash === hash && u.role === 'admin');
+        const session = sessionStorage.getItem(ADMIN_SESSION_KEY);
+        if (session) showDash();
+      }
 
-    if (user) {
-      sessionStorage.setItem(ADMIN_SESSION_KEY, Date.now());
-      logAction('LOGON_SUCCESS');
-      showDash();
-    } else {
-      document.getElementById('adminErr').style.display = 'block';
-      logAction('LOGON_FAILURE');
-    }
-  };
+      document.getElementById("loginBtn").onclick = async () => {
+        const email = document
+          .getElementById("adminEmail")
+          .value.trim()
+          .toLowerCase();
+        const pass = document.getElementById("adminPass").value;
+        const hash = await sha256(pass);
+        const users = getUsers();
+        const user = users.find(
+          (u) => u.email === email && u.hash === hash && u.role === "admin",
+        );
 
-  document.getElementById('logoutBtn').onclick = () => {
-    sessionStorage.removeItem(ADMIN_SESSION_KEY);
-    location.reload();
-  };
+        if (user) {
+          sessionStorage.setItem(ADMIN_SESSION_KEY, Date.now());
+          logAction("LOGON_SUCCESS");
+          showDash();
+        } else {
+          document.getElementById("adminErr").style.display = "block";
+          logAction("LOGON_FAILURE");
+        }
+      };
 
-  function showDash() {
-    document.getElementById('adminAuth').style.display = 'none';
-    document.getElementById('adminPortal').style.display = 'flex';
-    document.getElementById('adminPortal').classList.add('visible');
-    renderStats();
-    renderAudit();
-  }
+      document.getElementById("logoutBtn").onclick = () => {
+        sessionStorage.removeItem(ADMIN_SESSION_KEY);
+        location.reload();
+      };
 
-  // ─── NAVIGATION ───
-  function navTo(secId, btn) {
-    document.querySelectorAll('.admin-section').forEach(s => s.classList.remove('active'));
-    document.getElementById('sec-' + secId).classList.add('active');
-    document.querySelectorAll('.admin-nav-item').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    if (secId === 'materials') renderMats();
-    if (secId === 'users') renderUsers();
-  }
+      function showDash() {
+        document.getElementById("adminAuth").style.display = "none";
+        document.getElementById("adminPortal").style.display = "flex";
+        document.getElementById("adminPortal").classList.add("visible");
+        renderStats();
+        renderAudit();
+      }
 
-  // ─── CONTENT RENDERING ───
-  function renderStats() {
-    const users = getUsers();
-    const mats  = getMaterials();
-    const grid = document.getElementById('statsGrid');
-    
-    const items = [
-      { l: 'Registered Learners', v: users.length, i: '👥' },
-      { l: 'Study Materials', v: mats.length, i: '📚' },
-      { l: 'Security Score', v: 'High', i: '🛡️' },
-      { l: 'Active Modules', v: 8, i: '⚡' }
-    ];
+      // ─── NAVIGATION ───
+      function navTo(secId, btn) {
+        document
+          .querySelectorAll(".admin-section")
+          .forEach((s) => s.classList.remove("active"));
+        document.getElementById("sec-" + secId).classList.add("active");
+        document
+          .querySelectorAll(".admin-nav-item")
+          .forEach((b) => b.classList.remove("active"));
+        btn.classList.add("active");
+        if (secId === "materials") renderMats();
+        if (secId === "users") renderUsers();
+      }
 
-    grid.innerHTML = items.map(it => `
+      // ─── CONTENT RENDERING ───
+      function renderStats() {
+        const users = getUsers();
+        const mats = getMaterials();
+        const grid = document.getElementById("statsGrid");
+
+        const items = [
+          { l: "Registered Learners", v: users.length, i: "" },
+          { l: "Study Materials", v: mats.length, i: "" },
+          { l: "Security Score", v: "High", i: "️" },
+          { l: "Active Modules", v: 8, i: "" },
+        ];
+
+        grid.innerHTML = items
+          .map(
+            (it) => `
       <div class="stat-card">
         <span class="stat-icon">${it.i}</span>
         <span class="stat-label">${it.l}</span>
         <span class="stat-value">${it.v}</span>
       </div>
-    `).join('');
-    document.getElementById('timeRef').innerText = new Date().toLocaleString();
-  }
+    `,
+          )
+          .join("");
+        document.getElementById("timeRef").innerText =
+          new Date().toLocaleString();
+      }
 
-  function renderAudit() {
-    const logs = JSON.parse(localStorage.getItem('vision_audit_log') || '[]');
-    const list = document.getElementById('auditList');
-    list.innerHTML = logs.map(l => `
+      function renderAudit() {
+        const logs = JSON.parse(
+          localStorage.getItem("vision_audit_log") || "[]",
+        );
+        const list = document.getElementById("auditList");
+        list.innerHTML = logs
+          .map(
+            (l) => `
       <div class="audit-item">
-        <span class="audit-dot" style="background:${l.action.includes('FAIL')?'red':l.action.includes('DEL')?'orange':'var(--admin-primary)'}"></span>
+        <span class="audit-dot" style="background:${l.action.includes("FAIL") ? "red" : l.action.includes("DEL") ? "orange" : "var(--admin-primary)"}"></span>
         <span class="audit-time">${new Date(l.time).toLocaleTimeString()}</span>
         <span class="audit-action">${l.action}</span>
         <span style="color:var(--text-secondary)">System log event generated</span>
       </div>
-    `).join('');
-  }
+    `,
+          )
+          .join("");
+      }
 
-  function renderMats() {
-    const mats = getMaterials();
-    const container = document.getElementById('matDisplay');
-    
-    const subjects = {};
-    SUBJECTS_META.forEach(s => subjects[s.id] = []);
-    mats.forEach(m => { if(subjects[m.subject]) subjects[m.subject].push(m); });
+      function renderMats() {
+        const mats = getMaterials();
+        const container = document.getElementById("matDisplay");
 
-    container.innerHTML = SUBJECTS_META.map(s => {
-      const subjMats = subjects[s.id];
-      if (!subjMats.length) return '';
-      return `
+        const subjects = {};
+        SUBJECTS_META.forEach((s) => (subjects[s.id] = []));
+        mats.forEach((m) => {
+          if (subjects[m.subject]) subjects[m.subject].push(m);
+        });
+
+        container.innerHTML = SUBJECTS_META.map((s) => {
+          const subjMats = subjects[s.id];
+          if (!subjMats.length) return "";
+          return `
         <div class="mat-group">
           <div class="mat-header">
             <span>${s.icon}</span>
             <span style="font-weight:800;">${s.name}</span>
           </div>
           <div class="mat-grid">
-            ${subjMats.map(m => `
+            ${subjMats
+              .map(
+                (m) => `
               <div class="mat-card">
-                <span style="font-size:1.5rem;">📄</span>
+                <span style="font-size:1.5rem;"></span>
                 <div style="flex:1; overflow:hidden;">
                   <div style="font-weight:700; white-space:nowrap; text-overflow:ellipsis; overflow:hidden;">${m.title}</div>
-                  <div style="font-size:0.7rem; color:var(--text-muted);">${m.type} · ${m.uploadedAt||'New'}</div>
+                  <div style="font-size:0.7rem; color:var(--text-muted);">${m.type} · ${m.uploadedAt || "New"}</div>
                 </div>
                 <button class="act-btn act-danger" onclick="deleteMat('${m.id}')">Delete</button>
               </div>
-            `).join('')}
+            `,
+              )
+              .join("")}
           </div>
         </div>
       `;
-    }).join('');
-  }
+        }).join("");
+      }
 
-  function openMatModal() { document.getElementById('matModal').classList.add('visible'); }
-  function closeMatModal() { document.getElementById('matModal').classList.remove('visible'); }
+      function openMatModal() {
+        document.getElementById("matModal").classList.add("visible");
+      }
+      function closeMatModal() {
+        document.getElementById("matModal").classList.remove("visible");
+      }
 
-  function saveNewMaterial() {
-    const sub = document.getElementById('matSubject').value;
-    const title = document.getElementById('matTitle').value.trim();
-    const type = document.getElementById('matType').value;
-    const url = document.getElementById('matUrl').value.trim();
+      function saveNewMaterial() {
+        const sub = document.getElementById("matSubject").value;
+        const title = document.getElementById("matTitle").value.trim();
+        const type = document.getElementById("matType").value;
+        const url = document.getElementById("matUrl").value.trim();
 
-    if (!title || !url) { showToast('Please fill all fields'); return; }
+        if (!title || !url) {
+          showToast("Please fill all fields");
+          return;
+        }
 
-    const entry = {
-      id: genMatId(),
-      subject: sub,
-      title,
-      type,
-      url,
-      uploadedAt: new Date().toISOString().split('T')[0],
-      uploadedBy: 'admin'
-    };
+        const entry = {
+          id: genMatId(),
+          subject: sub,
+          title,
+          type,
+          url,
+          uploadedAt: new Date().toISOString().split("T")[0],
+          uploadedBy: "admin",
+        };
 
-    upsertMaterial(entry);
-    logAction('MATERIAL_ADDED: ' + title);
-    closeMatModal();
-    renderMats();
-    showToast('New material published!');
-    
-    // Clear inputs
-    document.getElementById('matTitle').value = '';
-    document.getElementById('matUrl').value = '';
-  }
+        upsertMaterial(entry);
+        logAction("MATERIAL_ADDED: " + title);
+        closeMatModal();
+        renderMats();
+        showToast("New material published!");
 
-  function postAnn() {
-    const title = document.getElementById('annTitle').value.trim();
-    const body = document.getElementById('annMsg').value.trim();
-    if(!title || !body) { showToast('Broadcast requires title and body'); return; }
+        // Clear inputs
+        document.getElementById("matTitle").value = "";
+        document.getElementById("matUrl").value = "";
+      }
 
-    const anns = JSON.parse(localStorage.getItem('vision_announcements') || '[]');
-    anns.unshift({ title, body, date: new Date().toISOString() });
-    localStorage.setItem('vision_announcements', JSON.stringify(anns.slice(0, 5)));
-    
-    logAction('BROADCAST_SENT: ' + title);
-    showToast('Message broadcasted to all students!');
-    document.getElementById('annTitle').value = '';
-    document.getElementById('annMsg').value = '';
-  }
+      function postAnn() {
+        const title = document.getElementById("annTitle").value.trim();
+        const body = document.getElementById("annMsg").value.trim();
+        if (!title || !body) {
+          showToast("Broadcast requires title and body");
+          return;
+        }
 
-  function deleteMat(id) {
-    if (!confirm('Permanently remove this material?')) return;
-    deleteMaterial(id);
-    logAction('MATERIAL_DEL');
-    renderMats();
-    showToast('Material removed');
-  }
+        const anns = JSON.parse(
+          localStorage.getItem("vision_announcements") || "[]",
+        );
+        anns.unshift({ title, body, date: new Date().toISOString() });
+        localStorage.setItem(
+          "vision_announcements",
+          JSON.stringify(anns.slice(0, 5)),
+        );
 
-  async function createUser() {
-    const name = document.getElementById('newUserName').value.trim();
-    const email = document.getElementById('newUserEmail').value.trim().toLowerCase();
-    const pass = document.getElementById('newUserPass').value;
-    const role = document.getElementById('newUserRole').value;
+        logAction("BROADCAST_SENT: " + title);
+        showToast("Message broadcasted to all students!");
+        document.getElementById("annTitle").value = "";
+        document.getElementById("annMsg").value = "";
+      }
 
-    if (!name || !email || !pass) {
-      showToast('All fields required', 'error'); return;
-    }
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      showToast('Invalid email format', 'error'); return;
-    }
-    if (pass.length < 6) {
-      showToast('Password must be at least 6 chars', 'error'); return;
-    }
+      function deleteMat(id) {
+        if (!confirm("Permanently remove this material?")) return;
+        deleteMaterial(id);
+        logAction("MATERIAL_DEL");
+        renderMats();
+        showToast("Material removed");
+      }
 
-    const users = getUsers();
-    if (users.some(u => u.email === email)) {
-      showToast('Email already in use', 'error'); return;
-    }
+      async function createUser() {
+        const name = document.getElementById("newUserName").value.trim();
+        const email = document
+          .getElementById("newUserEmail")
+          .value.trim()
+          .toLowerCase();
+        const pass = document.getElementById("newUserPass").value;
+        const role = document.getElementById("newUserRole").value;
 
-    const hash = await sha256(pass);
-    users.push({ 
-      name, 
-      email, 
-      hash, 
-      role, 
-      provider: 'email', 
-      createdAt: Date.now(),
-      status: 'active'
-    });
-    saveUsers(users);
-    
-    // Clear form
-    ['newUserName', 'newUserEmail', 'newUserPass'].forEach(id => document.getElementById(id).value = '');
-    logAction('USER_CREATED: ' + email);
-    renderUsers();
-    showToast('Account created: ' + name);
-  }
+        if (!name || !email || !pass) {
+          showToast("All fields required", "error");
+          return;
+        }
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+          showToast("Invalid email format", "error");
+          return;
+        }
+        if (pass.length < 6) {
+          showToast("Password must be at least 6 chars", "error");
+          return;
+        }
 
-  function renderUsers() {
-    const users = getUsers();
-    const q = document.getElementById('userSearch').value.toLowerCase();
-    const tbody = document.getElementById('allUsersTbody');
-    
-    const filtered = users.filter(u => u.name.toLowerCase().includes(q) || u.email.toLowerCase().includes(q));
+        const users = getUsers();
+        if (users.some((u) => u.email === email)) {
+          showToast("Email already in use", "error");
+          return;
+        }
 
-    tbody.innerHTML = filtered.map(u => `
+        const hash = await sha256(pass);
+        users.push({
+          name,
+          email,
+          hash,
+          role,
+          provider: "email",
+          createdAt: Date.now(),
+          status: "active",
+        });
+        saveUsers(users);
+
+        // Clear form
+        ["newUserName", "newUserEmail", "newUserPass"].forEach(
+          (id) => (document.getElementById(id).value = ""),
+        );
+        logAction("USER_CREATED: " + email);
+        renderUsers();
+        showToast("Account created: " + name);
+      }
+
+      function renderUsers() {
+        const users = getUsers();
+        const q = document.getElementById("userSearch").value.toLowerCase();
+        const tbody = document.getElementById("allUsersTbody");
+
+        const filtered = users.filter(
+          (u) =>
+            u.name.toLowerCase().includes(q) ||
+            u.email.toLowerCase().includes(q),
+        );
+
+        tbody.innerHTML = filtered
+          .map(
+            (u) => `
       <tr>
         <td>
           <div style="display:flex; align-items:center; gap:10px;">
@@ -666,57 +1366,59 @@
         <td style="font-family:var(--font-mono); font-size:0.8rem;">${u.email}</td>
         <td>
           <select style="background:var(--bg-input); border:1px solid var(--border); color:var(--text-primary); padding:6px 10px; border-radius:8px; font-size:0.75rem; font-weight:700; outline:none; cursor:pointer;" onchange="updateRole('${u.email}', this.value)">
-            <option value="student" ${u.role === 'student' ? 'selected' : ''}>STUDENT</option>
-            <option value="pro" ${u.role === 'pro' ? 'selected' : ''}>PRO</option>
-            <option value="admin" ${u.role === 'admin' ? 'selected' : ''}>ADMIN</option>
+            <option value="student" ${u.role === "student" ? "selected" : ""}>STUDENT</option>
+            <option value="pro" ${u.role === "pro" ? "selected" : ""}>PRO</option>
+            <option value="admin" ${u.role === "admin" ? "selected" : ""}>ADMIN</option>
           </select>
         </td>
         <td style="text-align:right;">
-          <button class="act-btn act-danger" onclick="deleteUserAccount('${u.email}')" ${u.email === 'admin@visionedu.online' ? 'disabled' : ''} title="Delete Account">🗑️</button>
+          <button class="act-btn act-danger" onclick="deleteUserAccount('${u.email}')" ${u.email === "admin@visionedu.online" ? "disabled" : ""} title="Delete Account">️</button>
         </td>
       </tr>
-    `).join('');
-  }
-
-  function updateRole(email, newRole) {
-    const users = getUsers();
-    const idx = users.findIndex(u => u.email === email);
-    if (idx !== -1) {
-      const oldRole = users[idx].role;
-      users[idx].role = newRole;
-      saveUsers(users);
-      logAction(`ROLE_CHANGE: ${email} (${oldRole} -> ${newRole})`);
-      showToast(`Role updated: ${newRole.toUpperCase()}`);
-      
-      // Update session if editing self
-      const session = getSession();
-      if (session && session.email === email) {
-        session.role = newRole;
-        setSession(session);
+    `,
+          )
+          .join("");
       }
-    }
-  }
 
-  function deleteUserAccount(email) {
-    if (email === 'admin@visionedu.online') return;
-    if (!confirm('Permanent deletion of account ' + email + '?')) return;
-    
-    const users = getUsers();
-    const filtered = users.filter(u => u.email !== email);
-    saveUsers(filtered);
-    logAction('USER_DELETED: ' + email);
-    renderUsers();
-    showToast('Account deleted');
-  }
+      function updateRole(email, newRole) {
+        const users = getUsers();
+        const idx = users.findIndex((u) => u.email === email);
+        if (idx !== -1) {
+          const oldRole = users[idx].role;
+          users[idx].role = newRole;
+          saveUsers(users);
+          logAction(`ROLE_CHANGE: ${email} (${oldRole} -> ${newRole})`);
+          showToast(`Role updated: ${newRole.toUpperCase()}`);
 
-  function showToast(msg) {
-    const t = document.getElementById('toast');
-    t.innerText = '🛡️ ' + msg;
-    t.classList.add('show');
-    setTimeout(() => t.classList.remove('show'), 3000);
-  }
+          // Update session if editing self
+          const session = getSession();
+          if (session && session.email === email) {
+            session.role = newRole;
+            setSession(session);
+          }
+        }
+      }
 
-  adminInit();
-</script>
-</body>
+      function deleteUserAccount(email) {
+        if (email === "admin@visionedu.online") return;
+        if (!confirm("Permanent deletion of account " + email + "?")) return;
+
+        const users = getUsers();
+        const filtered = users.filter((u) => u.email !== email);
+        saveUsers(filtered);
+        logAction("USER_DELETED: " + email);
+        renderUsers();
+        showToast("Account deleted");
+      }
+
+      function showToast(msg) {
+        const t = document.getElementById("toast");
+        t.innerText = "️ " + msg;
+        t.classList.add("show");
+        setTimeout(() => t.classList.remove("show"), 3000);
+      }
+
+      adminInit();
+    </script>
+  </body>
 </html>

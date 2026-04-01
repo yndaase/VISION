@@ -1,113 +1,342 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
-  <script defer src="/_vercel/insights/script.js"></script>
-  <script>window.si = window.si || function () { (window.siq = window.siq || []).push(arguments); };</script>
-  <script defer src="/_vercel/speed-insights/script.js"></script>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>About | Vision Education · WASSCE Prep</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css" />
-  <link rel="stylesheet" href="dashboard.css" />
-  <style>
-    @media (max-width: 600px) {
-      .questions-grid { grid-template-columns: 1fr !important; }
-    }
-  </style>
-</head>
-<body style="background: var(--bg);">
-
-  <!-- ── NAVBAR ── -->
-  <nav class="dash-nav" id="dashNav">
-    <div class="dash-nav-inner">
-      <div style="display:flex;align-items:center;gap:16px;">
-        <a class="back-btn" href="login.html" title="Back to Login">
-          <span class="back-arrow">←</span>
-          <span class="back-label">Back to Sign In</span>
-        </a>
-        <div class="nav-divider"></div>
-        <span class="nav-subject-label">📐 Vision Education</span>
-      </div>
-    </div>
-  </nav>
-
-  <!-- ===== HERO ===== -->
-  <header class="hero" id="top" style="padding-bottom: 3.5rem;">
-    <div class="hero-content">
-      <div class="badge">
-        <span class="badge-dot"></span>
-        Platform Standards & Governance
-      </div>
-      <h1>Official Prep<br/><span class="gradient-text" style="background: linear-gradient(135deg, var(--primary), #d97706); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;">Excellence</span></h1>
-      <p class="hero-sub" style="max-width: 700px; margin: 0 auto;">Vision Education is an authorized WASSCE preparation ecosystem, engineered to deliver elite performance through strategic, expert-curated curriculum practice.</p>
-    </div>
-  </header>
-
-  <!-- ===== HOW IT WORKS & AUTHOR ===== -->
-  <section id="about-content" style="max-width: 900px; margin: 0 auto; padding: 2rem 1.5rem 5rem;">
-    
-    <!-- How it works cards -->
-    <h2 style="font-size: 1.8rem; margin-bottom: 1.5rem; color: var(--text-primary);">How It Works</h2>
-    <div class="questions-grid" style="grid-template-columns: 1fr 1fr; margin-bottom: 5rem;">
-      <div class="q-card easy" style="padding: 2rem;">
-        <div class="q-number-badge" style="display:inline-block; margin-bottom:1.2rem;">1. Select Subject</div>
-        <h3 style="font-size: 1.25rem; margin-bottom: 10px; color: var(--gold);">Choose Your Focus</h3>
-        <p style="color: var(--text-secondary); line-height: 1.6; font-size: 0.95rem;">From your secure dashboard, click on any subject you wish to study. The platform instantly loads a curated set of multiple-choice questions matched exactly to the most recent WAEC syllabus.</p>
-      </div>
-      <div class="q-card medium" style="padding: 2rem;">
-        <div class="q-number-badge" style="display:inline-block; margin-bottom:1.2rem;">2. Contextual Questions</div>
-        <h3 style="font-size: 1.25rem; margin-bottom: 10px; color: var(--gold);">Real-World Contexts</h3>
-        <p style="color: var(--text-secondary); line-height: 1.6; font-size: 0.95rem;">Gone are the days of boring formulas. You will encounter questions dealing with Mobile Money (MoMo) transfer rates, ECG utility billing, Fintech investments, and Agricultural yields.</p>
-      </div>
-      <div class="q-card hard" style="padding: 2rem;">
-        <div class="q-number-badge" style="display:inline-block; margin-bottom:1.2rem;">3. Instant Clarification</div>
-        <h3 style="font-size: 1.25rem; margin-bottom: 10px; color: var(--gold);">Instant Examiner Feedback</h3>
-        <p style="color: var(--text-secondary); line-height: 1.6; font-size: 0.95rem;">As soon as you select an answer, whether right or wrong, the platform shows you the complete mathematical workings. Better yet, it reveals the Chief Examiner's logic on why certain "trap" answers trick students.</p>
-      </div>
-      <div class="q-card easy" style="padding: 2rem;">
-        <div class="q-number-badge" style="display:inline-block; margin-bottom:1.2rem;">4. Deep Privacy</div>
-        <h3 style="font-size: 1.25rem; margin-bottom: 10px; color: var(--gold);">100% Local Data</h3>
-        <p style="color: var(--text-secondary); line-height: 1.6; font-size: 0.95rem;">Your accounts and scores are absolutely secure. The database lives entirely inside your local browser storage. We never collect, sell, or monitor your personal data. Practice completely anonymously.</p>
-      </div>
-    </div>
-
-    <!-- Creator section -->
-    <h2 style="font-size: 1.8rem; margin-bottom: 1.5rem; color: var(--text-primary);">Strategic Development</h2>
-    <div class="q-card" style="background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 3rem; box-shadow: var(--shadow-premium);">
-      <div class="about-header" style="display: flex; align-items: center; gap: 1.5rem; margin-bottom: 2rem; flex-wrap: wrap;">
-        <div class="about-avatar" style="width: 80px; height: 80px; background: var(--primary); border-radius: var(--radius-sm); display: flex; align-items: center; justify-content: center; font-size: 2rem; font-weight: 800; color: #fff; flex-shrink: 0; box-shadow: var(--shadow-md);">YN</div>
-        <div>
-          <h2 class="about-name" style="font-size: 1.8rem; font-weight: 800; margin-bottom: 6px; color: var(--text-primary);">Yaw Ndaase Mensuoh</h2>
-          <p class="about-title" style="font-size: 1rem; color: var(--primary); font-family: var(--font-mono); font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em;">Systems Architect</p>
-          <p style="font-size: 0.9rem; color: var(--text-muted); margin-top: 4px;">Senior Developer & Education Technologist</p>
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="upgrade-insecure-requests"
+    />
+    <script defer src="/_vercel/insights/script.js"></script>
+    <script>
+      window.si =
+        window.si ||
+        function () {
+          (window.siq = window.siq || []).push(arguments);
+        };
+    </script>
+    <script defer src="/_vercel/speed-insights/script.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>About | Vision Education · WASSCE Prep</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="dashboard.css" />
+    <style>
+      @media (max-width: 600px) {
+        .questions-grid {
+          grid-template-columns: 1fr !important;
+        }
+      }
+    </style>
+  </head>
+  <body style="background: var(--bg)">
+    <!-- ── NAVBAR ── -->
+    <nav class="dash-nav" id="dashNav">
+      <div class="dash-nav-inner">
+        <div style="display: flex; align-items: center; gap: 16px">
+          <a class="back-btn" href="login.html" title="Back to Login">
+            <span class="back-arrow">←</span>
+            <span class="back-label">Back to Sign In</span>
+          </a>
+          <div class="nav-divider"></div>
+          <span class="nav-subject-label"> Vision Education</span>
         </div>
       </div>
-      <div class="about-body">
-        <p style="font-size: 1.05rem; color: var(--text-secondary); line-height: 1.8; margin-bottom: 2rem;">As a student and systems architect, I recognized the need for a digital environment that matches the cognitive rigor of the 2026 WASSCE syllabus. **Vision Education** was developed to provide an elite, high-performance interface for high-stakes preparation.</p>
-        
-        <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
-          <a href="https://www.instagram.com/yndaase/" target="_blank" rel="noopener noreferrer" class="cta-btn" style="padding: 12px 32px; font-size: 0.8rem; text-decoration: none;">
-            <svg viewBox="0 0 24 24" fill="currentColor" width="22" height="22">
-              <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/>
-            </svg>
-            Follow on Instagram
-          </a>
-          <a href="login.html" class="cta-btn" style="text-decoration: none; display: inline-flex; align-items: center; padding: 12px 28px;">
-            Start Practicing Now →
-          </a>
+    </nav>
+
+    <!-- ===== HERO ===== -->
+    <header class="hero" id="top" style="padding-bottom: 3.5rem">
+      <div class="hero-content">
+        <div class="badge">
+          <span class="badge-dot"></span>
+          Platform Standards & Governance
+        </div>
+        <h1>
+          Official Prep<br /><span
+            class="gradient-text"
+            style="
+              background: linear-gradient(135deg, var(--primary), #d97706);
+              -webkit-background-clip: text;
+              background-clip: text;
+              -webkit-text-fill-color: transparent;
+            "
+            >Excellence</span
+          >
+        </h1>
+        <p class="hero-sub" style="max-width: 700px; margin: 0 auto">
+          Vision Education is an authorized WASSCE preparation ecosystem,
+          engineered to deliver elite performance through strategic,
+          expert-curated curriculum practice.
+        </p>
+      </div>
+    </header>
+
+    <!-- ===== HOW IT WORKS & AUTHOR ===== -->
+    <section
+      id="about-content"
+      style="max-width: 900px; margin: 0 auto; padding: 2rem 1.5rem 5rem"
+    >
+      <!-- How it works cards -->
+      <h2
+        style="
+          font-size: 1.8rem;
+          margin-bottom: 1.5rem;
+          color: var(--text-primary);
+        "
+      >
+        How It Works
+      </h2>
+      <div
+        class="questions-grid"
+        style="grid-template-columns: 1fr 1fr; margin-bottom: 5rem"
+      >
+        <div class="q-card easy" style="padding: 2rem">
+          <div
+            class="q-number-badge"
+            style="display: inline-block; margin-bottom: 1.2rem"
+          >
+            1. Select Subject
+          </div>
+          <h3
+            style="font-size: 1.25rem; margin-bottom: 10px; color: var(--gold)"
+          >
+            Choose Your Focus
+          </h3>
+          <p
+            style="
+              color: var(--text-secondary);
+              line-height: 1.6;
+              font-size: 0.95rem;
+            "
+          >
+            From your secure dashboard, click on any subject you wish to study.
+            The platform instantly loads a curated set of multiple-choice
+            questions matched exactly to the most recent WAEC syllabus.
+          </p>
+        </div>
+        <div class="q-card medium" style="padding: 2rem">
+          <div
+            class="q-number-badge"
+            style="display: inline-block; margin-bottom: 1.2rem"
+          >
+            2. Contextual Questions
+          </div>
+          <h3
+            style="font-size: 1.25rem; margin-bottom: 10px; color: var(--gold)"
+          >
+            Real-World Contexts
+          </h3>
+          <p
+            style="
+              color: var(--text-secondary);
+              line-height: 1.6;
+              font-size: 0.95rem;
+            "
+          >
+            Gone are the days of boring formulas. You will encounter questions
+            dealing with Mobile Money (MoMo) transfer rates, ECG utility
+            billing, Fintech investments, and Agricultural yields.
+          </p>
+        </div>
+        <div class="q-card hard" style="padding: 2rem">
+          <div
+            class="q-number-badge"
+            style="display: inline-block; margin-bottom: 1.2rem"
+          >
+            3. Instant Clarification
+          </div>
+          <h3
+            style="font-size: 1.25rem; margin-bottom: 10px; color: var(--gold)"
+          >
+            Instant Examiner Feedback
+          </h3>
+          <p
+            style="
+              color: var(--text-secondary);
+              line-height: 1.6;
+              font-size: 0.95rem;
+            "
+          >
+            As soon as you select an answer, whether right or wrong, the
+            platform shows you the complete mathematical workings. Better yet,
+            it reveals the Chief Examiner's logic on why certain "trap" answers
+            trick students.
+          </p>
+        </div>
+        <div class="q-card easy" style="padding: 2rem">
+          <div
+            class="q-number-badge"
+            style="display: inline-block; margin-bottom: 1.2rem"
+          >
+            4. Deep Privacy
+          </div>
+          <h3
+            style="font-size: 1.25rem; margin-bottom: 10px; color: var(--gold)"
+          >
+            100% Local Data
+          </h3>
+          <p
+            style="
+              color: var(--text-secondary);
+              line-height: 1.6;
+              font-size: 0.95rem;
+            "
+          >
+            Your accounts and scores are absolutely secure. The database lives
+            entirely inside your local browser storage. We never collect, sell,
+            or monitor your personal data. Practice completely anonymously.
+          </p>
         </div>
       </div>
-    </div>
-  </section>
 
-  <!-- ===== FOOTER ===== -->
-  <footer class="site-footer">
-    <p>Built for Ghana SHS Students · Vision Education 2026</p>
-  </footer>
+      <!-- Creator section -->
+      <h2
+        style="
+          font-size: 1.8rem;
+          margin-bottom: 1.5rem;
+          color: var(--text-primary);
+        "
+      >
+        Strategic Development
+      </h2>
+      <div
+        class="q-card"
+        style="
+          background: var(--bg-card);
+          border: 1px solid var(--border);
+          border-radius: var(--radius-md);
+          padding: 3rem;
+          box-shadow: var(--shadow-premium);
+        "
+      >
+        <div
+          class="about-header"
+          style="
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+          "
+        >
+          <div
+            class="about-avatar"
+            style="
+              width: 80px;
+              height: 80px;
+              background: var(--primary);
+              border-radius: var(--radius-sm);
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              font-size: 2rem;
+              font-weight: 800;
+              color: #fff;
+              flex-shrink: 0;
+              box-shadow: var(--shadow-md);
+            "
+          >
+            YN
+          </div>
+          <div>
+            <h2
+              class="about-name"
+              style="
+                font-size: 1.8rem;
+                font-weight: 800;
+                margin-bottom: 6px;
+                color: var(--text-primary);
+              "
+            >
+              Yaw Ndaase Mensuoh
+            </h2>
+            <p
+              class="about-title"
+              style="
+                font-size: 1rem;
+                color: var(--primary);
+                font-family: var(--font-mono);
+                font-weight: 600;
+                text-transform: uppercase;
+                letter-spacing: 0.1em;
+              "
+            >
+              Systems Architect
+            </p>
+            <p
+              style="
+                font-size: 0.9rem;
+                color: var(--text-muted);
+                margin-top: 4px;
+              "
+            >
+              Senior Developer & Education Technologist
+            </p>
+          </div>
+        </div>
+        <div class="about-body">
+          <p
+            style="
+              font-size: 1.05rem;
+              color: var(--text-secondary);
+              line-height: 1.8;
+              margin-bottom: 2rem;
+            "
+          >
+            As a student and systems architect, I recognized the need for a
+            digital environment that matches the cognitive rigor of the 2026
+            WASSCE syllabus. **Vision Education** was developed to provide an
+            elite, high-performance interface for high-stakes preparation.
+          </p>
 
-</body>
+          <div style="display: flex; gap: 1rem; flex-wrap: wrap">
+            <a
+              href="https://www.instagram.com/yndaase/"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="cta-btn"
+              style="
+                padding: 12px 32px;
+                font-size: 0.8rem;
+                text-decoration: none;
+              "
+            >
+              <svg
+                viewBox="0 0 24 24"
+                fill="currentColor"
+                width="22"
+                height="22"
+              >
+                <path
+                  d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"
+                />
+              </svg>
+              Follow on Instagram
+            </a>
+            <a
+              href="login.html"
+              class="cta-btn"
+              style="
+                text-decoration: none;
+                display: inline-flex;
+                align-items: center;
+                padding: 12px 28px;
+              "
+            >
+              Start Practicing Now →
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== FOOTER ===== -->
+    <footer class="site-footer">
+      <p>Built for Ghana SHS Students · Vision Education 2026</p>
+    </footer>
+  </body>
 </html>
