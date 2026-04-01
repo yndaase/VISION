@@ -59,16 +59,33 @@
                 </div>
 
                 <div class="input-area">
-                    <div class="input-container">
-                        <button class="btn-icon" onclick="document.getElementById('fileInput').click()" title="Attach File (Max 100MB)">
-                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l8.57-8.57A4 4 0 1 1 18 8.84l-8.59 8.57a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
-                        </button>
-                        <input type="file" id="fileInput" style="display: none;" onchange="handleFileSelect(event)">
-                        
-                        <textarea class="chat-textarea" id="chatInput" placeholder="Write a secure message..." rows="1"></textarea>
+                    <div class="input-container" id="inputWrap">
+                        <!-- Default Chat Input -->
+                        <div id="defaultInput" style="display: flex; align-items: flex-end; gap: 10px; flex: 1;">
+                            <button class="btn-icon" onclick="document.getElementById('fileInput').click()" title="Attach File (Max 100MB)">
+                                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l8.57-8.57A4 4 0 1 1 18 8.84l-8.59 8.57a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
+                            </button>
+                            <input type="file" id="fileInput" style="display: none;" onchange="handleFileSelect(event)">
+                            
+                            <textarea class="chat-textarea" id="chatInput" placeholder="Write a secure message..." rows="1"></textarea>
+
+                            <button class="btn-icon mic-btn" id="micBtn" onclick="toggleVoiceRecording()" title="Record Secure Voice Note">
+                                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="22"/><line x1="8" y1="22" x2="16" y2="22"/></svg>
+                            </button>
+                        </div>
+
+                        <!-- Recording State Overlay -->
+                        <div id="recordingState" style="display: none; align-items: center; gap: 12px; flex: 1; padding: 5px 10px;">
+                            <span class="mic-pulse"></span>
+                            <span id="recordingTimer" style="font-family: 'JetBrains Mono', monospace; font-size: 0.95rem; font-weight: 800; color: #ef4444; width: 45px;">0:00</span>
+                            <span style="flex: 1; color: var(--text-muted); font-size: 0.9rem;">Recording encrypted voice...</span>
+                            <button class="btn-icon" onclick="cancelVoiceRecording()" title="Cancel Recording" style="color: #ef4444;">
+                                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                            </button>
+                        </div>
                     </div>
 
-                    <button class="btn-send" onclick="sendMessage()" title="Send Message">
+                    <button class="btn-send" id="sendBtn" onclick="sendMessage()" title="Send Message">
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
                     </button>
                 </div>

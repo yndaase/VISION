@@ -8,6 +8,12 @@ const PRIVATE_KEY_PREFIX = "vision_pk_";
 let currentIdentity = null;
 let selectedContact = null;
 
+// Voice Record State
+let mediaRecorder = null;
+let audioChunks = [];
+let recordingInterval = null;
+let recordingSeconds = 0;
+
 /**
  * Initialize Secure Identity & Session
  */
@@ -429,6 +435,8 @@ async function renderMessage(msg) {
             const url = URL.createObjectURL(blob);
             if (msg.fileType.startsWith("image/")) {
                 bubble.innerHTML = `<img src="${url}" style="max-width:100%; border-radius:12px; display:block; margin-bottom:5px;">`;
+            } else if (msg.fileType.startsWith("audio/")) {
+                bubble.innerHTML = `<audio controls class="secure-audio" src="${url}" style="display:block; margin-bottom:5px;"></audio>`;
             } else {
                 bubble.innerHTML = `<div style="display:flex; align-items:center; gap:8px; margin-bottom:5px;">
                     <span style="font-size:1.5rem;">📄</span>
@@ -481,6 +489,110 @@ function setupSearch() {
             item.style.display = name.includes(val) ? "flex" : "none";
         });
     });
+}
+
+/**
+ * Secure Voice Relay Logic
+ */
+async function toggleVoiceRecording() {
+    if (mediaRecorder && mediaRecorder.state === "recording") {
+        // Stop & Send
+        mediaRecorder.stop();
+        stopTimer();
+        document.getElementById("defaultInput").style.display = "flex";
+        document.getElementById("recordingState").style.display = "none";
+        document.getElementById("micBtn").classList.remove("recording");
+        document.getElementById("sendBtn").style.display = "flex";
+    } else {
+        // Start
+        try {
+            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            mediaRecorder = new MediaRecorder(stream);
+            
+            mediaRecorder.ondataavailable = (e) => {
+                if (e.data.size > 0) audioChunks.push(e.data);
+            };
+            
+            mediaRecorder.onstop = async () => {
+                if (audioChunks.length === 0) return;
+                const blob = new Blob(audioChunks, { type: "audio/webm" });
+                audioChunks = [];
+                stream.getTracks().forEach(t => t.stop()); // release mic
+                await sendVoiceNote(blob);
+            };
+
+            audioChunks = [];
+            mediaRecorder.start();
+            document.getElementById("defaultInput").style.display = "none";
+            document.getElementById("recordingState").style.display = "flex";
+            document.getElementById("micBtn").classList.add("recording");
+            document.getElementById("sendBtn").style.display = "none";
+            startTimer();
+        } catch (e) {
+            console.error("Microphone access denied:", e);
+            alert("Microphone access is required to send Secure Voice Notes.");
+        }
+    }
+}
+
+function cancelVoiceRecording() {
+    if (mediaRecorder && mediaRecorder.state === "recording") {
+        mediaRecorder.onstop = () => { 
+            audioChunks = []; 
+            mediaRecorder.stream.getTracks().forEach(t => t.stop());
+        }; // prevent send
+        mediaRecorder.stop();
+        stopTimer();
+        document.getElementById("defaultInput").style.display = "flex";
+        document.getElementById("recordingState").style.display = "none";
+        document.getElementById("micBtn").classList.remove("recording");
+        document.getElementById("sendBtn").style.display = "flex";
+    }
+}
+
+function startTimer() {
+    recordingSeconds = 0;
+    const timerEl = document.getElementById("recordingTimer");
+    timerEl.textContent = "0:00";
+    recordingInterval = setInterval(() => {
+        recordingSeconds++;
+        const m = Math.floor(recordingSeconds / 60);
+        const s = (recordingSeconds % 60).toString().padStart(2, '0');
+        timerEl.textContent = `${m}:${s}`;
+    }, 1000);
+}
+
+function stopTimer() {
+    clearInterval(recordingInterval);
+}
+
+async function sendVoiceNote(blob) {
+    if (!selectedContact) return;
+    const session = getSession();
+    const registry = JSON.parse(localStorage.getItem(IDENTITIES_KEY) || "{}");
+    const recipientPubKey = registry[selectedContact.email];
+
+    const reader = new FileReader();
+    reader.onload = async (e) => {
+        const buffer = e.target.result;
+        const encrypted = await window.VisionCrypto.encryptForRecipient(buffer, recipientPubKey);
+
+        const msgObj = {
+            type: "msg",
+            from: session.email,
+            to: selectedContact.email,
+            threadId: [session.email, selectedContact.email].sort().join("<->"),
+            payload: encrypted,
+            fileName: `VoiceNote_${Date.now()}.webm`,
+            fileType: blob.type || "audio/webm",
+            timestamp: Date.now()
+        };
+
+        await window.VisionStore.saveMessage(msgObj);
+        await renderMessage(msgObj);
+        renderContacts(); // updates sidebar to show attachment icon
+    };
+    reader.readAsArrayBuffer(blob);
 }
 
 initChat();
