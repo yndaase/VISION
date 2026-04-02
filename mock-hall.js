@@ -25,7 +25,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const mockConfig = MOCK_EXAMS[mockId];
   if (!mockConfig) {
     alert("Mock exam not found.");
-    window.location.href = "mocks.html";
+    window.location.href = "/mocks";
     return;
   }
 

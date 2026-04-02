@@ -2,12 +2,12 @@ User-agent: *
 Allow: /
 
 # Block admin and private pages from crawlers
-Disallow: /admin.html
-Disallow: /robotics-login.html
-Disallow: /robotics-dashboard.html
-Allow: /robotics.html
-Allow: /about.html
-Disallow: /mock-hall.html
+Disallow: /admin
+Disallow: /robotics-login
+Disallow: /robotics-dashboard
+Allow: /robotics
+Allow: /about
+Disallow: /mock-hall
 Disallow: /api/
 
 # Sitemap location

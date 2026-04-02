@@ -1,6 +1,6 @@
 const CACHE_NAME = 'vision-edu-v3';
 const ASSETS_TO_CACHE = [
-  '/login.html',
+  '/login',
   '/style.css',
   '/theme.js',
   '/assets/logo.png',

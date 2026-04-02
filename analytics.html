@@ -30,7 +30,7 @@
           sessionStorage.getItem(SESSION_KEY) ||
           localStorage.getItem(SESSION_KEY);
         if (!session) {
-          window.location.href = "login.html";
+          window.location.href = "/login";
         }
       })();
     </script>
@@ -243,7 +243,7 @@
     <script src="analytics.js"></script>
     <script>
       function handleLogout() {
-        window.location.href = "login.html";
+        window.location.href = "/login";
       }
     </script>
   </body>

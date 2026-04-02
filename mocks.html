@@ -29,7 +29,7 @@
           sessionStorage.getItem(SESSION_KEY) ||
           localStorage.getItem(SESSION_KEY);
         if (!session) {
-          window.location.href = "login.html";
+          window.location.href = "/login";
         }
       })();
     </script>
@@ -104,20 +104,20 @@
   <body class="dashboard-page">
     <!--  SIDE NAVIGATION  -->
     <aside class="side-nav">
-      <a class="side-nav-logo" href="dashboard.html">
+      <a class="side-nav-logo" href="/dashboard">
         <img src="assets/logo.png" alt="Logo" style="height: 48px; width: 48px; object-fit: contain;">
         <span>Vision Edu</span>
       </a>
       <nav class="side-nav-menu">
-        <a href="dashboard.html" class="nav-item">
+        <a href="/dashboard" class="nav-item">
           <span class="nav-item-icon"><img src="assets/logo.png" style="width: 20px; height: 20px;"></span>
           <span>Dashboard</span>
         </a>
-        <a href="mocks.html" class="nav-item active">
+        <a href="/mocks" class="nav-item active">
           <span class="nav-item-icon"><img src="assets/logo.png" style="width: 20px; height: 20px;"></span>
           <span>Mock Exams</span>
         </a>
-        <a href="analytics.html" class="nav-item">
+        <a href="/analytics" class="nav-item">
           <span class="nav-item-icon"><img src="assets/logo.png" style="width: 20px; height: 20px;"></span>
           <span>Performance</span>
         </a>
@@ -139,15 +139,15 @@
 
     <!--  BOTTOM NAVIGATION (Mobile)  -->
     <nav class="bottom-nav">
-      <a href="dashboard.html" class="bottom-nav-item">
+      <a href="/dashboard" class="bottom-nav-item">
         <span class="bottom-icon"><img src="assets/logo.png" style="width: 20px; height: 20px;"></span>
         <span>Home</span>
       </a>
-      <a href="mocks.html" class="bottom-nav-item active">
+      <a href="/mocks" class="bottom-nav-item active">
         <span class="bottom-icon"><img src="assets/logo.png" style="width: 20px; height: 20px;"></span>
         <span>Mocks</span>
       </a>
-      <a href="analytics.html" class="bottom-nav-item">
+      <a href="/analytics" class="bottom-nav-item">
         <span class="bottom-icon"><img src="assets/logo.png" style="width: 20px; height: 20px;"></span>
         <span>Stats</span>
       </a>
@@ -226,7 +226,7 @@
               >
               <button
                 class="start-mock-btn"
-                onclick="window.location.href = 'mock-hall.html?id=math_mock_a'"
+                onclick="window.location.href = '/mock-hall?id=math_mock_a'"
               >
                 Launch Exam
               </button>

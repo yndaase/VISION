@@ -123,7 +123,7 @@ function checkAuth() {
   const session = getSession();
   if (!session) {
     const isRobotics = window.location.pathname.includes("robotics");
-    window.location.href = isRobotics ? "robotics-login.html" : "login.html";
+    window.location.href = isRobotics ? "/robotics-login" : "/login";
     return null;
   }
   return session;
@@ -133,18 +133,18 @@ function checkAuth() {
 function goToDashboard() {
   const isRobotics = window.location.pathname.includes("robotics");
   window.location.href = isRobotics
-    ? "robotics-dashboard.html"
-    : "dashboard.html";
+    ? "/robotics-dashboard"
+    : "/dashboard";
 }
 function goToLogin() {
-  window.location.href = "login.html";
+  window.location.href = "/login";
 }
 
 //  Logout
 function handleLogout() {
   clearSession();
   const isRobotics = window.location.pathname.includes("robotics");
-  window.location.href = isRobotics ? "robotics-login.html" : "login.html";
+  window.location.href = isRobotics ? "/robotics-login" : "/login";
 }
 
 //  2FA State Helpers
