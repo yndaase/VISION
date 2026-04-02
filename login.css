@@ -10,6 +10,39 @@
   overflow-y: auto;
   position: relative;
   background: #05080f !important;
+  color: #f1f5f9 !important;
+}
+
+/* ─── Force light text on dark login ─── */
+.login-page h1,
+.login-page h2,
+.login-page h3,
+.login-page h4,
+.login-page label {
+  color: #f1f5f9 !important;
+}
+.login-page p,
+.login-page span,
+.login-page div {
+  color: inherit;
+}
+.auth-header h1 {
+  font-size: 1.75rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  margin-bottom: 4px;
+  color: #f1f5f9 !important;
+}
+.auth-header p {
+  font-size: 0.9rem;
+  color: #94a3b8 !important;
+}
+.google-custom-btn {
+  color: #f1f5f9 !important;
+}
+.auth-divider,
+.auth-divider span {
+  color: #64748b !important;
 }
 
 .login-bg {
