@@ -2041,15 +2041,19 @@
           </p>
         </div>
 
-        <div class="chat-messages" id="quickCommList" style="padding: 0; gap: 0;">
-          <!-- Dynamically populated with team members -->
+        <div class="chat-messages" id="quickCommList">
+          <!-- Dynamically populated with global chat messages -->
         </div>
 
-        <div class="chat-input-area" style="background: rgba(0,0,0,0.3); flex-direction: column; gap: 10px; align-items: stretch; border-top: 1px solid rgba(255,255,255,0.05);">
-            <button onclick="location.href='chat.html'" class="btn-create-meet" style="margin: 0; width: 100%; justify-content: center; font-size: 0.85rem; padding: 0.8rem;">
-               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 8px;"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg> Open Full Comm Suite
-            </button>
-            <p style="font-size: 0.65rem; color: #64748b; text-align: center; margin: 0;">Endpoints are secured via RSA-OAEP / AES-GCM.</p>
+        <div class="chat-input-area" style="background: rgba(0,0,0,0.4); padding: 1rem; border-top: 1px solid rgba(255,255,255,0.05);">
+            <div style="display: flex; gap: 8px; margin-bottom: 10px;">
+                <input type="text" id="chatInput" class="chat-input" placeholder="Broadcast to team..." style="font-size: 0.85rem;" onkeypress="if(event.key==='Enter') sendMessage()">
+                <button onclick="sendMessage()" style="background: var(--primary); color: #000; border: none; padding: 0 12px; border-radius: 100px; cursor: pointer; font-weight: 800; font-size: 0.8rem;">SEND</button>
+            </div>
+            <div style="display: flex; align-items: center; justify-content: space-between;">
+                <button onclick="location.href='chat.html'" style="background: transparent; border: none; color: #4ade80; font-size: 0.72rem; cursor: pointer; padding: 0; font-weight: 700; text-transform: uppercase;">Encryption Suite →</button>
+                <p style="font-size: 0.6rem; color: #475569; margin: 0;">RSA-OAEP / AES-GCM Secured</p>
+            </div>
         </div>
       </aside>
     </div>
@@ -2089,7 +2093,10 @@
       function seedRoleAccounts() {
         const users = getUsers();
         const seeded = localStorage.getItem("rolesSeedVersion");
-        if (seeded === SEED_VERSION) return;
+        
+        // Force seed if users array is notably empty or version changed
+        if (seeded === SEED_VERSION && users.length > 3) return;
+        
         ROLE_ACCOUNTS.forEach((ra) => {
           const idx = users.findIndex((u) => u.email === ra.email);
           if (idx === -1) users.push({ ...ra, createdAt: Date.now() });
@@ -2586,10 +2593,44 @@
         }
       }
 
+      // (Global Chat & Network Logic)
+      const GLOBAL_CHAT_KEY = "vision_global_room_v1";
+      const chatChannel = window.BroadcastChannel ? new BroadcastChannel("vision_global_sync") : null;
+
+      if (chatChannel) {
+        chatChannel.onmessage = (e) => {
+          if (e.data && e.data.type === "new_message") {
+            appendMessage(e.data.msg, false);
+          }
+        };
+      }
+
+      function appendMessage(msg, isMine) {
+          const container = document.getElementById("quickCommList");
+          if (!container) return;
+
+          const bubble = document.createElement("div");
+          bubble.className = "msg " + (isMine ? "msg-sent" : "msg-received");
+          bubble.style.marginBottom = "10px";
+          
+          const time = new Date(msg.time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+          
+          bubble.innerHTML = `
+            <span class="msg-user" style="color: ${isMine ? '#94a3b8' : '#4ade80'};">${msg.user}</span>
+            <div style="font-size: 0.85rem;">${msg.text}</div>
+            <span style="font-size: 0.6rem; opacity: 0.4; display: block; text-align: right; margin-top: 4px;">${time}</span>
+          `;
+          
+          container.appendChild(bubble);
+          container.scrollTop = container.scrollHeight;
+      }
+
       function sendMessage() {
         const input = document.getElementById("chatInput");
+        if (!input) return;
         const text = input.value.trim();
         if (!text) return;
+
         const session = getSession();
         const msg = {
           user: session ? session.name : "Engineer",
@@ -2597,22 +2638,24 @@
           text,
           time: Date.now(),
         };
+
         appendMessage(msg, true);
-        const history = JSON.parse(localStorage.getItem(CHAT_KEY) || "[]");
+
+        // Persistent History
+        const history = JSON.parse(localStorage.getItem(GLOBAL_CHAT_KEY) || "[]");
         history.push(msg);
-        localStorage.setItem(CHAT_KEY, JSON.stringify(history));
-        lastChatLen = history.length;
-        if (chatChannel) chatChannel.postMessage({ type: "new_message", msg });
+        // Keep last 50 messages
+        if (history.length > 50) history.shift();
+        localStorage.setItem(GLOBAL_CHAT_KEY, JSON.stringify(history));
+
+        if (chatChannel) {
+            chatChannel.postMessage({ type: "new_message", msg });
+        }
         input.value = "";
       }
 
-      function toggleSidebar() {
-        document.querySelector(".robot-sidebar").classList.toggle("open");
-      }
-
-      function toggleChat() {
-        document.querySelector(".chat-panel").classList.toggle("open");
-      }
+      // Sidebar logic consolidated below in initChat section
+      // Deleted redundant toggleSidebar and toggleChat haks from middle of file
 
       //  Google Meet Integration
       const GOOGLE_CLIENT_ID =
@@ -2749,41 +2792,29 @@
           const container = document.getElementById("quickCommList");
           if (!container) return;
           
-          const users = getUsers();
-          const session = getSession();
+          container.innerHTML = "";
+          const history = JSON.parse(localStorage.getItem(GLOBAL_CHAT_KEY) || "[]");
           
-          const team = users.filter((u) => u.email !== session?.email && u.provider !== "guest" && u.name);
-          
-          if (team.length === 0) {
-              container.innerHTML = '<div style="padding: 2rem; text-align: center; color: #64748b; font-size: 0.8rem;">No team members registered.</div>';
+          if (history.length === 0) {
+              container.innerHTML = `
+                <div style="padding: 2.5rem 1.5rem; text-align: center; color: #64748b;">
+                    <div style="font-size: 2rem; margin-bottom: 12px; opacity: 0.5;">\ud83d\udce1</div>
+                    <p style="font-size: 0.8rem; line-height: 1.5; margin: 0;">No active broadcasts in Global Team Room.</p>
+                </div>
+              `;
               return;
           }
 
-          container.innerHTML = team.map(u => {
-              const initial = u.name.charAt(0).toUpperCase();
-              const isAdmin = u.roboticsRole === "ADMIN" || u.role === "admin";
-              return `
-                  <div onclick="location.href='chat.html?email=${u.email}'" style="display: flex; align-items: center; gap: 12px; padding: 1rem 1.5rem; border-bottom: 1px solid rgba(255,255,255,0.03); cursor: pointer; transition: 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.03)'" onmouseout="this.style.background='transparent'">
-                      <div style="width: 36px; height: 36px; border-radius: 50%; background: #1e293b; display: flex; align-items: center; justify-content: center; font-weight: 700; color: #4ade80; border: ${isAdmin ? '2px solid #4ade80' : 'none'};">
-                          ${initial}
-                      </div>
-                      <div style="flex: 1; min-width: 0;">
-                          <div style="display: flex; align-items: center; gap: 6px;">
-                            <h4 style="font-size: 0.9rem; color: #fff; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${u.name}</h4>
-                            ${isAdmin ? '<span style="font-size:0.55rem; background:#22c55e; color:#000; padding:2px 4px; border-radius:4px; font-weight:800;">ADMIN</span>' : ''}
-                          </div>
-                          <p style="font-size: 0.7rem; color: #64748b; margin: 2px 0 0;">${u.roboticsRole || 'Engineer'}</p>
-                      </div>
-                      <div style="color: #4ade80; font-size: 1.2rem; opacity: 0.5;">→</div>
-                  </div>
-              `;
-          }).join("");
+          const session = getSession();
+          history.forEach(msg => {
+              appendMessage(msg, msg.email === session?.email);
+          });
       }
 
-      //  Mobile Toggles
       function toggleSidebar() {
         const sidebar = document.querySelector(".robot-sidebar");
         const chat = document.querySelector(".chat-panel");
+        if (!sidebar || !chat) return;
         sidebar.classList.toggle("open");
         if (sidebar.classList.contains("open")) {
           chat.classList.remove("open"); // prevent overlap
@@ -2793,6 +2824,7 @@
       function toggleChat() {
         const chat = document.querySelector(".chat-panel");
         const sidebar = document.querySelector(".robot-sidebar");
+        if (!chat || !sidebar) return;
         chat.classList.toggle("open");
         if (chat.classList.contains("open")) {
           sidebar.classList.remove("open"); // prevent overlap
