@@ -225,6 +225,32 @@
       </div>
       <button class="btn-auth" id="loginBtn">Initialize Access Sequence</button>
       <p id="adminErr" style="color: var(--admin-danger); font-size: 0.8rem; text-align: center; margin-top: 1rem; display: none;">Credential mismatch detected.</p>
+      
+      <!-- Return to Main Portal -->
+      <div style="display: flex; justify-content: center; align-items: center; margin-top: 1.8rem;">
+        <a
+          href="/login"
+          style="
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--admin-text-muted);
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            border-radius: 100px;
+            transition: all 0.2s;
+          "
+          onmouseover="this.style.background='rgba(255, 255, 255, 0.08)'; this.style.color='#f1f5f9';"
+          onmouseout="this.style.background='rgba(255, 255, 255, 0.03)'; this.style.color='var(--admin-text-muted)';"
+        >
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+          <span>Return to Student Portal</span>
+        </a>
+      </div>
     </div>
   </div>
 
@@ -336,9 +362,11 @@
               <div class="field" style="flex: 1; margin-bottom: 0;">
                 <label class="label">Access Authorization Level</label>
                 <select class="input" id="newUserRole">
-                  <option value="student">Student (Standard Access)</option>
-                  <option value="pro">PRO (Advanced Engineering)</option>
-                  <option value="admin">Admin (Full System Protocol)</option>
+                  <option value="President">President (Command Level)</option>
+                  <option value="Vice President">Vice President (Command Level)</option>
+                  <option value="PRO">PRO (Communications & Ops)</option>
+                  <option value="ADMIN">System Admin (Network Core)</option>
+                  <option value="Student">Student (Standard Access)</option>
                 </select>
               </div>
               <button class="btn btn-primary" onclick="createUser()" style="height: 50px; padding: 0 40px;">Authorize Account</button>
@@ -378,7 +406,7 @@
   <div class="modal-overlay" id="matModal">
     <div class="modal-card">
       <div class="modal-header"><h3>Register Educational Capital</h3><p style="color: var(--admin-text-muted); font-size: 0.85rem; margin-top: 4px;">Link new Syllabus-Aligned resources to the system core.</p></div>
-      <div class="field"><label class="label">Domain (Subject)</label><select class="input" id="matSubject"><script>document.write(SUBJECTS_META.map(s => `<option value="${s.id}">${s.name}</option>`).join(''));</script></select></div>
+      <div class="field"><label class="label">Domain (Subject)</label><select class="input" id="matSubject"></select></div>
       <div class="field"><label class="label">Resource Designation</label><input class="input" id="matTitle" placeholder="e.g. 2026 Core Maths Schema" /></div>
       <div class="field"><label class="label">Data Protocol (Type)</label><select class="input" id="matType"><option value="PDF">PDF Schema</option><option value="VIDEO">Loom/Video Session</option><option value="DOC">Structured Document</option><option value="SLIDE">Lecture Deck</option><option value="LINK">System Node (Link)</option></select></div>
       <div class="field"><label class="label">Resource Data Source (URL)</label><input class="input" id="matUrl" placeholder="https://..." /></div>
@@ -415,6 +443,12 @@
         admin.hash = expectedHash;
         admin.role = "admin";
         saveUsers(users);
+      }
+
+      // Populate modal subjects securely
+      const subjectSelect = document.getElementById("matSubject");
+      if (subjectSelect) {
+        subjectSelect.innerHTML = SUBJECTS_META.map(s => `<option value="${s.id}">${s.name}</option>`).join('');
       }
 
       if (sessionStorage.getItem(ADMIN_SESSION_KEY)) showDash();
@@ -588,7 +622,13 @@
         <tr>
           <td><div style="font-weight: 700;">${u.name}</div><div style="font-size: 0.7rem; color: var(--admin-text-muted);">${new Date(u.createdAt).toLocaleDateString()}</div></td>
           <td style="font-family: 'JetBrains Mono'; font-size: 0.8rem;">${u.email}</td>
-          <td><select class="input" style="padding: 6px 12px; font-size: 0.75rem; width: auto;" onchange="updateRole('${u.email}', this.value)"><option value="student" ${u.role === 'student' ? 'selected' : ''}>STUDENT</option><option value="pro" ${u.role === 'pro' ? 'selected' : ''}>ARCHITECT-PRO</option><option value="admin" ${u.role === 'admin' ? 'selected' : ''}>ADMIN-CORE</option></select></td>
+          <td><select class="input" style="padding: 6px 12px; font-size: 0.75rem; width: auto;" onchange="updateRole('${u.email}', this.value)">
+            <option value="President" ${u.role === 'President' ? 'selected' : ''}>PRESIDENT</option>
+            <option value="Vice President" ${u.role === 'Vice President' ? 'selected' : ''}>VICE PRESIDENT</option>
+            <option value="PRO" ${u.role === 'PRO' ? 'selected' : ''}>PRO (OPS)</option>
+            <option value="ADMIN" ${u.role === 'ADMIN' ? 'selected' : ''}>SYSTEM ADMIN</option>
+            <option value="Student" ${u.role === 'Student' || u.role === 'student' ? 'selected' : ''}>STUDENT</option>
+          </select></td>
           <td style="text-align: right;"><button class="btn btn-danger" style="padding: 8px;" onclick="deleteUserAccount('${u.email}')" ${u.email === 'admin@visionedu.online' ? 'disabled' : ''}><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" /></svg></button></td>
         </tr>
       `).join("");
