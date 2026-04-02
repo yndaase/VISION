@@ -1,421 +1,395 @@
 <!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta
-      http-equiv="Content-Security-Policy"
-      content="upgrade-insecure-requests"
-    />
-    <script defer src="/_vercel/insights/script.js"></script>
-    <script>
-      window.si =
-        window.si ||
-        function () {
-          (window.siq = window.siq || []).push(arguments);
-        };
-    </script>
-    <script defer src="/_vercel/speed-insights/script.js"></script>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Dashboard | Vision Education · 2026 WASSCE Prep</title>
-    <meta
-      name="description"
-      content="Access 2026 WASSCE exam practice, learner materials, and analytics for Ghana Senior High School students. Practice Core Mathematics, English, Science, and more."
-    />
-    <meta
-      name="keywords"
-      content="WASSCE Dashboard, Ghana SHS Practice, WAEC 2026 questions, Core Maths Practice, Vision Education Dashboard"
-    />
-    <link rel="canonical" href="https://www.visionedu.online/dashboard.html" />
+<html lang="en" data-theme="dark">
 
-    <!--  PWA & Branding  -->
-    <link rel="manifest" href="manifest.json" />
-    <meta name="theme-color" content="#0ea5e9" />
-    <link rel="apple-touch-icon" href="assets/logo.png" />
+<head>
+  <meta charset="UTF-8" />
+  <script>
+    // Persistent Theme Enforcer
+    document.documentElement.setAttribute("data-theme", "dark");
+  </script>
+  <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests" />
+  <script defer src="/_vercel/insights/script.js"></script>
+  <script>
+    window.si =
+      window.si ||
+      function () {
+        (window.siq = window.siq || []).push(arguments);
+      };
+  </script>
+  <script defer src="/_vercel/speed-insights/script.js"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard | Vision Education · 2026 WASSCE Prep</title>
+  <meta name="description"
+    content="Access 2026 WASSCE exam practice, learner materials, and analytics for Ghana Senior High School students. Practice Core Mathematics, English, Science, and more." />
+  <meta name="keywords"
+    content="WASSCE Dashboard, Ghana SHS Practice, WAEC 2026 questions, Core Maths Practice, Vision Education Dashboard" />
+  <link rel="canonical" href="https://www.visionedu.online/dashboard.html" />
 
-    <!-- Open Graph -->
-    <meta property="og:type" content="website" />
-    <meta
-      property="og:title"
-      content="WASSCE Prep 2026 | Vision Education Dashboard"
-    />
-    <meta
-      property="og:description"
-      content="Track your progress, take mocks, and master Core Maths with Ghana's most advanced prep platform."
-    />
-    <meta
-      property="og:url"
-      content="https://www.visionedu.online/dashboard.html"
-    />
-    <meta
-      property="og:image"
-      content="https://www.visionedu.online/assets/logo.png"
-    />
+  <!--  PWA & Branding  -->
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#0ea5e9" />
+  <link rel="apple-touch-icon" href="assets/logo.png" />
 
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap"
-      rel="stylesheet"
-    />
-    <link rel="stylesheet" href="style.css" />
-    <link rel="stylesheet" href="dashboard.css" />
-    <link rel="stylesheet" href="theme.css" />
+  <!-- Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="WASSCE Prep 2026 | Vision Education Dashboard" />
+  <meta property="og:description"
+    content="Track your progress, take mocks, and master Core Maths with Ghana's most advanced prep platform." />
+  <meta property="og:url" content="https://www.visionedu.online/dashboard.html" />
+  <meta property="og:image" content="https://www.visionedu.online/assets/logo.png" />
 
-    <script src="theme.js"></script>
-    <script>
-      //  Phase 1: Zero-Flash Auth Guard
-      (function () {
-        const SESSION_KEY = "waec_session";
-        const session =
-          sessionStorage.getItem(SESSION_KEY) ||
-          localStorage.getItem(SESSION_KEY);
-        if (!session) {
-          window.location.href = "login.html";
-        }
-      })();
-    </script>
-    <style>
-      /*  User Dropdown  */
-      .nav-user-chip {
-        position: relative;
-        cursor: pointer;
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="dashboard.css" />
+  <link rel="stylesheet" href="theme.css" />
+
+  <script src="theme.js"></script>
+  <script>
+    //  Phase 1: Zero-Flash Auth Guard
+    (function () {
+      const SESSION_KEY = "waec_session";
+      const session =
+        sessionStorage.getItem(SESSION_KEY) ||
+        localStorage.getItem(SESSION_KEY);
+      if (!session) {
+        window.location.href = "login.html";
       }
-      .nav-user-chip:focus-within .user-dropdown,
-      .nav-user-chip.open .user-dropdown {
-        display: block;
-      }
-      .user-dropdown {
-        display: none;
-        position: absolute;
-        top: calc(100% + 10px);
-        right: 0;
-        min-width: 200px;
-        background: var(--bg-card);
-        border: 1px solid var(--border);
-        border-radius: var(--radius-md);
-        box-shadow: var(--shadow-premium);
-        z-index: 999;
-        overflow: hidden;
-        animation: fadeDown 0.15s ease;
-      }
-      @keyframes fadeDown {
-        from {
-          opacity: 0;
-          transform: translateY(-6px);
-        }
-        to {
-          opacity: 1;
-          transform: translateY(0);
-        }
-      }
-      .dropdown-header {
-        padding: 14px 16px;
-        border-bottom: 1px solid var(--border);
-      }
-      .dropdown-header .dh-name {
-        font-weight: 800;
-        font-size: 0.9rem;
-        color: var(--text-primary);
-      }
-      .dropdown-header .dh-email {
-        font-size: 0.75rem;
-        color: var(--text-muted);
-        margin-top: 2px;
-      }
-      .dropdown-item {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        padding: 11px 16px;
-        font-size: 0.85rem;
-        color: var(--text-secondary);
-        text-decoration: none;
-        cursor: pointer;
-        background: none;
-        border: none;
-        width: 100%;
-        font-family: "Outfit", sans-serif;
-        transition: background 0.15s;
-        text-align: left;
-      }
-      .dropdown-item:hover {
-        background: var(--primary-dim);
-        color: var(--text-primary);
-      }
-      .dropdown-item.danger {
-        color: var(--error);
-      }
-      .dropdown-item.danger:hover {
-        background: rgba(248, 113, 113, 0.1);
-      }
-      .nav-user-chip .nav-avatar {
-        cursor: pointer;
+    })();
+  </script>
+  <style>
+    /*  User Dropdown  */
+    .nav-user-chip {
+      position: relative;
+      cursor: pointer;
+    }
+
+    .nav-user-chip:focus-within .user-dropdown,
+    .nav-user-chip.open .user-dropdown {
+      display: block;
+    }
+
+    .user-dropdown {
+      display: none;
+      position: absolute;
+      top: calc(100% + 10px);
+      right: 0;
+      min-width: 200px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-premium);
+      z-index: 999;
+      overflow: hidden;
+      animation: fadeDown 0.15s ease;
+    }
+
+    @keyframes fadeDown {
+      from {
+        opacity: 0;
+        transform: translateY(-6px);
       }
 
-      /* PRO Role Badge */
-      .pro-badge {
-        font-size: 0.62rem;
-        font-weight: 900;
-        background: linear-gradient(135deg, #fbbf24, #f59e0b);
-        color: #000;
-        padding: 2px 6px;
-        border-radius: 4px;
-        margin-left: 8px;
-        text-transform: uppercase;
-        letter-spacing: 0.04em;
-        box-shadow: 0 4px 10px rgba(251, 191, 36, 0.25);
-        display: inline-flex;
-        align-items: center;
-        line-height: 1;
-        height: 16px;
-        vertical-align: middle;
+      to {
+        opacity: 1;
+        transform: translateY(0);
       }
-    </style>
-  </head>
+    }
 
-  <body class="dashboard-page">
-    <!--  SIDE NAVIGATION  -->
-    <aside class="side-nav">
-      <a class="side-nav-logo" href="dashboard.html">
-        <img src="assets/logo.png" alt="Logo" style="height: 48px; width: 48px; object-fit: contain;">
-        <span>Vision Edu</span>
+    .dropdown-header {
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .dropdown-header .dh-name {
+      font-weight: 800;
+      font-size: 0.9rem;
+      color: var(--text-primary);
+    }
+
+    .dropdown-header .dh-email {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    .dropdown-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 11px 16px;
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      text-decoration: none;
+      cursor: pointer;
+      background: none;
+      border: none;
+      width: 100%;
+      font-family: "Outfit", sans-serif;
+      transition: background 0.15s;
+      text-align: left;
+    }
+
+    .dropdown-item:hover {
+      background: var(--primary-dim);
+      color: var(--text-primary);
+    }
+
+    .dropdown-item.danger {
+      color: var(--error);
+    }
+
+    .dropdown-item.danger:hover {
+      background: rgba(248, 113, 113, 0.1);
+    }
+
+    .nav-user-chip .nav-avatar {
+      cursor: pointer;
+    }
+
+    /* PRO Role Badge */
+    .pro-badge {
+      font-size: 0.62rem;
+      font-weight: 900;
+      background: linear-gradient(135deg, #fbbf24, #f59e0b);
+      color: #000;
+      padding: 2px 6px;
+      border-radius: 4px;
+      margin-left: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      box-shadow: 0 4px 10px rgba(251, 191, 36, 0.25);
+      display: inline-flex;
+      align-items: center;
+      line-height: 1;
+      height: 16px;
+      vertical-align: middle;
+    }
+  </style>
+</head>
+
+<body class="dashboard-page">
+  <!--  SIDE NAVIGATION  -->
+  <aside class="side-nav">
+    <a class="side-nav-logo" href="dashboard.html">
+      <img src="assets/logo.png" alt="Logo" style="height: 48px; width: 48px; object-fit: contain;">
+      <span>Vision Edu</span>
+    </a>
+    <nav class="side-nav-menu">
+      <a href="dashboard.html" class="nav-item active">
+        <span class="nav-item-icon"></span>
+        <span>Dashboard</span>
       </a>
-      <nav class="side-nav-menu">
-        <a href="dashboard.html" class="nav-item active">
-          <span class="nav-item-icon"></span>
-          <span>Dashboard</span>
-        </a>
-        <a href="mocks.html" class="nav-item">
-          <span class="nav-item-icon"></span>
-          <span>Mock Exams</span>
-        </a>
-        <a href="analytics.html" class="nav-item">
-          <span class="nav-item-icon"></span>
-          <span>Performance</span>
-        </a>
-      </nav>
-      <div class="side-nav-footer">
-        <a
-          href="#"
-          class="nav-item"
-          onclick="
-            openSettings();
-            return false;
-          "
-        >
-          <span class="nav-item-icon"></span>
-          <span>Settings</span>
-        </a>
-      </div>
-    </aside>
-
-    <!--  BOTTOM NAVIGATION (Mobile)  -->
-    <nav class="bottom-nav">
-      <a href="dashboard.html" class="bottom-nav-item active">
-        <span class="bottom-icon"></span>
-        <span>Home</span>
+      <a href="mocks.html" class="nav-item">
+        <span class="nav-item-icon"></span>
+        <span>Mock Exams</span>
       </a>
-      <a href="mocks.html" class="bottom-nav-item">
-        <span class="bottom-icon"></span>
-        <span>Mocks</span>
-      </a>
-      <a href="analytics.html" class="bottom-nav-item">
-        <span class="bottom-icon"></span>
-        <span>Stats</span>
-      </a>
-      <a
-        href="#"
-        class="bottom-nav-item"
-        onclick="
-          openSettings();
-          return false;
-        "
-      >
-        <span class="bottom-icon"></span>
-        <span>Settings</span>
+      <a href="analytics.html" class="nav-item">
+        <span class="nav-item-icon"></span>
+        <span>Performance</span>
       </a>
     </nav>
+    <div class="side-nav-footer">
+      <a href="#" class="nav-item" onclick="
+            openSettings();
+            return false;
+          ">
+        <span class="nav-item-icon"></span>
+        <span>Settings</span>
+      </a>
+    </div>
+  </aside>
 
-    <div class="main-wrapper">
-      <!--  NAVBAR  -->
-      <nav class="dash-nav" id="dashNav">
-        <div class="dash-nav-inner">
-          <a class="dash-logo" href="dashboard.html">
-            <img src="assets/logo.png" alt="Logo" style="height: 32px; width: 32px; object-fit: contain; margin-right: 10px;">
-            <span class="dash-logo-text"
-              >Vision <span class="brand-accent">Education</span></span
-            >
-          </a>
+  <!--  BOTTOM NAVIGATION (Mobile)  -->
+  <nav class="bottom-nav">
+    <a href="dashboard.html" class="bottom-nav-item active">
+      <span class="bottom-icon"></span>
+      <span>Home</span>
+    </a>
+    <a href="mocks.html" class="bottom-nav-item">
+      <span class="bottom-icon"></span>
+      <span>Mocks</span>
+    </a>
+    <a href="analytics.html" class="bottom-nav-item">
+      <span class="bottom-icon"></span>
+      <span>Stats</span>
+    </a>
+    <a href="#" class="bottom-nav-item" onclick="
+          openSettings();
+          return false;
+        ">
+      <span class="bottom-icon"></span>
+      <span>Settings</span>
+    </a>
+  </nav>
 
-          <!-- Global Search -->
-          <div class="nav-search-wrap">
-            <div class="nav-search-input-group">
-              <span class="search-icon"></span>
-              <input
-                type="search"
-                id="globalSearch"
-                placeholder="Search subjects, topics, or materials..."
-                autocomplete="off"
-              />
-              <kbd class="search-kbd">/</kbd>
-            </div>
-            <div class="search-results-overlay" id="searchResults">
-              <!-- Results rendered via JS -->
-            </div>
+  <div class="main-wrapper">
+    <!--  NAVBAR  -->
+    <nav class="dash-nav" id="dashNav">
+      <div class="dash-nav-inner">
+        <a class="dash-logo" href="dashboard.html">
+          <img src="assets/logo.png" alt="Logo"
+            style="height: 32px; width: 32px; object-fit: contain; margin-right: 10px;">
+          <span class="dash-logo-text">Vision <span class="brand-accent">Education</span></span>
+        </a>
+
+        <!-- Global Search -->
+        <div class="nav-search-wrap">
+          <div class="nav-search-input-group">
+            <span class="search-icon"></span>
+            <input type="search" id="globalSearch" placeholder="Search subjects, topics, or materials..."
+              autocomplete="off" />
+            <kbd class="search-kbd">/</kbd>
           </div>
+          <div class="search-results-overlay" id="searchResults">
+            <!-- Results rendered via JS -->
+          </div>
+        </div>
 
-          <div class="dash-nav-right">
-            <span class="nav-badge">2026 WASSCE</span>
-            <button
-              class="theme-toggle-btn"
-              onclick="toggleTheme()"
-              title="Toggle Theme"
-            ></button>
-            <div
-              class="nav-user-chip"
-              id="navUserChip"
-              onclick="toggleUserDropdown()"
-            >
-              <div class="nav-avatar" id="navAvatar">K</div>
-              <span class="nav-username" id="navUsername">Student</span>
-              <span
-                style="
+        <div class="dash-nav-right">
+          <span class="nav-badge">2026 WASSCE</span>
+          <button class="theme-toggle-btn" onclick="toggleTheme()" title="Toggle Theme"></button>
+          <div class="nav-user-chip" id="navUserChip" onclick="toggleUserDropdown()">
+            <div class="nav-avatar" id="navAvatar"><img src="assets/yaw.jpg"
+                style="width:100%; height:100%; object-fit:cover; border-radius:inherit;"></div>
+            <span class="nav-username" id="navUsername">Yaw Ndaase</span>
+            <span style="
                   font-size: 0.7rem;
                   color: var(--text-muted);
                   margin-left: 2px;
-                "
-              ></span>
-              <div class="user-dropdown" id="userDropdown">
-                <div class="dropdown-header">
-                  <div class="dh-name" id="dropdownName">Student</div>
-                  <div class="dh-email" id="dropdownEmail">
-                    student@visionedu.online
-                  </div>
+                "></span>
+            <div class="user-dropdown" id="userDropdown">
+              <div class="dropdown-header">
+                <div class="dh-name" id="dropdownName">Student</div>
+                <div class="dh-email" id="dropdownEmail">
+                  student@visionedu.online
                 </div>
-                <button
-                  class="dropdown-item"
-                  onclick="
+              </div>
+              <button class="dropdown-item" onclick="
                     openSettings();
                     closeUserDropdown();
-                  "
-                >
-                  Settings
-                </button>
-                <a class="dropdown-item" href="analytics.html">
-                  My Performance</a
-                >
-                <button class="dropdown-item danger" onclick="handleLogout()">
-                  Log Out
-                </button>
-              </div>
+                  ">
+                Settings
+              </button>
+              <a class="dropdown-item" href="analytics.html">
+                My Performance</a>
+              <button class="dropdown-item danger" onclick="handleLogout()">
+                Log Out
+              </button>
             </div>
           </div>
         </div>
-      </nav>
+      </div>
+    </nav>
 
-      <!--  HERO / WELCOME  -->
-      <section class="dash-hero">
-        <div class="dash-hero-content">
-          <div class="welcome-badge" id="welcomeBadge">
-            <span class="badge-dot"></span>
-            Official Examination Portal &middot; 2026 WASSCE
-          </div>
-          <h1 class="welcome-heading">
-            Strategic Excellence,<br />
-            <span class="welcome-name gradient-text" id="welcomeName"
-              >Student</span
-            >
-          </h1>
-          <p class="welcome-sub">
-            Authorized 2026 Curriculum &middot; Specialised Section B Analysis.
-          </p>
-
-          <!-- Action Buttons -->
-          <div class="hero-actions">
-            <a href="mocks.html" class="hero-btn hero-btn-primary">
-              <span class="hero-btn-icon"></span>
-              <span>Start Mock Exam</span>
-              <span class="hero-btn-arrow">→</span>
-            </a>
-            <a href="analytics.html" class="hero-btn hero-btn-secondary">
-              <span class="hero-btn-icon"></span>
-              <span>View Analytics</span>
-            </a>
-          </div>
-
-          <!-- Stats row -->
-          <div class="dash-stats" id="dashStats">
-            <div class="dash-stat-chip">
-              <span class="dash-stat-num" id="statAnswered">0</span>
-              <span class="dash-stat-lbl">Questions Done</span>
-            </div>
-            <div class="dash-stat-chip">
-              <span class="dash-stat-num" id="statCorrect">0</span>
-              <span class="dash-stat-lbl">Correct</span>
-            </div>
-            <div class="dash-stat-chip">
-              <span class="dash-stat-num" id="statPct"></span>
-              <span class="dash-stat-lbl">Accuracy</span>
-            </div>
-            <div class="dash-stat-chip">
-              <span class="dash-stat-num">8</span>
-              <span class="dash-stat-lbl">Subjects</span>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!--  TRUSTED SCHOOLS  -->
-      <section class="trusted-schools">
-        <p class="trusted-label">Trusted by Top Institutions in Ghana</p>
-        <div class="trusted-pills">
-          <div class="institution-pill">
-            <div class="institution-avatar"></div>
-            <span>St. Augustine's College</span>
-          </div>
-          <div class="institution-pill">
-            <div class="institution-avatar"></div>
-            <span>Ghana Education Service</span>
-          </div>
-        </div>
-      </section>
-
-      <!--  SUBJECTS GRID  -->
-      <section class="subjects-section">
-        <div class="subjects-inner">
-          <div class="section-header">
-            <h2 class="section-title">Choose a Subject</h2>
-            <p class="section-sub">
-              WAEC 2026 syllabus · Crafted by Senior Curriculum Specialists
+    <!--  HERO / WELCOME  -->
+    <section class="dash-hero">
+      <div class="dash-hero-content">
+        <!-- WELCOME CARD -->
+        <div class="welcome-card card" id="welcomeMsg"
+          style="display: flex; align-items: center; gap: 24px; margin-bottom: 2rem; max-width: 600px; background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border-accent);">
+          <img src="assets/yaw.jpg" alt="Founder"
+            style="height: 120px; width: 120px; object-fit: cover; border-radius: 16px; border: 2px solid var(--gold); filter: drop-shadow(0 0 15px rgba(251, 191, 36, 0.2));">
+          <div>
+            <h2 style="font-size: 1.5rem; margin-bottom: 0.25rem;">Welcome back, <span id="welcomeName">Student</span>!
+            </h2>
+            <p style="font-size: 0.9rem; color: var(--text-secondary); line-height: 1.5;">
+              I'm Yaw Ndaase, your systems architect. Your 2026 WASSCE roadmap is 65% complete. You have a mock exam
+              scheduled for tomorrow.
             </p>
           </div>
+        </div>
+        <div class="welcome-badge" id="welcomeBadge">
+          <span class="badge-dot"></span>
+          Official Examination Portal &middot; 2026 WASSCE
+        </div>
+        <h1 class="welcome-heading">
+          Strategic Excellence,<br />
+          <span class="welcome-name gradient-text" id="welcomeName">Student</span>
+        </h1>
+        <p class="welcome-sub">
+          Authorized 2026 Curriculum &middot; Specialised Section B Analysis.
+        </p>
 
-          <div class="subjects-grid" id="subjectsGrid">
-            <!-- Core Mathematics  AVAILABLE -->
-            <a
-              class="subject-card available"
-              href="index.html?sub=maths"
-              id="card-maths"
-            >
-              <div class="subject-card-inner">
-                <div class="subject-top">
-                  <div
-                    class="subject-icon-wrap"
-                    style="--subj-color: var(--primary)"
-                  >
-                    <span class="subject-icon"></span>
-                  </div>
-                  <div
-                    style="
+        <!-- Action Buttons -->
+        <div class="hero-actions">
+          <a href="mocks.html" class="hero-btn hero-btn-primary">
+            <span class="hero-btn-icon"></span>
+            <span>Start Mock Exam</span>
+            <span class="hero-btn-arrow">→</span>
+          </a>
+          <a href="analytics.html" class="hero-btn hero-btn-secondary">
+            <span class="hero-btn-icon"></span>
+            <span>View Analytics</span>
+          </a>
+        </div>
+
+        <!-- Stats row -->
+        <div class="dash-stats" id="dashStats">
+          <div class="dash-stat-chip">
+            <span class="dash-stat-num" id="statAnswered">0</span>
+            <span class="dash-stat-lbl">Questions Done</span>
+          </div>
+          <div class="dash-stat-chip">
+            <span class="dash-stat-num" id="statCorrect">0</span>
+            <span class="dash-stat-lbl">Correct</span>
+          </div>
+          <div class="dash-stat-chip">
+            <span class="dash-stat-num" id="statPct"></span>
+            <span class="dash-stat-lbl">Accuracy</span>
+          </div>
+          <div class="dash-stat-chip">
+            <span class="dash-stat-num">8</span>
+            <span class="dash-stat-lbl">Subjects</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!--  TRUSTED SCHOOLS  -->
+    <section class="trusted-schools">
+      <p class="trusted-label">Trusted by Top Institutions in Ghana</p>
+      <div class="trusted-pills">
+        <div class="institution-pill">
+          <div class="institution-avatar"></div>
+          <span>St. Augustine's College</span>
+        </div>
+        <div class="institution-pill">
+          <div class="institution-avatar"></div>
+          <span>Ghana Education Service</span>
+        </div>
+      </div>
+    </section>
+
+    <!--  SUBJECTS GRID  -->
+    <section class="subjects-section">
+      <div class="subjects-inner">
+        <div class="section-header">
+          <h2 class="section-title">Choose a Subject</h2>
+          <p class="section-sub">
+            WAEC 2026 syllabus · Crafted by Senior Curriculum Specialists
+          </p>
+        </div>
+
+        <div class="subjects-grid" id="subjectsGrid">
+          <!-- Core Mathematics  AVAILABLE -->
+          <a class="subject-card available" href="index.html?sub=maths" id="card-maths">
+            <div class="subject-card-inner">
+              <div class="subject-top">
+                <div class="subject-icon-wrap" style="--subj-color: var(--primary)">
+                  <span class="subject-icon"></span>
+                </div>
+                <div style="
                       display: flex;
                       flex-direction: column;
                       align-items: flex-end;
                       gap: 4px;
-                    "
-                  >
-                    <span class="subject-status available-tag">Available</span>
-                    <span
-                      style="
+                    ">
+                  <span class="subject-status available-tag">Available</span>
+                  <span style="
                         font-size: 0.6rem;
                         font-weight: 800;
                         color: var(--primary);
@@ -424,49 +398,40 @@
                         border-radius: 4px;
                         letter-spacing: 0.05em;
                         border: 1px solid var(--border-accent);
-                      "
-                      >WAEC VERIFIED</span
-                    >
-                  </div>
-                </div>
-                <h3 class="subject-name">Core Mathematics</h3>
-                <p class="subject-desc">
-                  Algebra, Number Theory, Statistics, Geometry &amp; real-world
-                  word problems.
-                </p>
-                <div class="subject-meta">
-                  <span class="meta-chip">15 Questions</span>
-                  <span class="meta-chip">3 Difficulty Levels</span>
-                  <span class="meta-chip difficulty-hard">High-Difficulty</span>
-                </div>
-                <div class="subject-cta">
-                  Start Practice <span class="cta-arrow">→</span>
+                      ">WAEC VERIFIED</span>
                 </div>
               </div>
-            </a>
+              <h3 class="subject-name">Core Mathematics</h3>
+              <p class="subject-desc">
+                Algebra, Number Theory, Statistics, Geometry &amp; real-world
+                word problems.
+              </p>
+              <div class="subject-meta">
+                <span class="meta-chip">15 Questions</span>
+                <span class="meta-chip">3 Difficulty Levels</span>
+                <span class="meta-chip difficulty-hard">High-Difficulty</span>
+              </div>
+              <div class="subject-cta">
+                Start Practice <span class="cta-arrow">→</span>
+              </div>
+            </div>
+          </a>
 
-            <!-- English Language -->
-            <a
-              class="subject-card available"
-              href="index.html?sub=english"
-              id="card-english"
-            >
-              <div class="subject-card-inner">
-                <div class="subject-top">
-                  <div class="subject-icon-wrap" style="--subj-color: #60a5fa">
-                    <span class="subject-icon"></span>
-                  </div>
-                  <div
-                    style="
+          <!-- English Language -->
+          <a class="subject-card available" href="index.html?sub=english" id="card-english">
+            <div class="subject-card-inner">
+              <div class="subject-top">
+                <div class="subject-icon-wrap" style="--subj-color: #60a5fa">
+                  <span class="subject-icon"></span>
+                </div>
+                <div style="
                       display: flex;
                       flex-direction: column;
                       align-items: flex-end;
                       gap: 4px;
-                    "
-                  >
-                    <span class="subject-status available-tag">Available</span>
-                    <span
-                      style="
+                    ">
+                  <span class="subject-status available-tag">Available</span>
+                  <span style="
                         font-size: 0.6rem;
                         font-weight: 800;
                         color: var(--primary);
@@ -475,49 +440,40 @@
                         border-radius: 4px;
                         letter-spacing: 0.05em;
                         border: 1px solid var(--border-accent);
-                      "
-                      >2026 ALIGNED</span
-                    >
-                  </div>
-                </div>
-                <h3 class="subject-name">English Language</h3>
-                <p class="subject-desc">
-                  Comprehension, essay writing, oral English &amp; language
-                  structure.
-                </p>
-                <div class="subject-meta">
-                  <span class="meta-chip">40+ Questions</span>
-                  <span class="meta-chip">Essay + MCQ</span>
-                </div>
-                <div class="subject-cta">
-                  Start Practice <span class="cta-arrow">→</span>
+                      ">2026 ALIGNED</span>
                 </div>
               </div>
-              <div class="subject-card-glow" style="--glow: #60a5fa"></div>
-            </a>
+              <h3 class="subject-name">English Language</h3>
+              <p class="subject-desc">
+                Comprehension, essay writing, oral English &amp; language
+                structure.
+              </p>
+              <div class="subject-meta">
+                <span class="meta-chip">40+ Questions</span>
+                <span class="meta-chip">Essay + MCQ</span>
+              </div>
+              <div class="subject-cta">
+                Start Practice <span class="cta-arrow">→</span>
+              </div>
+            </div>
+            <div class="subject-card-glow" style="--glow: #60a5fa"></div>
+          </a>
 
-            <!-- Integrated Science -->
-            <a
-              class="subject-card available"
-              href="index.html?sub=science"
-              id="card-science"
-            >
-              <div class="subject-card-inner">
-                <div class="subject-top">
-                  <div class="subject-icon-wrap" style="--subj-color: #34d399">
-                    <span class="subject-icon"></span>
-                  </div>
-                  <div
-                    style="
+          <!-- Integrated Science -->
+          <a class="subject-card available" href="index.html?sub=science" id="card-science">
+            <div class="subject-card-inner">
+              <div class="subject-top">
+                <div class="subject-icon-wrap" style="--subj-color: #34d399">
+                  <span class="subject-icon"></span>
+                </div>
+                <div style="
                       display: flex;
                       flex-direction: column;
                       align-items: flex-end;
                       gap: 4px;
-                    "
-                  >
-                    <span class="subject-status available-tag">Available</span>
-                    <span
-                      style="
+                    ">
+                  <span class="subject-status available-tag">Available</span>
+                  <span style="
                         font-size: 0.6rem;
                         font-weight: 800;
                         color: var(--primary);
@@ -526,48 +482,39 @@
                         border-radius: 4px;
                         letter-spacing: 0.05em;
                         border: 1px solid var(--border-accent);
-                      "
-                      >EXPERT CURATED</span
-                    >
-                  </div>
-                </div>
-                <h3 class="subject-name">Integrated Science</h3>
-                <p class="subject-desc">
-                  Biology, Chemistry &amp; Physics concepts in one integrated
-                  WAEC paper.
-                </p>
-                <div class="subject-meta">
-                  <span class="meta-chip">40+ Questions</span>
-                  <span class="meta-chip">MCQ + Structured</span>
-                </div>
-                <div class="subject-cta">
-                  Start Practice <span class="cta-arrow">→</span>
+                      ">EXPERT CURATED</span>
                 </div>
               </div>
-            </a>
+              <h3 class="subject-name">Integrated Science</h3>
+              <p class="subject-desc">
+                Biology, Chemistry &amp; Physics concepts in one integrated
+                WAEC paper.
+              </p>
+              <div class="subject-meta">
+                <span class="meta-chip">40+ Questions</span>
+                <span class="meta-chip">MCQ + Structured</span>
+              </div>
+              <div class="subject-cta">
+                Start Practice <span class="cta-arrow">→</span>
+              </div>
+            </div>
+          </a>
 
-            <!-- Social Studies -->
-            <a
-              class="subject-card available"
-              href="index.html?sub=social"
-              id="card-social"
-            >
-              <div class="subject-card-inner">
-                <div class="subject-top">
-                  <div class="subject-icon-wrap" style="--subj-color: #a78bfa">
-                    <span class="subject-icon"></span>
-                  </div>
-                  <div
-                    style="
+          <!-- Social Studies -->
+          <a class="subject-card available" href="index.html?sub=social" id="card-social">
+            <div class="subject-card-inner">
+              <div class="subject-top">
+                <div class="subject-icon-wrap" style="--subj-color: #a78bfa">
+                  <span class="subject-icon"></span>
+                </div>
+                <div style="
                       display: flex;
                       flex-direction: column;
                       align-items: flex-end;
                       gap: 4px;
-                    "
-                  >
-                    <span class="subject-status available-tag">Available</span>
-                    <span
-                      style="
+                    ">
+                  <span class="subject-status available-tag">Available</span>
+                  <span style="
                         font-size: 0.6rem;
                         font-weight: 800;
                         color: var(--primary);
@@ -576,49 +523,40 @@
                         border-radius: 4px;
                         letter-spacing: 0.05em;
                         border: 1px solid var(--border-accent);
-                      "
-                      >2026 ALIGNED</span
-                    >
-                  </div>
-                </div>
-                <h3 class="subject-name">Social Studies</h3>
-                <p class="subject-desc">
-                  Ghana's history, government, culture, citizenship &amp; global
-                  issues.
-                </p>
-                <div class="subject-meta">
-                  <span class="meta-chip">40+ Questions</span>
-                  <span class="meta-chip">Essay + MCQ</span>
-                </div>
-                <div class="subject-cta">
-                  Start Practice <span class="cta-arrow">→</span>
+                      ">2026 ALIGNED</span>
                 </div>
               </div>
-              <div class="subject-card-glow" style="--glow: #a78bfa"></div>
-            </a>
+              <h3 class="subject-name">Social Studies</h3>
+              <p class="subject-desc">
+                Ghana's history, government, culture, citizenship &amp; global
+                issues.
+              </p>
+              <div class="subject-meta">
+                <span class="meta-chip">40+ Questions</span>
+                <span class="meta-chip">Essay + MCQ</span>
+              </div>
+              <div class="subject-cta">
+                Start Practice <span class="cta-arrow">→</span>
+              </div>
+            </div>
+            <div class="subject-card-glow" style="--glow: #a78bfa"></div>
+          </a>
 
-            <!-- Physics -->
-            <a
-              class="subject-card available"
-              href="index.html?sub=physics"
-              id="card-physics"
-            >
-              <div class="subject-card-inner">
-                <div class="subject-top">
-                  <div class="subject-icon-wrap" style="--subj-color: #f87171">
-                    <span class="subject-icon"></span>
-                  </div>
-                  <div
-                    style="
+          <!-- Physics -->
+          <a class="subject-card available" href="index.html?sub=physics" id="card-physics">
+            <div class="subject-card-inner">
+              <div class="subject-top">
+                <div class="subject-icon-wrap" style="--subj-color: #f87171">
+                  <span class="subject-icon"></span>
+                </div>
+                <div style="
                       display: flex;
                       flex-direction: column;
                       align-items: flex-end;
                       gap: 4px;
-                    "
-                  >
-                    <span class="subject-status available-tag">Available</span>
-                    <span
-                      style="
+                    ">
+                  <span class="subject-status available-tag">Available</span>
+                  <span style="
                         font-size: 0.6rem;
                         font-weight: 800;
                         color: var(--primary);
@@ -627,48 +565,39 @@
                         border-radius: 4px;
                         letter-spacing: 0.05em;
                         border: 1px solid var(--border-accent);
-                      "
-                      >EXPERT CURATED</span
-                    >
-                  </div>
-                </div>
-                <h3 class="subject-name">Physics</h3>
-                <p class="subject-desc">
-                  Mechanics, waves, electricity, magnetism &amp; modern physics.
-                </p>
-                <div class="subject-meta">
-                  <span class="meta-chip">40+ Questions</span>
-                  <span class="meta-chip difficulty-hard">High Difficulty</span>
-                </div>
-                <div class="subject-cta">
-                  Start Practice <span class="cta-arrow">→</span>
+                      ">EXPERT CURATED</span>
                 </div>
               </div>
-              <div class="subject-card-glow" style="--glow: #f87171"></div>
-            </a>
+              <h3 class="subject-name">Physics</h3>
+              <p class="subject-desc">
+                Mechanics, waves, electricity, magnetism &amp; modern physics.
+              </p>
+              <div class="subject-meta">
+                <span class="meta-chip">40+ Questions</span>
+                <span class="meta-chip difficulty-hard">High Difficulty</span>
+              </div>
+              <div class="subject-cta">
+                Start Practice <span class="cta-arrow">→</span>
+              </div>
+            </div>
+            <div class="subject-card-glow" style="--glow: #f87171"></div>
+          </a>
 
-            <!-- Chemistry -->
-            <a
-              class="subject-card available"
-              href="index.html?sub=chemistry"
-              id="card-chemistry"
-            >
-              <div class="subject-card-inner">
-                <div class="subject-top">
-                  <div class="subject-icon-wrap" style="--subj-color: #fb923c">
-                    <span class="subject-icon"></span>
-                  </div>
-                  <div
-                    style="
+          <!-- Chemistry -->
+          <a class="subject-card available" href="index.html?sub=chemistry" id="card-chemistry">
+            <div class="subject-card-inner">
+              <div class="subject-top">
+                <div class="subject-icon-wrap" style="--subj-color: #fb923c">
+                  <span class="subject-icon"></span>
+                </div>
+                <div style="
                       display: flex;
                       flex-direction: column;
                       align-items: flex-end;
                       gap: 4px;
-                    "
-                  >
-                    <span class="subject-status available-tag">Available</span>
-                    <span
-                      style="
+                    ">
+                  <span class="subject-status available-tag">Available</span>
+                  <span style="
                         font-size: 0.6rem;
                         font-weight: 800;
                         color: var(--primary);
@@ -677,49 +606,40 @@
                         border-radius: 4px;
                         letter-spacing: 0.05em;
                         border: 1px solid var(--border-accent);
-                      "
-                      >2026 ALIGNED</span
-                    >
-                  </div>
-                </div>
-                <h3 class="subject-name">Chemistry</h3>
-                <p class="subject-desc">
-                  Atomic structure, bonding, organic chemistry &amp;
-                  stoichiometry.
-                </p>
-                <div class="subject-meta">
-                  <span class="meta-chip">40+ Questions</span>
-                  <span class="meta-chip">MCQ + Theory</span>
-                </div>
-                <div class="subject-cta">
-                  Start Practice <span class="cta-arrow">→</span>
+                      ">2026 ALIGNED</span>
                 </div>
               </div>
-              <div class="subject-card-glow" style="--glow: #fb923c"></div>
-            </a>
+              <h3 class="subject-name">Chemistry</h3>
+              <p class="subject-desc">
+                Atomic structure, bonding, organic chemistry &amp;
+                stoichiometry.
+              </p>
+              <div class="subject-meta">
+                <span class="meta-chip">40+ Questions</span>
+                <span class="meta-chip">MCQ + Theory</span>
+              </div>
+              <div class="subject-cta">
+                Start Practice <span class="cta-arrow">→</span>
+              </div>
+            </div>
+            <div class="subject-card-glow" style="--glow: #fb923c"></div>
+          </a>
 
-            <!-- Biology -->
-            <a
-              class="subject-card available"
-              href="index.html?sub=biology"
-              id="card-biology"
-            >
-              <div class="subject-card-inner">
-                <div class="subject-top">
-                  <div class="subject-icon-wrap" style="--subj-color: #4ade80">
-                    <span class="subject-icon"></span>
-                  </div>
-                  <div
-                    style="
+          <!-- Biology -->
+          <a class="subject-card available" href="index.html?sub=biology" id="card-biology">
+            <div class="subject-card-inner">
+              <div class="subject-top">
+                <div class="subject-icon-wrap" style="--subj-color: #4ade80">
+                  <span class="subject-icon"></span>
+                </div>
+                <div style="
                       display: flex;
                       flex-direction: column;
                       align-items: flex-end;
                       gap: 4px;
-                    "
-                  >
-                    <span class="subject-status available-tag">Available</span>
-                    <span
-                      style="
+                    ">
+                  <span class="subject-status available-tag">Available</span>
+                  <span style="
                         font-size: 0.6rem;
                         font-weight: 800;
                         color: var(--primary);
@@ -728,49 +648,40 @@
                         border-radius: 4px;
                         letter-spacing: 0.05em;
                         border: 1px solid var(--border-accent);
-                      "
-                      >EXPERT CURATED</span
-                    >
-                  </div>
-                </div>
-                <h3 class="subject-name">Biology</h3>
-                <p class="subject-desc">
-                  Cell biology, genetics, ecology, reproduction &amp; human
-                  physiology.
-                </p>
-                <div class="subject-meta">
-                  <span class="meta-chip">40+ Questions</span>
-                  <span class="meta-chip">MCQ + Essay</span>
-                </div>
-                <div class="subject-cta">
-                  Start Practice <span class="cta-arrow">→</span>
+                      ">EXPERT CURATED</span>
                 </div>
               </div>
-              <div class="subject-card-glow" style="--glow: #4ade80"></div>
-            </a>
+              <h3 class="subject-name">Biology</h3>
+              <p class="subject-desc">
+                Cell biology, genetics, ecology, reproduction &amp; human
+                physiology.
+              </p>
+              <div class="subject-meta">
+                <span class="meta-chip">40+ Questions</span>
+                <span class="meta-chip">MCQ + Essay</span>
+              </div>
+              <div class="subject-cta">
+                Start Practice <span class="cta-arrow">→</span>
+              </div>
+            </div>
+            <div class="subject-card-glow" style="--glow: #4ade80"></div>
+          </a>
 
-            <!-- Economics -->
-            <a
-              class="subject-card available"
-              href="index.html?sub=economics"
-              id="card-economics"
-            >
-              <div class="subject-card-inner">
-                <div class="subject-top">
-                  <div class="subject-icon-wrap" style="--subj-color: #38bdf8">
-                    <span class="subject-icon"></span>
-                  </div>
-                  <div
-                    style="
+          <!-- Economics -->
+          <a class="subject-card available" href="index.html?sub=economics" id="card-economics">
+            <div class="subject-card-inner">
+              <div class="subject-top">
+                <div class="subject-icon-wrap" style="--subj-color: #38bdf8">
+                  <span class="subject-icon"></span>
+                </div>
+                <div style="
                       display: flex;
                       flex-direction: column;
                       align-items: flex-end;
                       gap: 4px;
-                    "
-                  >
-                    <span class="subject-status available-tag">Available</span>
-                    <span
-                      style="
+                    ">
+                  <span class="subject-status available-tag">Available</span>
+                  <span style="
                         font-size: 0.6rem;
                         font-weight: 800;
                         color: var(--primary);
@@ -779,49 +690,40 @@
                         border-radius: 4px;
                         letter-spacing: 0.05em;
                         border: 1px solid var(--border-accent);
-                      "
-                      >2026 ALIGNED</span
-                    >
-                  </div>
-                </div>
-                <h3 class="subject-name">Economics</h3>
-                <p class="subject-desc">
-                  Demand &amp; supply, national income, trade, banking &amp;
-                  development economics.
-                </p>
-                <div class="subject-meta">
-                  <span class="meta-chip">40+ Questions</span>
-                  <span class="meta-chip">MCQ + Essay</span>
-                </div>
-                <div class="subject-cta">
-                  Start Practice <span class="cta-arrow">→</span>
+                      ">2026 ALIGNED</span>
                 </div>
               </div>
-              <div class="subject-card-glow" style="--glow: #38bdf8"></div>
-            </a>
+              <h3 class="subject-name">Economics</h3>
+              <p class="subject-desc">
+                Demand &amp; supply, national income, trade, banking &amp;
+                development economics.
+              </p>
+              <div class="subject-meta">
+                <span class="meta-chip">40+ Questions</span>
+                <span class="meta-chip">MCQ + Essay</span>
+              </div>
+              <div class="subject-cta">
+                Start Practice <span class="cta-arrow">→</span>
+              </div>
+            </div>
+            <div class="subject-card-glow" style="--glow: #38bdf8"></div>
+          </a>
 
-            <!-- Computer Science -->
-            <a
-              class="subject-card available"
-              href="index.html?sub=cs"
-              id="card-cs"
-            >
-              <div class="subject-card-inner">
-                <div class="subject-top">
-                  <div class="subject-icon-wrap" style="--subj-color: #14b8a6">
-                    <span class="subject-icon"></span>
-                  </div>
-                  <div
-                    style="
+          <!-- Computer Science -->
+          <a class="subject-card available" href="index.html?sub=cs" id="card-cs">
+            <div class="subject-card-inner">
+              <div class="subject-top">
+                <div class="subject-icon-wrap" style="--subj-color: #14b8a6">
+                  <span class="subject-icon"></span>
+                </div>
+                <div style="
                       display: flex;
                       flex-direction: column;
                       align-items: flex-end;
                       gap: 4px;
-                    "
-                  >
-                    <span class="subject-status available-tag">Available</span>
-                    <span
-                      style="
+                    ">
+                  <span class="subject-status available-tag">Available</span>
+                  <span style="
                         font-size: 0.6rem;
                         font-weight: 800;
                         color: var(--primary);
@@ -830,49 +732,40 @@
                         border-radius: 4px;
                         letter-spacing: 0.05em;
                         border: 1px solid var(--border-accent);
-                      "
-                      >2026 ALIGNED</span
-                    >
-                  </div>
-                </div>
-                <h3 class="subject-name">Computer Science</h3>
-                <p class="subject-desc">
-                  Programming, Algorithms, Data Structures, Hardware &amp;
-                  Networking.
-                </p>
-                <div class="subject-meta">
-                  <span class="meta-chip">15 Questions</span>
-                  <span class="meta-chip difficulty-hard">High Difficulty</span>
-                </div>
-                <div class="subject-cta">
-                  Start Practice <span class="cta-arrow">→</span>
+                      ">2026 ALIGNED</span>
                 </div>
               </div>
-              <div class="subject-card-glow" style="--glow: #14b8a6"></div>
-            </a>
+              <h3 class="subject-name">Computer Science</h3>
+              <p class="subject-desc">
+                Programming, Algorithms, Data Structures, Hardware &amp;
+                Networking.
+              </p>
+              <div class="subject-meta">
+                <span class="meta-chip">15 Questions</span>
+                <span class="meta-chip difficulty-hard">High Difficulty</span>
+              </div>
+              <div class="subject-cta">
+                Start Practice <span class="cta-arrow">→</span>
+              </div>
+            </div>
+            <div class="subject-card-glow" style="--glow: #14b8a6"></div>
+          </a>
 
-            <!-- Integrated Science -->
-            <a
-              class="subject-card available"
-              href="index.html?sub=science"
-              id="card-science"
-            >
-              <div class="subject-card-inner">
-                <div class="subject-top">
-                  <div class="subject-icon-wrap" style="--subj-color: #10b981">
-                    <span class="subject-icon"></span>
-                  </div>
-                  <div
-                    style="
+          <!-- Integrated Science -->
+          <a class="subject-card available" href="index.html?sub=science" id="card-science">
+            <div class="subject-card-inner">
+              <div class="subject-top">
+                <div class="subject-icon-wrap" style="--subj-color: #10b981">
+                  <span class="subject-icon"></span>
+                </div>
+                <div style="
                       display: flex;
                       flex-direction: column;
                       align-items: flex-end;
                       gap: 4px;
-                    "
-                  >
-                    <span class="subject-status available-tag">Available</span>
-                    <span
-                      style="
+                    ">
+                  <span class="subject-status available-tag">Available</span>
+                  <span style="
                         font-size: 0.6rem;
                         font-weight: 800;
                         color: var(--primary);
@@ -881,281 +774,207 @@
                         border-radius: 4px;
                         letter-spacing: 0.05em;
                         border: 1px solid var(--border-accent);
-                      "
-                      >NEW MODULE</span
-                    >
-                  </div>
-                </div>
-                <h3 class="subject-name">Integrated Science</h3>
-                <p class="subject-desc">
-                  Biology, Chemistry &amp; Physics for Senior High Schools.
-                </p>
-                <div class="subject-meta">
-                  <span class="meta-chip">15+ Questions</span>
-                  <span class="meta-chip">MCQ + Theory</span>
-                </div>
-                <div class="subject-cta">
-                  Start Practice <span class="cta-arrow">→</span>
+                      ">NEW MODULE</span>
                 </div>
               </div>
-              <div class="subject-card-glow" style="--glow: #10b981"></div>
-            </a>
+              <h3 class="subject-name">Integrated Science</h3>
+              <p class="subject-desc">
+                Biology, Chemistry &amp; Physics for Senior High Schools.
+              </p>
+              <div class="subject-meta">
+                <span class="meta-chip">15+ Questions</span>
+                <span class="meta-chip">MCQ + Theory</span>
+              </div>
+              <div class="subject-cta">
+                Start Practice <span class="cta-arrow">→</span>
+              </div>
+            </div>
+            <div class="subject-card-glow" style="--glow: #10b981"></div>
+          </a>
 
-            <!-- Vision Education Robotics -->
-            <a
-              class="subject-card available"
-              href="robotics-login.html"
-              id="card-robotics"
-              style="
+          <!-- Vision Education Robotics -->
+          <a class="subject-card available" href="robotics-login.html" id="card-robotics" style="
                 background: rgba(46, 184, 46, 0.05);
                 border-color: rgba(46, 184, 46, 0.3);
-              "
-            >
-              <div class="subject-card-inner">
-                <div class="subject-top">
-                  <div class="subject-icon-wrap" style="--subj-color: #2eb82e">
-                    <span class="subject-icon" style="font-size: 1.8rem"></span>
-                  </div>
-                  <span
-                    class="subject-status available-tag"
-                    style="background: var(--success); color: #000"
-                    >Augusco Platform</span
-                  >
+              ">
+            <div class="subject-card-inner">
+              <div class="subject-top">
+                <div class="subject-icon-wrap" style="--subj-color: #2eb82e">
+                  <span class="subject-icon" style="font-size: 1.8rem"></span>
                 </div>
-                <h3 class="subject-name" style="color: #e0f2fe">
-                  Vision Robotics
-                </h3>
-                <p class="subject-desc" style="color: #bae6fd">
-                  Powered by Augusco Robotics. Exclusive team access and
-                  training modules.
-                </p>
-                <div class="subject-meta">
-                  <span
-                    class="meta-chip"
-                    style="background: #1e4d28; color: #fff"
-                    >Secured Portal</span
-                  >
-                </div>
-                <div class="subject-cta" style="color: #4ade80">
-                  Enter Portal <span class="cta-arrow">→</span>
-                </div>
+                <span class="subject-status available-tag" style="background: var(--success); color: #000">Augusco
+                  Platform</span>
               </div>
-              <div class="subject-card-glow" style="--glow: #2eb82e"></div>
-            </a>
-          </div>
-          <!-- /subjects-grid -->
+              <h3 class="subject-name" style="color: #e0f2fe">
+                Vision Robotics
+              </h3>
+              <p class="subject-desc" style="color: #bae6fd">
+                Powered by Augusco Robotics. Exclusive team access and
+                training modules.
+              </p>
+              <div class="subject-meta">
+                <span class="meta-chip" style="background: #1e4d28; color: #fff">Secured Portal</span>
+              </div>
+              <div class="subject-cta" style="color: #4ade80">
+                Enter Portal <span class="cta-arrow">→</span>
+              </div>
+            </div>
+            <div class="subject-card-glow" style="--glow: #2eb82e"></div>
+          </a>
         </div>
-      </section>
+        <!-- /subjects-grid -->
+      </div>
+    </section>
 
-      <!--  LEARNER MATERIALS  -->
-      <section
-        class="main-section"
-        id="materialsSection"
-        style="padding: 3rem 2rem"
-      >
-        <div class="section-header">
-          <div>
-            <h2 class="section-title">Learner Materials</h2>
-            <p class="section-sub">
-              Download official study packs, past questions, and revision guides
-              for each subject.
-            </p>
-          </div>
+    <!--  LEARNER MATERIALS  -->
+    <section class="main-section" id="materialsSection" style="padding: 3rem 2rem">
+      <section class="about-hero">
+        <img src="assets/logo.png" alt="Vision Education Astronaut"
+          style="height: 140px; width: 140px; object-fit: contain; margin-bottom: 2rem; filter: drop-shadow(0 0 30px rgba(14, 165, 233, 0.5));">
+        <h1>Pioneering Education <br /><span class="gradient-text">Technological Mastery</span></h1>
+        <p class="hero-subtext">Vision Education is Ghana's premier AI-integrated platform, built to empower every
+          WASSCE candidate with expert-reviewed transformation logic and real-world STEM contexts.</p>
+      </section>
+      <div class="section-header">
+        <div>
+          <h2 class="section-title">Learner Materials</h2>
+          <p class="section-sub">
+            Download official study packs, past questions, and revision guides
+            for each subject.
+          </p>
         </div>
-        <div id="materialsContainer" style="margin-top: 1.5rem"></div>
-      </section>
+      </div>
+      <div id="materialsContainer" style="margin-top: 1.5rem"></div>
+    </section>
 
-      <!--  ANNOUNCEMENTS BANNER  -->
-      <div
-        id="announceBanner"
-        style="display: none; padding: 0 2rem 1.5rem"
-      ></div>
+    <!--  ANNOUNCEMENTS BANNER  -->
+    <div id="announceBanner" style="display: none; padding: 0 2rem 1.5rem"></div>
 
-      <!--  FOOTER  -->
-      <footer class="site-footer">
-        <p>
-          Built for Ghana SHS Students · 2026 WASSCE · Questions align with the
-          WAEC Chief Examiner's 2025 Report
-        </p>
-        <p class="footer-note">
-          Practice tool only. Consult official syllabuses at
-          <strong>waecgh.org</strong>.
-        </p>
-        <p class="footer-note" style="margin-top: 6px">
-          <a
-            href="admin.html"
-            style="
+    <!--  FOOTER  -->
+    <footer class="site-footer">
+      <p>
+        Built for Ghana SHS Students · 2026 WASSCE · Questions align with the
+        WAEC Chief Examiner's 2025 Report
+      </p>
+      <p class="footer-note">
+        Practice tool only. Consult official syllabuses at
+        <strong>waecgh.org</strong>.
+      </p>
+      <p class="footer-note" style="margin-top: 6px">
+        <a href="admin.html" style="
               color: var(--text-muted);
               font-size: 0.72rem;
               opacity: 0.5;
               text-decoration: none;
-            "
-          >
-            Admin Portal</a
-          >
-        </p>
-      </footer>
+            ">
+          Admin Portal</a>
+      </p>
+    </footer>
 
-      <!-- SETTINGS MODAL -->
-      <div
-        class="modal-overlay"
-        id="settingsModal"
-        onclick="handleModalOutsideClick(event)"
-      >
-        <div class="settings-modal" onclick="event.stopPropagation()">
-          <div class="modal-header">
-            <div style="display: flex; align-items: center; gap: 10px">
-              <span style="font-size: 1.3rem"></span>
-              <h3 class="modal-title">Settings &amp; Security</h3>
+    <!-- SETTINGS MODAL -->
+    <div class="modal-overlay" id="settingsModal" onclick="handleModalOutsideClick(event)">
+      <div class="settings-modal" onclick="event.stopPropagation()">
+        <div class="modal-header">
+          <div style="display: flex; align-items: center; gap: 10px">
+            <span style="font-size: 1.3rem"></span>
+            <h3 class="modal-title">Settings &amp; Security</h3>
+          </div>
+          <button class="close-modal-btn" onclick="closeSettings()" aria-label="Close">
+            &#215;
+          </button>
+        </div>
+        <div class="modal-content">
+          <div class="settings-user-card">
+            <div class="settings-avatar" id="settingsAvatar">S</div>
+            <div class="settings-info">
+              <h4 id="settingsName">Student Name</h4>
+              <p id="settingsEmail">student@visionedu.online</p>
+              <div class="security-status" id="securityStatus">
+                <span class="status-warn"> Level 1 &mdash; Standard</span>
+              </div>
             </div>
-            <button
-              class="close-modal-btn"
-              onclick="closeSettings()"
-              aria-label="Close"
-            >
-              &#215;
+          </div>
+          <div class="setting-row">
+            <div class="setting-label-wrap">
+              <span class="setting-label"> Interface Theme</span>
+              <span class="setting-desc">Switch between dark and light mode.</span>
+            </div>
+            <button class="theme-toggle-btn" onclick="toggleTheme()" id="settingsThemeBtn" title="Toggle Theme">
+
             </button>
           </div>
-          <div class="modal-content">
-            <div class="settings-user-card">
-              <div class="settings-avatar" id="settingsAvatar">S</div>
-              <div class="settings-info">
-                <h4 id="settingsName">Student Name</h4>
-                <p id="settingsEmail">student@visionedu.online</p>
-                <div class="security-status" id="securityStatus">
-                  <span class="status-warn"
-                    > Level 1 &mdash; Standard</span
-                  >
-                </div>
-              </div>
+          <div class="setting-row">
+            <div class="setting-label-wrap">
+              <span class="setting-label"> Two-Factor Authentication</span>
+              <span class="setting-desc">A code will be emailed on every login for extra
+                security.</span>
             </div>
-            <div class="setting-row">
-              <div class="setting-label-wrap">
-                <span class="setting-label"> Interface Theme</span>
-                <span class="setting-desc"
-                  >Switch between dark and light mode.</span
-                >
-              </div>
-              <button
-                class="theme-toggle-btn"
-                onclick="toggleTheme()"
-                id="settingsThemeBtn"
-                title="Toggle Theme"
-              >
-                
-              </button>
+            <div class="toggle-switch" id="tfaToggle" onclick="handle2FAToggle()" role="switch" aria-checked="false">
             </div>
-            <div class="setting-row">
-              <div class="setting-label-wrap">
-                <span class="setting-label"
-                  > Two-Factor Authentication</span
-                >
-                <span class="setting-desc"
-                  >A code will be emailed on every login for extra
-                  security.</span
-                >
-              </div>
-              <div
-                class="toggle-switch"
-                id="tfaToggle"
-                onclick="handle2FAToggle()"
-                role="switch"
-                aria-checked="false"
-              ></div>
+          </div>
+          <div class="setting-row">
+            <div class="setting-label-wrap">
+              <span class="setting-label"> Daily Question Sync</span>
+              <span class="setting-desc">Auto-fetch new AI-curated questions every 24h.</span>
             </div>
-            <div class="setting-row">
-              <div class="setting-label-wrap">
-                <span class="setting-label"> Daily Question Sync</span>
-                <span class="setting-desc"
-                  >Auto-fetch new AI-curated questions every 24h.</span
-                >
-              </div>
-              <div
-                class="toggle-switch active"
-                style="pointer-events: none; opacity: 0.5"
-              ></div>
-            </div>
-            <p class="setting-section-title">Change Password</p>
-            <div class="setting-password-block">
-              <input
-                class="setting-input"
-                type="password"
-                id="setCurrentPass"
-                placeholder="Current password"
-                autocomplete="current-password"
-              />
-              <input
-                class="setting-input"
-                type="password"
-                id="setNewPass"
-                placeholder="New password (min 6 chars)"
-                autocomplete="new-password"
-              />
-              <input
-                class="setting-input"
-                type="password"
-                id="setConfirmPass"
-                placeholder="Confirm new password"
-                autocomplete="new-password"
-              />
-              <div
-                id="passChangeMsg"
-                class="pass-change-msg"
-                style="display: none"
-              ></div>
-            </div>
-            <div class="modal-footer-btns">
-              <button
-                class="modal-btn modal-btn-primary"
-                onclick="unifiedChangePassword()"
-              >
-                Update Password
-              </button>
-              <button
-                class="modal-btn modal-btn-ghost"
-                onclick="closeSettings()"
-              >
-                Done
-              </button>
-            </div>
+            <div class="toggle-switch active" style="pointer-events: none; opacity: 0.5"></div>
+          </div>
+          <p class="setting-section-title">Change Password</p>
+          <div class="setting-password-block">
+            <input class="setting-input" type="password" id="setCurrentPass" placeholder="Current password"
+              autocomplete="current-password" />
+            <input class="setting-input" type="password" id="setNewPass" placeholder="New password (min 6 chars)"
+              autocomplete="new-password" />
+            <input class="setting-input" type="password" id="setConfirmPass" placeholder="Confirm new password"
+              autocomplete="new-password" />
+            <div id="passChangeMsg" class="pass-change-msg" style="display: none"></div>
+          </div>
+          <div class="modal-footer-btns">
+            <button class="modal-btn modal-btn-primary" onclick="unifiedChangePassword()">
+              Update Password
+            </button>
+            <button class="modal-btn modal-btn-ghost" onclick="closeSettings()">
+              Done
+            </button>
           </div>
         </div>
       </div>
     </div>
-    <!-- /main-wrapper -->
+  </div>
+  <!-- /main-wrapper -->
 
-    <script src="auth.js"></script>
-    <script src="dashboard.js"></script>
-    <script src="materials.js"></script>
-    <script>
-      //  Render Materials on Dashboard
-      (function renderDashMaterials() {
-        const container = document.getElementById("materialsContainer");
-        if (!container) return;
+  <script src="auth.js"></script>
+  <script src="dashboard.js"></script>
+  <script src="materials.js"></script>
+  <script>
+    //  Render Materials on Dashboard
+    (function renderDashMaterials() {
+      const container = document.getElementById("materialsContainer");
+      if (!container) return;
 
-        const all = getMaterials();
-        if (!all.length) {
-          container.innerHTML =
-            '<p style="color:var(--text-muted);text-align:center;padding:2rem;">No materials uploaded yet. Check back soon!</p>';
-          return;
-        }
+      const all = getMaterials();
+      if (!all.length) {
+        container.innerHTML =
+          '<p style="color:var(--text-muted);text-align:center;padding:2rem;">No materials uploaded yet. Check back soon!</p>';
+        return;
+      }
 
-        const bySubject = {};
-        SUBJECTS_META.forEach((s) => {
-          bySubject[s.id] = [];
-        });
-        all.forEach((m) => {
-          if (bySubject[m.subject]) bySubject[m.subject].push(m);
-        });
+      const bySubject = {};
+      SUBJECTS_META.forEach((s) => {
+        bySubject[s.id] = [];
+      });
+      all.forEach((m) => {
+        if (bySubject[m.subject]) bySubject[m.subject].push(m);
+      });
 
-        const activeSubjects = SUBJECTS_META.filter(
-          (s) => (bySubject[s.id] || []).length > 0,
-        );
+      const activeSubjects = SUBJECTS_META.filter(
+        (s) => (bySubject[s.id] || []).length > 0,
+      );
 
-        container.innerHTML = activeSubjects
-          .map((subj) => {
-            const mats = bySubject[subj.id] || [];
-            return `<div style="margin-bottom:1.75rem;">
+      container.innerHTML = activeSubjects
+        .map((subj) => {
+          const mats = bySubject[subj.id] || [];
+          return `<div style="margin-bottom:1.75rem;">
           <div style="display:flex;align-items:center;gap:8px;margin-bottom:0.75rem;">
             <span style="font-size:1.2rem">${subj.icon}</span>
             <h3 style="font-size:0.95rem;font-weight:800;color:var(--text-primary);">${subj.name}</h3>
@@ -1183,28 +1002,27 @@
                     <span style="font-size:0.7rem;color:var(--text-muted);">· ${m.uploadedAt || ""}</span>
                   </div>
                 </div>
-                ${
-                  noLink
+                ${noLink
                     ? `<span style="font-size:0.72rem;color:var(--text-muted);background:var(--bg-input);padding:6px 12px;border-radius:var(--radius-sm);border:1px dashed var(--border);flex-shrink:0;">Coming Soon</span>`
                     : `<a href="${m.url}" target="_blank" rel="noopener" download style="display:inline-flex;align-items:center;gap:6px;padding:8px 14px;background:linear-gradient(135deg,var(--primary),#8b5cf6);color:#fff;text-decoration:none;border-radius:var(--radius-sm);font-size:0.78rem;font-weight:800;flex-shrink:0;transition:opacity 0.2s;" onmouseover="this.style.opacity='0.85'" onmouseout="this.style.opacity='1'"> Download</a>`
-                }
+                  }
               </div>`;
               })
               .join("")}
           </div>
         </div>`;
-          })
-          .join("");
+        })
+        .join("");
 
-        // Show announcements
-        const anns = JSON.parse(
-          localStorage.getItem("vision_announcements") || "[]",
-        );
-        const banner = document.getElementById("announceBanner");
-        if (anns.length && banner) {
-          banner.style.display = "block";
-          banner.innerHTML = anns.slice(0, 2).map(
-            (a) => `
+      // Show announcements
+      const anns = JSON.parse(
+        localStorage.getItem("vision_announcements") || "[]",
+      );
+      const banner = document.getElementById("announceBanner");
+      if (anns.length && banner) {
+        banner.style.display = "block";
+        banner.innerHTML = anns.slice(0, 2).map(
+          (a) => `
           <div style="background:var(--primary-dim);border:1px solid var(--border-accent);border-radius:var(--radius-md);padding:0.875rem 1.25rem;margin-bottom:8px;display:flex;gap:10px;align-items:flex-start;">
             <span style="font-size:1rem;"></span>
             <div>
@@ -1212,16 +1030,17 @@
               <div style="font-size:0.8rem;color:var(--text-secondary);margin-top:2px;">${escDash(a.body)}</div>
             </div>
           </div>`,
-          );
-        }
-      })();
-
-      function escDash(s) {
-        return String(s)
-          .replace(/&/g, "&amp;")
-          .replace(/</g, "&lt;")
-          .replace(/>/g, "&gt;");
+        );
       }
-    </script>
-  </body>
+    })();
+
+    function escDash(s) {
+      return String(s)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;");
+    }
+  </script>
+</body>
+
 </html>
