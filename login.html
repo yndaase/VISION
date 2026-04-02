@@ -30,6 +30,8 @@
     />
     <meta name="author" content="Vision Education" />
     <link rel="canonical" href="https://www.visionedu.online/login" />
+    <!-- Google Site Verification - Placeholder: Replace with your actual code from Search Console -->
+    <meta name="google-site-verification" content="YOUR_VERIFICATION_CODE_HERE" />
 
     <!--  OPEN GRAPH (Facebook, WhatsApp, LinkedIn)  -->
     <meta property="og:type" content="website" />
@@ -820,10 +822,48 @@
           <!-- Success toast -->
           <div class="auth-success-toast" id="authSuccessToast"></div>
           
-          <!-- Legal Footer -->
-          <div style="margin-top: 2rem; display: flex; justify-content: center; gap: 20px; opacity: 0.6;">
-            <a href="/privacy" style="font-size: 0.75rem; color: var(--text-secondary); text-decoration: none;">Privacy Policy</a>
-            <a href="/terms" style="font-size: 0.75rem; color: var(--text-secondary); text-decoration: none;">Terms of Service</a>
+          <!-- Legal Footer - Prominent Buttons for Google Verification -->
+          <div style="margin-top: 2.5rem; display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; padding: 0 20px;">
+            <a href="/privacy" style="
+              background: rgba(255, 255, 255, 0.05);
+              border: 1px solid rgba(255, 255, 255, 0.1);
+              color: #f1f5f9;
+              font-size: 0.8rem;
+              font-weight: 600;
+              text-decoration: none;
+              padding: 10px 20px;
+              border-radius: 8px;
+              transition: all 0.2s;
+              display: inline-flex;
+              align-items: center;
+              gap: 8px;
+            "
+            onmouseover="this.style.background='rgba(255, 255, 255, 0.1)'; this.style.borderColor='var(--primary)';"
+            onmouseout="this.style.background='rgba(255, 255, 255, 0.05)'; this.style.borderColor='rgba(255, 255, 255, 0.1)';"
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+              Privacy Policy
+            </a>
+            <a href="/terms" style="
+              background: rgba(255, 255, 255, 0.03);
+              border: 1px solid rgba(255, 255, 255, 0.1);
+              color: #94a3b8;
+              font-size: 0.8rem;
+              font-weight: 600;
+              text-decoration: none;
+              padding: 10px 20px;
+              border-radius: 8px;
+              transition: all 0.2s;
+              display: inline-flex;
+              align-items: center;
+              gap: 8px;
+            "
+            onmouseover="this.style.background='rgba(255, 255, 255, 0.08)'; this.style.color='#f1f5f9';"
+            onmouseout="this.style.background='rgba(255, 255, 255, 0.03)'; this.style.color='#94a3b8';"
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+              Terms of Service
+            </a>
           </div>
         </div>
         <!-- /auth-card-page -->
