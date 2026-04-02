@@ -6,7 +6,7 @@
 (function () {
   // Remove any saved light-mode preference and force dark
   localStorage.removeItem("vision_theme");
-  document.documentElement.setAttribute("data-theme", "dark"); document.body.style.backgroundColor = "#05080f";
+  document.documentElement.setAttribute("data-theme", "dark"); document.addEventListener("DOMContentLoaded", () => { document.body.style.backgroundColor = "#05080f"; });
 
   // Expose dummy toggle (does nothing) so any existing onclick calls don't error
   window.toggleTheme = function () {};
@@ -21,3 +21,4 @@
     });
   });
 })();
+
