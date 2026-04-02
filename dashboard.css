@@ -182,7 +182,16 @@
   align-items: center;
   justify-content: space-between;
   gap: 2rem;
+  padding: 0 1.5rem;
 }
+
+@media (max-width: 640px) {
+  .dash-nav-inner {
+    padding: 0 1rem;
+    gap: 1rem;
+  }
+}
+
 
 /* Logo */
 .dash-logo {
@@ -456,6 +465,12 @@
   padding: 5rem 2rem 4rem;
   border-bottom: 1px solid var(--border);
   overflow: hidden;
+}
+
+@media (max-width: 640px) {
+  .dash-hero {
+    padding: 3rem 1.25rem 2.5rem;
+  }
 }
 
 .dash-hero-orbs {
