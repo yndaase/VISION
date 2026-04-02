@@ -2709,14 +2709,20 @@
       }
 
       function handleCreateRoom() {
+        console.log("Creation requested. GIS Status:", !!meetTokenClient);
         // Try API first; always fall back to direct open
         if (meetTokenClient && !meetAccessToken) {
           pendingSpaceKey = "main";
-          meetTokenClient.requestAccessToken();
+          try {
+            meetTokenClient.requestAccessToken();
+          } catch (e) {
+            console.error("Token request failed:", e);
+            openMeetDirectly("main");
+          }
         } else if (meetAccessToken) {
           createMeetingSpaceViaAPI("main");
         } else {
-          // GIS not ready or not configured  just open Google Meet directly
+          // GIS not ready or not configured - just open Google Meet directly
           openMeetDirectly("main");
         }
       }
@@ -2737,9 +2743,14 @@
       }
 
       async function createMeetingSpaceViaAPI(key) {
-        document.getElementById("meetSpinner").style.display = "block";
-        document.getElementById("meetRoomCard").classList.remove("visible");
-        document.getElementById("meetApiError").style.display = "none";
+        const spinner = document.getElementById("meetSpinner");
+        const card = document.getElementById("meetRoomCard");
+        const apiError = document.getElementById("meetApiError");
+        
+        if (spinner) spinner.style.display = "block";
+        if (card) card.classList.remove("visible");
+        if (apiError) apiError.style.display = "none";
+        
         pendingSpaceKey = null;
         try {
           const res = await fetch(MEET_API, {
@@ -2748,27 +2759,37 @@
               Authorization: "Bearer " + meetAccessToken,
               "Content-Type": "application/json",
             },
-            body: JSON.stringify({}),
+            body: JSON.stringify({
+              config: { accessType: "TRUSTED" }
+            }),
           });
+          
           if (!res.ok) {
             const err = await res.json().catch(() => ({}));
+            // If 403, it's likely a verification/scope issue
+            if (res.status === 403) {
+                console.warn("Scope restricted (Unverified App). Using professional fallback.");
+                openMeetDirectly(key);
+                return;
+            }
             throw new Error(err?.error?.message || "HTTP " + res.status);
           }
+          
           const data = await res.json();
+          // Meet V2 API returns meetingUri and meetingCode
+          const uri = data.meetingUri || data.uri; // Safety fallback
+          const code = data.meetingCode || "Active Session";
+          
           SESSION_SPACES[key] = {
-            meetingUri: data.meetingUri,
-            meetingCode: data.meetingCode,
+            meetingUri: uri,
+            meetingCode: code,
           };
-          showMeetRoom(data.meetingUri, data.meetingCode);
+          showMeetRoom(uri, code);
         } catch (e) {
-          console.warn(
-            "Meet API error  falling back to direct open:",
-            e.message,
-          );
-          // API failed  silently fall back to opening meet.google.com/new
+          console.warn("Meet API Error:", e.message);
           openMeetDirectly(key);
         } finally {
-          document.getElementById("meetSpinner").style.display = "none";
+          if (spinner) spinner.style.display = "none";
         }
       }
 
