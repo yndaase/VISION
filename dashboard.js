@@ -200,7 +200,7 @@ function renderSearchResults(subjects, materials, query) {
     html += `<div class="search-section-label">Subjects</div>`;
     subjects.forEach((s) => {
       html += `
-        <a href="index.html?sub=${s.id.split("-").pop()}" class="search-result-item">
+        <a href="/?sub=${s.id.split("-").pop()}" class="search-result-item">
           <div class="search-result-icon">${s.icon}</div>
           <div class="search-result-info">
             <span class="search-result-title">${s.name}</span>

@@ -7,6 +7,8 @@ Disallow: /robotics-login
 Disallow: /robotics-dashboard
 Allow: /robotics
 Allow: /about
+Allow: /privacy
+Allow: /terms
 Disallow: /mock-hall
 Disallow: /api/
 

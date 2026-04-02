@@ -14,7 +14,7 @@
           sessionStorage.getItem("waec_session") ||
           localStorage.getItem("waec_session");
         if (!session) {
-          window.location.replace("login.html");
+          window.location.replace("/login");
         }
       })();
     </script>
@@ -750,7 +750,7 @@
           <button class="submit-hall-btn" onclick="confirmSubmit()">
             Submit Exam Paper
           </button>
-          <a class="back-link" href="mocks.html">← Exit to Mock Portal</a>
+          <a class="back-link" href="/mocks">← Exit to Mock Portal</a>
         </div>
       </aside>
 
@@ -832,10 +832,10 @@
           </div>
         </div>
         <div class="results-actions">
-          <a href="analytics.html" class="btn-primary">
+          <a href="/analytics" class="btn-primary">
             View Performance Analytics</a
           >
-          <a href="mocks.html" class="btn-secondary"> Return to Mock Portal</a>
+          <a href="/mocks" class="btn-secondary"> Return to Mock Portal</a>
         </div>
       </div>
     </div>
