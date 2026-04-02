@@ -4,7 +4,7 @@
   <!-- Homepage / Login -->
   <url>
     <loc>https://www.visionedu.online/login.html</loc>
-    <lastmod>2026-04-01</lastmod>
+    <lastmod>2026-04-02</lastmod>
     <changefreq>monthly</changefreq>
     <priority>1.0</priority>
   </url>
@@ -12,7 +12,7 @@
   <!-- Dashboard -->
   <url>
     <loc>https://www.visionedu.online/dashboard.html</loc>
-    <lastmod>2026-04-01</lastmod>
+    <lastmod>2026-04-02</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
@@ -20,7 +20,7 @@
   <!-- Core Mathematics practise -->
   <url>
     <loc>https://www.visionedu.online/index.html</loc>
-    <lastmod>2026-04-01</lastmod>
+    <lastmod>2026-04-02</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
@@ -28,7 +28,7 @@
   <!-- Mock Exams -->
   <url>
     <loc>https://www.visionedu.online/mocks.html</loc>
-    <lastmod>2026-04-01</lastmod>
+    <lastmod>2026-04-02</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -36,7 +36,7 @@
   <!-- Analytics -->
   <url>
     <loc>https://www.visionedu.online/analytics.html</loc>
-    <lastmod>2026-04-01</lastmod>
+    <lastmod>2026-04-02</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -44,7 +44,7 @@
   <!-- About -->
   <url>
     <loc>https://www.visionedu.online/about.html</loc>
-    <lastmod>2026-04-01</lastmod>
+    <lastmod>2026-04-02</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
