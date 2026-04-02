@@ -362,11 +362,13 @@
               <div class="field" style="flex: 1; margin-bottom: 0;">
                 <label class="label">Access Authorization Level</label>
                 <select class="input" id="newUserRole">
-                  <option value="President">President (Command Level)</option>
-                  <option value="Vice President">Vice President (Command Level)</option>
-                  <option value="PRO">PRO (Communications & Ops)</option>
-                  <option value="ADMIN">System Admin (Network Core)</option>
-                  <option value="Student">Student (Standard Access)</option>
+                  <option value="President">President</option>
+                  <option value="Vice President 1">Vice President 1</option>
+                  <option value="Vice President 2">Vice President 2</option>
+                  <option value="General Secretary">General Secretary</option>
+                  <option value="Organiser">Organiser</option>
+                  <option value="PRO">PRO (Public Relations Officer)</option>
+                  <option value="Admin">Admin (System)</option>
                 </select>
               </div>
               <button class="btn btn-primary" onclick="createUser()" style="height: 50px; padding: 0 40px;">Authorize Account</button>
@@ -623,11 +625,13 @@
           <td><div style="font-weight: 700;">${u.name}</div><div style="font-size: 0.7rem; color: var(--admin-text-muted);">${new Date(u.createdAt).toLocaleDateString()}</div></td>
           <td style="font-family: 'JetBrains Mono'; font-size: 0.8rem;">${u.email}</td>
           <td><select class="input" style="padding: 6px 12px; font-size: 0.75rem; width: auto;" onchange="updateRole('${u.email}', this.value)">
-            <option value="President" ${u.role === 'President' ? 'selected' : ''}>PRESIDENT</option>
-            <option value="Vice President" ${u.role === 'Vice President' ? 'selected' : ''}>VICE PRESIDENT</option>
-            <option value="PRO" ${u.role === 'PRO' ? 'selected' : ''}>PRO (OPS)</option>
-            <option value="ADMIN" ${u.role === 'ADMIN' ? 'selected' : ''}>SYSTEM ADMIN</option>
-            <option value="Student" ${u.role === 'Student' || u.role === 'student' ? 'selected' : ''}>STUDENT</option>
+            <option value="President" ${u.role === 'President' ? 'selected' : ''}>President</option>
+            <option value="Vice President 1" ${u.role === 'Vice President 1' ? 'selected' : ''}>Vice President 1</option>
+            <option value="Vice President 2" ${u.role === 'Vice President 2' ? 'selected' : ''}>Vice President 2</option>
+            <option value="General Secretary" ${u.role === 'General Secretary' ? 'selected' : ''}>General Secretary</option>
+            <option value="Organiser" ${u.role === 'Organiser' ? 'selected' : ''}>Organiser</option>
+            <option value="PRO" ${u.role === 'PRO' ? 'selected' : ''}>PRO</option>
+            <option value="Admin" ${u.role === 'Admin' || u.role === 'admin' || u.role === 'ADMIN' ? 'selected' : ''}>Admin</option>
           </select></td>
           <td style="text-align: right;"><button class="btn btn-danger" style="padding: 8px;" onclick="deleteUserAccount('${u.email}')" ${u.email === 'admin@visionedu.online' ? 'disabled' : ''}><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" /></svg></button></td>
         </tr>
