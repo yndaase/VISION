@@ -98,8 +98,17 @@
     />
     <link rel="stylesheet" href="style.css" />
     <link rel="stylesheet" href="login.css" />
-    <link rel="stylesheet" href="theme.css" />
-    <script src="theme.js"></script>
+    <!--  PWA & Branding  -->
+    <link rel="manifest" href="manifest.json" />
+    <meta name="theme-color" content="#0ea5e9" />
+    <link rel="apple-touch-icon" href="assets/logo.png" />
+    <script>
+      if ("serviceWorker" in navigator) {
+        window.addEventListener("load", () => {
+          navigator.serviceWorker.register("sw.js");
+        });
+      }
+    </script>
     <script src="https://accounts.google.com/gsi/client" async defer></script>
   </head>
 
@@ -133,10 +142,7 @@
       <aside class="login-left" aria-hidden="true">
         <div class="left-content">
           <div class="brand-logo-lg">
-            Vision
-            <span class="brand-accent" style="color: var(--primary)"
-              >Education</span
-            >
+            <img src="assets/logo.png" alt="Vision Education Astronaut Logo" style="height: 120px; width: 120px; object-fit: contain; margin-bottom: 1rem; filter: drop-shadow(0 0 20px rgba(14, 165, 233, 0.3));">
           </div>
           <h2 class="left-hero">Official 2026<br />WASSCE Prep Hub</h2>
           <p class="left-sub">

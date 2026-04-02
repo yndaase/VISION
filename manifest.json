@@ -1,0 +1,21 @@
+{
+  "name": "Vision Education - WASSCE Prep",
+  "short_name": "Vision Edu",
+  "description": "Premium 2026 WASSCE preparation platform for Ghana SHS students.",
+  "start_url": "/login.html",
+  "display": "standalone",
+  "background_color": "#020617",
+  "theme_color": "#0ea5e9",
+  "icons": [
+    {
+      "src": "assets/logo.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "assets/logo.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

@@ -5,7 +5,8 @@ Allow: /
 Disallow: /admin.html
 Disallow: /robotics-login.html
 Disallow: /robotics-dashboard.html
-Disallow: /robotics.html
+Allow: /robotics.html
+Allow: /about.html
 Disallow: /mock-hall.html
 Disallow: /api/
 
