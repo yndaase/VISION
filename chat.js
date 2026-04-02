@@ -14,6 +14,11 @@ let audioChunks = [];
 let recordingInterval = null;
 let recordingSeconds = 0;
 
+// ── SERVER SYNC STATE ──
+let pollInterval = null;
+let lastPollTimestamp = 0;
+const POLL_INTERVAL_MS = 3000; // Poll every 3 seconds
+
 /**
  * Initialize Secure Identity & Session
  */
@@ -195,6 +200,9 @@ async function renderContacts() {
 async function selectUser(user, element) {
     selectedContact = user;
     
+    // Stop any existing polling
+    stopPolling();
+    
     // UI Transitions
     document.getElementById("noChatSelected").style.display = "none";
     const activeChat = document.getElementById("activeChat");
@@ -208,7 +216,6 @@ async function selectUser(user, element) {
     if (element) element.classList.add("active");
 
     // --- Enterprise Auto-Provisioning (Demo Polish) ---
-    // Automatically generate cryptographic keys for offline/seeded team members
     const registry = JSON.parse(localStorage.getItem(IDENTITIES_KEY) || "{}");
     if (!registry[user.email]) {
         console.log(`Auto-provisioning secure identity for: ${user.email}`);
@@ -220,15 +227,127 @@ async function selectUser(user, element) {
 
     const session = getSession();
     const threadId = [session.email, user.email].sort().join("<->");
-    const history = await window.VisionStore.getThread(threadId);
-    
+
+    // ── HYBRID LOAD: Merge local + server messages ──
+    const localHistory = await window.VisionStore.getThread(threadId);
+    let serverMessages = [];
+    try {
+        const resp = await fetch(`/api/chat/poll?threadId=${encodeURIComponent(threadId)}&after=0`);
+        if (resp.ok) {
+            const data = await resp.json();
+            serverMessages = data.messages || [];
+        }
+    } catch (e) {
+        console.warn("Server sync unavailable, using local only", e);
+    }
+
+    // Merge: deduplicate by timestamp+from, prefer server data
+    const merged = mergeMessages(localHistory, serverMessages);
+
+    // Save any server-only messages to local IndexedDB
+    for (const sMsg of serverMessages) {
+        const existsLocally = localHistory.some(l => l.timestamp === sMsg.timestamp && l.from === sMsg.from);
+        if (!existsLocally) {
+            const localMsg = serverToLocalMsg(sMsg);
+            await window.VisionStore.saveMessage(localMsg);
+        }
+    }
+
     const list = document.getElementById("messageList");
     list.innerHTML = "";
-    for (const msg of history) await renderMessage(msg);
+    for (const msg of merged) await renderMessage(msg);
     list.scrollTop = list.scrollHeight;
+
+    // Set poll cursor to latest message time
+    lastPollTimestamp = merged.length > 0 ? merged[merged.length - 1].timestamp : 0;
+
+    // Start polling for new messages
+    startPolling(threadId);
 
     // Update Intelligence Panel
     updateInfoPanel(user);
+}
+
+/**
+ * Merge local IndexedDB messages with server messages, deduplicated
+ */
+function mergeMessages(localMsgs, serverMsgs) {
+    const map = new Map();
+    // Local messages first
+    for (const m of localMsgs) {
+        const key = `${m.timestamp}_${m.from}`;
+        map.set(key, m);
+    }
+    // Server messages fill gaps (messages from other user)
+    for (const s of serverMsgs) {
+        const key = `${s.timestamp}_${s.from}`;
+        if (!map.has(key)) {
+            map.set(key, serverToLocalMsg(s));
+        }
+    }
+    // Sort by timestamp
+    return Array.from(map.values()).sort((a, b) => a.timestamp - b.timestamp);
+}
+
+/**
+ * Convert a server message to local format for rendering
+ */
+function serverToLocalMsg(sMsg) {
+    return {
+        type: "msg",
+        from: sMsg.from,
+        to: sMsg.to,
+        threadId: sMsg.threadId,
+        payload: null, // Server messages are plaintext
+        textPreview: sMsg.text,
+        timestamp: sMsg.timestamp,
+        _fromServer: true
+    };
+}
+
+/**
+ * Server Polling — check for new messages every 3s
+ */
+function startPolling(threadId) {
+    stopPolling();
+    pollInterval = setInterval(async () => {
+        if (!selectedContact) return;
+        try {
+            const resp = await fetch(`/api/chat/poll?threadId=${encodeURIComponent(threadId)}&after=${lastPollTimestamp}`);
+            if (!resp.ok) return;
+            const data = await resp.json();
+            const newMsgs = (data.messages || []).filter(m => m.timestamp > lastPollTimestamp);
+
+            if (newMsgs.length > 0) {
+                const session = getSession();
+                for (const sMsg of newMsgs) {
+                    // Only render messages from the OTHER user (we already rendered ours)
+                    if (sMsg.from !== session.email) {
+                        const localMsg = serverToLocalMsg(sMsg);
+                        // Save to local store
+                        await window.VisionStore.saveMessage(localMsg);
+                        // Render in chat
+                        await renderMessage(localMsg);
+                    }
+                    if (sMsg.timestamp > lastPollTimestamp) {
+                        lastPollTimestamp = sMsg.timestamp;
+                    }
+                }
+                const list = document.getElementById("messageList");
+                list.scrollTop = list.scrollHeight;
+                renderContacts(); // Update sidebar previews
+            }
+        } catch (e) {
+            // Silent fail — will retry next interval
+        }
+    }, POLL_INTERVAL_MS);
+}
+
+function stopPolling() {
+    if (pollInterval) {
+        clearInterval(pollInterval);
+        pollInterval = null;
+    }
 }
 
 /**
@@ -368,32 +487,57 @@ async function sendMessage() {
         return;
     }
 
+    const ts = Date.now();
+    const threadId = [session.email, selectedContact.email].sort().join("<->");
+
     try {
         const encrypted = await window.VisionCrypto.encryptForRecipient(text, recipientPubKey);
         const msgObj = {
             type: "msg",
             from: session.email,
             to: selectedContact.email,
-            threadId: [session.email, selectedContact.email].sort().join("<->"),
+            threadId,
             payload: encrypted,
             textPreview: text,
-            timestamp: Date.now()
+            timestamp: ts
         };
 
         await window.VisionStore.saveMessage(msgObj);
         await renderMessage(msgObj);
+
+        // ── SERVER RELAY: Send to Vercel Blob so other user can see it ──
+        relayToServer(session.email, selectedContact.email, threadId, text, ts);
         
-        // Beam payload across WebRTC Tunnel
+        // Also try P2P WebRTC
         if (window.VisionNetwork) {
             window.VisionNetwork.broadcast(msgObj);
         }
         
+        // Update poll cursor so we don't re-render our own message
+        lastPollTimestamp = ts;
+        
         input.value = "";
         input.style.height = 'auto';
-        renderContacts(); // Update preview
+        renderContacts();
     } catch (e) {
         console.error("Transmission failed:", e);
     }
+}
+
+/**
+ * Relay message to server (fire-and-forget)
+ */
+function relayToServer(from, to, threadId, text, timestamp) {
+    fetch('/api/chat/send', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ from, to, threadId, text, timestamp })
+    }).then(r => {
+        if (r.ok) console.log('[Chat] Server relay OK');
+        else console.warn('[Chat] Server relay failed:', r.status);
+    }).catch(e => {
+        console.warn('[Chat] Server relay unavailable:', e.message);
+    });
 }
 
 /**
@@ -448,10 +592,13 @@ async function renderMessage(msg) {
 
     try {
         let dc;
-        if (isMine && msg.textPreview) {
+        if (msg.textPreview) {
+            // Use plaintext preview (available for own messages and server-synced messages)
             dc = new TextEncoder().encode(msg.textPreview);
-        } else {
+        } else if (msg.payload) {
             dc = await window.VisionCrypto.decrypt(msg.payload, currentIdentity.privateKey);
+        } else {
+            dc = new TextEncoder().encode("[Message]");
         }
 
         const time = new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
