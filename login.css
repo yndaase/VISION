@@ -9,7 +9,7 @@
   overflow-x: hidden;
   overflow-y: auto;
   position: relative;
-  background: var(--bg-dark);
+  background: #05080f !important;
 }
 
 .login-bg {
@@ -17,7 +17,7 @@
   inset: 0;
   z-index: 0;
   pointer-events: none;
-  background: var(--bg-dark);
+  background: #05080f !important;
 }
 .bg-orb {
   display: none;
@@ -114,34 +114,10 @@
   /* Make right panel fill the remaining space */
   .login-right {
     flex: 1 !important;
-    padding: 1.5rem 1.25rem 2rem !important;
-    align-items: flex-start !important;
-    overflow-y: visible !important;
-  }
-
-  /* Auth card full-width */
-  .auth-card-page {
-    max-width: 100% !important;
-    width: 100% !important;
-  }
-
-  /* Bigger touch targets for tabs */
-  .auth-tab {
-    padding: 0.75rem 1rem !important;
-    font-size: 0.9rem !important;
-  }
-
-  /* Larger input fields */
-  .auth-input {
-    padding: 0.875rem 1rem !important;
-    font-size: 1rem !important;
-  }
-
-  /* Full-width submit button */
-  .auth-submit-btn {
-    width: 100% !important;
-    padding: 1rem !important;
-    font-size: 1rem !important;
+    padding: 2rem 1.5rem !important;
+    align-items: center !important;
+    justify-content: center !important;
+    min-height: auto !important;
   }
 }
 
@@ -197,7 +173,7 @@
   margin-bottom: 2.5rem;
 }
 .subject-pill {
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(0, 0, 0, 0.2);
   border: 1px solid var(--border);
   border-radius: 100px;
   padding: 6px 14px;
@@ -219,7 +195,7 @@
   gap: 2rem;
   margin-bottom: 2.5rem;
   padding: 1.25rem 1.5rem;
-  background: rgba(255, 255, 255, 0.04);
+  background: rgba(0, 0, 0, 0.25);
   border: 1px solid var(--border);
   border-radius: var(--radius-md);
 }
@@ -415,7 +391,7 @@
 /* Guest Button Styling */
 .guest-btn {
   width: 100%;
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(0, 0, 0, 0.2);
   border: 1.5px solid rgba(255, 255, 255, 0.1);
   color: var(--text-secondary);
   padding: 12px;
@@ -536,7 +512,7 @@
 .google-steps {
   margin-top: 10px;
   padding: 14px 16px;
-  background: rgba(255, 255, 255, 0.04);
+  background: rgba(0, 0, 0, 0.25);
   border: 1px solid var(--border);
   border-radius: var(--radius-md);
   font-size: 0.82rem;
@@ -612,7 +588,7 @@
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  background: rgba(255, 255, 255, 0.04);
+  background: rgba(0, 0, 0, 0.25);
   border: 1px solid rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(8px);
   padding: 0.6rem 1.25rem;
