@@ -115,6 +115,74 @@
       }
     </script>
     <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <style>
+      /* --- PREMIUM DARK MODE FORCE OVERRIDES --- */
+      body.login-page {
+        background-color: #05080f !important;
+        color: #f1f5f9 !important;
+      }
+      
+      /* Ensure all headings and paragraphs are readable */
+      .login-page h1, .login-page h2, .login-page h3, 
+      .login-page h4, .login-page h5, .login-page h6 {
+        color: #f8fafc !important; 
+      }
+      .login-page p, .login-page span, .login-page label {
+        color: #cbd5e1 !important;
+      }
+      
+      /* Fix Browser Autofill ruining the dark inputs */
+      input:-webkit-autofill,
+      input:-webkit-autofill:hover, 
+      input:-webkit-autofill:focus, 
+      input:-webkit-autofill:active {
+          -webkit-box-shadow: 0 0 0 30px #0f1523 inset !important;
+          -webkit-text-fill-color: #f1f5f9 !important;
+          transition: background-color 5000s ease-in-out 0s;
+          border-color: rgba(251, 191, 36, 0.4) !important;
+      }
+      
+      /* Google Button Fix */
+      .google-custom-btn {
+        background: #ffffff !important;
+        color: #000000 !important;
+        border: none !important;
+      }
+      .google-custom-btn span {
+        color: #000000 !important;
+        font-weight: 700 !important;
+      }
+      
+      /* Sign In Button Fix */
+      .auth-submit-btn {
+        color: #0a0d14 !important; /* Keep text dark for contrast against bright orange */
+      }
+      .auth-submit-btn span {
+         color: #0a0d14 !important;
+      }
+      
+      /* Brand Logo Text Fix */
+      .brand-accent {
+        color: #fbbf24 !important; /* Force bright gold */
+      }
+      .brand-name-lg {
+        color: #f8fafc !important;
+      }
+
+      /* Fix the White Background Logo Image rendering poorly on dark */
+      .brand-logo-lg img {
+         border-radius: 50%; /* If logo has white box, round it or hide borders */
+         background: transparent;
+      }
+      
+      /* Other Links & Buttons */
+      .about-brand-btn {
+        color: #f1f5f9 !important;
+      }
+      .forgot-link {
+        color: #fbbf24 !important;
+      }
+    </style>
 </head>
 
   <body class="login-page">
