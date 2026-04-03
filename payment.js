@@ -65,7 +65,7 @@ async function initiatePayment(itemId, amount, itemName, onSuccessCallback) {
     if (!initRes.ok) throw new Error(initData.error || "Initialization failed");
 
     // 2. Open Paystack Popup (V2 Syntax)
-    const popup = new Paystack();
+    const popup = new PaystackPop();
     popup.resumeTransaction({
       accessCode: initData.access_code,
       onSuccess: async function(response) {

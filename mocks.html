@@ -289,10 +289,44 @@
             </div>
           </div>
 
-          <script>
-            document.addEventListener("DOMContentLoaded", () => {
-              const mockId = "mock_english_b";
+          <!-- Mock 4: Computer Science -->
+          <div class="mock-card" id="mock_cs_a" data-premium="true" data-price="5" data-name="Computer Science Mock A">
+            <span class="mock-badge" style="background: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3)"
+              >Premium Mock</span
+            >
+            <div>
+              <h3 class="mock-title">Computer Science Mock A</h3>
+              <p
+                style="
+                  color: var(--text-muted);
+                  font-size: 0.9rem;
+                  margin-top: 0.5rem;
+                "
+              >
+                Programming, Algorithms & Hardware.
+              </p>
+            </div>
+            <div class="mock-meta">
+              <span> 2.5 Hours</span>
+              <span> 60 Questions</span>
+            </div>
+            <div class="mock-footer">
+              <span id="label_mock_cs_a" style="font-weight: 700; color: #fbbf24">5.00 GHS</span>
+              <button id="btn_mock_cs_a" class="start-mock-btn" style="background: #f59e0b; color: #000">
+                Unlock Access
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <script>
+          document.addEventListener("DOMContentLoaded", () => {
+            const premiumMocks = ["mock_english_b", "mock_cs_a"];
+            
+            premiumMocks.forEach((mockId) => {
               const card = document.getElementById(mockId);
+              if (!card) return;
+              
               const btn = document.getElementById("btn_" + mockId);
               const label = document.getElementById("label_" + mockId);
 
@@ -312,15 +346,15 @@
                      const price = parseFloat(card.getAttribute("data-price") || "10");
                      const name = card.getAttribute("data-name") || "Mock Exam";
                      initiatePayment(mockId, price, name, () => {
-                         alert("Success! Mock B is now unlocked.");
+                         alert("Success! " + name + " is now unlocked.");
                          window.location.reload();
                      });
                   };
                 }
               }
             });
-          </script>
-        </div>
+          });
+        </script>
       </main>
     </div>
 
