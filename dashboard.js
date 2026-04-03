@@ -99,7 +99,45 @@ document.addEventListener("DOMContentLoaded", () => {
 
   //  Initialize Global Search
   initGlobalSearch();
+
+  //  Premium Subject Handling
+  initPremiumSubjects();
 });
+
+function initPremiumSubjects() {
+  const cards = document.querySelectorAll(".subject-card[data-premium='true']");
+  cards.forEach((card) => {
+    const itemId = card.id;
+    if (isPurchased(itemId)) {
+      // Update UI for purchased item
+      const statusTag = card.querySelector(".subject-status");
+      if (statusTag) {
+        statusTag.textContent = "Unlocked";
+        statusTag.classList.remove("premium-tag");
+        statusTag.classList.add("available-tag");
+        
+        // Find the price shield and remove it or hide it
+        const priceShield = statusTag.nextElementSibling;
+        if (priceShield && priceShield.textContent.includes("GHS")) {
+            priceShield.style.display = "none";
+        }
+      }
+    }
+
+    card.addEventListener("click", (e) => {
+      if (isPurchased(itemId)) return; // Allow normal navigation
+
+      e.preventDefault();
+      const price = parseFloat(card.getAttribute("data-price") || "10");
+      const name = card.getAttribute("data-name") || "Premium Subject";
+      
+      initiatePayment(itemId, price, name, (detail) => {
+        alert("Success! " + name + " is now unlocked.");
+        window.location.reload();
+      });
+    });
+  });
+}
 
 //  Animated counter
 function animateCount(el, target) {

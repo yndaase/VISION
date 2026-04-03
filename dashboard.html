@@ -531,7 +531,7 @@
           </a>
 
           <!-- Physics -->
-          <a class="subject-card available" href="/?sub=physics" id="card-physics">
+          <a class="subject-card available" href="/?sub=physics" id="card-physics" data-premium="true" data-price="10" data-name="Physics">
             <div class="subject-card-inner">
               <div class="subject-top">
                 <div class="subject-icon-wrap" style="--subj-color: #f87171">
@@ -543,17 +543,17 @@
                       align-items: flex-end;
                       gap: 4px;
                     ">
-                  <span class="subject-status available-tag">Available</span>
+                  <span class="subject-status premium-tag">Premium Access</span>
                   <span style="
                         font-size: 0.6rem;
                         font-weight: 800;
-                        color: var(--primary);
-                        background: var(--primary-dim);
+                        color: #f59e0b;
+                        background: rgba(245, 158, 11, 0.1);
                         padding: 2px 8px;
                         border-radius: 4px;
                         letter-spacing: 0.05em;
-                        border: 1px solid var(--border-accent);
-                      ">EXPERT CURATED</span>
+                        border: 1px solid rgba(245, 158, 11, 0.2);
+                      ">10.00 GHS</span>
                 </div>
               </div>
               <h3 class="subject-name">Physics</h3>
@@ -698,7 +698,7 @@
           </a>
 
           <!-- Computer Science -->
-          <a class="subject-card available" href="/?sub=cs" id="card-cs">
+          <a class="subject-card available" href="/?sub=cs" id="card-cs" data-premium="true" data-price="10" data-name="Computer Science">
             <div class="subject-card-inner">
               <div class="subject-top">
                 <div class="subject-icon-wrap" style="--subj-color: #14b8a6">
@@ -710,17 +710,17 @@
                       align-items: flex-end;
                       gap: 4px;
                     ">
-                  <span class="subject-status available-tag">Available</span>
+                  <span class="subject-status premium-tag">Premium Access</span>
                   <span style="
                         font-size: 0.6rem;
                         font-weight: 800;
-                        color: var(--primary);
-                        background: var(--primary-dim);
+                        color: #f59e0b;
+                        background: rgba(245, 158, 11, 0.1);
                         padding: 2px 8px;
                         border-radius: 4px;
                         letter-spacing: 0.05em;
-                        border: 1px solid var(--border-accent);
-                      ">2026 ALIGNED</span>
+                        border: 1px solid rgba(245, 158, 11, 0.2);
+                      ">10.00 GHS</span>
                 </div>
               </div>
               <h3 class="subject-name">Computer Science</h3>
@@ -931,7 +931,9 @@
   </div>
   <!-- /main-wrapper -->
 
+  <script src="https://js.paystack.co/v2/inline.js"></script>
   <script src="auth.js"></script>
+  <script src="payment.js"></script>
   <script src="dashboard.js"></script>
   <script src="materials.js"></script>
   <script>

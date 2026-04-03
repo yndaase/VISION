@@ -261,9 +261,9 @@
           </div>
 
           <!-- Mock 3 -->
-          <div class="mock-card" style="opacity: 0.6; pointer-events: none">
-            <span class="mock-badge" style="background: #334155; color: #94a3b8"
-              >Coming Soon</span
+          <div class="mock-card" id="mock_english_b" data-premium="true" data-price="10" data-name="English Mock B">
+            <span class="mock-badge" style="background: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3)"
+              >Premium Mock</span
             >
             <div>
               <h3 class="mock-title">English Language Mock B</h3>
@@ -282,16 +282,50 @@
               <span> 100 Questions</span>
             </div>
             <div class="mock-footer">
-              <span>Locked</span>
-              <button class="start-mock-btn" style="background: #475569">
-                Unlock Soon
+              <span id="label_mock_english_b" style="font-weight: 700; color: #fbbf24">10.00 GHS</span>
+              <button id="btn_mock_english_b" class="start-mock-btn" style="background: #f59e0b; color: #000">
+                Unlock Access
               </button>
             </div>
           </div>
+
+          <script>
+            document.addEventListener("DOMContentLoaded", () => {
+              const mockId = "mock_english_b";
+              const card = document.getElementById(mockId);
+              const btn = document.getElementById("btn_" + mockId);
+              const label = document.getElementById("label_" + mockId);
+
+              if (isPurchased(mockId)) {
+                if (btn) {
+                   btn.textContent = "Launch Exam";
+                   btn.style.background = "var(--primary)";
+                   btn.onclick = () => window.location.href = "/mock-hall?id=" + mockId;
+                }
+                if (label) {
+                   label.textContent = "Unlocked";
+                   label.style.color = "var(--primary)";
+                }
+              } else {
+                if (btn) {
+                  btn.onclick = () => {
+                     const price = parseFloat(card.getAttribute("data-price") || "10");
+                     const name = card.getAttribute("data-name") || "Mock Exam";
+                     initiatePayment(mockId, price, name, () => {
+                         alert("Success! Mock B is now unlocked.");
+                         window.location.reload();
+                     });
+                  };
+                }
+              }
+            });
+          </script>
         </div>
       </main>
     </div>
 
+    <script src="https://js.paystack.co/v2/inline.js"></script>
     <script src="auth.js"></script>
+    <script src="payment.js"></script>
   </body>
 </html>
