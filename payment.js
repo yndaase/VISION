@@ -35,9 +35,9 @@ function markAsPurchased(itemId) {
 }
 
 /**
- * Start the Paystack checkout flow.
+ * Start the Paystack checkout flow via standard Redirect.
  */
-async function initiatePayment(itemId, amount, itemName, onSuccessCallback) {
+async function initiatePayment(itemId, amount, itemName) {
   const session = getSession();
   if (!session || !session.email) {
     alert("Please log in to make a purchase.");
@@ -45,8 +45,8 @@ async function initiatePayment(itemId, amount, itemName, onSuccessCallback) {
     return;
   }
 
-  // 1. Initialize transaction on backend
   try {
+    // 1. Initialize transaction on backend
     const initRes = await fetch("/api/paystack-init", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -64,42 +64,56 @@ async function initiatePayment(itemId, amount, itemName, onSuccessCallback) {
     const initData = await initRes.json();
     if (!initRes.ok) throw new Error(initData.error || "Initialization failed");
 
-    // 2. Open Paystack Popup (V2 Syntax)
-    const popup = new PaystackPop();
-    popup.resumeTransaction({
-      accessCode: initData.access_code,
-      onSuccess: function(response) {
-        // Use an inner async IIFE to avoid DataCloneError with async functions
-        (async () => {
-          // 3. Verify on backend (optional but recommended)
-          const verifyRes = await fetch("/api/paystack-verify", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ reference: response.reference })
-          });
+    // Save the item being purchased temporarily to localStorage to know what to unlock upon return
+    localStorage.setItem("pending_purchase_item", itemId);
+    localStorage.setItem("pending_purchase_name", itemName);
 
-          const verifyData = await verifyRes.json();
-          if (verifyData.success) {
-            markAsPurchased(itemId);
-            if (onSuccessCallback) onSuccessCallback(verifyData.detail);
-            else {
-              alert("Payment successful! " + itemName + " unlocked.");
-              window.location.reload();
-            }
-          } else {
-            alert("Payment verification failed: " + (verifyData.error || "Unknown error"));
-          }
-        })();
-      },
-      onCancel: function() {
-        console.log("Payment cancelled.");
-      }
-    });
+    // 2. Redirect completely to Paystack Secure Checkout
+    window.location.href = initData.authorization_url;
   } catch (err) {
     console.error("Payment error:", err);
     alert("Error starting payment: " + err.message);
   }
 }
+
+// 3. Global Verifier: Automatically runs when returning from Paystack
+async function constructVerificationFlow() {
+  const urlParams = new URLSearchParams(window.location.search);
+  const reference = urlParams.get("reference");
+  
+  if (reference) {
+    // We have returned from a payment
+    const pendingItemId = localStorage.getItem("pending_purchase_item");
+    const pendingItemName = localStorage.getItem("pending_purchase_name");
+
+    try {
+        const verifyRes = await fetch("/api/paystack-verify", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ reference })
+        });
+        const verifyData = await verifyRes.json();
+        
+        if (verifyData.success) {
+            if (pendingItemId) markAsPurchased(pendingItemId);
+            alert("Payment successful! " + (pendingItemName || "Item") + " unlocked.");
+        } else {
+            alert("Payment failed or was cancelled.");
+        }
+    } catch (err) {
+        alert("Verification error: Could not verify payment.");
+    } finally {
+        // Clean up URL so it doesn't verify twice
+        localStorage.removeItem("pending_purchase_item");
+        localStorage.removeItem("pending_purchase_name");
+        window.history.replaceState({}, document.title, window.location.pathname);
+        window.location.reload(); // Hard reload to apply unlocked states
+    }
+  }
+}
+
+// Run verifier when file loads
+constructVerificationFlow();
 
 // Ensure getSession is available from auth.js
 if (typeof getSession !== "function") {
