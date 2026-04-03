@@ -2391,4 +2391,22 @@ const MOCK_EXAMS = {
       40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50,
     ],
   },
+  mock_english_b: {
+    id: "mock_english_b",
+    subject: "english",
+    title: "English Language Mock B",
+    description: "Objective & Language simulation for 2026 standards.",
+    timeLimit: 180, // 3 Hours
+    questionCount: 10,
+    questions: [601, 602, 603, 604, 605, 606, 607, 608, 609, 610],
+  },
+  mock_cs_a: {
+    id: "mock_cs_a",
+    subject: "cs",
+    title: "Computer Science Mock A",
+    description: "Programming, Algorithms & Hardware.",
+    timeLimit: 150, // 2.5 Hours
+    questionCount: 5,
+    questions: [201, 202, 203, 204, 205],
+  },
 };
