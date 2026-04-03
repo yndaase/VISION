@@ -68,25 +68,28 @@ async function initiatePayment(itemId, amount, itemName, onSuccessCallback) {
     const popup = new PaystackPop();
     popup.resumeTransaction({
       accessCode: initData.access_code,
-      onSuccess: async function(response) {
-        // 3. Verify on backend (optional but recommended)
-        const verifyRes = await fetch("/api/paystack-verify", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ reference: response.reference })
-        });
+      onSuccess: function(response) {
+        // Use an inner async IIFE to avoid DataCloneError with async functions
+        (async () => {
+          // 3. Verify on backend (optional but recommended)
+          const verifyRes = await fetch("/api/paystack-verify", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ reference: response.reference })
+          });
 
-        const verifyData = await verifyRes.json();
-        if (verifyData.success) {
-          markAsPurchased(itemId);
-          if (onSuccessCallback) onSuccessCallback(verifyData.detail);
-          else {
-            alert("Payment successful! " + itemName + " unlocked.");
-            window.location.reload();
+          const verifyData = await verifyRes.json();
+          if (verifyData.success) {
+            markAsPurchased(itemId);
+            if (onSuccessCallback) onSuccessCallback(verifyData.detail);
+            else {
+              alert("Payment successful! " + itemName + " unlocked.");
+              window.location.reload();
+            }
+          } else {
+            alert("Payment verification failed: " + (verifyData.error || "Unknown error"));
           }
-        } else {
-          alert("Payment verification failed: " + (verifyData.error || "Unknown error"));
-        }
+        })();
       },
       onCancel: function() {
         console.log("Payment cancelled.");
