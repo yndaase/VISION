@@ -421,62 +421,39 @@
 
   <div class="toast" id="toast"></div>
 
-  <script src="auth.js"></script>
   <script>
     const ADMIN_SESSION_KEY = "vision_admin_at";
+
+    // --- GLOBAL ADMINISTRATIVE HANDLERS ---
+    
+    // Register these globally so HTML onclick can find them
+    window.openMatModal = () => { document.getElementById("matModal").classList.add("visible"); };
+    window.closeMatModal = () => { document.getElementById("matModal").classList.remove("visible"); };
+    window.handleLogout = () => { sessionStorage.removeItem(ADMIN_SESSION_KEY); location.reload(); };
+    
+    window.navTo = (secId, btn) => {
+      document.querySelectorAll(".admin-section").forEach(s => s.classList.remove("active"));
+      const section = document.getElementById("sec-" + secId);
+      if (section) section.classList.add("active");
+      
+      document.querySelectorAll(".nav-item").forEach(b => b.classList.remove("active"));
+      if (btn) btn.classList.add("active");
+
+      const titles = { overview: "System Architecture", materials: "Educational Assets", users: "Identity Protocol", announce: "Broadcast Frequency" };
+      const subs = { overview: "Architect-level control & platform metrics", materials: "Manage expert-curated learning nodes", users: "Authorize access levels & system identities", announce: "Initialize global system broadcast" };
+      
+      document.getElementById("pageTitleText").innerText = titles[secId] || "Vision Core";
+      document.getElementById("pageSubText").innerText = subs[secId] || "Platform Management";
+
+      if (secId === "materials") renderMats();
+      if (secId === "users") renderUsers();
+    };
 
     function logAction(action) {
       const logs = JSON.parse(localStorage.getItem("vision_audit_log") || "[]");
       logs.unshift({ action, time: new Date().toISOString() });
       localStorage.setItem("vision_audit_log", JSON.stringify(logs.slice(0, 50)));
       if (document.getElementById("sec-overview").classList.contains("active")) renderAudit();
-    }
-
-    async function adminInit() {
-      const users = getUsers();
-      const adminEmail = "admin@visionedu.online";
-      const admin = users.find(u => u.email === adminEmail);
-      const expectedHash = await sha256("Ndaase@2009");
-
-      if (!admin) {
-        users.push({ name: "System Admin", email: adminEmail, hash: expectedHash, role: "admin", createdAt: Date.now(), provider: "email" });
-        saveUsers(users);
-      } else {
-        // Force update admin hash and role to match code definition
-        admin.hash = expectedHash;
-        admin.role = "admin";
-        saveUsers(users);
-      }
-
-      // Populate modal subjects securely
-      const subjectSelect = document.getElementById("matSubject");
-      if (subjectSelect) {
-        subjectSelect.innerHTML = SUBJECTS_META.map(s => `<option value="${s.id}">${s.name}</option>`).join('');
-      }
-
-      if (sessionStorage.getItem(ADMIN_SESSION_KEY)) showDash();
-    }
-
-    document.getElementById("loginBtn").onclick = async () => {
-      const email = document.getElementById("adminEmail").value.trim().toLowerCase();
-      const pass = document.getElementById("adminPass").value;
-      const hash = await sha256(pass);
-      const users = getUsers();
-      const user = users.find(u => u.email === email && u.hash === hash && u.role === "admin");
-
-      if (user) {
-        sessionStorage.setItem(ADMIN_SESSION_KEY, Date.now());
-        logAction("AUTH_SUCCESS");
-        showDash();
-      } else {
-        document.getElementById("adminErr").style.display = "block";
-        logAction("AUTH_FAILURE");
-      }
-    };
-
-    function handleLogout() {
-      sessionStorage.removeItem(ADMIN_SESSION_KEY);
-      location.reload();
     }
 
     function showDash() {
@@ -488,26 +465,11 @@
       renderAudit();
     }
 
-    function navTo(secId, btn) {
-      document.querySelectorAll(".admin-section").forEach(s => s.classList.remove("active"));
-      document.getElementById("sec-" + secId).classList.add("active");
-      document.querySelectorAll(".nav-item").forEach(b => b.classList.remove("active"));
-      btn.classList.add("active");
-
-      const titles = { overview: "System Architecture", materials: "Educational Assets", users: "Identity Protocol", announce: "Broadcast Frequency" };
-      const subs = { overview: "Architect-level control & platform metrics", materials: "Manage expert-curated learning nodes", users: "Authorize access levels & system identities", announce: "Initialize global system broadcast" };
-      
-      document.getElementById("pageTitleText").innerText = titles[secId] || "Vision Core";
-      document.getElementById("pageSubText").innerText = subs[secId] || "Platform Management";
-
-      if (secId === "materials") renderMats();
-      if (secId === "users") renderUsers();
-    }
-
     function renderStats() {
       const users = getUsers();
       const mats = getMaterials();
       const grid = document.getElementById("statsGrid");
+      if (!grid) return;
       const items = [
         { label: "Authorized Learners", val: users.length },
         { label: "Educational Assets", val: mats.length },
@@ -520,6 +482,7 @@
     function renderAudit() {
       const logs = JSON.parse(localStorage.getItem("vision_audit_log") || "[]");
       const list = document.getElementById("auditList");
+      if (!list) return;
       list.innerHTML = logs.map(l => `
         <div class="audit-item">
           <div class="audit-dot" style="background: ${l.action.includes('FAIL') ? 'var(--admin-danger)' : 'var(--admin-primary)'}"></div>
@@ -532,6 +495,7 @@
     function renderMats() {
       const mats = getMaterials();
       const container = document.getElementById("matDisplay");
+      if (!container) return;
       const subjects = {};
       SUBJECTS_META.forEach(s => subjects[s.id] = []);
       mats.forEach(m => { if (subjects[m.subject]) subjects[m.subject].push(m); });
@@ -561,10 +525,7 @@
       }).join("");
     }
 
-    function openMatModal() { document.getElementById("matModal").classList.add("visible"); }
-    function closeMatModal() { document.getElementById("matModal").classList.remove("visible"); }
-
-    function saveNewMaterial() {
+    window.saveNewMaterial = () => {
       const sub = document.getElementById("matSubject").value;
       const title = document.getElementById("matTitle").value.trim();
       const type = document.getElementById("matType").value;
@@ -576,14 +537,14 @@
       logAction("ASSET_REGISTERED: " + title);
       closeMatModal(); renderMats(); showToast("Asset committed to core database");
       ["matTitle", "matUrl"].forEach(id => document.getElementById(id).value = "");
-    }
+    };
 
-    function deleteMat(id) {
+    window.deleteMat = (id) => {
       if (!confirm("Confirm infrastructure purge of this asset?")) return;
       deleteMaterial(id); logAction("ASSET_PURGED"); renderMats(); showToast("Asset purged from memory");
-    }
+    };
 
-    function postAnn() {
+    window.postAnn = () => {
       const title = document.getElementById("annTitle").value.trim();
       const body = document.getElementById("annMsg").value.trim();
       if (!title || !body) return showToast("Protocol error: Null title/body broadcast");
@@ -593,9 +554,9 @@
       logAction("BROADCAST_INITIALIZED: " + title);
       showToast("Broadcast sequence successful at 100% frequency");
       ["annTitle", "annMsg"].forEach(id => document.getElementById(id).value = "");
-    }
+    };
 
-    async function createUser() {
+    window.createUser = async () => {
       const name = document.getElementById("newUserName").value.trim();
       const email = document.getElementById("newUserEmail").value.trim().toLowerCase();
       const pass = document.getElementById("newUserPass").value;
@@ -613,12 +574,13 @@
       logAction("IDENTITY_AUTHORIZED: " + email);
       renderUsers(); showToast("Identity authorized & hashed");
       ["newUserName", "newUserEmail", "newUserPass"].forEach(id => document.getElementById(id).value = "");
-    }
+    };
 
     function renderUsers() {
       const users = getUsers();
       const q = document.getElementById("userSearch").value.toLowerCase();
       const tbody = document.getElementById("allUsersTbody");
+      if (!tbody) return;
       const filtered = users.filter(u => u.name.toLowerCase().includes(q) || u.email.toLowerCase().includes(q));
 
       tbody.innerHTML = filtered.map(u => `
@@ -639,23 +601,67 @@
       `).join("");
     }
 
-    function updateRole(email, newRole) {
+    window.updateRole = (email, newRole) => {
       const users = getUsers(); const idx = users.findIndex(u => u.email === email);
       if (idx !== -1) { users[idx].role = newRole; saveUsers(users); logAction(`ROLE_MODIFIED: ${email} -> ${newRole}`); showToast("Protocol authorization updated"); }
-    }
+    };
 
-    function deleteUserAccount(email) {
+    window.deleteUserAccount = (email) => {
       if (email === "admin@visionedu.online") return;
       if (!confirm("Terminate identity node: " + email + "?")) return;
       const users = getUsers().filter(u => u.email !== email);
       saveUsers(users); logAction("IDENTITY_TERMINATED: " + email); renderUsers(); showToast("Identity node successfully terminated");
-    }
+    };
 
     function showToast(msg) {
-      const t = document.getElementById("toast"); t.innerText = msg; t.classList.add("show");
+      const t = document.getElementById("toast"); if (!t) return;
+      t.innerText = msg; t.classList.add("show");
       setTimeout(() => t.classList.remove("show"), 3000);
     }
 
+    // --- INITIALIZATION ---
+
+    async function adminInit() {
+      const users = getUsers();
+      const adminEmail = "admin@visionedu.online";
+      const admin = users.find(u => u.email === adminEmail);
+      const expectedHash = await sha256("Ndaase@2009");
+
+      if (!admin) {
+        users.push({ name: "System Admin", email: adminEmail, hash: expectedHash, role: "admin", createdAt: Date.now(), provider: "email" });
+        saveUsers(users);
+      } else {
+        admin.hash = expectedHash;
+        admin.role = "admin";
+        saveUsers(users);
+      }
+
+      const subjectSelect = document.getElementById("matSubject");
+      if (subjectSelect) {
+        subjectSelect.innerHTML = SUBJECTS_META.map(s => `<option value="${s.id}">${s.name}</option>`).join('');
+      }
+
+      if (sessionStorage.getItem(ADMIN_SESSION_KEY)) showDash();
+    }
+
+    document.getElementById("loginBtn").onclick = async () => {
+      const email = document.getElementById("adminEmail").value.trim().toLowerCase();
+      const pass = document.getElementById("adminPass").value;
+      const hash = await sha256(pass);
+      const users = getUsers();
+      const user = users.find(u => u.email === email && u.hash === hash && u.role === "admin");
+
+      if (user) {
+        sessionStorage.setItem(ADMIN_SESSION_KEY, Date.now());
+        logAction("AUTH_SUCCESS");
+        showDash();
+      } else {
+        document.getElementById("adminErr").style.display = "block";
+        logAction("AUTH_FAILURE");
+      }
+    };
+
+    // Bootstrap
     adminInit();
   </script>
 </body>
