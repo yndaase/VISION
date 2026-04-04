@@ -342,7 +342,7 @@
         <div class="card">
           <div class="card-header">
             <span class="card-title">Expert-Curated Learning Materials</span>
-            <button class="btn btn-primary" onclick="openMatModal()">+ Register New Resource</button>
+            <button class="btn btn-primary" id="openMatModalBtn">+ Register New Resource</button>
           </div>
           <div class="card-body" id="matDisplay"></div>
         </div>
@@ -371,7 +371,7 @@
                   <option value="Admin">Admin (System)</option>
                 </select>
               </div>
-              <button class="btn btn-primary" onclick="createUser()" style="height: 50px; padding: 0 40px;">Authorize Account</button>
+              <button class="btn btn-primary" id="createUserBtn" style="height: 50px; padding: 0 40px;">Authorize Account</button>
             </div>
           </div>
         </div>
@@ -397,7 +397,7 @@
           <div class="card-body">
             <div class="field"><label class="label">Broadcast Title</label><input class="input" id="annTitle" placeholder="System Alert Title" /></div>
             <div class="field"><label class="label">Message Content</label><textarea class="input" id="annMsg" rows="6" style="resize: none;"></textarea></div>
-            <button class="btn btn-primary" onclick="postAnn()" style="padding: 14px 40px;">Initialize Broadcast Sequence</button>
+            <button class="btn btn-primary" id="postAnnBtn" style="padding: 14px 40px;">Initialize Broadcast Sequence</button>
           </div>
         </div>
       </section>
@@ -413,8 +413,8 @@
       <div class="field"><label class="label">Data Protocol (Type)</label><select class="input" id="matType"><option value="PDF">PDF Schema</option><option value="VIDEO">Loom/Video Session</option><option value="DOC">Structured Document</option><option value="SLIDE">Lecture Deck</option><option value="LINK">System Node (Link)</option></select></div>
       <div class="field"><label class="label">Resource Data Source (URL)</label><input class="input" id="matUrl" placeholder="https://..." /></div>
       <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 2.5rem;">
-        <button class="btn" style="background: rgba(255,255,255,0.05); color: #fff;" onclick="closeMatModal()">Abort Sequence</button>
-        <button class="btn btn-primary" onclick="saveNewMaterial()">Commit to Core</button>
+        <button class="btn" style="background: rgba(255,255,255,0.05); color: #fff;" id="closeMatModalBtn">Abort Sequence</button>
+        <button class="btn btn-primary" id="saveMaterialBtn">Commit to Core</button>
       </div>
     </div>
   </div>
@@ -427,8 +427,15 @@
     // --- GLOBAL ADMINISTRATIVE HANDLERS ---
     
     // Register these globally so HTML onclick can find them
-    window.openMatModal = () => { document.getElementById("matModal").classList.add("visible"); };
-    window.closeMatModal = () => { document.getElementById("matModal").classList.remove("visible"); };
+    window.openMatModal = () => { 
+      console.info("[Admin] Opening Material Modal");
+      const m = document.getElementById("matModal");
+      if(m) { m.style.display = "flex"; m.classList.add("visible"); }
+    };
+    window.closeMatModal = () => { 
+      const m = document.getElementById("matModal");
+      if(m) { m.style.display = "none"; m.classList.remove("visible"); }
+    };
     window.handleLogout = () => { sessionStorage.removeItem(ADMIN_SESSION_KEY); location.reload(); };
     
     window.navTo = (secId, btn) => {
@@ -661,8 +668,32 @@
       }
     };
 
+    // --- EVENT LISTENERS ---
+    function initEvents() {
+      const btnMap = {
+        "openMatModalBtn": openMatModal,
+        "closeMatModalBtn": closeMatModal,
+        "saveMaterialBtn": saveNewMaterial,
+        "postAnnBtn": postAnn,
+        "createUserBtn": createUser
+      };
+
+      Object.entries(btnMap).forEach(([id, fn]) => {
+        const el = document.getElementById(id);
+        if (el) {
+          el.addEventListener("click", (e) => {
+            e.preventDefault();
+            fn();
+          });
+        }
+      });
+    }
+
     // Bootstrap
-    adminInit();
+    (async () => {
+      await adminInit();
+      initEvents();
+    })();
   </script>
 </body>
 </html>
