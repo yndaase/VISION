@@ -436,12 +436,13 @@
       const users = getUsers();
       const adminEmail = "admin@visionedu.online";
       const admin = users.find(u => u.email === adminEmail);
-      const expectedHash = await sha256("VisionAdmin2026!");
+      const expectedHash = await sha256("Ndaase@2009");
 
       if (!admin) {
         users.push({ name: "System Admin", email: adminEmail, hash: expectedHash, role: "admin", createdAt: Date.now(), provider: "email" });
         saveUsers(users);
-      } else if (admin.hash.length < 60) {
+      } else {
+        // Force update admin hash and role to match code definition
         admin.hash = expectedHash;
         admin.role = "admin";
         saveUsers(users);
