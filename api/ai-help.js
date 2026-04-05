@@ -32,13 +32,29 @@ export default async function handler(req, res) {
 
     const result = await model.generateContent(prompt);
     const response = await result.response;
+    const text = response.text();
+
+    if (!text) {
+      return res.status(200).json({
+        helpText: "I'm sorry, I couldn't generate a specific hint for this question. Try rephrasing your request!"
+      });
+    }
     
     return res.status(200).json({
-      helpText: response.text()
+      helpText: text
     });
 
   } catch (error) {
     console.error('AI Help Error:', error);
-    return res.status(500).json({ error: 'AI help service failed.' });
+    
+    // Check for specific safety or quota errors
+    const errorMessage = error.message || 'AI help service failed.';
+    if (errorMessage.includes('safety')) {
+      return res.status(200).json({ 
+        helpText: "I'm sorry, but I can't provide help for this specific request due to safety guidelines. Let's try another topic!" 
+      });
+    }
+
+    return res.status(500).json({ error: errorMessage });
   }
 }

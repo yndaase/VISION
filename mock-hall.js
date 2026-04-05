@@ -534,7 +534,7 @@ async function handleAISearch(manualPrompt) {
     });
 
     const data = await res.json();
-    loader.textContent = data.helpText || "I couldn't generate a response right now.";
+    loader.textContent = data.helpText || data.error || "I couldn't generate a response right now.";
   } catch (err) {
     loader.textContent = "Linking to AI brain failed. Check your connection.";
   }
