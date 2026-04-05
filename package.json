@@ -1,4 +1,7 @@
 {
+  "name": "waec-core-maths",
+  "version": "1.0.1",
+  "description": "WAEC 2026 Core Mathematics Prep Portal - Adaptive AI v2",
   "type": "module",
   "dependencies": {
     "@google/generative-ai": "^0.24.1",
