@@ -496,7 +496,7 @@ if (aiInput) {
 document.querySelectorAll('.quick-btn').forEach((btn) => {
   btn.onclick = () => {
     const action = btn.dataset.action;
-    const qData = examState.shuffledQuestions[examState.currentIdx];
+    const qData = examState.questions[examState.currentIndex];
 
     let prompt = "";
     if (action === 'explain') prompt = `Can you explain the concept behind this question: "${qData.question}"?`;
@@ -511,7 +511,7 @@ async function handleAISearch(manualPrompt) {
   const text = manualPrompt || aiInput.value;
   if (!text.trim()) return;
 
-  const qData = examState.shuffledQuestions[examState.currentIdx];
+  const qData = examState.questions[examState.currentIndex];
 
   // Add User Message
   appendMsg(text, 'user');
