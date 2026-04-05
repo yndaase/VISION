@@ -3,10 +3,14 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Analytics | Vision Education · 2026 WASSCE</title>
+    <title>WASSCE Performance Analytics | 2026 Ready Vision Education</title>
     <meta
       name="description"
-      content="Track your 2026 WASSCE readiness and subject mastery with AI diagnostics."
+      content="Track your 2026 WASSCE readiness and subject mastery with AI diagnostics. Detailed performance metrics across Core Maths, English, and Science."
+    />
+    <meta
+      name="keywords"
+      content="wassce performance, waec stats, shs readiness, vision education diagnostics"
     />
     <link rel="manifest" href="manifest.json" />
     <meta name="theme-color" content="#0ea5e9" />
@@ -39,20 +43,20 @@
     <!--  SIDE NAVIGATION  -->
     <aside class="side-nav">
       <a class="side-nav-logo" href="/dashboard">
-        <img src="assets/logo.png" alt="Logo" style="height: 48px; width: 48px; object-fit: contain;">
+        <img src="assets/logo.png" alt="Vision Education official logo - 2026 WASSCE Prep" style="height: 48px; width: 48px; object-fit: contain;" loading="lazy">
         <span>Vision Edu</span>
       </a>
       <nav class="side-nav-menu">
         <a href="/dashboard" class="nav-item">
-          <span class="nav-item-icon"></span>
+          <span class="nav-item-icon">🏠</span>
           <span>Dashboard</span>
         </a>
         <a href="/mocks" class="nav-item">
-          <span class="nav-item-icon"></span>
+          <span class="nav-item-icon">📝</span>
           <span>Mock Exams</span>
         </a>
         <a href="/analytics" class="nav-item active">
-          <span class="nav-item-icon"></span>
+          <span class="nav-item-icon">📊</span>
           <span>Performance</span>
         </a>
       </nav>
@@ -74,15 +78,15 @@
     <!--  BOTTOM NAVIGATION (Mobile)  -->
     <nav class="bottom-nav">
       <a href="/dashboard" class="bottom-nav-item">
-        <span class="bottom-icon"></span>
+        <span class="bottom-icon">🏠</span>
         <span>Home</span>
       </a>
       <a href="/mocks" class="bottom-nav-item">
-        <span class="bottom-icon"></span>
+        <span class="bottom-icon">📝</span>
         <span>Mocks</span>
       </a>
       <a href="/analytics" class="bottom-nav-item active">
-        <span class="bottom-icon"></span>
+        <span class="bottom-icon">📊</span>
         <span>Stats</span>
       </a>
       <a
@@ -93,7 +97,7 @@
           return false;
         "
       >
-        <span class="bottom-icon"></span>
+        <span class="bottom-icon">⚙️</span>
         <span>Settings</span>
       </a>
     </nav>
@@ -103,7 +107,7 @@
       <nav class="dash-nav" id="dashNav">
         <div class="dash-nav-inner">
           <div class="dash-logo">
-            <img src="assets/logo.png" alt="Logo" style="height: 32px; width: 32px; object-fit: contain; margin-right: 10px;">
+            <img src="assets/logo.png" alt="Vision Education Analytics Dashboard Logo" style="height: 32px; width: 32px; object-fit: contain; margin-right: 10px;" loading="lazy">
             <span class="dash-logo-text"
               >Vision <span class="brand-accent">Analytics</span></span
             >
@@ -164,7 +168,7 @@
 
             <div class="subject-matrix-row">
               <div class="matrix-name">
-                <span class="matrix-icon" style="color: #f59e0b"></span>
+                <span class="matrix-icon" style="color: #f59e0b">📐</span>
                 Core Mathematics
               </div>
               <div class="matrix-score" id="mathsMastery"></div>
@@ -172,7 +176,7 @@
 
             <div class="subject-matrix-row">
               <div class="matrix-name">
-                <span class="matrix-icon" style="color: #60a5fa"></span>
+                <span class="matrix-icon" style="color: #60a5fa">📖</span>
                 English Language
               </div>
               <div class="matrix-score" id="englishMastery"></div>
@@ -180,7 +184,7 @@
 
             <div class="subject-matrix-row">
               <div class="matrix-name">
-                <span class="matrix-icon" style="color: #10b981"></span>
+                <span class="matrix-icon" style="color: #10b981">🔬</span>
                 Integrated Science
               </div>
               <div class="matrix-score" id="scienceMastery"></div>
@@ -188,7 +192,7 @@
 
             <div class="subject-matrix-row">
               <div class="matrix-name">
-                <span class="matrix-icon" style="color: #a78bfa"></span>
+                <span class="matrix-icon" style="color: #a78bfa">🌍</span>
                 Social Studies
               </div>
               <div class="matrix-score" id="socialMastery"></div>

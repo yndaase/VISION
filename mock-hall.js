@@ -15,6 +15,7 @@ let examState = {
   startTime: null,
   timerInterval: null,
   submitted: false,
+  isGeneratingPartB: false,
 };
 
 //  Init
@@ -34,9 +35,10 @@ document.addEventListener("DOMContentLoaded", () => {
   examState.timeRemaining = mockConfig.timeLimit * 60; // to seconds
 
   // Pull questions from DATABASE
-  const allQuestions = DATABASE[mockConfig.subject] || [];
-  const qIds = new Set(mockConfig.questions);
-  examState.questions = allQuestions.filter((q) => qIds.has(q.id));
+  const mcqQuestions = (DATABASE[mockConfig.subject] || []).filter(q => new Set(mockConfig.questions).has(q.id)).map(q => ({ ...q, type: 'mcq' }));
+  const essayQuestions = (DATABASE.theory && DATABASE.theory[mockConfig.subject] || []).filter(q => new Set(mockConfig.essayQuestions || []).has(q.id)).map(q => ({ ...q, type: 'essay' }));
+  
+  examState.questions = [...mcqQuestions, ...essayQuestions];
 
   // Update meta UI
   document.getElementById("infoMockTitle").textContent = mockConfig.title;
@@ -93,6 +95,43 @@ function renderQuestion() {
   const diffClass = `diff-${q.difficulty}`;
   const chosen = examState.answers[q.id];
 
+  let bodyHtml = "";
+  if (q.type === "essay") {
+    bodyHtml = `
+      <div class="essay-container">
+        <textarea id="essay-ans-${q.id}" 
+                  class="essay-input" 
+                  placeholder="Type your detailed answer here..."
+                  oninput="saveEssayAnswer(${q.id}, this.value)">${chosen || ""}</textarea>
+        <div class="essay-actions">
+          <button class="ai-mark-btn" onclick="markEssayWithAI(${q.id})">
+            <span class="sparkle-icon">✨</span> Mark with AI
+          </button>
+          <div id="ai-feedback-${q.id}" class="ai-feedback-box" style="display:none">
+            <div class="ai-loader">Analyzing your answer...</div>
+          </div>
+        </div>
+      </div>
+    `;
+  } else {
+    bodyHtml = `
+      <div class="options-stack">
+        ${["A", "B", "C", "D"]
+          .map(
+            (letter) => `
+          <div class="option-row ${chosen === letter ? "selected" : ""}"
+               id="opt-row-${q.id}-${letter}"
+               onclick="selectAnswer(${q.id}, '${letter}')">
+            <div class="option-letter-box">${letter}</div>
+            <div class="option-text">${q.options[letter]}</div>
+          </div>
+        `,
+          )
+          .join("")}
+      </div>
+    `;
+  }
+
   card.innerHTML = `
     <div class="q-header-row">
       <div class="q-num-badge">Q${examState.currentIndex + 1} of ${examState.questions.length}</div>
@@ -100,23 +139,11 @@ function renderQuestion() {
         <span class="q-tag ${diffClass}">${diffLabel}</span>
         <span class="q-tag">${q.topic}</span>
         <span class="q-tag">${q.contextIcon || ""}</span>
+        ${q.type === 'essay' ? '<span class="q-tag theory-tag">Theory</span>' : ''}
       </div>
     </div>
     <p class="q-text">${q.question}</p>
-    <div class="options-stack">
-      ${["A", "B", "C", "D"]
-        .map(
-          (letter) => `
-        <div class="option-row ${chosen === letter ? "selected" : ""}"
-             id="opt-row-${q.id}-${letter}"
-             onclick="selectAnswer(${q.id}, '${letter}')">
-          <div class="option-letter-box">${letter}</div>
-          <div class="option-text">${q.options[letter]}</div>
-        </div>
-      `,
-        )
-        .join("")}
-    </div>
+    ${bodyHtml}
   `;
 
   // Update num display
@@ -139,6 +166,63 @@ function renderQuestion() {
   updateSideStats();
 }
 
+// Essay Answer Saving
+function saveEssayAnswer(qId, text) {
+  if (examState.submitted) return;
+  examState.answers[qId] = text;
+  updatePalette();
+  updateSideStats();
+}
+
+// AI Marking Logic
+async function markEssayWithAI(qId) {
+  const answer = examState.answers[qId];
+  const q = examState.questions.find(item => item.id === qId);
+  const feedbackEl = document.getElementById(`ai-feedback-${qId}`);
+  
+  if (!answer || answer.trim().length < 10) {
+    alert("Please provide a more detailed answer before marking.");
+    return;
+  }
+
+  feedbackEl.style.display = "block";
+  feedbackEl.innerHTML = '<div class="ai-loader">Analyzing your answer...</div>';
+
+  try {
+    const response = await fetch('/api/mark-essay', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        question: q.question,
+        userAnswer: answer,
+        markScheme: q.markScheme,
+        modelAnswer: q.modelAnswer
+      })
+    });
+
+    const result = await response.json();
+    
+    if (result.success) {
+      feedbackEl.innerHTML = `
+        <div class="ai-score-row">
+          <div class="ai-score-badge">${result.score} / ${result.maxPoints}</div>
+          <div class="ai-verdict">${result.verdict}</div>
+        </div>
+        <div class="ai-feedback-text">${result.feedback}</div>
+        <div class="ai-model-ans">
+          <strong>Model Answer:</strong><br>
+          ${q.modelAnswer}
+        </div>
+      `;
+    } else {
+      feedbackEl.innerHTML = `<div class="ai-error">Error: ${result.error || 'Failed to analyze.'}</div>`;
+    }
+  } catch (err) {
+    console.error(err);
+    feedbackEl.innerHTML = '<div class="ai-error">Connection error. Please try again.</div>';
+  }
+}
+
 //  Answer Selection
 function selectAnswer(qId, letter) {
   if (examState.submitted) return;
@@ -158,9 +242,22 @@ function selectAnswer(qId, letter) {
 
 //  Navigation
 function navigateQ(delta) {
-  const next = examState.currentIndex + delta;
-  if (next < 0 || next >= examState.questions.length) return;
-  examState.currentIndex = next;
+  const nextIdx = examState.currentIndex + delta;
+  
+  // Transition check: If on last MCQ and going next
+  if (delta > 0 && nextIdx >= examState.questions.length && !examState.isGeneratingPartB) {
+    const allMCQsAnswered = (examState.questions || [])
+      .filter(q => q.type === 'mcq')
+      .every(q => examState.answers[q.id]);
+
+    if (allMCQsAnswered) {
+      checkForPartBTransition();
+      return;
+    }
+  }
+
+  if (nextIdx < 0 || nextIdx >= examState.questions.length) return;
+  examState.currentIndex = nextIdx;
   renderQuestion();
 }
 
@@ -368,4 +465,160 @@ function saveExamResult({
   } catch (e) {
     console.warn("Could not save exam result to stats:", e);
   }
+}
+
+/**  ASK AI TUTOR INTEGRATION  **/
+const aiBtn = document.getElementById('askAIButton');
+const aiDrawer = document.getElementById('aiTutorDrawer');
+const closeDrawer = document.getElementById('closeDrawer');
+const aiHistory = document.getElementById('aiChatHistory');
+const aiInput = document.getElementById('aiInput');
+const sendAI = document.getElementById('sendToAI');
+
+if (aiBtn) {
+  aiBtn.onclick = () => aiDrawer.classList.toggle('open');
+}
+
+if (closeDrawer) {
+  closeDrawer.onclick = () => aiDrawer.classList.remove('open');
+}
+
+if (sendAI) {
+  sendAI.onclick = () => handleAISearch();
+}
+
+if (aiInput) {
+  aiInput.onkeypress = (e) => {
+    if (e.key === 'Enter') handleAISearch();
+  };
+}
+
+document.querySelectorAll('.quick-btn').forEach((btn) => {
+  btn.onclick = () => {
+    const action = btn.dataset.action;
+    const qData = examState.shuffledQuestions[examState.currentIdx];
+
+    let prompt = "";
+    if (action === 'explain') prompt = `Can you explain the concept behind this question: "${qData.question}"?`;
+    if (action === 'hint') prompt = `Give me a small hint for this question: "${qData.question}". Don't tell me the answer yet!`;
+
+    aiInput.value = prompt;
+    handleAISearch(prompt);
+  };
+});
+
+async function handleAISearch(manualPrompt) {
+  const text = manualPrompt || aiInput.value;
+  if (!text.trim()) return;
+
+  const qData = examState.shuffledQuestions[examState.currentIdx];
+
+  // Add User Message
+  appendMsg(text, 'user');
+  aiInput.value = "";
+
+  // Add AI Loading
+  const loader = appendMsg("Thinking...", 'ai');
+
+  try {
+    const res = await fetch('/api/ai-help', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        question: qData.question,
+        options: qData.options,
+        subject: qData.subject || 'WASSCE Prep',
+        topic: qData.topic || 'General',
+        userMessage: text
+      })
+    });
+
+    const data = await res.json();
+    loader.textContent = data.helpText || "I couldn't generate a response right now.";
+  } catch (err) {
+    loader.textContent = "Linking to AI brain failed. Check your connection.";
+  }
+}
+
+function appendMsg(text, type) {
+  const div = document.createElement('div');
+  div.className = `${type}-msg`;
+  div.textContent = text;
+  aiHistory.appendChild(div);
+  aiHistory.scrollTop = aiHistory.scrollHeight;
+  return div;
+}
+
+
+/**  DYNAMIC AI QUESTION GENERATION  **/
+
+async function checkForPartBTransition() {
+  const confirmMsg = "General Objectives (Part A) complete! Would you like the AI to generate your Theory Paper (Part B) now? This will take a few seconds.";
+  if (!confirm(confirmMsg)) return;
+
+  examState.isGeneratingPartB = true;
+  showGenerationLoading();
+
+  // Calculate MCQ Performance for Adaptive Prompting
+  const perf = {}; // { topic: { correct: 0, total: 0 } }
+  examState.questions.filter(q => q.type === 'mcq').forEach(q => {
+    if (!perf[q.topic]) perf[q.topic] = { correct: 0, total: 0 };
+    perf[q.topic].total++;
+    if (examState.answers[q.id] === q.correct || examState.answers[q.id] === q.correctFixed) {
+      perf[q.topic].correct++;
+    }
+  });
+
+  try {
+    const res = await fetch('/api/generate-questions', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        subject: examState.mockConfig.subject,
+        count: 3,
+        studentPerformance: perf
+      })
+    });
+
+    const data = await res.json();
+    if (data.questions && data.questions.length > 0) {
+      // Append new questions
+      examState.questions = [...examState.questions, ...data.questions];
+      examState.currentIndex++; 
+      
+      // Update UI
+      renderPalette();
+      updateSideStats();
+      document.getElementById("statTotal").textContent = examState.questions.length;
+      document.getElementById("totalQNum").textContent = examState.questions.length;
+      
+      hideGenerationLoading();
+      renderQuestion();
+    } else {
+      throw new Error("No questions generated");
+    }
+  } catch (err) {
+    console.error(err);
+    alert("AI set-up failed. We will use standard theory questions instead.");
+    hideGenerationLoading();
+    // Fallback to static theory if available
+  } finally {
+    examState.isGeneratingPartB = false;
+  }
+}
+
+function showGenerationLoading() {
+  const card = document.getElementById("qDisplayCard");
+  card.innerHTML = `
+    <div class="ai-gen-loading">
+      <div class="ai-sparkles">✨</div>
+      <h2>AI is setting your Theory Paper...</h2>
+      <p>Analyzing your MCQ performance to create the perfect challenge.</p>
+      <div class="pixel-loader"></div>
+    </div>
+  `;
+}
+
+function hideGenerationLoading() {
+  // Logic to restore normally will be handled by renderQuestion()
 }
