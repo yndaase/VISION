@@ -357,10 +357,11 @@
       chatInput.value = '';
       
       try {
-        const res = await fetch('/api/ai-vision', {
+        const res = await fetch('/api/ai', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
+            type: 'vision',
             imageBase64: currentBase64,
             mimeType: currentMimeType,
             userMessage: message,

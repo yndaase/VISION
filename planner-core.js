@@ -48,6 +48,13 @@ function startCountdown() {
 }
 
 async function initializeMission(session) {
+    // 1. Paywall Check
+    if (typeof isPurchased === 'function' && !isPurchased('wassce_planner_access')) {
+        const paywall = document.getElementById("plannerPaywall");
+        if (paywall) paywall.style.display = "flex";
+        return;
+    }
+
     const PLAN_KEY = `vision_plan_${session.email}`;
     const stored = JSON.parse(localStorage.getItem(PLAN_KEY) || 'null');
     
@@ -98,10 +105,11 @@ async function generateNewMission(session, PLAN_KEY) {
     } catch (e) { console.warn("Failed to audit mock history:", e); }
 
     try {
-        const res = await fetch('/api/ai-planner', {
+        const res = await fetch('/api/ai', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ 
+                type: 'planner',
                 subject: prioritySubject, 
                 accuracy: worstAccuracy,
                 name: session.name 

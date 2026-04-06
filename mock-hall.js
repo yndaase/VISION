@@ -67,10 +67,10 @@ async function initAIMock() {
 
   try {
     const today = new Date().toISOString().split('T')[0];
-    const res = await fetch('/api/generate-questions', {
+    const res = await fetch('/api/ai', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ subject: 'Core Mathematics', dateSeed: today })
+      body: JSON.stringify({ type: 'generate-questions', subject: 'Core Mathematics', dateSeed: today })
     });
     const data = await res.json();
     
@@ -237,14 +237,18 @@ async function markEssayWithAI(qId) {
   feedbackEl.innerHTML = '<div class="ai-loader">Analyzing your answer...</div>';
 
   try {
-    const response = await fetch('/api/mark-essay', {
+    const response = await fetch('/api/ai', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        question: q.question,
-        userAnswer: answer,
-        markScheme: q.markScheme,
-        modelAnswer: q.modelAnswer
+        type: 'mark-exam',
+        studentResponses: [{
+          questionId: q.id,
+          question: q.question,
+          studentAnswer: answer,
+          markScheme: q.markScheme,
+          modelAnswer: q.modelAnswer
+        }]
       })
     });
 
@@ -535,10 +539,10 @@ async function performAIGrading(stats) {
         markScheme: q.markScheme
       }));
 
-    const res = await fetch('/api/mark-exam', {
+    const res = await fetch('/api/ai', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ studentResponses })
+      body: JSON.stringify({ type: 'mark-exam', studentResponses })
     });
     const results = await res.json();
     
@@ -630,10 +634,11 @@ async function handleAISearch(manualPrompt) {
   const loader = appendMsg("Thinking...", 'ai');
 
   try {
-    const res = await fetch('/api/ai-help', {
+    const res = await fetch('/api/ai', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
+        type: 'help',
         question: qData.question,
         options: qData.options,
         subject: qData.subject || 'WASSCE Prep',
@@ -686,10 +691,11 @@ async function checkForPartBTransition() {
   });
 
   try {
-    const res = await fetch('/api/generate-questions', {
+    const res = await fetch('/api/ai', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
+        type: 'generate-questions',
         subject: examState.mockConfig.subject,
         count: 3,
         studentPerformance: perf

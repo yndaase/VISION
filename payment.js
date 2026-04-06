@@ -46,11 +46,12 @@ async function initiatePayment(itemId, amount, itemName) {
   }
 
   try {
-    // 1. Initialize transaction on backend
-    const initRes = await fetch("/api/paystack-init", {
+    // 1. Initialize transaction on backend (Consolidated Hub)
+    const initRes = await fetch("/api/paystack", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
+        type: 'init',
         email: session.email,
         amount: amount,
         metadata: {
@@ -87,10 +88,10 @@ async function constructVerificationFlow() {
     const pendingItemName = localStorage.getItem("pending_purchase_name");
 
     try {
-        const verifyRes = await fetch("/api/paystack-verify", {
+        const verifyRes = await fetch("/api/paystack", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ reference })
+            body: JSON.stringify({ type: 'verify', reference })
         });
         const verifyData = await verifyRes.json();
         

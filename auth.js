@@ -140,7 +140,7 @@ function checkAuth() {
  */
 async function validateRevocationStatus(session) {
   try {
-    const res = await fetch('/api/check-revocation', {
+    const res = await fetch('/api/auth-core?type=check-revocation', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ sub: session.sub, email: session.email })
@@ -473,7 +473,7 @@ async function handleLogin(e) {
   
   // Check for pre-existing revocation before finishing login
   try {
-    const res = await fetch('/api/check-revocation', {
+    const res = await fetch('/api/auth-core?type=check-revocation', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ sub: user.sub, email: user.email })
@@ -766,10 +766,10 @@ function showAuthSuccess(msg) {
 //  Unified Email Sending (Backend API)
 async function sendEmailCode(email, code, type = "reset", name = "") {
   try {
-    const response = await fetch("/api/send-code", {
+    const response = await fetch("/api/auth-core", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, code, type, name }),
+      body: JSON.stringify({ type: "send-code", email, code, authType: type, name }),
     });
     const result = await response.json();
     if (!result.success) {
