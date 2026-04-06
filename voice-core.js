@@ -20,27 +20,35 @@ if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
   };
 
   recognition.onresult = (event) => {
-    const transcript = Array.from(event.results)
-      .map(result => result[0])
-      .map(result => result.transcript)
-      .join('');
+    let interimTranscript = '';
+    let finalTranscript = '';
+
+    for (let i = event.resultIndex; i < event.results.length; ++i) {
+      if (event.results[i].isFinal) {
+        finalTranscript += event.results[i][0].transcript;
+      } else {
+        interimTranscript += event.results[i][0].transcript;
+      }
+    }
 
     const chatInput = document.getElementById('chatInput');
-    if (chatInput) chatInput.value = transcript;
+    if (chatInput) {
+      chatInput.value = finalTranscript || interimTranscript;
+    }
   };
 
   recognition.onend = () => {
+    console.log('Speech recognition ended.');
     isListening = false;
     updateMicUI(false);
     
-    // Auto-send logic: if we have content after a short delay
     const chatInput = document.getElementById('chatInput');
-    if (chatInput && chatInput.value.trim().length > 3) {
-      setTimeout(() => {
-        if (!isListening) {
-           document.getElementById('sendBtn').click();
-        }
-      }, 1500);
+    const sendBtn = document.getElementById('sendBtn');
+    
+    // Auto-send if we have a significant transcript
+    if (chatInput && chatInput.value.trim().length > 2 && sendBtn) {
+      console.log('Auto-sending spoken question...');
+      sendBtn.click();
     }
   };
 
@@ -48,6 +56,9 @@ if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
     console.error('Speech recognition error:', event.error);
     isListening = false;
     updateMicUI(false);
+    if (event.error === 'not-allowed') {
+      alert("Microphone access denied. Please enable it in browser settings.");
+    }
   };
 }
 
@@ -102,10 +113,13 @@ function updateMicUI(listening) {
   }
 }
 
-// Attach listener to button
-document.addEventListener('DOMContentLoaded', () => {
+// Global Initialization
+window.addEventListener('load', () => {
   const btn = document.getElementById('voiceMicBtn');
   if (btn) {
-    btn.addEventListener('click', toggleSpeech);
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
+      toggleSpeech();
+    });
   }
 });
