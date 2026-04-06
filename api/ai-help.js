@@ -8,28 +8,29 @@ export default async function handler(req, res) {
   const { question, options, subject, topic, userMessage } = req.body;
 
   const apiKey = process.env.GEMINI_API_KEY;
-  if (!apiKey || apiKey.includes('AIzaSy')) { // Basic format check
-    if (!apiKey) return res.status(500).json({ error: 'AI key not configured in environment variables.' });
-  } else {
-    return res.status(500).json({ error: 'AI key format appears invalid.' });
+  if (!apiKey) {
+    return res.status(500).json({ error: 'AI key not configured in environment variables.' });
   }
 
   try {
     const genAI = new GoogleGenerativeAI(apiKey);
-    const model = genAI.getGenerativeModel({ 
-      model: "gemini-1.5-flash",
-      systemInstruction: "You are the Vision Education AI Tutor. A student is taking a WASSCE mock exam and needs help with a specific question. Provide hints, explain concepts, and guide them to the answer without revealing it immediately. Be encouraging and use simple English. Keep responses short and conversational."
-    }, { apiVersion: "v1" });
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" }, { apiVersion: "v1" });
 
     const prompt = `
+      Instructions:
+      You are the Vision Education AI Tutor. A student is taking a WASSCE mock exam and needs help with a specific question. 
+      Provide hints, explain concepts, and guide them to the answer without revealing it immediately. 
+      Be encouraging and use simple English. Keep responses short and conversational.
+
+      Context:
       SUBJECT: ${subject}
       TOPIC: ${topic}
       QUESTION: ${question}
       OPTIONS: ${JSON.stringify(options)}
       
-      STUDENT REQUEST: "${userMessage}"
+      Student Request: "${userMessage}"
 
-      Please provide help based on the student's request. If they haven't asked a specific question yet, just give a helpful hint about the topic.
+      Expert Guidance:
     `;
 
     const result = await model.generateContent(prompt);
