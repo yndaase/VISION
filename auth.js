@@ -126,7 +126,33 @@ function checkAuth() {
     window.location.href = isRobotics ? "/robotics-login" : "/login";
     return null;
   }
+  
+  // Background Security Check (RISC)
+  if (session.provider === 'google' || session.email) {
+    validateRevocationStatus(session);
+  }
+  
   return session;
+}
+
+/**
+ * Background verify if session has been revoked by Google RISC events
+ */
+async function validateRevocationStatus(session) {
+  try {
+    const res = await fetch('/api/check-revocation', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ sub: session.sub, email: session.email })
+    });
+    const data = await res.json();
+    if (data.revoked) {
+      console.warn('[Security] Account Revocation Detected via RISC. Force Logout.');
+      handleLogout();
+    }
+  } catch (err) {
+    console.warn('[Security] RISC Check failed:', err.message);
+  }
 }
 
 //  Redirect helpers
@@ -444,6 +470,22 @@ async function handleLogin(e) {
   }
 
   setSession(user);
+  
+  // Check for pre-existing revocation before finishing login
+  try {
+    const res = await fetch('/api/check-revocation', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ sub: user.sub, email: user.email })
+    });
+    const data = await res.json();
+    if (data.revoked) {
+      setError("errLoginGeneral", "This account has been disabled for security reasons.");
+      clearSession();
+      return;
+    }
+  } catch (e) {}
+
   showAuthSuccess("Welcome back, " + user.name + "! ");
   setTimeout(goToDashboard, 900);
 }
