@@ -16,8 +16,8 @@ export default async function handler(req, res) {
     return res.status(500).json({ error: 'AI key not configured in environment variables.' });
   }
 
-  const genAI = new GoogleGenerativeAI(apiKey, "v1");
-  const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+  const genAI = new GoogleGenerativeAI(apiKey);
+  const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" }, { apiVersion: "v1" });
 
   const prompt = `
     You are a Senior WAEC (West African Examinations Council) Examiner for the subject: ${subject}.

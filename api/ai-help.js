@@ -15,11 +15,11 @@ export default async function handler(req, res) {
   }
 
   try {
-    const genAI = new GoogleGenerativeAI(apiKey, "v1");
+    const genAI = new GoogleGenerativeAI(apiKey);
     const model = genAI.getGenerativeModel({ 
       model: "gemini-1.5-flash",
       systemInstruction: "You are the Vision Education AI Tutor. A student is taking a WASSCE mock exam and needs help with a specific question. Provide hints, explain concepts, and guide them to the answer without revealing it immediately. Be encouraging and use simple English. Keep responses short and conversational."
-    });
+    }, { apiVersion: "v1" });
 
     const prompt = `
       SUBJECT: ${subject}
