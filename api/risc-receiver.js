@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken';
 import jwksClient from 'jwks-rsa';
-import { put, head, get } from '@vercel/blob';
+import { put, list } from '@vercel/blob';
 
 // Google RISC Configuration
 const RISC_CONFIG = {
@@ -28,9 +28,15 @@ const BLACKLIST_PATH = 'security/risc_blacklist.json';
 
 async function getBlacklist() {
   try {
-    const listJson = await get(BLACKLIST_PATH);
-    return JSON.parse(listJson);
+    // Vercel Blob - Find the blob by its pathname prefix
+    const { blobs } = await list({ prefix: BLACKLIST_PATH });
+    if (blobs.length === 0) return { revokedSubs: [], revokedEmails: [], processedJtis: [] };
+    
+    // Fetch the actual content from the blob URL
+    const response = await fetch(blobs[0].url);
+    return await response.json();
   } catch (e) {
+    console.warn('[RISC] Blacklist fetch error:', e.message);
     return { revokedSubs: [], revokedEmails: [], processedJtis: [] };
   }
 }

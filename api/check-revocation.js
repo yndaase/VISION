@@ -1,4 +1,4 @@
-import { get } from '@vercel/blob';
+import { list } from '@vercel/blob';
 
 const BLACKLIST_PATH = 'security/risc_blacklist.json';
 
@@ -16,16 +16,19 @@ export default async function handler(req, res) {
   const { sub, email } = req.body || {};
 
   try {
-    const listJson = await get(BLACKLIST_PATH);
-    const blacklist = JSON.parse(listJson);
+    const { blobs } = await list({ prefix: BLACKLIST_PATH });
+    if (blobs.length === 0) return res.status(200).json({ revoked: false });
+
+    const response = await fetch(blobs[0].url);
+    const blacklist = await response.json();
 
     const isRevoked = 
-      (sub && blacklist.revokedSubs.includes(sub)) || 
-      (email && blacklist.revokedEmails.includes(email));
+      (sub && (blacklist.revokedSubs || []).includes(sub)) || 
+      (email && (blacklist.revokedEmails || []).includes(email));
 
     return res.status(200).json({ revoked: !!isRevoked });
   } catch (e) {
-    // If blacklist doesn't exist, nobody is revoked yet
+    console.warn('[Security] Check-revocation error:', e.message);
     return res.status(200).json({ revoked: false });
   }
 }
