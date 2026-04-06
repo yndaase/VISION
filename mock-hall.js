@@ -19,9 +19,15 @@ let examState = {
 };
 
 //  Init
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
   const params = new URLSearchParams(window.location.search);
   const mockId = params.get("id") || "math_mock_a";
+
+  if (mockId === "daily_ai_mock") {
+    // Generate AI Mock for today
+    await initAIMock();
+    return;
+  }
 
   const mockConfig = MOCK_EXAMS[mockId];
   if (!mockConfig) {
@@ -35,8 +41,8 @@ document.addEventListener("DOMContentLoaded", () => {
   examState.timeRemaining = mockConfig.timeLimit * 60; // to seconds
 
   // Pull questions from DATABASE
-  const mcqQuestions = (DATABASE[mockConfig.subject] || []).filter(q => new Set(mockConfig.questions).has(q.id)).map(q => ({ ...q, type: 'mcq' }));
-  const essayQuestions = (DATABASE.theory && DATABASE.theory[mockConfig.subject] || []).filter(q => new Set(mockConfig.essayQuestions || []).has(q.id)).map(q => ({ ...q, type: 'essay' }));
+  const mcqQuestions = (window.DATABASE[mockConfig.subject] || []).filter(q => new Set(mockConfig.questions).has(q.id)).map(q => ({ ...q, type: 'mcq' }));
+  const essayQuestions = (window.DATABASE.theory && window.DATABASE.theory[mockConfig.subject] || []).filter(q => new Set(mockConfig.essayQuestions || []).has(q.id)).map(q => ({ ...q, type: 'essay' }));
   
   examState.questions = [...mcqQuestions, ...essayQuestions];
 
@@ -54,6 +60,48 @@ document.addEventListener("DOMContentLoaded", () => {
   renderQuestion();
   startTimer();
 });
+
+async function initAIMock() {
+  const qCard = document.getElementById("qDisplayCard");
+  if (qCard) qCard.innerHTML = "<div style='text-align:center; padding: 3rem;'><h2 style='color:var(--primary); animation: pulse 2s infinite;'>AI is setting your daily questions...</h2><p style='color:var(--text-muted);'>Gemini is analyzing the 2026 syllabus to build your mission of the day.</p></div>";
+
+  try {
+    const today = new Date().toISOString().split('T')[0];
+    const res = await fetch('/api/generate-questions', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ subject: 'Core Mathematics', dateSeed: today })
+    });
+    const data = await res.json();
+    
+    examState.mockId = "daily_ai_mock";
+    examState.mockConfig = {
+      title: "AI Daily Challenge - " + today,
+      description: "A fresh set of syllabus-aligned WASSCE questions generated specifically for today's mission.",
+      timeLimit: 45
+    };
+    examState.timeRemaining = 45 * 60;
+    examState.questions = [
+      ...data.mcqs.map(q => ({ ...q, type: 'mcq' })),
+      ...data.theory.map(q => ({ ...q, type: 'essay' }))
+    ];
+
+    document.getElementById("infoMockTitle").textContent = examState.mockConfig.title;
+    document.getElementById("topbarMockTitle").textContent = examState.mockConfig.title;
+    document.getElementById("infoMockDesc").textContent = examState.mockConfig.description;
+    document.getElementById("statTotal").textContent = examState.questions.length;
+    document.getElementById("totalQNum").textContent = examState.questions.length;
+    examState.startTime = Date.now();
+
+    renderPalette();
+    renderQuestion();
+    startTimer();
+  } catch (err) {
+    console.error("AI Generation Error:", err);
+    alert("AI failed to set today's questions. Launching fallback mock.");
+    window.location.href = "/mock-hall?id=math_mock_a";
+  }
+}
 
 //  Timer
 function startTimer() {
@@ -441,6 +489,12 @@ function saveExamResult({
     stats.answered = (stats.answered || 0) + (correct + wrong);
     stats.correct = (stats.correct || 0) + correct;
 
+    // AI Grading Handshake for Daily Mocks
+    if (examState.mockId === "daily_ai_mock") {
+      performAIGrading(stats);
+      return; 
+    }
+
     // History array (last 10 mocks)
     if (!stats.mockHistory) stats.mockHistory = [];
     stats.mockHistory.unshift({
@@ -464,6 +518,61 @@ function saveExamResult({
     saveStats(stats); // from auth.js
   } catch (e) {
     console.warn("Could not save exam result to stats:", e);
+  }
+}
+
+async function performAIGrading(stats) {
+  const resultArea = document.getElementById('resultArea');
+  if (resultArea) resultArea.innerHTML = "<div style='text-align:center; padding: 2rem;'><h3 style='color:var(--primary); animation: pulse 2s infinite;'>AI Examiner is marking your Theory responses...</h3><p style='color:var(--text-muted);'>This process takes 3-5 seconds for precision grading.</p></div>";
+
+  try {
+    const studentResponses = examState.questions
+      .filter(q => q.type === 'essay')
+      .map(q => ({
+        questionId: q.id,
+        question: q.question,
+        studentAnswer: examState.answers[q.id] || "No Answer Provided",
+        markScheme: q.markScheme
+      }));
+
+    const res = await fetch('/api/mark-exam', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ studentResponses })
+    });
+    const results = await res.json();
+    
+    // Aggregate AI results back into final view
+    let aiHtml = `
+      <div class="glass-card" style="margin-top: 2rem; border: 1px solid var(--primary); padding: 2rem; animation: slideUp 0.5s ease-out;">
+        <h3 style="font-size: 1.5rem; color: var(--primary); margin-bottom: 1.5rem; display: flex; align-items:center; gap:10px;">
+          <span style="font-size: 1.2rem;">✨</span> Chief Examiner's Critique
+        </h3>
+    `;
+    results.forEach(r => {
+      aiHtml += `
+        <div style="background: rgba(255,255,255,0.03); padding: 1.5rem; border-radius: 12px; margin-bottom: 1.2rem; border: 1px solid var(--border);">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.8rem;">
+            <strong style="color:var(--text-secondary);">Question ${r.questionId || 'Theory'}</strong>
+            <span style="color:var(--primary); font-weight:800; background: var(--primary-dim); padding: 4px 12px; border-radius: 20px; font-size:0.85rem;">
+              ${r.score} / ${r.maxScore} Marks
+            </span>
+          </div>
+          <p style="font-size: 1rem; line-height:1.7; color:var(--text-muted); font-style:italic; margin:0;">
+            "${r.critique}"
+          </p>
+        </div>
+      `;
+    });
+    aiHtml += `
+        <button onclick="window.location.reload()" class="start-mock-btn" style="width: 100%; margin-top: 1rem;">Back to Hall</button>
+      </div>
+    `;
+
+    if (resultArea) resultArea.innerHTML = aiHtml;
+  } catch (err) {
+    console.error("AI Marking Failed:", err);
+    saveStats(stats);
   }
 }
 

@@ -1,56 +1,72 @@
-import { GoogleGenAI } from "@google/genai";
+import { GoogleGenerativeAI } from "@google/generative-ai";
+
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method Not Allowed' });
+    return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  const { subject, year, questionsCount } = req.body;
-
-  const apiKey = process.env.GEMINI_API_KEY;
-  if (!apiKey) {
-    return res.status(500).json({ error: 'AI key not configured in environment variables.' });
-  }
+  const { subject, dateSeed } = req.body; // dateSeed like '2026-04-06'
 
   try {
-    const ai = new GoogleGenAI({ apiKey });
+    const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
 
     const prompt = `
-      You are a Senior WAEC (West African Examinations Council) Examiner for the subject: ${subject}.
-      Generate ${questionsCount || 5} theoretical (structured) questions specifically for the WASSCE Core Mathematics exam style.
-      Each question must follow the actual Part B format.
+      You are the "Vision Education 2026 WASSCE Senior Examiner".
+      Generate a "Daily AI Mock Exam" for the subject: ${subject}.
+      Target Date: ${dateSeed}.
+      
+      Generate exactly:
+      - 5 high-yield MCQ (Objective) questions.
+      - 2 high-yield Theory (Part B) questions.
+      
+      Follow these structures EXACTLY:
+      
+      MCQ Schema:
+      {
+        "id": number (start from 8001),
+        "difficulty": "easy" | "medium" | "hard",
+        "topic": "Topic Name",
+        "question": "Question text (HTML supported)",
+        "options": { "A": "...", "B": "...", "C": "...", "D": "..." },
+        "correct": "Letter",
+        "workings": "Detailed step-by-step math/logic",
+        "protip": "Examiner's Secret: common mistake to avoid"
+      }
 
-      Return ONLY a JSON array with this structure:
-      [
-        {
-          "number": 1,
-          "question": "The actual math question text goes here...",
-          "subQuestions": ["(a) Sub-question 1", "(b) Sub-question 2"],
-          "marks": 12
-        }
-      ]
+      Theory Schema:
+      {
+        "id": number (start from 9001),
+        "difficulty": "medium" | "hard",
+        "topic": "Topic Name",
+        "question": "Question text with parts (a), (b), etc.",
+        "markScheme": [
+          { "key": "unique_string", "points": number, "desc": "What to look for" }
+        ],
+        "modelAnswer": "Full detailed answer"
+      }
+
+      Return ONLY a JSON object:
+      {
+        "subject": "${subject}",
+        "date": "${dateSeed}",
+        "mcqs": [...],
+        "theory": [...]
+      }
     `;
 
-    const response = await ai.models.generateContent({
-        model: "gemini-2.5-flash",
-        contents: [{ role: "user", parts: [{ text: prompt }] }]
-    });
-
-    const text = response.text;
+    const result = await model.generateContent(prompt);
+    const response = await result.response;
+    const text = response.text();
     
-    // Clean potential markdown wrapping
-    let jsonString = text.trim();
-    if (jsonString.startsWith('```json')) {
-      jsonString = jsonString.split('```json')[1].split('```')[0].trim();
-    } else if (jsonString.startsWith('```')) {
-      jsonString = jsonString.split('```')[1].split('```')[0].trim();
-    }
+    // Clean JSON from potential markdown backticks
+    const jsonStr = text.replace(/```json|```/g, "").trim();
+    const mockData = JSON.parse(jsonStr);
 
-    const questions = JSON.parse(jsonString);
-    return res.status(200).json({ questions });
-
+    return res.status(200).json(mockData);
   } catch (error) {
-    console.error("Gemini GenAI Migration Error:", error);
-    return res.status(500).json({ error: `AI System Error (Migration): ${error.message}` });
+    console.error('AI Question Generator Error:', error);
+    return res.status(500).json({ error: 'Failed to generate today\'s exam.' });
   }
 }

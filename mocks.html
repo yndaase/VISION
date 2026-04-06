@@ -103,6 +103,11 @@
       .start-mock-btn:hover {
         opacity: 0.9;
       }
+      @keyframes pulse {
+        0% { transform: scale(1); opacity: 1; box-shadow: 0 0 0 0 rgba(14, 165, 233, 0.7); }
+        70% { transform: scale(1.05); opacity: 0.8; box-shadow: 0 0 0 10px rgba(14, 165, 233, 0); }
+        100% { transform: scale(1); opacity: 1; box-shadow: 0 0 0 0 rgba(14, 165, 233, 0); }
+      }
     </style>
   </head>
   <body class="dashboard-page">
@@ -205,6 +210,27 @@
         </header>
 
         <div class="mocks-grid">
+          <!-- AI Daily Challenge (Generative) -->
+          <div class="mock-card" style="border: 1px solid var(--primary); background: radial-gradient(circle at top right, rgba(14, 165, 233, 0.1), transparent); grid-column: 1 / -1;">
+            <div style="position: absolute; top: 1rem; right: 1rem; background: var(--primary); color: #000; font-size: 0.65rem; font-weight: 800; padding: 4px 10px; border-radius: 4px; text-transform: uppercase; animation: pulse 2s infinite;">New Goal Available</div>
+            <div>
+              <h3 class="mock-title" style="font-size: 1.8rem; display: flex; align-items: center; gap: 10px;">
+                <span style="font-size: 1.4rem;">✨</span> AI Daily Challenge
+              </h3>
+              <p style="color: var(--text-secondary); margin-top: 0.5rem; max-width: 600px;">
+                Gemini AI has set a new 2026 WASSCE simulation for today. Fresh questions, AI marking, and examiner feedback—refreshed every 24 hours.
+              </p>
+            </div>
+            <div class="mock-footer">
+               <div class="mock-meta">
+                 <span>⏱️ 45 Mins</span>
+                 <span>📝 10 Questions</span>
+                 <span>🎓 AI Grading</span>
+               </div>
+               <button class="start-mock-btn" onclick="window.location.href = '/mock-hall?id=daily_ai_mock'" style="padding: 12px 30px; font-size: 1rem;">Start Daily Mission</button>
+            </div>
+          </div>
+
           <!-- Mock 1 -->
           <div class="mock-card">
             <span class="mock-badge">2026 Simulation</span>
