@@ -10,9 +10,9 @@ let isListening = false;
 if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
   const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
   recognition = new SpeechRecognition();
-  recognition.continuous = false; // Stop after one phrase
+  recognition.continuous = true; // Stay active for longer thoughts
   recognition.interimResults = true;
-  recognition.lang = 'en-US';
+  recognition.lang = 'en-GB'; // Optimized for Ghana/West Africa WASSCE patterns
 
   recognition.onstart = () => {
     isListening = true;
@@ -20,20 +20,16 @@ if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
   };
 
   recognition.onresult = (event) => {
-    let interimTranscript = '';
-    let finalTranscript = '';
-
+    let transcript = '';
     for (let i = event.resultIndex; i < event.results.length; ++i) {
-      if (event.results[i].isFinal) {
-        finalTranscript += event.results[i][0].transcript;
-      } else {
-        interimTranscript += event.results[i][0].transcript;
-      }
+      transcript += event.results[i][0].transcript;
     }
 
     const chatInput = document.getElementById('chatInput');
     if (chatInput) {
-      chatInput.value = finalTranscript || interimTranscript;
+      chatInput.value = transcript;
+      // Visual feedback in placeholder or a dedicated label
+      chatInput.placeholder = "Listening: " + transcript + "...";
     }
   };
 
@@ -43,12 +39,12 @@ if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
     updateMicUI(false);
     
     const chatInput = document.getElementById('chatInput');
-    const sendBtn = document.getElementById('sendBtn');
+    chatInput.placeholder = "Type or speak your question here...";
     
-    // Auto-send if we have a significant transcript
-    if (chatInput && chatInput.value.trim().length > 2 && sendBtn) {
-      console.log('Auto-sending spoken question...');
-      sendBtn.click();
+    // Auto-send if we have content
+    if (chatInput && chatInput.value.trim().length > 3) {
+      const sendBtn = document.getElementById('sendBtn');
+      if (sendBtn) sendBtn.click();
     }
   };
 
