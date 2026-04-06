@@ -47,22 +47,31 @@ async function updateBlacklist(newEntry) {
 }
 
 export default async function handler(req, res) {
+  // 1. Method Check First
   if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method Not Allowed' });
+    res.setHeader('Allow', 'POST');
+    return res.status(405).json({ error: 'Method Not Allowed', message: 'The RISC endpoint only accepts POST requests from Google.' });
   }
 
-  const token = req.body; // Google sends the SET as a raw string in the body
-  if (typeof token !== 'string') {
-    return res.status(400).json({ error: 'Invalid Token Format' });
+  // 2. Critical Env Check
+  const googleClientId = process.env.GOOGLE_CLIENT_ID;
+  if (!googleClientId) {
+    console.error('[RISC] Missing GOOGLE_CLIENT_ID environment variable.');
+    return res.status(500).json({ error: 'Server Configuration Error' });
+  }
+
+  const token = req.body; 
+  if (!token || typeof token !== 'string') {
+    return res.status(400).json({ error: 'Invalid Token Format', detail: 'Expected a raw JWT string.' });
   }
 
   try {
-    // 1. Validate and Decode the SET
+    // 3. Validate and Decode the SET
     const decoded = await new Promise((resolve, reject) => {
       jwt.verify(token, getKey, {
         issuer: RISC_CONFIG.issuer,
-        audience: process.env.GOOGLE_CLIENT_ID, // Ensure this is set in Vercel
-        ignoreExpiration: true, // RISK events don't expire
+        audience: googleClientId, 
+        ignoreExpiration: true,
       }, (err, decoded) => {
         if (err) reject(err);
         else resolve(decoded);
