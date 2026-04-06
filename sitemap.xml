@@ -25,22 +25,6 @@
     <priority>0.8</priority>
   </url>
 
-  <!-- Dashboard (Publicly Indexed but Auth Required) -->
-  <url>
-    <loc>https://www.visionedu.online/dashboard</loc>
-    <lastmod>2026-04-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-
-  <!-- Study Materials -->
-  <url>
-    <loc>https://www.visionedu.online/mocks</loc>
-    <lastmod>2026-04-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-
   <!-- Legal Pages -->
   <url>
     <loc>https://www.visionedu.online/privacy</loc>
