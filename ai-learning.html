@@ -208,26 +208,38 @@
       const message = chatInput.value.trim();
       if (!message && !currentBase64) return;
 
+      const previousBtnText = sendBtn.innerText;
+      sendBtn.innerText = "SENDING...";
+      sendBtn.disabled = true;
+
       appendMessage('user', message || "Analyzing image...");
       chatInput.value = '';
       
-      const res = await fetch('/api/ai-vision', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          imageBase64: currentBase64,
-          mimeType: currentMimeType,
-          userMessage: message
-        })
-      });
+      try {
+        const res = await fetch('/api/ai-vision', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            imageBase64: currentBase64,
+            mimeType: currentMimeType,
+            userMessage: message
+          })
+        });
 
-      const data = await res.json();
-      appendMessage('ai', data.analysis || data.error);
-      
-      // Clear current file after send
-      currentBase64 = null;
-      imagePreview.style.display = 'none';
-      uploadText.innerHTML = `Drag & drop or click to <strong>Import Picture</strong>`;
+        const data = await res.json();
+        appendMessage('ai', data.analysis || data.error || "I've processed your request!");
+      } catch (err) {
+        appendMessage('ai', "Error connecting to AI. Please try again.");
+      } finally {
+        sendBtn.innerText = previousBtnText;
+        sendBtn.disabled = false;
+        // Clear current file after send to prevent hallucination on next text msg
+        currentBase64 = null;
+        currentMimeType = null;
+        imagePreview.style.display = 'none';
+        imagePreview.src = '';
+        uploadText.innerHTML = `Drag & drop or click to <strong>Import Picture</strong>`;
+      }
     };
 
     function appendMessage(role, text) {
