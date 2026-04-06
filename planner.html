@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Study Planner | Vision Education</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="dashboard.css">
+    <link rel="stylesheet" href="theme.css">
+</head>
+<body class="dashboard-page">
+
+<aside class="side-nav">
+  <a class="side-nav-logo" href="dashboard.html">
+    <img src="assets/logo.png" alt="Logo" style="height: 48px; width: 48px; object-fit: contain;">
+    <span>Vision Edu</span>
+  </a>
+  <nav class="side-nav-menu">
+    <a href="dashboard.html" class="nav-item"><span>Dashboard</span></a>
+    <a href="mocks.html" class="nav-item"><span>Mock Exams</span></a>
+    <a href="ai-learning.html" class="nav-item"><span>AI Learning Hub</span></a>
+    <a href="planner.html" class="nav-item active"><span>Study Planner</span></a>
+  </nav>
+</aside>
+
+<main class="main-wrapper">
+    <section class="dash-hero" style="padding: 3rem 2rem 2.5rem; background: radial-gradient(circle at top right, rgba(99, 102, 241, 0.08), transparent 40%);">
+        <div class="dash-hero-content" style="max-width: 900px;">
+            <div class="welcome-badge">WASSCE 2026 · ADAPTIVE AUTO-PILOT</div>
+            <h1 class="welcome-heading">Your Personal <br><span class="brand-accent">2026 Roadmap</span></h1>
+            <p class="welcome-sub">The Auto-Pilot analyzes your mock results to ensure you bridge every syllabus gap before exam day.</p>
+            
+            <!-- Countdown Row -->
+            <div style="display: flex; gap: 1rem; margin-top: 2rem;">
+                <div style="background:var(--bg-card); border:1px solid var(--border-accent); border-radius:var(--radius-md); padding:1rem 1.5rem; text-align:center; min-width:80px; box-shadow:var(--shadow-glow);">
+                    <div id="cdDays" style="font-size:2rem; font-weight:800; color:var(--primary);">--</div>
+                    <div style="font-size:0.65rem; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.1em; font-weight:700;">Days Left</div>
+                </div>
+                <div style="background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius-md); padding:1rem 1.5rem; text-align:center; min-width:80px;">
+                    <div id="cdHours" style="font-size:2rem; font-weight:800; color:var(--text-secondary);">--</div>
+                    <div style="font-size:0.65rem; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.1em;">Hours</div>
+                </div>
+                <div style="background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius-md); padding:1rem 1.5rem; text-align:center; min-width:80px;">
+                    <div id="cdMins" style="font-size:2rem; font-weight:800; color:var(--text-secondary);">--</div>
+                    <div style="font-size:0.65rem; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.1em;">Minutes</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div style="display: grid; grid-template-columns: 1fr 340px; gap: 1.5rem; padding: 2rem; max-width: 1200px; margin: 0 auto; width:100%;">
+        
+        <!-- Left: Daily Mission -->
+        <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+            <div id="missionCard" style="background:var(--bg-card); border:1px solid var(--border-accent); border-radius:var(--radius-lg); padding:2rem; position:relative; overflow:hidden; box-shadow:var(--shadow-premium);">
+                <div style="position:absolute; top:0; left:0; width:100%; height:4px; background:linear-gradient(90deg, var(--primary), #8b5cf6);"></div>
+                
+                <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:1.5rem;">
+                    <div>
+                        <div style="font-size:0.75rem; font-weight:800; color:var(--primary); text-transform:uppercase; letter-spacing:0.12em; margin-bottom:8px;">Today's Strategic Mission</div>
+                        <h2 id="planTopic" style="font-size:1.6rem; font-weight:800;">Loading your mission...</h2>
+                    </div>
+                    <span id="planDifficulty" class="meta-chip">--</span>
+                </div>
+
+                <div id="missionContainer" style="opacity:0.3; transition:opacity 0.4s;">
+                    <div id="planTasks" style="margin-bottom:2rem;">
+                        <!-- Tasks go here -->
+                    </div>
+
+                    <div style="border-top:1px solid var(--border); padding-top:1.5rem;">
+                        <div style="font-size:0.72rem; color:var(--text-muted); text-transform:uppercase; font-weight:700; margin-bottom:8px;">Strategist's Tip</div>
+                        <div id="planMotivation" style="font-size:1rem; font-style:italic; color:var(--brand-accent); line-height:1.6;">"Keep grinding. Every session counts toward your A1."</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right: Mastery Gaps -->
+        <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+            <div style="background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius-lg); padding:1.75rem;">
+                <h3 style="font-size:1.1rem; font-weight:800; margin-bottom:1.5rem; letter-spacing:-0.02em;">Syllabus Gaps</h3>
+                <div id="gapsContainer">
+                    <!-- Gaps go here -->
+                </div>
+                <div style="margin-top:1rem; font-size:0.75rem; color:var(--text-muted); line-height:1.5; background:var(--bg-input); padding:10px; border-radius:8px;">
+                    📈 These scores are based on your most recent Mock Exam accuracy.
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<nav class="bottom-nav">
+    <a href="dashboard.html" class="bottom-nav-item">
+        <span class="bottom-icon">🏠</span>
+        <span>Home</span>
+    </a>
+    <a href="mocks.html" class="bottom-nav-item">
+        <span class="bottom-icon">📝</span>
+        <span>Mocks</span>
+    </a>
+    <a href="planner.html" class="bottom-nav-item active">
+        <span class="bottom-icon">📅</span>
+        <span>Plan</span>
+    </a>
+    <a href="ai-learning.html" class="bottom-nav-item">
+        <span class="bottom-icon">✨</span>
+        <span>AI Hub</span>
+    </a>
+</nav>
+
+<script src="auth.js"></script>
+<script src="materials.js"></script>
+<script src="planner-core.js"></script>
+</body>
+</html>
