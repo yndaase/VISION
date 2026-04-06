@@ -59,4 +59,19 @@ html, body {
   color: var(--text-primary) !important;
 }
 
+/* YouTube Brand Utility */
+.social-youtube {
+  color: var(--text-secondary);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.social-youtube:hover {
+  color: #ff0000 !important; /* Official YouTube Red */
+  transform: translateY(-1px);
+  filter: drop-shadow(0 0 8px rgba(255, 0, 0, 0.3));
+}
+
 /* Light Mode Purged - No Overrides Allowed */
