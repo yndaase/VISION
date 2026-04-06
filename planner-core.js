@@ -63,14 +63,31 @@ async function initializeMission(session) {
 
 async function generateNewMission(session, PLAN_KEY) {
     const missionContainer = document.getElementById("missionContainer");
-    if (missionContainer) missionContainer.innerHTML = "<p style='color:var(--text-muted);'>AI is crafting your 2026 Strategy...</p>";
+    if (missionContainer) missionContainer.innerHTML = "<p style='color:var(--text-muted);'>AI is auditing your mastery gaps...</p>";
 
-    // Get weakest subject
-    const stats = typeof getStats === 'function' ? getStats() : { answered: 0, correct: 0 };
-    const accuracy = stats.answered > 0 ? Math.round((stats.correct / stats.answered) * 100) : 50;
+    // 1. Identify Weakest Subject dynamically from real stats
+    let prioritySubject = "Core Mathematics"; // Global Fallback
+    let worstAccuracy = 100;
 
-    // Pick top priority subject (placeholder for demo, usually first in sorted list)
-    const prioritySubject = "Core Mathematics"; 
+    try {
+        // Fetch real stats stored by the Mock engine
+        const userStatsKey = `waec_stats_${session.email}`;
+        const allStats = JSON.parse(localStorage.getItem(userStatsKey) || '{}');
+        
+        // Find subject with lowest accuracy (min 1 answer)
+        let foundSubject = false;
+        for (const [subjId, stat] of Object.entries(allStats)) {
+            if (stat.answered > 0) {
+                const acc = Math.round((stat.correct / stat.answered) * 100);
+                if (acc <= worstAccuracy) {
+                    worstAccuracy = acc;
+                    // Map ID to Name (should ideally come from SUBJECTS_META)
+                    prioritySubject = subjId.charAt(0).toUpperCase() + subjId.slice(1).replace('-', ' ');
+                    foundSubject = true;
+                }
+            }
+        }
+    } catch (e) { console.warn("Stat audit failed, using default roadmap."); }
 
     try {
         const res = await fetch('/api/ai-planner', {
@@ -78,7 +95,7 @@ async function generateNewMission(session, PLAN_KEY) {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ 
                 subject: prioritySubject, 
-                accuracy: accuracy,
+                accuracy: worstAccuracy,
                 name: session.name 
             })
         });
