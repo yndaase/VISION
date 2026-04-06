@@ -31,19 +31,44 @@ async function getBlacklist() {
     const listJson = await get(BLACKLIST_PATH);
     return JSON.parse(listJson);
   } catch (e) {
-    return { revokedSubs: [], revokedEmails: [] };
+    return { revokedSubs: [], revokedEmails: [], processedJtis: [] };
   }
 }
 
-async function updateBlacklist(newEntry) {
+async function modifyBlacklist(action, entry) {
   const current = await getBlacklist();
-  if (newEntry.sub && !current.revokedSubs.includes(newEntry.sub)) {
-    current.revokedSubs.push(newEntry.sub);
+  let changed = false;
+
+  if (action === 'add') {
+    if (entry.sub && !current.revokedSubs.includes(entry.sub)) {
+      current.revokedSubs.push(entry.sub);
+      changed = true;
+    }
+    if (entry.email && !current.revokedEmails.includes(entry.email)) {
+      current.revokedEmails.push(entry.email);
+      changed = true;
+    }
+  } else if (action === 'remove') {
+    if (entry.sub) {
+      current.revokedSubs = current.revokedSubs.filter(s => s !== entry.sub);
+      changed = true;
+    }
+    if (entry.email) {
+      current.revokedEmails = current.revokedEmails.filter(e => e !== entry.email);
+      changed = true;
+    }
   }
-  if (newEntry.email && !current.revokedEmails.includes(newEntry.email)) {
-    current.revokedEmails.push(newEntry.email);
+
+  if (entry.jti && !current.processedJtis.includes(entry.jti)) {
+    current.processedJtis.push(entry.jti);
+    // Keep list manageable
+    if (current.processedJtis.length > 500) current.processedJtis.shift();
+    changed = true;
   }
-  await put(BLACKLIST_PATH, JSON.stringify(current), { access: 'public', addRandomSuffix: false });
+
+  if (changed) {
+    await put(BLACKLIST_PATH, JSON.stringify(current), { access: 'public', addRandomSuffix: false });
+  }
 }
 
 export default async function handler(req, res) {
@@ -80,36 +105,51 @@ export default async function handler(req, res) {
 
     console.log('[RISC] Received Valid Security Event:', decoded.jti);
 
-    // 2. Handle Events
-    const events = decoded.events || {};
-    
-    // Check for Verification Event
-    if (events['https://schemas.openid.net/secevent/risc/event-type/verification']) {
-      console.log('[RISC] Verification Event Received. State:', events['https://schemas.openid.net/secevent/risc/event-type/verification'].state);
+    // 2. Event De-duplication Check
+    const blacklist = await getBlacklist();
+    if (blacklist.processedJtis.includes(decoded.jti)) {
+      console.log('[RISC] Duplicate Event Ignored:', decoded.jti);
       return res.status(202).json({ status: 'Accepted' });
     }
 
-    // Check for Critical Security Events
-    const criticalEvents = [
+    // 3. Handle Events
+    const events = decoded.events || {};
+    
+    // Verification Event
+    if (events['https://schemas.openid.net/secevent/risc/event-type/verification']) {
+      return res.status(202).json({ status: 'Accepted' });
+    }
+
+    // Account Enabled (Recovery)
+    if (events['https://schemas.openid.net/secevent/risc/event-type/account-enabled']) {
+      const subject = events['https://schemas.openid.net/secevent/risc/event-type/account-enabled'].subject || {};
+      console.log('[RISC] Account Enabled. Restoring Access for:', subject.email || subject.sub);
+      await modifyBlacklist('remove', { sub: subject.sub, email: subject.email, jti: decoded.jti });
+      return res.status(202).json({ status: 'Accepted' });
+    }
+
+    // Account Disabled / Session Revoked
+    const disableEvents = [
       'https://schemas.openid.net/secevent/risc/event-type/account-disabled',
       'https://schemas.openid.net/secevent/risc/event-type/sessions-revoked',
       'https://schemas.openid.net/secevent/oauth/event-type/tokens-revoked'
     ];
 
-    for (const type of criticalEvents) {
+    for (const type of disableEvents) {
       if (events[type]) {
         const subject = events[type].subject || {};
-        const sub = subject.sub; // Google Account ID
+        const sub = subject.sub;
         const email = subject.email;
         
         console.warn(`[RISC] Security Action Required for ${email || sub}: ${type}`);
-        
-        // Add to persistent blacklist
-        await updateBlacklist({ sub, email });
-        
-        // Note: Real-time session revocation would happen here if we used a backend session store.
-        // For local sessions, the Dashboard/Login guards must check this blacklist.
+        await modifyBlacklist('add', { sub, email, jti: decoded.jti });
       }
+    }
+
+    // Credential Change Required (Security Audit)
+    if (events['https://schemas.openid.net/secevent/risc/event-type/account-credential-change-required']) {
+      // Just log de-duplication for now as it doesn't require immediate lockout
+      await modifyBlacklist('none', { jti: decoded.jti });
     }
 
     return res.status(202).json({ status: 'Accepted' });
