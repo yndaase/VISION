@@ -47,6 +47,10 @@ async function modifyBlacklist(action, entry) {
       current.revokedEmails = (current.revokedEmails || []).filter(e => e !== entry.email);
       changed = true;
     }
+  } else if (action === 'verify') {
+    current.lastVerified = Date.now();
+    current.lastVerifiedState = entry.state;
+    changed = true;
   }
 
   if (entry.jti && !current.processedJtis.includes(entry.jti)) {
@@ -61,32 +65,55 @@ async function modifyBlacklist(action, entry) {
 }
 
 export default async function handler(req, res) {
-  // 1. Better Browser Feedback (GET)
-  if (req.method === 'GET') {
-    res.setHeader('Content-Type', 'text/html');
-    return res.status(200).send(`
-      <!DOCTYPE html>
-      <html>
-        <head>
-          <title>Vision RISC Signal Hub</title>
-          <style>
-            body { font-family: system-ui; background: #0f172a; color: #f8fafc; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; text-align: center; }
-            .card { background: #1e293b; padding: 2rem; border-radius: 1rem; border: 1px solid #334155; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); border-top: 4px solid #38bdf8; }
-            .status { color: #38bdf8; font-weight: bold; font-size: 1.2rem; }
-            h1 { margin-top: 0; }
-          </style>
-        </head>
-        <body>
-          <div class="card">
-            <h1>Vision RISC Shield</h1>
-            <p class="status">● Active & Secure</p>
-            <p>Waiting for Google Security Event Tokens (POST).</p>
-            <p style="color: #94a3b8; font-size: 0.8rem">v1.2.0 - Gemini ESM Protocol</p>
-          </div>
-        </body>
-      </html>
-    `);
-  }
+    // 1. Better Browser Feedback (GET)
+    if (req.method === 'GET') {
+      const blacklist = await getBlacklist();
+      const lastV = blacklist.lastVerified ? new Date(blacklist.lastVerified).toLocaleString() : 'Never';
+      const lastSValue = blacklist.lastVerifiedState || 'N/A';
+      
+      res.setHeader('Content-Type', 'text/html');
+      return res.status(200).send(`
+        <!DOCTYPE html>
+        <html>
+          <head>
+            <title>Vision RISC Signal Hub</title>
+            <style>
+              body { font-family: system-ui; background: #0f172a; color: #f8fafc; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; text-align: center; }
+              .card { background: #1e293b; padding: 2.5rem; border-radius: 1.5rem; border: 1px solid #334155; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); border-top: 5px solid #38bdf8; min-width: 400px; }
+              .status { color: #38bdf8; font-weight: bold; font-size: 1.4rem; margin-bottom: 1.5rem; }
+              .audit-item { background: rgba(255,255,255,0.03); padding: 1rem; border-radius: 0.8rem; text-align: left; margin-bottom: 1rem; border: 1px solid rgba(255,255,255,0.05); }
+              .audit-label { color: #94a3b8; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; font-weight: bold; }
+              .audit-val { color: #f1f5f9; font-size: 0.95rem; margin-top: 0.2rem; }
+              .badge { background: #075985; color: #bae6fd; font-weight: bold; font-size: 0.7rem; padding: 4px 10px; border-radius: 20px; vertical-align: middle; margin-left: 8px; }
+              h1 { margin-top: 0; margin-bottom: 0.5rem; font-size: 1.8rem; }
+            </style>
+          </head>
+          <body>
+            <div class="card">
+              <h1>Vision Shield</h1>
+              <p class="status">● Signal Active <span class="badge">SECURED</span></p>
+              
+              <div class="audit-item">
+                <div class="audit-label">Cloud Synchronization</div>
+                <div class="audit-val">Google RISC Stream: v1beta push</div>
+              </div>
+
+              <div class="audit-item">
+                <div class="audit-label">Last Identity Verification</div>
+                <div class="audit-val">${lastV}</div>
+              </div>
+
+              <div class="audit-item">
+                <div class="audit-label">Last Verification State</div>
+                <div class="audit-val">${lastSValue}</div>
+              </div>
+
+              <p style="color: #94a3b8; font-size: 0.8rem; margin-top: 2rem">Monitoring security events for 2026 WASSCE Candidates.</p>
+            </div>
+          </body>
+        </html>
+      `);
+    }
 
   if (req.method !== 'POST') {
     res.setHeader('Allow', 'POST');
@@ -125,6 +152,9 @@ export default async function handler(req, res) {
     
     // Verification Event
     if (events['https://schemas.openid.net/secevent/risc/event-type/verification']) {
+      const state = events['https://schemas.openid.net/secevent/risc/event-type/verification'].state;
+      console.log('[RISC] Verification Event Handshake Successful. State:', state);
+      await modifyBlacklist('verify', { state, jti: decoded.jti });
       return res.status(202).json({ status: 'Accepted' });
     }
 
