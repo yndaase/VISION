@@ -61,10 +61,36 @@ async function modifyBlacklist(action, entry) {
 }
 
 export default async function handler(req, res) {
-  // 1. Method Check
+  // 1. Better Browser Feedback (GET)
+  if (req.method === 'GET') {
+    res.setHeader('Content-Type', 'text/html');
+    return res.status(200).send(`
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <title>Vision RISC Signal Hub</title>
+          <style>
+            body { font-family: system-ui; background: #0f172a; color: #f8fafc; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; text-align: center; }
+            .card { background: #1e293b; padding: 2rem; border-radius: 1rem; border: 1px solid #334155; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); border-top: 4px solid #38bdf8; }
+            .status { color: #38bdf8; font-weight: bold; font-size: 1.2rem; }
+            h1 { margin-top: 0; }
+          </style>
+        </head>
+        <body>
+          <div class="card">
+            <h1>Vision RISC Shield</h1>
+            <p class="status">● Active & Secure</p>
+            <p>Waiting for Google Security Event Tokens (POST).</p>
+            <p style="color: #94a3b8; font-size: 0.8rem">v1.2.0 - Gemini ESM Protocol</p>
+          </div>
+        </body>
+      </html>
+    `);
+  }
+
   if (req.method !== 'POST') {
     res.setHeader('Allow', 'POST');
-    return res.status(405).json({ error: 'Method Not Allowed', message: 'The RISC endpoint only accepts POST requests from Google.' });
+    return res.status(405).json({ error: 'Method Not Allowed' });
   }
 
   // 2. Critical Env Check
