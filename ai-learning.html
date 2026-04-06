@@ -260,7 +260,15 @@
     </section>
   </div>
 
+  <script src="auth.js"></script>
   <script>
+    //  Auth guard - Strict Lockdown
+    const session = checkAuth();
+    if (!session) {
+      // checkAuth handles the redirect, but we stop execution here
+      throw new Error("Authentication required"); 
+    }
+
     const fileInput = document.getElementById('fileInput');
     const imagePreview = document.getElementById('imagePreview');
     const chatMessages = document.getElementById('chatMessages');
@@ -284,16 +292,17 @@
     });
 
     function updateSubjectUI() {
+      const firstName = session.name ? session.name.split(" ")[0] : "Student";
       const texts = {
-        maths: "Import pictures of math problems for instant visual guidance.",
-        english: "Get help with grammar, essays, and literature comprehension.",
-        physics: "Master derivations, SI units, and complex physics problems.",
-        chemistry: "Understand reactions, organic chemistry, and periodic trends.",
-        biology: "Identify diagrams and master biological terminology."
+        maths: `Welcome ${firstName}, import pictures of math problems for instant visual guidance.`,
+        english: `Hi ${firstName}, get help with grammar, essays, and literature comprehension.`,
+        physics: `Master derivations and SI units specifically for your Physics cycle, ${firstName}.`,
+        chemistry: `Understand reactions and periodic trends with expert guidance, ${firstName}.`,
+        biology: `Identify diagrams and master biological terminology, ${firstName}.`
       };
       welcomeText.innerText = texts[currentSubject];
       chatInput.placeholder = `Type your ${currentSubject} question here...`;
-      appendMessage('ai', `Switched to ${currentSubject.toUpperCase()} mode. How can I help you excel in this subject?`);
+      appendMessage('ai', `Switched to ${currentSubject.toUpperCase()} mode. I am ready to help you excel, ${firstName}!`);
     }
 
     fileInput.onchange = e => {
