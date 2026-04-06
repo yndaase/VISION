@@ -22,9 +22,9 @@ export default async function handler(req, res) {
       // Vision Mode
       prompt = `
         Instructions:
-        You are the Vision Education AI Learning Specialist. You have been given an image of a math problem or diagram. 
-        Identify the mathematical concepts shown (e.g., Geometry, Trigonometry, Graphs) and provide guidance.
-        Student Message: "${userMessage || 'Help me solve this problem.'}"
+        You are the Vision Education AI Learning Specialist. You have been given an image of an academic problem, diagram, or text. 
+        Identify the subject (e.g., Biology, English, Physics, Maths, Social Studies) and provide clear guidance.
+        Student Message: "${userMessage || 'Help me understand this academic material.'}"
         Expert Visual Analysis:
       `;
       parts.push({ text: prompt });
