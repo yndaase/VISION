@@ -1,5 +1,4 @@
-import jwt from 'jsonwebtoken';
-import jwksClient from 'jwks-rsa';
+import * as jose from 'jose';
 import { put, list } from '@vercel/blob';
 
 // Google RISC Configuration
@@ -8,31 +7,16 @@ const RISC_CONFIG = {
   jwksUri: 'https://www.googleapis.com/oauth2/v3/certs',
 };
 
-// Initialize JWKS client for Google
-const client = jwksClient({
-  jwksUri: RISC_CONFIG.jwksUri,
-  cache: true,
-  rateLimit: true,
-});
-
-function getKey(header, callback) {
-  client.getSigningKey(header.kid, (err, key) => {
-    if (err) return callback(err);
-    const signingKey = key.getPublicKey();
-    callback(null, signingKey);
-  });
-}
+// Initialize Remote JWK Set for Google
+const JWKS = jose.createRemoteJWKSet(new URL(RISC_CONFIG.jwksUri));
 
 // Helper to manage Revocation List in Vercel Blob
 const BLACKLIST_PATH = 'security/risc_blacklist.json';
 
 async function getBlacklist() {
   try {
-    // Vercel Blob - Find the blob by its pathname prefix
     const { blobs } = await list({ prefix: BLACKLIST_PATH });
     if (blobs.length === 0) return { revokedSubs: [], revokedEmails: [], processedJtis: [] };
-    
-    // Fetch the actual content from the blob URL
     const response = await fetch(blobs[0].url);
     return await response.json();
   } catch (e) {
@@ -56,18 +40,17 @@ async function modifyBlacklist(action, entry) {
     }
   } else if (action === 'remove') {
     if (entry.sub) {
-      current.revokedSubs = current.revokedSubs.filter(s => s !== entry.sub);
+      current.revokedSubs = (current.revokedSubs || []).filter(s => s !== entry.sub);
       changed = true;
     }
     if (entry.email) {
-      current.revokedEmails = current.revokedEmails.filter(e => e !== entry.email);
+      current.revokedEmails = (current.revokedEmails || []).filter(e => e !== entry.email);
       changed = true;
     }
   }
 
   if (entry.jti && !current.processedJtis.includes(entry.jti)) {
     current.processedJtis.push(entry.jti);
-    // Keep list manageable
     if (current.processedJtis.length > 500) current.processedJtis.shift();
     changed = true;
   }
@@ -78,7 +61,7 @@ async function modifyBlacklist(action, entry) {
 }
 
 export default async function handler(req, res) {
-  // 1. Method Check First
+  // 1. Method Check
   if (req.method !== 'POST') {
     res.setHeader('Allow', 'POST');
     return res.status(405).json({ error: 'Method Not Allowed', message: 'The RISC endpoint only accepts POST requests from Google.' });
@@ -97,28 +80,21 @@ export default async function handler(req, res) {
   }
 
   try {
-    // 3. Validate and Decode the SET
-    const decoded = await new Promise((resolve, reject) => {
-      jwt.verify(token, getKey, {
-        issuer: RISC_CONFIG.issuer,
-        audience: googleClientId, 
-        ignoreExpiration: true,
-      }, (err, decoded) => {
-        if (err) reject(err);
-        else resolve(decoded);
-      });
+    // 3. Validate and Decode the SET using jose
+    const { payload: decoded } = await jose.jwtVerify(token, JWKS, {
+      issuer: RISC_CONFIG.issuer,
+      audience: googleClientId,
     });
 
     console.log('[RISC] Received Valid Security Event:', decoded.jti);
 
-    // 2. Event De-duplication Check
+    // 4. Event De-duplication Check
     const blacklist = await getBlacklist();
     if (blacklist.processedJtis.includes(decoded.jti)) {
-      console.log('[RISC] Duplicate Event Ignored:', decoded.jti);
-      return res.status(202).json({ status: 'Accepted' });
+      return res.status(202).json({ status: 'Accepted (Duplicate)' });
     }
 
-    // 3. Handle Events
+    // 5. Handle Events
     const events = decoded.events || {};
     
     // Verification Event
@@ -144,17 +120,13 @@ export default async function handler(req, res) {
     for (const type of disableEvents) {
       if (events[type]) {
         const subject = events[type].subject || {};
-        const sub = subject.sub;
-        const email = subject.email;
-        
-        console.warn(`[RISC] Security Action Required for ${email || sub}: ${type}`);
-        await modifyBlacklist('add', { sub, email, jti: decoded.jti });
+        console.warn(`[RISC] Security Action Required for ${subject.email || subject.sub}: ${type}`);
+        await modifyBlacklist('add', { sub: subject.sub, email: subject.email, jti: decoded.jti });
       }
     }
 
     // Credential Change Required (Security Audit)
     if (events['https://schemas.openid.net/secevent/risc/event-type/account-credential-change-required']) {
-      // Just log de-duplication for now as it doesn't require immediate lockout
       await modifyBlacklist('none', { jti: decoded.jti });
     }
 
@@ -162,6 +134,6 @@ export default async function handler(req, res) {
 
   } catch (error) {
     console.error('[RISC] Validation Failed:', error.message);
-    return res.status(400).json({ error: 'Invalid Security Event Token' });
+    return res.status(400).json({ error: 'Invalid Security Token', detail: error.message });
   }
 }

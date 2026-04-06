@@ -1,5 +1,5 @@
 /**
- * Vision Education - RISC Registration Utility
+ * Vision Education - RISC Registration Utility (ESM/jose version)
  * 
  * Instructions:
  * 1. Place your Google Service Account JSON in the root as 'service-account.json'
@@ -7,13 +7,13 @@
  */
 
 import fs from 'fs';
-import jwt from 'jsonwebtoken';
+import * as jose from 'jose';
 
 const SERVICE_ACCOUNT_FILE = './service-account.json';
 const RECEIVER_URL = 'https://www.visionedu.online/api/risc-receiver';
 
 async function register() {
-  console.log('--- Vision Education: RISC Stream Registration ---');
+  console.log('--- Vision Education: RISC Stream Registration (ESM) ---');
 
   if (!fs.existsSync(SERVICE_ACCOUNT_FILE)) {
     console.error('Error: service-account.json not found in root directory.');
@@ -22,20 +22,23 @@ async function register() {
 
   const credentials = JSON.parse(fs.readFileSync(SERVICE_ACCOUNT_FILE, 'utf8'));
   const clientEmail = credentials.client_email;
-  const privateKey = credentials.private_key;
 
-  // 1. Generate Auth Token
+  // 1. Import Private Key
+  console.log('Importing Service Account Private Key...');
+  const privateKey = await jose.importPKCS8(credentials.private_key, 'RS256');
+
+  // 2. Generate Auth Token
   console.log('Generating Authorization Token...');
-  const now = Math.floor(Date.now() / 1000);
-  const token = jwt.sign({
-    iss: clientEmail,
-    sub: clientEmail,
-    aud: 'https://risc.googleapis.com/google.identity.risc.v1beta.RiscManagementService',
-    iat: now,
-    exp: now + 3600
-  }, privateKey, { algorithm: 'RS256', keyid: credentials.private_key_id });
+  const token = await new jose.SignJWT({})
+    .setProtectedHeader({ alg: 'RS256', kid: credentials.private_key_id })
+    .setIssuer(clientEmail)
+    .setSubject(clientEmail)
+    .setAudience('https://risc.googleapis.com/google.identity.risc.v1beta.RiscManagementService')
+    .setIssuedAt()
+    .setExpirationTime('1h')
+    .sign(privateKey);
 
-  // 2. Call Google RISC API
+  // 3. Call Google RISC API
   console.log('Registering Receiver URL:', RECEIVER_URL);
   try {
     const response = await fetch('https://risc.googleapis.com/v1beta/stream:update', {
