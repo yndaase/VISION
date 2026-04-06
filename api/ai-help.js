@@ -1,4 +1,4 @@
-import { GoogleGenerativeAI } from "@google/generative-ai";
+import { GoogleGenAI } from "@google/genai";
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
@@ -13,8 +13,8 @@ export default async function handler(req, res) {
   }
 
   try {
-    const genAI = new GoogleGenerativeAI(apiKey);
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" }, { apiVersion: "v1" });
+    // Initialize the new GoogleGenAI client (automatically picks up GEMINI_API_KEY from env if needed)
+    const ai = new GoogleGenAI({ apiKey });
 
     const prompt = `
       Instructions:
@@ -33,13 +33,17 @@ export default async function handler(req, res) {
       Expert Guidance:
     `;
 
-    const result = await model.generateContent(prompt);
-    const response = await result.response;
-    const text = response.text();
+    const response = await ai.models.generateContent({
+      model: "gemini-2.0-flash",
+      contents: [{ role: "user", parts: [{ text: prompt }] }]
+    });
+
+    // The new SDK returns a simplified response object
+    const text = response.text;
 
     if (!text) {
       return res.status(200).json({
-        helpText: "I'm sorry, I couldn't generate a specific hint for this question. Try rephrasing your request!"
+        helpText: "I'm processing the data. Please try re-phrasing your question!"
       });
     }
     
@@ -48,20 +52,13 @@ export default async function handler(req, res) {
     });
 
   } catch (error) {
-    console.error('AI Help Error:', error);
-    
-    // Check for specific safety or quota errors
-    const errorMessage = error.message || 'AI help service failed.';
+    console.error('Gemini GenAI Migration Error:', error);
+    const errorMessage = error.message || 'AI tutor failed.';
     if (errorMessage.includes('safety')) {
       return res.status(200).json({ 
-        helpText: "I'm sorry, but I can't provide help for this specific request due to safety guidelines. Let's try another topic!" 
+        helpText: "I'm sorry, I can't provide help for this specific request due to safety guidelines. Let's try another topic!" 
       });
     }
-    
-    if (errorMessage.includes('quota')) {
-      return res.status(500).json({ error: 'AI quota exceeded. Please try again later.' });
-    }
-
-    return res.status(500).json({ error: `AI System Error: ${errorMessage}` });
+    return res.status(500).json({ error: `AI System Error (Migration): ${errorMessage}` });
   }
 }

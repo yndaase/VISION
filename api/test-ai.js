@@ -1,42 +1,43 @@
-import { GoogleGenerativeAI } from "@google/generative-ai";
+import { GoogleGenAI } from "@google/genai";
 
 export default async function handler(req, res) {
   const apiKey = process.env.GEMINI_API_KEY;
   if (!apiKey) {
-    return res.status(500).json({ error: "GEMINI_API_KEY is missing from Vercel Environment Variables. Please add it to your project settings and redeploy." });
+    return res.status(500).json({ error: "GEMINI_API_KEY is missing from Vercel Environment Variables. Please add it to your project settings." });
   }
 
   try {
-    const genAI = new GoogleGenerativeAI(apiKey);
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" }, { apiVersion: "v1" });
+    const ai = new GoogleGenAI({ apiKey });
     
-    const result = await model.generateContent("Respond with only the word: SUCCESS");
-    const response = await result.response;
-    const text = response.text();
+    // Test a minimal 2.0 Flash call
+    const response = await ai.models.generateContent({
+        model: "gemini-2.0-flash",
+        contents: [{ role: "user", parts: [{ text: "Respond with only the word: SUCCESS" }] }]
+    });
+
+    const text = response.text;
 
     return res.status(200).json({ 
         status: "success", 
-        message: "AI Brain is Linked & Functional!",
+        message: "SDK Migration Successful - GenAI 2.0 Brain is Linked!",
         rawResponse: text,
         diagnosticInfo: {
             apiKeyPresent: true,
-            modelUsed: "gemini-1.5-flash",
-            apiVersion: "v1"
+            modelUsed: "gemini-2.0-flash",
+            sdk: "@google/genai"
         }
     });
   } catch (error) {
-    console.error("AI Diagnostic Error:", error);
+    console.error("AI GenAI Migration Diagnostic Error:", error);
     return res.status(500).json({ 
         status: "error", 
-        message: "AI Brain Linkage Failed.",
+        message: "AI SDK Connection Failed.",
         errorDetails: error.message,
-        errorStack: error.stack,
         diagnosticInfo: {
             apiKeyPresent: true,
-            modelUsed: "gemini-1.5-flash",
-            apiVersion: "v1"
-        },
-        troubleshootingStep: "Check your Google Cloud Console for the 'Generative Language API' and ensure it is 'Enabled' for this project."
+            modelUsed: "gemini-2.0-flash",
+            sdk: "@google/genai"
+        }
     });
   }
 }
