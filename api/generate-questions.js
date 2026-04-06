@@ -11,7 +11,12 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: 'Subject is required' });
   }
 
-  const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+  const apiKey = process.env.GEMINI_API_KEY;
+  if (!apiKey) {
+    return res.status(500).json({ error: 'AI key not configured in environment variables.' });
+  }
+
+  const genAI = new GoogleGenerativeAI(apiKey);
   const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
   const prompt = `
@@ -55,13 +60,21 @@ export default async function handler(req, res) {
     const response = await result.response;
     const text = response.text();
     
-    // Clean potential markdown wrap
-    const jsonString = text.replace(/```json/g, '').replace(/```/g, '').trim();
+    // Robust JSON cleaning logic
+    let jsonString = text.trim();
+    if (jsonString.startsWith("```")) {
+        // Remove markdown wrappers if present
+        jsonString = jsonString.replace(/^```(json)?/, "").replace(/```$/, "").trim();
+    }
+    
     const questions = JSON.parse(jsonString);
-
     return res.status(200).json({ questions });
   } catch (error) {
     console.error("Gemini Generation Error:", error);
-    return res.status(500).json({ error: 'Failed to generate questions. AI brain timed out.' });
+    const errorMessage = error.message || 'AI brain timed out.';
+    if (errorMessage.includes('safety')) {
+        return res.status(500).json({ error: 'AI safety filter blocked question generation. Try another subject.' });
+    }
+    return res.status(500).json({ error: `AI System Error: ${errorMessage}` });
   }
 }

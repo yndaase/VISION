@@ -534,9 +534,16 @@ async function handleAISearch(manualPrompt) {
     });
 
     const data = await res.json();
-    loader.textContent = data.helpText || data.error || "I couldn't generate a response right now.";
+    if (res.ok) {
+        loader.textContent = data.helpText || "I couldn't generate a response right now.";
+    } else {
+        // Display the specific backend error (e.g. AI key missing)
+        loader.style.color = "var(--error)";
+        loader.textContent = `⚠️ ${data.error || "AI brain offline."}`;
+    }
   } catch (err) {
-    loader.textContent = "Linking to AI brain failed. Check your connection.";
+    loader.style.color = "var(--error)";
+    loader.textContent = "Linking to AI brain failed. This usually indicates a network issue or missing API credentials.";
   }
 }
 

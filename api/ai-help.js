@@ -8,8 +8,10 @@ export default async function handler(req, res) {
   const { question, options, subject, topic, userMessage } = req.body;
 
   const apiKey = process.env.GEMINI_API_KEY;
-  if (!apiKey) {
-    return res.status(500).json({ error: 'AI key not configured.' });
+  if (!apiKey || apiKey.includes('AIzaSy')) { // Basic format check
+    if (!apiKey) return res.status(500).json({ error: 'AI key not configured in environment variables.' });
+  } else {
+    return res.status(500).json({ error: 'AI key format appears invalid.' });
   }
 
   try {
@@ -54,7 +56,11 @@ export default async function handler(req, res) {
         helpText: "I'm sorry, but I can't provide help for this specific request due to safety guidelines. Let's try another topic!" 
       });
     }
+    
+    if (errorMessage.includes('quota')) {
+      return res.status(500).json({ error: 'AI quota exceeded. Please try again later.' });
+    }
 
-    return res.status(500).json({ error: errorMessage });
+    return res.status(500).json({ error: `AI System Error: ${errorMessage}` });
   }
 }
