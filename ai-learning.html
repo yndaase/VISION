@@ -129,6 +129,39 @@
       display: none;
     }
 
+    .subject-selector {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 2rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .subject-pill {
+      padding: 8px 16px;
+      border-radius: 20px;
+      background: var(--bg-input);
+      border: 1px solid var(--border);
+      color: var(--text-secondary);
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .subject-pill.active {
+      background: var(--primary);
+      color: white;
+      border-color: var(--primary);
+      box-shadow: 0 0 15px var(--primary-dim);
+    }
+
+    .subject-pill[data-subject="physics"].active { --primary: #3b82f6; }
+    .subject-pill[data-subject="chemistry"].active { --primary: #10b981; }
+    .subject-pill[data-subject="biology"].active { --primary: #8b5cf6; }
+    .subject-pill[data-subject="maths"].active { --primary: #f59e0b; }
+    .subject-pill[data-subject="english"].active { --primary: #ef4444; }
+
     @media (max-width: 900px) {
       .learning-main { margin-left: 0; padding-bottom: 70px; }
     }
@@ -152,8 +185,16 @@
     <section class="learning-workspace">
       <div class="ai-vision-card">
         <h1 class="welcome-heading" style="font-size: 2.5rem;">AI <span class="brand-accent">Learning Hub</span></h1>
-        <p class="welcome-sub">Import pictures of math problems for instant visual guidance.</p>
+        <p class="welcome-sub" id="welcomeText">Select a subject to begin your specialized WASSCE tutoring session.</p>
         
+        <div class="subject-selector" id="subjectSelector">
+          <div class="subject-pill active" data-subject="maths">Core Maths</div>
+          <div class="subject-pill" data-subject="english">English</div>
+          <div class="subject-pill" data-subject="physics">Physics</div>
+          <div class="subject-pill" data-subject="chemistry">Chemistry</div>
+          <div class="subject-pill" data-subject="biology">Biology</div>
+        </div>
+
         <img id="imagePreview" class="preview-img" alt="Preview">
         
         <div class="upload-area" id="dropArea" onclick="document.getElementById('fileInput').click()">
@@ -183,9 +224,34 @@
     const sendBtn = document.getElementById('sendBtn');
     const chatInput = document.getElementById('chatInput');
     const uploadText = document.getElementById('uploadText');
+    const subjectPills = document.querySelectorAll('.subject-pill');
+    const welcomeText = document.getElementById('welcomeText');
 
+    let currentSubject = 'maths';
     let currentBase64 = null;
     let currentMimeType = null;
+
+    subjectPills.forEach(pill => {
+      pill.onclick = () => {
+        subjectPills.forEach(p => p.classList.remove('active'));
+        pill.classList.add('active');
+        currentSubject = pill.dataset.subject;
+        updateSubjectUI();
+      };
+    });
+
+    function updateSubjectUI() {
+      const texts = {
+        maths: "Import pictures of math problems for instant visual guidance.",
+        english: "Get help with grammar, essays, and literature comprehension.",
+        physics: "Master derivations, SI units, and complex physics problems.",
+        chemistry: "Understand reactions, organic chemistry, and periodic trends.",
+        biology: "Identify diagrams and master biological terminology."
+      };
+      welcomeText.innerText = texts[currentSubject];
+      chatInput.placeholder = `Type your ${currentSubject} question here...`;
+      appendMessage('ai', `Switched to ${currentSubject.toUpperCase()} mode. How can I help you excel in this subject?`);
+    }
 
     fileInput.onchange = e => {
       const file = e.target.files[0];
@@ -222,7 +288,8 @@
           body: JSON.stringify({
             imageBase64: currentBase64,
             mimeType: currentMimeType,
-            userMessage: message
+            userMessage: message,
+            subject: currentSubject
           })
         });
 

@@ -5,12 +5,23 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'Method Not Allowed' });
   }
 
-  const { imageBase64, mimeType, userMessage } = req.body;
+  const { imageBase64, mimeType, userMessage, subject } = req.body;
 
   const apiKey = process.env.GEMINI_API_KEY;
   if (!apiKey) {
     return res.status(500).json({ error: 'AI key not configured in environment variables.' });
   }
+
+  // Specialized Subject Personalities
+  const subjectContexts = {
+    physics: "Elite WASSCE Physics Tutor. Focus: SI unit correctness, formula precision (F=ma, v=u+at, etc.), and step-by-step derivations. WARNING: Proactively warn students about SI unit conversions and Vector vs Scalar traps.",
+    chemistry: "Elite WASSCE Chemistry Tutor. Focus: IUPAC naming, reaction mechanisms, and periodic trends. WARNING: Proactively warn students about valence balancing, oxidation states, and state symbols (s, l, g, aq).",
+    biology: "Elite WASSCE Biology Tutor. Focus: Detailed diagram labeling, physiological processes, and genetics. WARNING: Proactively warn students about precise terminology (e.g., 'osmosis' vs 'diffusion') and diagram proportions.",
+    maths: "Expert WASSCE Mathematics Tutor. Focus: Step-by-step logic, geometric proofs, and algebraic simplification. WARNING: Watch for sign errors and rounding precision.",
+    english: "Expert WASSCE English Tutor. Focus: Grammar, essay structure, literature, and reading comprehension. WARNING: Focus on Lexis & Structure pitfalls."
+  };
+
+  const currentContext = subjectContexts[subject] || "Expert WASSCE Academic Tutor across all subjects.";
 
   try {
     const ai = new GoogleGenAI({ apiKey });
@@ -22,9 +33,11 @@ export default async function handler(req, res) {
       // Vision Mode
       prompt = `
         Instructions:
-        You are the Vision Education AI Learning Specialist. You have been given an image of an academic problem, diagram, or text. 
-        Identify the subject (e.g., Biology, English, Physics, Maths, Social Studies) and provide clear guidance.
-        Student Message: "${userMessage || 'Help me understand this academic material.'}"
+        You are the Vision Education AI Learning Specialist. Persona: ${currentContext}
+        You have been given an image of an academic problem, diagram, or text regarding ${subject || 'a general subject'}.
+        Provide clear, step-by-step guidance. If it's a science subject, be very strict with units and terminology.
+        
+        Student Message: "${userMessage || 'Help me understand this material.'}"
         Expert Visual Analysis:
       `;
       parts.push({ text: prompt });
@@ -38,8 +51,10 @@ export default async function handler(req, res) {
       // Text-Only Mode
       prompt = `
         Instructions:
-        You are the Vision Education AI Tutor. A student is asking for general help or just saying hi.
-        Respond naturally and provide guidance only on what they ask. Do not assume there is an image.
+        You are the Vision Education AI Tutor. Persona: ${currentContext}
+        A student is asking for specialized help in ${subject || 'their studies'}.
+        Respond naturally and provide guidance based on the WASSCE syllabus.
+        
         Student Message: "${userMessage}"
         Expert Support:
       `;
