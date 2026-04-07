@@ -387,9 +387,12 @@
             <!-- STUDENTS -->
             <section id="sec-students" class="section">
                 <div class="card" style="padding: 0;">
-                    <div style="padding: 2rem; border-bottom: 1px solid var(--ent-border); display: flex; justify-content: space-between; align-items: center;">
-                        <h3 style="font-weight: 800;">Learner Oversight</h3>
-                        <input type="text" id="studentSearch" placeholder="Search learners..." class="ent-input" style="width: 250px;" oninput="renderStudents()">
+                    <div style="padding: 2rem; border-bottom: 1px solid var(--ent-border); display: flex; justify-content: space-between; align-items: center; background: rgba(99, 102, 241, 0.03);">
+                        <h3 style="font-weight: 800;">Academic Fleet Command</h3>
+                        <div style="display: flex; gap: 10px;">
+                            <input type="text" id="studentSearch" placeholder="Search learners..." class="ent-input" style="width: 250px;" oninput="renderStudents()">
+                            <button class="btn-ent btn-ent-primary" onclick="openAddUserModal()">+ Add New Personnel</button>
+                        </div>
                     </div>
                     <table class="table">
                         <thead>
@@ -424,6 +427,36 @@
                 </div>
             </section>
         </main>
+    </div>
+
+    <!-- ADD USER MODAL -->
+    <div id="userModal" style="display: none; position: fixed; inset: 0; background: rgba(5,8,16,0.9); backdrop-filter: blur(20px); z-index: 2000; align-items: center; justify-content: center;">
+        <div class="card" style="max-width: 500px; width: 100%; border: 1px solid var(--ent-primary); box-shadow: 0 0 50px var(--ent-primary-glow);">
+            <h2 style="margin-bottom: 2rem; font-weight: 800;">Register New Personnel</h2>
+            <div class="form-group">
+                <label class="form-label">Full Name</label>
+                <input class="ent-input" id="newUserName" placeholder="Full legal name">
+            </div>
+            <div class="form-group">
+                <label class="form-label">System Identity (Email)</label>
+                <input class="ent-input" id="newUserEmail" placeholder="email@visionedu.online">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Secure Access Key (Password)</label>
+                <input class="ent-input" type="password" id="newUserPass" placeholder="••••••••">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Fleet Role</label>
+                <select class="ent-input" id="newUserRole">
+                    <option value="pro">Institutional Student (Pro Access)</option>
+                    <option value="teacher">Institutional Faculty (Teacher)</option>
+                </select>
+            </div>
+            <div style="display: flex; gap: 1rem; margin-top: 2.5rem;">
+                <button class="btn-ent btn-ent-primary" style="flex: 1;" onclick="createInstitutionalUser()">Deploy Identity</button>
+                <button class="btn-ent" style="flex: 1; background: rgba(255,255,255,0.05);" onclick="closeUserModal()">Abort</button>
+            </div>
+        </div>
     </div>
 
     <div id="toast"></div>
@@ -554,6 +587,61 @@
             t.innerText = msg;
             t.classList.add("show");
             setTimeout(() => t.classList.remove("show"), 3000);
+        }
+
+        // MODAL MANAGEMENT
+        function openAddUserModal() {
+            document.getElementById("userModal").style.display = "flex";
+        }
+        function closeUserModal() {
+            document.getElementById("userModal").style.display = "none";
+        }
+
+        async function createInstitutionalUser() {
+            const name = document.getElementById("newUserName").value.trim();
+            const email = document.getElementById("newUserEmail").value.trim().toLowerCase();
+            const pass = document.getElementById("newUserPass").value;
+            const role = document.getElementById("newUserRole").value;
+
+            if(!name || !email || !pass) {
+                showToast("Identity parameters missing.");
+                return;
+            }
+
+            const users = getUsers();
+            if (users.find(u => u.email === email)) {
+                showToast("System Identity already exists.");
+                return;
+            }
+
+            const hash = await sha256(pass);
+            const newUser = {
+                name,
+                email,
+                hash,
+                role,
+                institutionId: session.email,
+                institutionName: enterpriseData.schoolName,
+                createdAt: Date.now(),
+                provider: "email"
+            };
+
+            // If Student, give long subscription
+            if(role === 'pro') {
+                newUser.subscriptionExpiry = Date.now() + (365 * 24 * 60 * 60 * 1000);
+            }
+
+            users.push(newUser);
+            saveUsers(users);
+            
+            renderStudents();
+            closeUserModal();
+            showToast(`Identity ${name} deployed to the fleet.`);
+            
+            // Clear inputs
+            document.getElementById("newUserName").value = "";
+            document.getElementById("newUserEmail").value = "";
+            document.getElementById("newUserPass").value = "";
         }
 
         initUI();
