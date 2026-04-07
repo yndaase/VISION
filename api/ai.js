@@ -233,19 +233,25 @@ async function handleHelp(data, role, res) {
 }
 
 async function handlePlanner(data, role, res) {
-  const { subject, accuracy, name } = data;
+  const { subject, accuracy, name, email = "" } = data;
+  
+  // ABSOLUTE ADMIN OVERRIDE (Hardcoded Pro)
+  const isHardcodedAdmin = email.toLowerCase() === 'gisgreat308@gmail.com';
+  const effectiveRole = isHardcodedAdmin ? 'pro' : role;
+
   const prompt = `Student: ${name}. Performance: ${accuracy}% in ${subject}.
-  Generate a Daily Study Mission in JSON:
+  Generate a Strategic 7-Day Study Timetable in JSON:
   {
-    "topic": "Specific Topic Name",
-    "tasks": ["Small Task 1", "Small Task 2"],
+    "topic": "Mastery Focus for the Week",
+    "timetable": "| Day | Session | Focus Topic | Goal |\n|---|---|---|---|\n| Monday | 4PM-6PM | Topic A | Goal A | ...",
+    "tasks": ["Critical Action 1", "Critical Action 2"],
     "motivation": "A punchy motivational quote",
     "difficulty": "Easy"|"Medium"|"Hard"
   }
-  JSON ONLY.`;
+  STRICT JSON ONLY. Markdown Table for the "timetable" field.`;
   
   const contents = [{ role: "user", parts: [{ text: prompt }] }];
-  const response = await safeGenerateContent(contents, role);
+  const response = await safeGenerateContent(contents, effectiveRole);
   return res.status(200).json(extractJSON(response));
 }
 

@@ -115,7 +115,8 @@ async function generateNewMission(session, PLAN_KEY) {
                 type: 'planner',
                 subject: prioritySubject, 
                 accuracy: worstAccuracy,
-                name: session.name 
+                name: session.name,
+                email: session.email // ABSOLUTE ADMIN OVERRIDE Handshake
             })
         });
         const plan = await res.json();
@@ -124,7 +125,6 @@ async function generateNewMission(session, PLAN_KEY) {
         renderMission(plan);
     } catch (err) {
         console.error("Planner generation failed:", err);
-        // Silently fallback if API fails
     }
 }
 
@@ -133,10 +133,15 @@ function renderMission(plan) {
     const tasksEl = document.getElementById("planTasks");
     const motivEl = document.getElementById("planMotivation");
     const diffEl = document.getElementById("planDifficulty");
+    const timetableEl = document.getElementById("planTimetable");
 
     if (topicEl) topicEl.innerHTML = typeof marked !== 'undefined' ? marked.parse(plan.topic) : plan.topic;
     if (motivEl) motivEl.innerHTML = typeof marked !== 'undefined' ? marked.parse(`"${plan.motivation}"`) : `"${plan.motivation}"`;
     
+    if (timetableEl && plan.timetable) {
+        timetableEl.innerHTML = typeof marked !== 'undefined' ? marked.parse(plan.timetable) : plan.timetable;
+    }
+
     if (diffEl) {
         diffEl.innerText = plan.difficulty || "Medium";
         diffEl.className = "meta-chip " + (plan.difficulty?.toLowerCase() === 'hard' ? 'difficulty-hard' : '');

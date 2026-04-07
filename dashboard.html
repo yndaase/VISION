@@ -190,6 +190,18 @@
       50% { transform: scale(1.02); box-shadow: 0 4px 25px rgba(0, 120, 212, 0.5); }
       100% { transform: scale(1); box-shadow: 0 4px 15px rgba(0, 120, 212, 0.3); }
     }
+    .hero-btn-pro {
+      background: linear-gradient(135deg, #0078d4, #288ad6);
+      border: none !important;
+      color: white !important;
+      animation: pulse-hero-pro 2s infinite;
+      box-shadow: 0 4px 15px rgba(0, 120, 212, 0.4);
+    }
+    @keyframes pulse-hero-pro {
+      0% { box-shadow: 0 4px 15px rgba(0, 120, 212, 0.4); }
+      50% { box-shadow: 0 4px 25px rgba(0, 120, 212, 0.7); }
+      100% { box-shadow: 0 4px 15px rgba(0, 120, 212, 0.4); }
+    }
   </style>
 </head>
 
@@ -399,6 +411,11 @@
             <span class="hero-btn-icon"></span>
             <span>Start Mock Exam</span>
             <span class="hero-btn-arrow">→</span>
+          </a>
+          <!-- Added Get Pro Button for Hero Visibility -->
+          <a href="pricing.html" class="hero-btn hero-btn-pro" id="heroGetProBtn" style="display:none;">
+            <span class="hero-btn-icon">✨</span>
+            <span>Get Vision Pro</span>
           </a>
           <a href="ai-learning.html" class="hero-btn hero-btn-secondary" style="border-color: var(--primary); color: var(--primary); background: var(--primary-dim);">
             <span class="hero-btn-icon"></span>
@@ -1204,6 +1221,7 @@
       const promoStrip = document.getElementById('proPromoStrip');
       const promoCard = document.getElementById('proUpgradeCard');
       const sideGetPro = document.getElementById("sideNavGetPro");
+      const heroGetPro = document.getElementById("heroGetProBtn");
       const headerBadge = document.getElementById("proHeaderBadge");
       const nameEl = document.getElementById('welcomeName');
 
@@ -1215,10 +1233,12 @@
           if (promoStrip) promoStrip.style.display = 'none';
           if (promoCard) promoCard.style.display = 'none';
           if (sideGetPro) sideGetPro.style.display = 'none';
+          if (heroGetPro) heroGetPro.style.display = 'none';
         } else {
           if (promoStrip) promoStrip.style.display = 'block';
           if (promoCard) promoCard.style.display = 'block';
           if (sideGetPro) sideGetPro.style.display = 'block';
+          if (heroGetPro) heroGetPro.style.display = 'inline-flex';
         }
 
         // Add Pro Badge to Greeting
@@ -1230,6 +1250,7 @@
         if (promoStrip) promoStrip.style.display = 'block';
         if (promoCard) promoCard.style.display = 'block';
         if (sideGetPro) sideGetPro.style.display = 'block';
+        if (heroGetPro) heroGetPro.style.display = 'inline-flex';
         if (headerBadge) headerBadge.style.display = 'none';
       }
     }
