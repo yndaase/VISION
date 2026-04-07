@@ -40,12 +40,14 @@ function markAsPurchased(itemId) {
     const idx = users.findIndex(u => u.email === session.email);
     if (idx !== -1) {
       users[idx].role = 'pro';
-      saveUsers(users);
       
-      // Hot-update current session
+      // Hot-update current session BEFORE sync
       session.role = 'pro';
       setSession(session);
-      console.log("[Payment] Pro Status Activated successfully.");
+      
+      // Save triggers the cloud sync automatically
+      saveUsers(users);
+      console.log("[Payment] Pro Status Activated & Cloud Synced.");
     }
   }
 }

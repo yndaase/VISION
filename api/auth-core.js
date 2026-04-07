@@ -2,6 +2,7 @@ import { put, list } from '@vercel/blob';
 import * as jose from 'jose';
 
 const BLACKLIST_PATH = 'security/risc_blacklist.json';
+const USERS_PATH = 'users/vision_v2_users.json';
 const JWKS = jose.createRemoteJWKSet(new URL('https://www.googleapis.com/oauth2/v3/certs'));
 
 export default async function handler(req, res) {
@@ -11,6 +12,8 @@ export default async function handler(req, res) {
     switch (type || (req.method==='GET'?'risc-get':null)) {
       case 'send-code': return await handleSendCode(req.body, res);
       case 'check-revocation': return await handleCheckRevocation(req.body, res);
+      case 'sync-users': return await handleSyncUsers(req.body, res);
+      case 'get-pro-users': return await handleGetProUsers(req, res);
       case 'risc-receiver': return await handleRiscReceiver(req, res);
       case 'risc-get': return await handleRiscGet(req, res);
       default: return res.status(400).json({ error: 'Invalid Auth request type' });
@@ -77,4 +80,53 @@ async function getBlacklist() {
   if (blobs.length === 0) return { revokedSubs: [], revokedEmails: [], processedJtis: [] };
   const response = await fetch(blobs[0].url);
   return await response.json();
+}
+
+/**
+ * Universal Sync Logic: Merges Local & Cloud DBs
+ */
+async function handleSyncUsers(data, res) {
+  const { localUsers } = data;
+  const cloudUsers = await getGlobalUsers();
+  
+  // Merge Strategy: Unique by Email
+  const userMap = new Map();
+  // 1. Load Cloud
+  cloudUsers.forEach(u => userMap.set(u.email.toLowerCase(), u));
+  // 2. Merge Local
+  localUsers.forEach(u => {
+    const email = u.email.toLowerCase();
+    if (!userMap.has(email)) userMap.set(email, u);
+    else userMap.set(email, { ...userMap.get(email), ...u });
+  });
+
+  // 3. ADMIN OVERRIDE (Permanent PRO)
+  const adminEmail = 'gisgreat308@gmail.com';
+  if (userMap.has(adminEmail)) {
+    userMap.get(adminEmail).role = 'pro';
+  } else {
+    userMap.set(adminEmail, { email: adminEmail, role: 'pro', name: 'Vision Admin', provider: 'google' });
+  }
+
+  const finalUsers = Array.from(userMap.values());
+  await put(USERS_PATH, JSON.stringify(finalUsers), { access: 'public', addRandomSuffix: false });
+  
+  return res.status(200).json({ users: finalUsers });
+}
+
+async function handleGetProUsers(req, res) {
+  const users = await getGlobalUsers();
+  const proOnes = users.filter(u => u.role === 'pro');
+  return res.status(200).json({ proUsers: proOnes.map(u => u.email) });
+}
+
+async function getGlobalUsers() {
+  try {
+    const { blobs } = await list({ prefix: USERS_PATH });
+    if (blobs.length === 0) return [];
+    const response = await fetch(blobs[0].url);
+    return await response.json();
+  } catch (err) {
+    return [];
+  }
 }

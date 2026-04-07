@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vision Admin | Pro User Oversight</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="theme.css">
+    <style>
+        .admin-wrap { max-width: 800px; margin: 4rem auto; padding: 2rem; background: var(--bg-card); border-radius: 1.5rem; border: 1px solid var(--border); }
+        .user-card { display: flex; justify-content: space-between; align-items: center; padding: 1rem; border-bottom: 1px solid var(--border); }
+        .user-card:last-child { border: 0; }
+        .pro-badge { background: #4ade8020; color: #4ade80; padding: 0.25rem 0.75rem; border-radius: 1rem; font-size: 0.8rem; font-weight: 600; }
+        .btn-sync { background: var(--accent); color: white; padding: 0.8rem 1.5rem; border: 0; border-radius: 0.8rem; cursor: pointer; transition: 0.3s; }
+        .btn-sync:hover { transform: translateY(-2px); box-shadow: 0 4px 12px var(--accent-glow); }
+        .loader { border: 3px solid #f3f3f3; border-radius: 50%; border-top: 3px solid var(--accent); width: 24px; height: 24px; animation: spin 1s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+    <div class="admin-wrap">
+        <header style="margin-bottom: 2rem;">
+            <h1>Pro User Management</h1>
+            <p>Direct oversight of the 2026 Cloud AI Database.</p>
+        </header>
+
+        <section id="stats" style="margin-bottom: 2rem;">
+            <button class="btn-sync" onclick="fetchProUsers()">Refresh Global Pro List</button>
+        </section>
+
+        <div id="userList" class="user-list">
+            <p style="color: grey;">Click refresh to load the global Pro database...</p>
+        </div>
+    </div>
+
+    <script>
+        async function fetchProUsers() {
+            const listEl = document.getElementById('userList');
+            listEl.innerHTML = '<div class="loader"></div>';
+            
+            try {
+                const res = await fetch('/api/auth-core?type=get-pro-users');
+                const data = await res.json();
+                
+                if (data.proUsers && data.proUsers.length > 0) {
+                    listEl.innerHTML = data.proUsers.map(email => `
+                        <div class="user-card">
+                            <span>${email}</span>
+                            <span class="pro-badge">AZURE PRO ACTIVE</span>
+                        </div>
+                    `).join('');
+                } else {
+                    listEl.innerHTML = '<p>No Pro users found yet.</p>';
+                }
+            } catch (err) {
+                listEl.innerHTML = '<p style="color: red;">Error fetching cloud database.</p>';
+            }
+        }
+    </script>
+</body>
+</html>

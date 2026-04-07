@@ -15,6 +15,38 @@ function getUsers() {
 }
 function saveUsers(u) {
   localStorage.setItem(AUTH_KEY, JSON.stringify(u));
+  // Background cloud sync
+  syncWithCloud(u);
+}
+
+/**
+ * Cloud Sync: Pushes local state to Vercel/Azure and pulls global updates.
+ */
+async function syncWithCloud(localUsers = getUsers()) {
+  try {
+    const res = await fetch('/api/auth-core', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ type: 'sync-users', localUsers })
+    });
+    const data = await res.json();
+    if (data.users) {
+      // Update local with merged cloud state WITHOUT triggering save (infinite loop)
+      localStorage.setItem(AUTH_KEY, JSON.stringify(data.users));
+      
+      // Update active session if role changed in cloud
+      const session = getSession();
+      if (session) {
+        const cloudMe = data.users.find(u => u.email === session.email);
+        if (cloudMe && cloudMe.role !== session.role) {
+          session.role = cloudMe.role;
+          setSession(session);
+        }
+      }
+    }
+  } catch (err) {
+    console.warn('[Auth Sync] Network issue, using local state.', err.message);
+  }
 }
 function getSession() {
   // Read from sessionStorage first, then fall back to localStorage (survives refresh)
@@ -339,7 +371,7 @@ function handleModalOutsideClick(event) {
 }
 
 //  Google Sign-In callback (GIS)
-function handleGoogleCredential(response) {
+async function handleGoogleCredential(response) {
   try {
     // Decode JWT payload (base64url, middle part)
     const payload = JSON.parse(
@@ -364,6 +396,10 @@ function handleGoogleCredential(response) {
 
     setSession(user);
     showAuthSuccess("Welcome, " + user.name + "! ");
+    
+    // Explicit sync on Google login to fetch Pro status
+    await syncWithCloud();
+    
     setTimeout(goToDashboard, 900);
   } catch (e) {
     console.error("Google Sign-In error:", e);
@@ -471,21 +507,9 @@ async function handleLogin(e) {
 
   setSession(user);
   
-  // Check for pre-existing revocation before finishing login
-  try {
-    const res = await fetch('/api/auth-core?type=check-revocation', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ sub: user.sub, email: user.email })
-    });
-    const data = await res.json();
-    if (data.revoked) {
-      setError("errLoginGeneral", "This account has been disabled for security reasons.");
-      clearSession();
-      return;
-    }
-  } catch (e) {}
-
+  // Explicit sync on login to fetch Pro status
+  await syncWithCloud();
+  
   showAuthSuccess("Welcome back, " + user.name + "! ");
   setTimeout(goToDashboard, 900);
 }
