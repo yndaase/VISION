@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vision Institutional Console | Enterprise Management</title>
+    <meta name="robots" content="noindex, nofollow" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="theme.css">
+    <script src="auth.js"></script>
+    <script src="materials.js"></script>
+    <style>
+        :root {
+            --ent-primary: #6366f1;
+            --ent-primary-glow: rgba(99, 102, 241, 0.15);
+            --ent-accent: #fbbf24;
+            --ent-bg: #050810;
+            --ent-sidebar: #080b15;
+            --ent-card: rgba(13, 17, 26, 0.6);
+            --ent-border: rgba(255, 255, 255, 0.08);
+            --ent-text-muted: #94a3b8;
+            --font-main: 'Outfit', sans-serif;
+            --font-mono: 'JetBrains Mono', monospace;
+        }
+
+        * { box-sizing: border-box; }
+        body {
+            font-family: var(--font-main);
+            background: var(--ent-bg);
+            background-image: 
+                radial-gradient(circle at 0% 0%, rgba(99, 102, 241, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 100% 100%, rgba(139, 92, 246, 0.05) 0%, transparent 50%);
+            color: #f1f5f9;
+            min-height: 100vh;
+            margin: 0;
+            overflow-x: hidden;
+        }
+
+        /* --- LAYOUT --- */
+        #enterprisePortal {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            min-height: 100vh;
+        }
+
+        /* --- SIDEBAR --- */
+        .sidebar {
+            background: var(--ent-sidebar);
+            border-right: 1px solid var(--ent-border);
+            padding: 2.5rem 1.8rem;
+            display: flex;
+            flex-direction: column;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            backdrop-filter: blur(20px);
+        }
+
+        .school-brand {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            margin-bottom: 3.5rem;
+            padding-bottom: 2.5rem;
+            border-bottom: 1px solid var(--ent-border);
+        }
+
+        .school-logo {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--ent-primary), #8b5cf6);
+            border-radius: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.2rem;
+            font-weight: 800;
+            color: #fff;
+            margin-bottom: 1.2rem;
+            box-shadow: 0 10px 30px rgba(99, 102, 241, 0.3);
+            border: 2px solid rgba(255,255,255,0.1);
+        }
+
+        .school-name {
+            font-size: 1.1rem;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            background: linear-gradient(to bottom, #fff, #94a3b8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .nav-group { margin-bottom: 2.5rem; }
+        .nav-label { 
+            font-size: 0.7rem; 
+            font-weight: 800; 
+            color: var(--ent-text-muted); 
+            text-transform: uppercase; 
+            letter-spacing: 0.15em; 
+            margin-bottom: 18px; 
+            padding-left: 14px; 
+            opacity: 0.6;
+        }
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 14px 18px;
+            border-radius: 14px;
+            color: var(--ent-text-muted);
+            text-decoration: none;
+            font-size: 0.95rem;
+            font-weight: 600;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+            margin-bottom: 6px;
+            border: 1px solid transparent;
+            background: transparent;
+            width: 100%;
+            text-align: left;
+        }
+        .nav-item:hover { 
+            background: rgba(255, 255, 255, 0.03); 
+            color: #fff;
+            transform: translateX(4px);
+        }
+        .nav-item.active { 
+            background: linear-gradient(90deg, rgba(99, 102, 241, 0.15), transparent);
+            color: var(--ent-primary);
+            border-left: 3px solid var(--ent-primary);
+            border-radius: 0 14px 14px 0;
+            padding-left: 15px;
+        }
+        .nav-item svg { width: 22px; height: 22px; stroke-width: 2.5; }
+
+        /* --- MAIN --- */
+        .main { padding: 3.5rem 4rem; overflow-y: auto; }
+        .header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 4rem; }
+        .page-info h2 { font-size: 2.2rem; font-weight: 800; letter-spacing: -0.03em; margin: 0; }
+        .page-info p { color: var(--ent-text-muted); font-size: 1rem; margin-top: 8px; font-weight: 500; }
+
+        .ent-status {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: rgba(251, 191, 36, 0.05);
+            border: 1px solid rgba(251, 191, 36, 0.2);
+            padding: 10px 20px;
+            border-radius: 100px;
+            font-size: 0.8rem;
+            font-weight: 800;
+            color: var(--ent-accent);
+            letter-spacing: 0.05em;
+        }
+
+        /* --- CARDS --- */
+        .card {
+            background: var(--ent-card);
+            border: 1px solid var(--ent-border);
+            border-radius: 32px;
+            padding: 2.5rem;
+            backdrop-filter: blur(12px);
+            margin-bottom: 2.5rem;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 2rem;
+            margin-bottom: 4rem;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--ent-border);
+            padding: 2rem;
+            border-radius: 28px;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.3s ease;
+        }
+        .stat-card:hover { transform: translateY(-5px); background: rgba(255,255,255,0.04); }
+        .stat-lbl { color: var(--ent-text-muted); font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 12px; display: block; }
+        .stat-val { font-size: 2.4rem; font-weight: 800; color: #fff; line-height: 1; }
+
+        /* --- UTILS --- */
+        .section { display: none; }
+        .section.active { display: block; animation: fadeIn 0.4s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .btn-ent {
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-family: inherit;
+            font-weight: 800;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .btn-ent-primary { background: var(--ent-primary); color: #fff; }
+        .btn-ent-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 20px var(--ent-primary-glow); }
+
+        .form-group { margin-bottom: 1.5rem; }
+        .form-label { display: block; font-size: 0.75rem; font-weight: 700; color: #94a3b8; text-transform: uppercase; margin-bottom: 8px; }
+        .ent-input {
+            width: 100%;
+            padding: 12px 16px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--ent-border);
+            border-radius: 12px;
+            color: #fff;
+            outline: none;
+        }
+        .ent-input:focus { border-color: var(--ent-primary); }
+
+        .table { width: 100%; border-collapse: collapse; }
+        .table th { text-align: left; font-size: 0.7rem; text-transform: uppercase; color: #64748b; padding: 12px; border-bottom: 1px solid var(--ent-border); }
+        .table td { padding: 16px 12px; border-bottom: 1px solid var(--ent-border); font-size: 0.9rem; }
+
+        #toast {
+            position: fixed; bottom: 2rem; right: 2rem;
+            background: #fff; color: #000;
+            padding: 1rem 2rem; border-radius: 12px; font-weight: 800;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            transform: translateY(100px); opacity: 0; transition: all 0.3s cubic-bezier(0.17, 0.84, 0.44, 1);
+            z-index: 1000;
+        }
+        #toast.show { transform: translateY(0); opacity: 1; }
+
+    </style>
+</head>
+<body>
+
+    <div id="enterprisePortal">
+        <!-- SIDEBAR -->
+        <aside class="sidebar">
+            <div class="school-brand">
+                <div class="school-logo" id="consoleLogo">V</div>
+                <div class="school-name" id="consoleSchoolName">Vision Institute</div>
+            </div>
+
+            <div class="nav-group">
+                <p class="nav-label">Management</p>
+                <button class="nav-item active" onclick="navTo('overview', this)">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25h-2.25a2.25 2.25 0 01-2.25-2.25v-2.25z" /></svg>
+                    <span>System Overview</span>
+                </button>
+                <button class="nav-item" onclick="navTo('licenses', this)">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 5.25a3 3 0 013 3m3 0a6 6 0 01-7.029 5.912c-.563-.097-1.159.026-1.563.43L10.5 17.25H8.25v2.25H6v2.25H2.25v-2.818c0-.597.237-1.17.659-1.591l6.499-6.499c.404-.404.527-1 .43-1.563A6 6 0 1121.75 8.25z" /></svg>
+                    <span>License Keys</span>
+                </button>
+                <button class="nav-item" onclick="navTo('students', this)">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z" /></svg>
+                    <span>Learner Directory</span>
+                </button>
+            </div>
+
+            <div class="nav-group">
+                <p class="nav-label">Elite Staff Training</p>
+                <a class="nav-item" href="mocks.html" style="text-decoration: none;">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M4.26 10.174L10.74 3.694a1.5 1.5 0 012.52 0l6.48 6.48a1.5 1.5 0 010 2.122l-6.48 6.48a1.5 1.5 0 01-2.52 0l-6.48-6.48a1.5 1.5 0 010-2.122z" /></svg>
+                    <span>Mock Hall Access</span>
+                </a>
+                <a class="nav-item" href="chat.html" style="text-decoration: none;">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z" /></svg>
+                    <span>AI Strategic Mission</span>
+                </a>
+                <a class="nav-item" href="planner.html" style="text-decoration: none;">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" /></svg>
+                    <span>Institutional Planner</span>
+                </a>
+            </div>
+
+            <div class="nav-group">
+                <p class="nav-label">Institutional Setting</p>
+                <button class="nav-item" onclick="navTo('branding', this)">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9.53 16.122l9.37-9.37a2.828 2.828 0 114.001 4.001l-9.37 9.37a4.5 4.5 0 01-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 011.13-1.897zm0 0L7.5 20.5 2 22l1.5-5.5L7.878 12.122" /></svg>
+                    <span>White-labeling</span>
+                </button>
+                <button class="nav-item" onclick="navTo('support', this)">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" /></svg>
+                    <span>Institutional Support</span>
+                </button>
+            </div>
+
+            <div style="margin-top: auto; padding-top: 2rem;">
+                <button class="nav-item" style="color: #f87171;" onclick="handleLogout()">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15m3 0l3-3m0 0l-3-3m3 3H9" /></svg>
+                    <span>End Command Session</span>
+                </button>
+            </div>
+        </aside>
+
+        <!-- MAIN -->
+        <main class="main">
+            <header class="header">
+                <div class="page-info">
+                    <h2 id="viewTitle">Command Oversight</h2>
+                    <p id="viewSub">Real-time institutional performance metrics.</p>
+                </div>
+                <div class="ent-status">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+                    <span>Vision Enterprise Active</span>
+                </div>
+            </header>
+
+            <!-- OVERVIEW -->
+            <section id="sec-overview" class="section active">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <span class="stat-lbl">Active Learners</span>
+                        <div class="stat-val" id="countStudents">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-lbl">Assigned licenses</span>
+                        <div class="stat-val" id="countLicenses">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-lbl">Avg. subject Mastery</span>
+                        <div class="stat-val">74%</div>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-lbl">Support tier</span>
+                        <div class="stat-val" style="color: var(--ent-accent);">ELITE</div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3 style="margin-bottom: 1.5rem; font-weight: 800;">Subject Mastery Heatmap</h3>
+                    <div style="height: 200px; display: flex; align-items: flex-end; gap: 1rem; padding-bottom: 2rem;">
+                        <div style="flex: 1; background: var(--ent-primary); height: 80%; border-radius: 8px 8px 0 0; position: relative;"><span style="position:absolute; bottom: -25px; left:0; width:100%; text-align:center; font-size: 10px; font-weight: 700;">CORE MATHS</span></div>
+                        <div style="flex: 1; background: #60a5fa; height: 65%; border-radius: 8px 8px 0 0; position: relative;"><span style="position:absolute; bottom: -25px; left:0; width:100%; text-align:center; font-size: 10px; font-weight: 700;">ENGLISH</span></div>
+                        <div style="flex: 1; background: #4ade80; height: 40%; border-radius: 8px 8px 0 0; position: relative;"><span style="position:absolute; bottom: -25px; left:0; width:100%; text-align:center; font-size: 10px; font-weight: 700;">G. SCIENCE</span></div>
+                        <div style="flex: 1; background: #f87171; height: 90%; border-radius: 8px 8px 0 0; position: relative;"><span style="position:absolute; bottom: -25px; left:0; width:100%; text-align:center; font-size: 10px; font-weight: 700;">S. STUDIES</span></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- LICENSES -->
+            <section id="sec-licenses" class="section">
+                <div class="card">
+                    <h3 style="margin-bottom: 1rem;">Generate Bulk Keys</h3>
+                    <p style="color: #94a3b8; font-size: 0.9rem; margin-bottom: 2rem;">Create batches of subscription keys for your students. Each key grants 30 days of Vision Pro access.</p>
+                    <div style="display: flex; gap: 1rem; align-items: flex-end;">
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <label class="form-label">Key Prefix</label>
+                            <input class="ent-input" id="keyPrefix" value="SCH-" style="width: 120px;">
+                        </div>
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <label class="form-label">Batch Size</label>
+                            <select class="ent-input" id="batchSize" style="width: 150px;">
+                                <option value="10">10 Keys</option>
+                                <option value="50">50 Keys</option>
+                                <option value="100">100 Keys</option>
+                            </select>
+                        </div>
+                        <button class="btn-ent btn-ent-primary" onclick="generateBatch()">Generate Protocol Batch</button>
+                    </div>
+                </div>
+
+                <div class="card" style="padding: 0;">
+                    <table class="table" id="licenseTable">
+                        <thead>
+                            <tr>
+                                <th>License Key</th>
+                                <th>Status</th>
+                                <th>Associated Identity</th>
+                                <th>Protocol Created</th>
+                            </tr>
+                        </thead>
+                        <tbody id="keysTbody">
+                            <!-- JS Inject -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- STUDENTS -->
+            <section id="sec-students" class="section">
+                <div class="card" style="padding: 0;">
+                    <div style="padding: 2rem; border-bottom: 1px solid var(--ent-border); display: flex; justify-content: space-between; align-items: center;">
+                        <h3 style="font-weight: 800;">Learner Oversight</h3>
+                        <input type="text" id="studentSearch" placeholder="Search learners..." class="ent-input" style="width: 250px;" oninput="renderStudents()">
+                    </div>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Learner Name</th>
+                                <th>System Email</th>
+                                <th>Subject Mastery</th>
+                                <th>Access Tier</th>
+                                <th style="text-align: right;">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="studentsTbody"></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- BRANDING -->
+            <section id="sec-branding" class="section">
+                <div class="card">
+                    <h3 style="margin-bottom: 1.5rem;">Institutional Customization</h3>
+                    <div style="max-width: 500px;">
+                        <div class="form-group">
+                            <label class="form-label">Display School Name</label>
+                            <input class="ent-input" id="setSchoolName" placeholder="e.g. Adisadel College">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Logo Initial / URL</label>
+                            <input class="ent-input" id="setSchoolLogo" placeholder="e.g. A or https://...">
+                        </div>
+                        <button class="btn-ent btn-ent-primary" onclick="saveInstitutionalBranding()">Commit Branding Changes</button>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <div id="toast"></div>
+
+    <script>
+        // --- AUTH GUARD ---
+        const session = checkAuth();
+        if (!session || session.role !== 'enterprise') {
+            window.location.href = "/dashboard";
+        }
+
+        const INST_KEY = "vision_ext_" + (session.email);
+        
+        // --- DATA STATE ---
+        let enterpriseData = JSON.parse(localStorage.getItem(INST_KEY) || JSON.stringify({
+            schoolName: session.name || "Vision Institute",
+            schoolLogo: session.name ? session.name.charAt(0) : "V",
+            keys: []
+        }));
+
+        // Initial UI Setup
+        function initUI() {
+            document.getElementById("consoleSchoolName").textContent = enterpriseData.schoolName;
+            document.getElementById("consoleLogo").textContent = enterpriseData.schoolLogo;
+            document.getElementById("setSchoolName").value = enterpriseData.schoolName;
+            document.getElementById("setSchoolLogo").value = enterpriseData.schoolLogo;
+            
+            renderKeys();
+            renderStudents();
+            updateCounts();
+        }
+
+        function updateCounts() {
+            document.getElementById("countLicenses").textContent = enterpriseData.keys.length;
+            const students = getUsers().filter(u => u.institutionId === session.email);
+            document.getElementById("countStudents").textContent = students.length;
+        }
+
+        // Navigation
+        function navTo(id, btn) {
+            document.querySelectorAll(".section").forEach(s => s.classList.remove("active"));
+            document.getElementById("sec-" + id).classList.add("active");
+            
+            document.querySelectorAll(".nav-item").forEach(b => b.classList.remove("active"));
+            if (btn) btn.classList.add("active");
+
+            const titles = { overview: "Command Oversight", licenses: "Key Management", students: "Learner Directory", branding: "Institutional Identity", support: "Elite Hub" };
+            document.getElementById("viewTitle").textContent = titles[id];
+        }
+
+        // KEY GENERATOR
+        function generateBatch() {
+            const prefix = document.getElementById("keyPrefix").value || "V-";
+            const count = parseInt(document.getElementById("batchSize").value);
+            
+            for(let i=0; i<count; i++) {
+                const random = Math.random().toString(36).substring(2, 8).toUpperCase();
+                enterpriseData.keys.push({
+                    key: prefix + random,
+                    status: 'available',
+                    usedBy: null,
+                    createdAt: new Date().toISOString()
+                });
+            }
+            saveData();
+            renderKeys();
+            showToast(`Protocol: ${count} keys generated.`);
+        }
+
+        function renderKeys() {
+            const tbody = document.getElementById("keysTbody");
+            tbody.innerHTML = enterpriseData.keys.map(k => `
+                <tr>
+                    <td style="font-family: 'JetBrains Mono'; font-weight: 800; color: var(--ent-primary);">${k.key}</td>
+                    <td><span style="font-size: 0.7rem; color: ${k.status === 'available' ? '#4ade80' : '#94a3b8'}; font-weight: 800;">${k.status.toUpperCase()}</span></td>
+                    <td style="color: #94a3b8;">${k.usedBy || 'None Assigned'}</td>
+                    <td style="font-size: 0.75rem;">${new Date(k.createdAt).toLocaleDateString()}</td>
+                </tr>
+            `).join("");
+        }
+
+        function renderStudents() {
+            const users = getUsers();
+            const students = users.filter(u => u.institutionId === session.email);
+            const q = document.getElementById("studentSearch").value.toLowerCase();
+            const filtered = students.filter(s => s.name.toLowerCase().includes(q) || s.email.toLowerCase().includes(q));
+            
+            const tbody = document.getElementById("studentsTbody");
+            tbody.innerHTML = filtered.map(s => `
+                <tr>
+                    <td><div style="font-weight: 800;">${s.name}</div></td>
+                    <td style="font-family: 'JetBrains Mono'; font-size: 0.8rem;">${s.email}</td>
+                    <td>
+                        <div style="width: 100%; height: 6px; background: rgba(255,255,255,0.05); border-radius: 10px;">
+                            <div style="width: 74%; height: 100%; background: var(--ent-primary); border-radius: 10px;"></div>
+                        </div>
+                    </td>
+                    <td><span style="font-weight: 800; color: var(--ent-accent);">PRO / INST</span></td>
+                    <td style="text-align: right;">
+                        <button class="btn-ent" style="background: rgba(255,255,255,0.05); padding: 8px;">View Detail</button>
+                    </td>
+                </tr>
+            `).join("");
+        }
+
+        // BRANDING
+        function saveInstitutionalBranding() {
+            const name = document.getElementById("setSchoolName").value;
+            const logo = document.getElementById("setSchoolLogo").value;
+            
+            enterpriseData.schoolName = name;
+            enterpriseData.schoolLogo = logo.charAt(0);
+            saveData();
+            
+            document.getElementById("consoleSchoolName").textContent = name;
+            document.getElementById("consoleLogo").textContent = enterpriseData.schoolLogo;
+            
+            showToast("Institutional branding deployed successfully.");
+        }
+
+        function saveData() {
+            localStorage.setItem(INST_KEY, JSON.stringify(enterpriseData));
+            updateCounts();
+        }
+
+        function showToast(msg) {
+            const t = document.getElementById("toast");
+            t.innerText = msg;
+            t.classList.add("show");
+            setTimeout(() => t.classList.remove("show"), 3000);
+        }
+
+        initUI();
+    </script>
+</body>
+</html>

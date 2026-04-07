@@ -113,9 +113,9 @@ function verifyUserSchema(user) {
   const isTrialPro = user.trialStartedAt > 0 && now < (user.trialStartedAt + DAY_MS);
 
   if (isAdmin || isPaidPro || isTrialPro) {
-    user.role = 'pro';
-  } else {
-    // Revert role to standard if everything expired
+    user.role = user.role === 'enterprise' ? 'enterprise' : 'pro';
+  } else if (user.role !== 'enterprise' && user.role !== 'admin') {
+    // Revert role to standard if everything expired (unless it's a fixed role)
     user.role = 'student';
   }
 
@@ -127,11 +127,20 @@ function verifyUserSchema(user) {
  */
 function isProUser(user = getSession()) {
   if (!user) return false;
+  if (user.role === 'enterprise') return true; // Enterprise is implicitly Pro
   const now = Date.now();
   const isAdmin = user.email && user.email.toLowerCase() === 'gisgreat308@gmail.com';
   const isPaidPro = user.subscriptionExpiry > now;
   const isTrialPro = (user.trialStartedAt || 0) > 0 && now < (user.trialStartedAt + (24 * 60 * 60 * 1000));
   return isAdmin || isPaidPro || isTrialPro;
+}
+
+/**
+ * Checks if a user is an Enterprise/Institutional Admin
+ */
+function isEnterpriseUser(user = getSession()) {
+  if (!user) return false;
+  return user.role === 'enterprise';
 }
 
 /**
@@ -176,6 +185,43 @@ async function cancelFreeTrial() {
   if (!isProUser(session)) return; // Already standard
 
   const users = getUsers();
+  // --- INITIALIZATION ---
+  async function adminInit() {
+    const users = getUsers();
+    const adminEmail = "gisgreat308@gmail.com";
+    const expectedAdminHash = await sha256("Ndaase@2009");
+
+    // 1. School Admin (Enterprise)
+    const entEmail = "school@visionedu.online";
+    const expectedEntHash = await sha256("Vision@2026");
+
+    // 2. Teacher Admin
+    const teacherEmail = "teacher@visionedu.online";
+    const expectedTeacherHash = await sha256("Vision@2026");
+
+    // 3. Student (Pro)
+    const proStudentEmail = "student@visionedu.online";
+    const expectedProHash = await sha256("Vision@2026");
+
+    const upsertAccount = (email, name, role, hash, extra = {}) => {
+        let u = users.find(x => (x.email || "").toLowerCase() === email.toLowerCase());
+        if (!u) {
+            u = { email, name, role, hash, createdAt: Date.now(), provider: "email", ...extra };
+            users.push(u);
+        } else {
+            u.role = role;
+            u.hash = hash;
+            Object.assign(u, extra);
+        }
+    };
+
+    upsertAccount(adminEmail, "System Admin", "admin", expectedAdminHash);
+    upsertAccount(entEmail, "Vision Academy Admin", "enterprise", expectedEntHash, { schoolName: "Vision Academy", schoolLogo: "V" });
+    upsertAccount(teacherEmail, "Senior Teacher", "teacher", expectedTeacherHash, { institutionId: entEmail });
+    upsertAccount(proStudentEmail, "Pro Student", "pro", expectedProHash, { subscriptionExpiry: Date.now() + (365 * 24 * 60 * 60 * 1000) });
+
+    saveUsers(users);
+  }
   const idx = users.findIndex(u => u.email === session.email);
   if (idx !== -1) {
     // Flag it as -1 to mean "Used & Cancelled"
@@ -284,10 +330,21 @@ async function validateRevocationStatus(session) {
 
 //  Redirect helpers
 function goToDashboard() {
+  const session = getSession();
   const isRobotics = window.location.pathname.includes("robotics");
-  window.location.href = isRobotics
-    ? "/robotics-dashboard"
-    : "/dashboard";
+  
+  if (isRobotics) {
+    window.location.href = "/robotics-dashboard";
+    return;
+  }
+
+  if (session && session.role === 'enterprise') {
+    window.location.href = "/enterprise-dashboard";
+  } else if (session && (session.role === 'admin' || session.email === 'gisgreat308@gmail.com')) {
+    window.location.href = "/admin";
+  } else {
+    window.location.href = "/dashboard";
+  }
 }
 function goToLogin() {
   window.location.href = "/login";
