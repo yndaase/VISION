@@ -1,0 +1,407 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Institutional Mock Exams | Vision Enterprise</title>
+    <meta
+      name="description"
+      content="Take full-length, timed 2026 WASSCE mock exams for Core Maths, Integrated Science, and English. Real exam-standard questions with expert diagnostics."
+    />
+    <meta
+      name="keywords"
+      content="wassce mock exams, waec mock papers, core maths mock, integrated science mock, wassce 2026 practice"
+    />
+    <link rel="manifest" href="manifest.json" />
+    <meta name="theme-color" content="#0ea5e9" />
+    <link rel="apple-touch-icon" href="assets/logo.png" />
+    <meta property="og:title" content="2026 WASSCE Mock Exams | Vision Education" />
+    <meta property="og:image" content="https://www.visionedu.online/assets/logo.png" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="dashboard.css" />
+    <link rel="stylesheet" href="theme.css" />
+    <script src="theme.js"></script>
+
+    <script>
+      (function () {
+        const sessionStr = sessionStorage.getItem("waec_session") || localStorage.getItem("waec_session");
+        if (!sessionStr) { window.location.replace("/login"); return; }
+        const session = JSON.parse(sessionStr);
+        if (!session.institutionId && session.role !== 'enterprise') {
+          window.location.replace("/dashboard");
+        }
+      })();
+    </script>
+    <style>
+      .mocks-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+        gap: 1.5rem;
+        padding: 2rem 0;
+      }
+      .mock-card {
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-lg);
+        padding: 2rem;
+        position: relative;
+        overflow: hidden;
+        transition: all 0.3s ease;
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+      }
+      .mock-card:hover {
+        border-color: var(--primary);
+        transform: translateY(-5px);
+        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+      }
+      .mock-badge {
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        background: var(--primary-dim);
+        color: var(--primary);
+        font-size: 0.65rem;
+        font-weight: 800;
+        padding: 4px 10px;
+        border-radius: 4px;
+        text-transform: uppercase;
+      }
+      .mock-title {
+        font-size: 1.3rem;
+        font-weight: 800;
+        margin: 0;
+      }
+      .mock-meta {
+        display: flex;
+        gap: 1rem;
+        color: var(--text-muted);
+        font-size: 0.85rem;
+      }
+      .mock-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: auto;
+      }
+      .start-mock-btn {
+        background: var(--primary);
+        color: #000;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 8px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: opacity 0.2s;
+      }
+      .start-mock-btn:hover {
+        opacity: 0.9;
+      }
+      @keyframes pulse {
+        0% { transform: scale(1); opacity: 1; box-shadow: 0 0 0 0 rgba(14, 165, 233, 0.7); }
+        70% { transform: scale(1.05); opacity: 0.8; box-shadow: 0 0 0 10px rgba(14, 165, 233, 0); }
+        100% { transform: scale(1); opacity: 1; box-shadow: 0 0 0 0 rgba(14, 165, 233, 0); }
+      }
+    </style>
+  </head>
+  <body class="dashboard-page">
+    <!--  SIDE NAVIGATION  -->
+    <aside class="side-nav">
+      <a class="side-nav-logo" href="enterprise-student-dashboard.html">
+        <img src="assets/logo.png" alt="Logo" style="height: 40px; width: 40px; object-fit: contain;">
+        <span>Vision Enterprise</span>
+    </a>
+    <nav class="side-nav-menu">
+        <a href="enterprise-student-dashboard.html" class="nav-item">
+          <span class="nav-item-icon"><img src="assets/logo.png" style="width: 20px; height: 20px;"></span>
+          <span>Dashboard</span>
+        </a>
+        <a href="/mocks" class="nav-item active">
+          <span class="nav-item-icon"><img src="assets/logo.png" style="width: 20px; height: 20px;"></span>
+          <span>Mock Exams</span>
+        </a>
+        <a href="/analytics" class="nav-item">
+          <span class="nav-item-icon"><img src="assets/logo.png" style="width: 20px; height: 20px;"></span>
+          <span>Performance</span>
+        </a>
+      </nav>
+      <div class="side-nav-footer">
+        <a
+          href="#"
+          class="nav-item"
+          onclick="
+            openSettings();
+            return false;
+          "
+        >
+          <span class="nav-item-icon"><img src="assets/logo.png" style="width: 20px; height: 20px;"></span>
+          <span>Settings</span>
+        </a>
+      </div>
+    </aside>
+
+    <!--  BOTTOM NAVIGATION (Mobile)  -->
+    <nav class="bottom-nav">
+      <a href="/dashboard" class="bottom-nav-item">
+        <span class="bottom-icon"><img src="assets/logo.png" style="width: 20px; height: 20px;"></span>
+        <span>Home</span>
+      </a>
+      <a href="/mocks" class="bottom-nav-item active">
+        <span class="bottom-icon"><img src="assets/logo.png" style="width: 20px; height: 20px;"></span>
+        <span>Mocks</span>
+      </a>
+      <a href="/analytics" class="bottom-nav-item">
+        <span class="bottom-icon"><img src="assets/logo.png" style="width: 20px; height: 20px;"></span>
+        <span>Stats</span>
+      </a>
+      <a
+        href="#"
+        class="bottom-nav-item"
+        onclick="
+          openSettings();
+          return false;
+        "
+      >
+        <span class="bottom-icon"><img src="assets/logo.png" style="width: 20px; height: 20px;"></span>
+        <span>Settings</span>
+      </a>
+    </nav>
+
+    <div class="main-wrapper">
+      <nav class="dash-nav">
+        <div class="dash-nav-inner">
+          <div class="dash-logo">
+            <img src="assets/logo.png" alt="Vision Education Exam Hall Logo" style="height: 32px; width: 32px; object-fit: contain; margin-right: 10px;" loading="lazy">
+            <span class="dash-logo-text"
+              >Mock <span class="brand-accent">Exams</span></span
+            >
+          </div>
+          <div class="dash-nav-right">
+            <button
+              class="theme-toggle-btn"
+              onclick="toggleTheme()"
+              title="Toggle Theme"
+            ></button>
+            <div class="nav-user-chip" id="navUserChip">
+              <div class="nav-avatar">K</div>
+              <span class="nav-username">Student</span>
+            </div>
+          </div>
+        </div>
+      </nav>
+
+      <main style="padding: 2rem 3rem">
+        <header>
+          <h1
+            style="font-size: 2.5rem; font-weight: 800; margin-bottom: 0.5rem"
+          >
+            Examination Hall
+          </h1>
+          <p style="color: var(--text-secondary); max-width: 600px">
+            Simulate the real WASSCE environment with full-length, timed mock
+            papers curated by senior examiners.
+          </p>
+        </header>
+
+        <div class="mocks-grid">
+          <!-- AI Daily Challenge (Generative) -->
+          <div class="mock-card" style="border: 1px solid var(--primary); background: radial-gradient(circle at top right, rgba(14, 165, 233, 0.1), transparent); grid-column: 1 / -1;">
+            <div style="position: absolute; top: 1rem; right: 1rem; background: var(--primary); color: #000; font-size: 0.65rem; font-weight: 800; padding: 4px 10px; border-radius: 4px; text-transform: uppercase; animation: pulse 2s infinite;">New Goal Available</div>
+            <div>
+              <h3 class="mock-title" style="font-size: 1.8rem; display: flex; align-items: center; gap: 10px;">
+                <span id="challengeIcon" style="font-size: 1.4rem;">✨</span> <span id="challengeTitle">AI Daily Challenge</span>
+              </h3>
+              <p id="challengeDesc" style="color: var(--text-secondary); margin-top: 0.5rem; max-width: 600px;">
+                Our High-Performance AI has set a new 2026 WASSCE simulation for today. Fresh questions, AI marking, and examiner feedback—refreshed every 24 hours.
+              </p>
+            </div>
+            <script>
+              document.addEventListener("DOMContentLoaded", () => {
+                const session = JSON.parse(sessionStorage.getItem("waec_session") || localStorage.getItem("waec_session") || "{}");
+                const isAdmin = (session.email || "").toLowerCase() === 'gisgreat308@gmail.com';
+                const isPro = session.role === 'pro' || isAdmin;
+                
+                if (isPro) {
+                  document.getElementById("challengeTitle").textContent = "Azure GPT-4o Daily Mission";
+                  document.getElementById("challengeDesc").innerHTML = "<strong>Exclusive Vision Pro Upgrade:</strong> Azure GPT-4o has curated an elite 2026 simulation for your tier. High-intensity diagnostics initiated.";
+                  document.getElementById("challengeIcon").textContent = "💎";
+                }
+              });
+            </script>
+            <div class="mock-footer">
+               <div class="mock-meta">
+                 <span>⏱️ 45 Mins</span>
+                 <span>📝 10 Questions</span>
+                 <span>🎓 AI Grading</span>
+               </div>
+               <button class="start-mock-btn" onclick="window.location.href = '/mock-hall?id=daily_ai_mock'" style="padding: 12px 30px; font-size: 1rem;">Start Daily Mission</button>
+            </div>
+          </div>
+
+          <!-- Mock 1 -->
+          <div class="mock-card">
+            <span class="mock-badge">2026 Simulation</span>
+            <div>
+              <h3 class="mock-title">Core Mathematics Mock A</h3>
+              <p
+                style="
+                  color: var(--text-muted);
+                  font-size: 0.9rem;
+                  margin-top: 0.5rem;
+                "
+              >
+                Focus: Algebra, Geometry, and Section B Theory.
+              </p>
+            </div>
+            <div class="mock-meta">
+              <span> 2.5 Hours</span>
+              <span> 50 Questions</span>
+            </div>
+            <div class="mock-footer">
+              <span style="font-weight: 700; color: var(--primary)"
+                >Ready to start</span
+              >
+              <button
+                class="start-mock-btn"
+                onclick="window.location.href = '/mock-hall?id=math_mock_a'"
+              >
+                Launch Exam
+              </button>
+            </div>
+          </div>
+
+          <!-- Mock 2 -->
+          <div class="mock-card">
+            <span class="mock-badge">Past Paper Refined</span>
+            <div>
+              <h3 class="mock-title">Integrated Science Mock 1</h3>
+              <p
+                style="
+                  color: var(--text-muted);
+                  font-size: 0.9rem;
+                  margin-top: 0.5rem;
+                "
+              >
+                Full coverage of Biology, Physics, and Chemistry modules.
+              </p>
+            </div>
+            <div class="mock-meta">
+              <span> 2 Hours</span>
+              <span> 60 Questions</span>
+            </div>
+            <div class="mock-footer">
+              <span style="font-weight: 700; color: var(--primary)"
+                >Ready to start</span
+              >
+              <button class="start-mock-btn">Launch Exam</button>
+            </div>
+          </div>
+
+          <!-- Mock 3 -->
+          <div class="mock-card" id="mock_english_b" data-premium="true" data-price="10" data-name="English Mock B">
+            <span class="mock-badge" style="background: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3)"
+              >Premium Mock</span
+            >
+            <div>
+              <h3 class="mock-title">English Language Mock B</h3>
+              <p
+                style="
+                  color: var(--text-muted);
+                  font-size: 0.9rem;
+                  margin-top: 0.5rem;
+                "
+              >
+                Objective & Theory simulation for 2026 standards.
+              </p>
+            </div>
+            <div class="mock-meta">
+              <span> 3 Hours</span>
+              <span> 100 Questions</span>
+            </div>
+            <div class="mock-footer">
+              <span id="label_mock_english_b" style="font-weight: 700; color: #fbbf24">10.00 GHS</span>
+              <button id="btn_mock_english_b" class="start-mock-btn" style="background: #f59e0b; color: #000">
+                Unlock Access
+              </button>
+            </div>
+          </div>
+
+          <!-- Mock 4: Computer Science -->
+          <div class="mock-card" id="mock_cs_a" data-premium="true" data-price="5" data-name="Computer Science Mock A">
+            <span class="mock-badge" style="background: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3)"
+              >Premium Mock</span
+            >
+            <div>
+              <h3 class="mock-title">Computer Science Mock A</h3>
+              <p
+                style="
+                  color: var(--text-muted);
+                  font-size: 0.9rem;
+                  margin-top: 0.5rem;
+                "
+              >
+                Programming, Algorithms & Hardware.
+              </p>
+            </div>
+            <div class="mock-meta">
+              <span> 2.5 Hours</span>
+              <span> 60 Questions</span>
+            </div>
+            <div class="mock-footer">
+              <span id="label_mock_cs_a" style="font-weight: 700; color: #fbbf24">5.00 GHS</span>
+              <button id="btn_mock_cs_a" class="start-mock-btn" style="background: #f59e0b; color: #000">
+                Unlock Access
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <script>
+          document.addEventListener("DOMContentLoaded", () => {
+            const premiumMocks = ["mock_english_b", "mock_cs_a"];
+            
+            premiumMocks.forEach((mockId) => {
+              const card = document.getElementById(mockId);
+              if (!card) return;
+              
+              const btn = document.getElementById("btn_" + mockId);
+              const label = document.getElementById("label_" + mockId);
+
+              if (isPurchased(mockId)) {
+                if (btn) {
+                   btn.textContent = "Launch Exam";
+                   btn.style.background = "var(--primary)";
+                   btn.onclick = () => window.location.href = "/mock-hall?id=" + mockId;
+                }
+                if (label) {
+                   label.textContent = "Unlocked";
+                   label.style.color = "var(--primary)";
+                }
+              } else {
+                if (btn) {
+                  btn.onclick = () => {
+                     const price = parseFloat(card.getAttribute("data-price") || "10");
+                     const name = card.getAttribute("data-name") || "Mock Exam";
+                     initiatePayment(mockId, price, name, () => {
+                         alert("Success! " + name + " is now unlocked.");
+                         window.location.reload();
+                     });
+                  };
+                }
+              }
+            });
+          });
+        </script>
+      </main>
+    </div>
+
+    <script src="https://js.paystack.co/v2/inline.js"></script>
+    <script src="auth.js"></script>
+    <script src="payment.js"></script>
+  </body>
+</html>

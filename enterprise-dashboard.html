@@ -266,15 +266,15 @@
 
             <div class="nav-group">
                 <p class="nav-label">Elite Staff Training</p>
-                <a class="nav-item" href="mocks.html" style="text-decoration: none;">
+                <a class="nav-item" href="enterprise-mocks.html" style="text-decoration: none;">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M4.26 10.174L10.74 3.694a1.5 1.5 0 012.52 0l6.48 6.48a1.5 1.5 0 010 2.122l-6.48 6.48a1.5 1.5 0 01-2.52 0l-6.48-6.48a1.5 1.5 0 010-2.122z" /></svg>
                     <span>Mock Hall Access</span>
                 </a>
-                <a class="nav-item" href="chat.html" style="text-decoration: none;">
+                <a class="nav-item" href="enterprise-ai-mission.html" style="text-decoration: none;">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z" /></svg>
                     <span>AI Strategic Mission</span>
                 </a>
-                <a class="nav-item" href="planner.html" style="text-decoration: none;">
+                <a class="nav-item" href="enterprise-planner.html" style="text-decoration: none;">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" /></svg>
                     <span>Institutional Planner</span>
                 </a>
@@ -420,7 +420,10 @@
                         </div>
                         <div class="form-group">
                             <label class="form-label">Institutional Enrollment Code</label>
-                            <input class="ent-input" id="setSchoolCode" placeholder="e.g. SKY-2026">
+                            <div style="display: flex; gap: 8px;">
+                                <input class="ent-input" id="setSchoolCode" placeholder="e.g. SKY-2026" style="flex: 1;">
+                                <button class="btn-ent" onclick="generateSchoolCode()" style="background: rgba(255,255,255,0.05); border: 1px solid var(--ent-border); font-size: 0.8rem; font-weight: 700; padding: 0 15px;">Auto-Gen</button>
+                            </div>
                         </div>
                         <button class="btn-ent btn-ent-primary" onclick="saveInstitutionalBranding()">Commit Branding Changes</button>
                     </div>
@@ -588,6 +591,14 @@
             document.getElementById("consoleLogo").textContent = enterpriseData.schoolLogo;
             
             showToast("Institutional Protocol updated.");
+        }
+
+        function generateSchoolCode() {
+            const prefix = (enterpriseData.schoolName || "VISION").substring(0, 3).toUpperCase();
+            const rand = Math.random().toString(36).substring(2, 6).toUpperCase();
+            const newCode = `${prefix}-${rand}`;
+            document.getElementById("setSchoolCode").value = newCode;
+            showToast("Protocol code generated.");
         }
 
         function saveData() {
