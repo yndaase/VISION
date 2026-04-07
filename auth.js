@@ -1084,10 +1084,54 @@ async function handleResetPassword(e) {
   setTimeout(goToDashboard, 1200);
 }
 
+// --- GLOBAL SYSTEM INITIALIZATION ---
+async function adminInit() {
+  const users = getUsers();
+  
+  // 1. System Admin
+  const adminEmail = "admin@visionedu.online";
+  const expectedAdminHash = await sha256("Ndaase@2009");
+
+  // 2. School Admin (Enterprise)
+  const entEmail = "school@visionedu.online";
+  const expectedEntHash = await sha256("Vision@2026");
+
+  // 3. Teacher Admin
+  const teacherEmail = "teacher@visionedu.online";
+  const expectedTeacherHash = await sha256("Vision@2026");
+
+  // 4. Student (Pro)
+  const proStudentEmail = "student@visionedu.online";
+  const expectedProHash = await sha256("Vision@2026");
+
+  const upsertAccount = (email, name, role, hash, extra = {}) => {
+    let u = users.find(x => (x.email || "").toLowerCase() === email.toLowerCase());
+    if (!u) {
+      u = { email, name, role, hash, createdAt: Date.now(), provider: "email", ...extra };
+      users.push(u);
+    } else {
+      // Preserve critical fields but update credentials
+      u.role = role;
+      u.hash = hash;
+      Object.assign(u, extra);
+    }
+  };
+
+  await upsertAccount(adminEmail, "System Architect", "admin", expectedAdminHash);
+  await upsertAccount(entEmail, "Vision Academy Admin", "enterprise", expectedEntHash, { schoolName: "Vision Academy", schoolLogo: "V" });
+  await upsertAccount(teacherEmail, "Senior Faculty", "teacher", expectedTeacherHash, { institutionId: entEmail });
+  await upsertAccount(proStudentEmail, "Pro Candidate", "pro", expectedProHash, { subscriptionExpiry: Date.now() + (365 * 24 * 60 * 60 * 1000) });
+
+  saveUsers(users);
+}
+
 //  Init on page load
 document.addEventListener("DOMContentLoaded", () => {
   // Always run migration first to ensure database is in sync
   migrateLegacyData();
+
+  // Bootstrap academic tiers
+  adminInit().catch(console.error);
 
   if (document.getElementById("loginForm")) {
     if (getSession()) {
