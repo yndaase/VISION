@@ -65,7 +65,7 @@ async function handleHelp(data, res) {
   const prompt = `You are the Vision Education AI Academic Assistant. Subject: ${subject}. Topic: ${topic}. Question: ${question}. Provide a HINT or CONCEPT EXPLANATION for: "${userMessage}". Keep it short and don't give the final answer.`;
   const contents = [{ role: "user", parts: [{ text: prompt }] }];
   const response = await safeGenerateContent(contents);
-  return res.status(200).json({ helpText: response.text() });
+  return res.status(200).json({ helpText: response.text });
 }
 
 async function handlePlanner(data, res) {
@@ -73,7 +73,7 @@ async function handlePlanner(data, res) {
   const prompt = `You are the "Vision Education 2026 WASSCE Academic Strategist". A student named ${name} has ${accuracy}% accuracy in ${subject}. Generate a "Today's Study Mission" JSON: { "topic": "Name", "tasks": ["..."], "motivation": "...", "difficulty": "..." }`;
   const contents = [{ role: "user", parts: [{ text: prompt }] }];
   const response = await safeGenerateContent(contents);
-  const text = response.text().replace(/```json|```/g, "").trim();
+  const text = response.text.replace(/```json|```/g, "").trim();
   return res.status(200).json(JSON.parse(text));
 }
 
@@ -83,7 +83,7 @@ async function handleVision(data, res) {
   if (imageBase64) parts.push({ inlineData: { data: imageBase64, mimeType: mimeType || "image/jpeg" } });
   const contents = [{ role: "user", parts }];
   const response = await safeGenerateContent(contents);
-  return res.status(200).json({ analysis: response.text() });
+  return res.status(200).json({ analysis: response.text });
 }
 
 async function handleGenerateQuestions(data, res) {
@@ -91,7 +91,7 @@ async function handleGenerateQuestions(data, res) {
   const prompt = `You are a Senior WASSCE Examiner. Generate a Daily AI Mock for ${subject} on ${dateSeed}. Return JSON: { "mcqs": [...], "theory": [...] }. Match the official Vision Edu schema.`;
   const contents = [{ role: "user", parts: [{ text: prompt }] }];
   const response = await safeGenerateContent(contents);
-  const text = response.text().replace(/```json|```/g, "").trim();
+  const text = response.text.replace(/```json|```/g, "").trim();
   return res.status(200).json(JSON.parse(text));
 }
 
@@ -100,6 +100,6 @@ async function handleMarkExam(data, res) {
   const prompt = `You are the WASSCE Chief Examiner. Mark these responses against schemes: ${JSON.stringify(studentResponses)}. Return JSON array of { questionId, score, maxScore, critique }.`;
   const contents = [{ role: "user", parts: [{ text: prompt }] }];
   const response = await safeGenerateContent(contents);
-  const text = response.text().replace(/```json|```/g, "").trim();
+  const text = response.text.replace(/```json|```/g, "").trim();
   return res.status(200).json(JSON.parse(text));
 }
