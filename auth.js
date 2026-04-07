@@ -101,18 +101,15 @@ function verifyUserSchema(user) {
   // Ensure default booleans/timestamps
   user.twoFAEnabled = !!user.twoFAEnabled;
   user.subscriptionExpiry = user.subscriptionExpiry || 0;
-  user.trialStartedAt = user.trialStartedAt || 0;
 
   // ABSOLUTE ADMIN OVERRIDE (Permanent Pro)
   const isAdmin = user.email && user.email.toLowerCase() === 'gisgreat308@gmail.com';
   
   // Calculate Effective Role
   const now = Date.now();
-  const DAY_MS = 24 * 60 * 60 * 1000;
-  const isPaidPro = user.subscriptionExpiry > now;
-  const isTrialPro = user.trialStartedAt > 0 && now < (user.trialStartedAt + DAY_MS);
+  const isPaidPro = (user.subscriptionExpiry || 0) > now;
 
-  if (isAdmin || isPaidPro || isTrialPro) {
+  if (isAdmin || isPaidPro) {
     user.role = user.role === 'enterprise' ? 'enterprise' : 'pro';
   } else if (user.role !== 'enterprise' && user.role !== 'admin') {
     // Revert role to standard if everything expired (unless it's a fixed role)
@@ -123,16 +120,15 @@ function verifyUserSchema(user) {
 }
 
 /**
- * Checks if a user is currently Pro (Paid, Trial, or Admin)
+ * Checks if a user is currently Pro (Paid or Admin)
  */
 function isProUser(user = getSession()) {
   if (!user) return false;
   if (user.role === 'enterprise') return true; // Enterprise is implicitly Pro
   const now = Date.now();
   const isAdmin = user.email && user.email.toLowerCase() === 'gisgreat308@gmail.com';
-  const isPaidPro = user.subscriptionExpiry > now;
-  const isTrialPro = (user.trialStartedAt || 0) > 0 && now < (user.trialStartedAt + (24 * 60 * 60 * 1000));
-  return isAdmin || isPaidPro || isTrialPro;
+  const isPaidPro = (user.subscriptionExpiry || 0) > now;
+  return isAdmin || isPaidPro;
 }
 
 /**
@@ -143,63 +139,7 @@ function isEnterpriseUser(user = getSession()) {
   return user.role === 'enterprise';
 }
 
-/**
- * Activate a 1-day free trial
- */
-async function startFreeTrial() {
-  const session = getSession();
-  if (!session) return;
-  
-  // FIX: Detects both active trials (>0) and used/cancelled trials (-1)
-  if (session.trialStartedAt !== 0) {
-    alert("You have already used your 1-day free trial.");
-    return;
-  }
-
-  const users = getUsers();
-  const idx = users.findIndex(u => u.email === session.email);
-  if (idx !== -1) {
-    const startTime = Date.now();
-    users[idx].trialStartedAt = startTime;
-    users[idx].role = 'pro';
-    
-  session.trialStartedAt = startTime;
-    session.role = 'pro';
-    
-    setSession(session);
-    saveUsers(users);
-    
-    alert("Success! Your 24-hour Elite Trial is now active.");
-    if (window.updateSettingsSubUI) updateSettingsSubUI();
-    window.location.href = "/dashboard";
-  }
-}
-
-/**
- * Cancel an active 1-day free trial immediately
- */
-async function cancelFreeTrial() {
-  const session = getSession();
-  if (!session) return;
-  
-  if (!isProUser(session)) return; // Already standard
-
-  const idx = users.findIndex(u => u.email === session.email);
-  if (idx !== -1) {
-    // Flag it as -1 to mean "Used & Cancelled"
-    users[idx].trialStartedAt = -1;
-    users[idx].role = 'student';
-    
-    session.trialStartedAt = -1;
-    session.role = 'student';
-    
-    setSession(session);
-    saveUsers(users);
-    
-    alert("Your 1-Day Trial has been cancelled.");
-    if (window.updateSettingsSubUI) updateSettingsSubUI();
-  }
-}
+// Trial Decommissioned: strictly paid or institutional access model now active.
 
 function migrateLegacyData() {
   try {

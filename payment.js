@@ -12,8 +12,14 @@ function isPurchased(itemId) {
   const session = getSession();
   if (!session || !session.email) return false;
   
-  // PRO users (Active Sub or Trial) get everything for free
-  if (isProUser(session)) return true;
+  // PRO users (Active Paid Sub or Admin) get everything for free
+  const now = Date.now();
+  const isPaidPro = (session.subscriptionExpiry || 0) > now;
+  const isElite = session.role === 'admin' || session.role === 'enterprise';
+
+  if (isPaidPro || isElite) {
+    return true;
+  }
 
   const purchases = JSON.parse(localStorage.getItem(PURCHASE_KEY_PREFIX + session.email) || "[]");
   return purchases.includes(itemId);

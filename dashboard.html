@@ -1116,7 +1116,7 @@
             <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 2rem;">
               <div>
                 <div style="font-size: 0.75rem; font-weight: 800; color: var(--primary); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 8px;">Tier Status</div>
-                <h2 id="subTierName" style="font-size: 2rem; margin: 0; font-weight: 900;">Vision <span style="background: linear-gradient(135deg, #fbbf24, #f59e0b); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">PRO</span></h2>
+                <h2 id="subTierName" style="font-size: 2rem; margin: 0; font-weight: 900;">Vision <span style="background: linear-gradient(135deg, #fbbf24, #f59e0b); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;">PRO</span></h2>
               </div>
               <div id="subStatusBadge" style="background: var(--primary); color: #fff; padding: 6px 14px; border-radius: 100px; font-size: 0.75rem; font-weight: 700;">Active</div>
             </div>
@@ -1126,10 +1126,6 @@
             </div>
             <p id="subDescription" style="color: var(--text-secondary); line-height: 1.6; font-size: 0.9rem;">Enjoy full access to the 2026 High-Performance suite, including Azure GPT-4o and Strategic Study Planning.</p>
           </div>
-          <div id="trialUnlockContainer" style="display: none; margin-top: 1rem;">
-             <button onclick="window.location.href='pricing.html'" style="display: block; width: 100%; padding: 14px; border-radius: 12px; background: linear-gradient(135deg, #6366f1, #a855f7); color: white; border: none; font-weight: 800; font-size: 0.95rem; cursor: pointer; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 4px 15px rgba(99, 102, 241, 0.2);" onmouseover="this.style.transform='translateY(-2px) scale(1.02)'; this.style.boxShadow='0 12px 25px rgba(99, 102, 241, 0.4)'" onmouseout="this.style.transform='none'; this.style.boxShadow='0 4px 15px rgba(99, 102, 241, 0.2)'">Upgrade to 30 GHS Premium</button>
-          </div>
-          <button id="cancelTrialBtn" onclick="cancelFreeTrial()" style="display: none; width: 100%; margin-top: 1rem; border: 1px solid rgba(239, 68, 68, 0.2); background: rgba(239, 68, 68, 0.05); color: #f87171; padding: 10px; border-radius: 10px; font-weight: 700; cursor: pointer;">Cancel Active Trial</button>
         </div>
         <script>
            function updateSettingsSubUI() {
@@ -1140,18 +1136,15 @@
               const isAdmin = session.email === 'gisgreat308@gmail.com';
               const isEnt = session.role === 'enterprise' || session.institutionId;
               const isPaid = session.subscriptionExpiry > now;
-              const isTrial = (session.trialStartedAt || 0) > 0 && now < (session.trialStartedAt + (24 * 60 * 60 * 1000));
               
               const dateEl = document.getElementById("subExpiryDate");
               const badgeEl = document.getElementById("subStatusBadge");
               const tierEl = document.getElementById("subTierName");
               const descEl = document.getElementById("subDescription");
               const card = document.getElementById("subscriptionCard");
-              const trialBtn = document.getElementById("cancelTrialBtn");
-              const upgradeMsg = document.getElementById("trialUnlockContainer");
 
               if (isEnt) {
-                  tierEl.innerHTML = `Vision <span style="background: linear-gradient(135deg, #fbbf24, #f59e0b); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">ENTERPRISE</span>`;
+                  tierEl.innerHTML = `Vision <span style="color: #fbbf24;">ENTERPRISE</span>`;
                   badgeEl.textContent = "Institutional";
                   badgeEl.style.background = "var(--ent-accent, #fbbf24)";
                   badgeEl.style.color = "#000";
@@ -1159,29 +1152,16 @@
                   descEl.textContent = "You are currently covered by an official institutional license. Full access to the 2026 Strategic Suite is active.";
                   card.style.border = "1px solid #fbbf24";
                   card.style.background = "linear-gradient(135deg, rgba(251, 191, 36, 0.05), rgba(0, 0, 0, 0.2))";
-                  if (trialBtn) trialBtn.style.display = 'none';
-                  if (upgradeMsg) upgradeMsg.style.display = 'none';
               } else if (isAdmin) {
                 dateEl.textContent = "Permanent Institutional Access";
                 badgeEl.textContent = "Admin Override";
               } else if (isPaid) {
                 dateEl.textContent = new Date(session.subscriptionExpiry).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
                 badgeEl.textContent = "Paid Active";
-              } else if (isTrial) {
-                const timeLeft = Math.max(0, Math.ceil(((session.trialStartedAt + (24*60*60*1000)) - now) / (1000 * 60 * 60)));
-                dateEl.textContent = "Trial Expires in " + timeLeft + " hours";
-                badgeEl.textContent = "Trial Active";
-                badgeEl.style.background = "var(--primary-dim)";
-                badgeEl.style.color = "var(--primary)";
-                tierEl.innerHTML = "Vision <span style='color:var(--primary)'>TRIAL</span>";
-                descEl.textContent = "You are currently exploring the 24-hour Elite Trial. Upgrade to 30 GHS for uninterrupted 30-day access.";
-                document.getElementById("trialUnlockContainer").style.display = "block";
-                document.getElementById("cancelTrialBtn").style.display = "block";
               } else {
                 dateEl.textContent = "Subscription Expired";
                 badgeEl.textContent = "Inactive";
                 badgeEl.style.background = "#ef4444";
-                container.style.borderColor = "#ef4444";
                 document.getElementById("trialUnlockContainer").style.display = "block";
                 document.getElementById("cancelTrialBtn").style.display = "none";
               }
