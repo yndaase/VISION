@@ -159,11 +159,16 @@ function renderMission(plan) {
     const diffEl = document.getElementById("planDifficulty");
     const timetableEl = document.getElementById("planTimetable");
 
-    if (topicEl) topicEl.innerHTML = typeof marked !== 'undefined' ? marked.parse(plan.topic) : plan.topic;
-    if (motivEl) motivEl.innerHTML = typeof marked !== 'undefined' ? marked.parse(`"${plan.motivation}"`) : `"${plan.motivation}"`;
+    const sm = (val) => {
+        if (!val) return "";
+        return Array.isArray(val) ? val.join("\n") : String(val);
+    };
+
+    if (topicEl) topicEl.innerHTML = typeof marked !== 'undefined' ? marked.parse(sm(plan.topic)) : sm(plan.topic);
+    if (motivEl) motivEl.innerHTML = typeof marked !== 'undefined' ? marked.parse(`"${sm(plan.motivation)}"`) : `"${sm(plan.motivation)}"`;
     
     if (timetableEl && plan.timetable) {
-        timetableEl.innerHTML = typeof marked !== 'undefined' ? marked.parse(plan.timetable) : plan.timetable;
+        timetableEl.innerHTML = typeof marked !== 'undefined' ? marked.parse(sm(plan.timetable)) : sm(plan.timetable);
     }
 
     if (diffEl) {
@@ -172,8 +177,9 @@ function renderMission(plan) {
     }
 
     if (tasksEl && plan.tasks) {
-        tasksEl.innerHTML = plan.tasks.map(t => {
-            const renderedText = typeof marked !== 'undefined' ? marked.parseInline(t) : t;
+        const tasks = Array.isArray(plan.tasks) ? plan.tasks : [plan.tasks];
+        tasksEl.innerHTML = tasks.map(t => {
+            const renderedText = typeof marked !== 'undefined' ? marked.parseInline(sm(t)) : sm(t);
             return `
                 <div style="display:flex;align-items:flex-start;gap:12px;margin-bottom:12px;">
                     <input type="checkbox" style="margin-top:4px;">
