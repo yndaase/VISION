@@ -1162,10 +1162,18 @@
         
         if (session.role === "pro") {
           if (proBadge) proBadge.style.display = "inline-flex";
-          if (goProCard) goProCard.style.display = "none";
-          if (promoStrip) promoStrip.style.display = "none";
-          const sideGetPro = document.getElementById("sideNavGetPro");
-          if (sideGetPro) sideGetPro.style.display = "none";
+          // Admin can still see the Get Pro buttons for testing/oversight
+          if (!isAdmin) {
+            if (goProCard) goProCard.style.display = "none";
+            if (promoStrip) promoStrip.style.display = "none";
+            const sideGetPro = document.getElementById("sideNavGetPro");
+            if (sideGetPro) sideGetPro.style.display = "none";
+          } else {
+            if (goProCard) goProCard.style.display = "block";
+            if (promoStrip) promoStrip.style.display = "block";
+            const sideGetPro = document.getElementById("sideNavGetPro");
+            if (sideGetPro) sideGetPro.style.display = "block";
+          }
         } else {
           // Standard view
           if (goProCard) goProCard.style.display = "block";
@@ -1219,11 +1227,19 @@
         const promoStrip = document.getElementById('proPromoStrip');
         const promoCard = document.getElementById('proUpgradeCard');
         const sideGetPro = document.getElementById("sideNavGetPro");
-        if (promoStrip) promoStrip.style.display = 'none';
-        if (promoCard) promoCard.style.display = 'none';
-        if (sideGetPro) sideGetPro.style.display = 'none';
+        const isAdmin = session.email && session.email.toLowerCase() === 'gisgreat308@gmail.com';
+
+        if (!isAdmin) {
+          if (promoStrip) promoStrip.style.display = 'none';
+          if (promoCard) promoCard.style.display = 'none';
+          if (sideGetPro) sideGetPro.style.display = 'none';
+        } else {
+          if (promoStrip) promoStrip.style.display = 'block';
+          if (promoCard) promoCard.style.display = 'block';
+          if (sideGetPro) sideGetPro.style.display = 'block';
+        }
         
-        // Add pro badge to username
+        // Add pro badge to username (Admin always gets the badge)
         const nameEl = document.getElementById('welcomeName');
         if (nameEl) {
             if (!nameEl.innerHTML.includes('AZURE PRO')) {
