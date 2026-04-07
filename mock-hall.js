@@ -210,6 +210,18 @@ function renderQuestion() {
     }
   }
 
+  if (typeof renderMathInElement !== 'undefined') {
+    renderMathInElement(card, {
+      delimiters: [
+        {left: '$$', right: '$$', display: true},
+        {left: '$', right: '$', display: false},
+        {left: '\\(', right: '\\)', display: false},
+        {left: '\\[', right: '\\]', display: true}
+      ],
+      throwOnError: false
+    });
+  }
+
   updatePalette();
   updateSideStats();
 }
@@ -268,6 +280,18 @@ async function markEssayWithAI(qId) {
       `;
     } else {
       feedbackEl.innerHTML = `<div class="ai-error">Error: ${result.error || 'Failed to analyze.'}</div>`;
+    }
+
+    if (typeof renderMathInElement !== 'undefined') {
+      renderMathInElement(feedbackEl, {
+        delimiters: [
+          {left: '$$', right: '$$', display: true},
+          {left: '$', right: '$', display: false},
+          {left: '\\(', right: '\\)', display: false},
+          {left: '\\[', right: '\\]', display: true}
+        ],
+        throwOnError: false
+      });
     }
   } catch (err) {
     console.error(err);
@@ -573,7 +597,20 @@ async function performAIGrading(stats) {
       </div>
     `;
 
-    if (resultArea) resultArea.innerHTML = aiHtml;
+    if (resultArea) {
+      resultArea.innerHTML = aiHtml;
+      if (typeof renderMathInElement !== 'undefined') {
+        renderMathInElement(resultArea, {
+          delimiters: [
+            {left: '$$', right: '$$', display: true},
+            {left: '$', right: '$', display: false},
+            {left: '\\(', right: '\\)', display: false},
+            {left: '\\[', right: '\\]', display: true}
+          ],
+          throwOnError: false
+        });
+      }
+    }
   } catch (err) {
     console.error("AI Marking Failed:", err);
     saveStats(stats);
@@ -649,11 +686,23 @@ async function handleAISearch(manualPrompt) {
 
     const data = await res.json();
     if (res.ok) {
-        loader.textContent = data.helpText || "I couldn't generate a response right now.";
+        const helpText = data.helpText || "I couldn't generate a response right now.";
+        loader.innerHTML = typeof marked !== 'undefined' ? marked.parse(helpText) : helpText;
     } else {
-        // Display the specific backend error (e.g. AI key missing)
         loader.style.color = "var(--error)";
         loader.textContent = `⚠️ ${data.error || "AI brain offline."}`;
+    }
+
+    if (typeof renderMathInElement !== 'undefined') {
+      renderMathInElement(loader, {
+        delimiters: [
+          {left: '$$', right: '$$', display: true},
+          {left: '$', right: '$', display: false},
+          {left: '\\(', right: '\\)', display: false},
+          {left: '\\[', right: '\\]', display: true}
+        ],
+        throwOnError: false
+      });
     }
   } catch (err) {
     loader.style.color = "var(--error)";
@@ -664,8 +713,27 @@ async function handleAISearch(manualPrompt) {
 function appendMsg(text, type) {
   const div = document.createElement('div');
   div.className = `${type}-msg`;
-  div.textContent = text;
+  
+  if (typeof marked !== 'undefined' && type === 'ai') {
+    div.innerHTML = marked.parse(text);
+  } else {
+    div.textContent = text;
+  }
+  
   aiHistory.appendChild(div);
+
+  if (type === 'ai' && typeof renderMathInElement !== 'undefined') {
+    renderMathInElement(div, {
+      delimiters: [
+        {left: '$$', right: '$$', display: true},
+        {left: '$', right: '$', display: false},
+        {left: '\\(', right: '\\)', display: false},
+        {left: '\\[', right: '\\]', display: true}
+      ],
+      throwOnError: false
+    });
+  }
+
   aiHistory.scrollTop = aiHistory.scrollHeight;
   return div;
 }

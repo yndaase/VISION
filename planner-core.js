@@ -131,20 +131,37 @@ function renderMission(plan) {
     const motivEl = document.getElementById("planMotivation");
     const diffEl = document.getElementById("planDifficulty");
 
-    if (topicEl) topicEl.innerText = plan.topic;
-    if (motivEl) motivEl.innerText = '"' + plan.motivation + '"';
+    if (topicEl) topicEl.innerHTML = typeof marked !== 'undefined' ? marked.parse(plan.topic) : plan.topic;
+    if (motivEl) motivEl.innerHTML = typeof marked !== 'undefined' ? marked.parse(`"${plan.motivation}"`) : `"${plan.motivation}"`;
+    
     if (diffEl) {
         diffEl.innerText = plan.difficulty || "Medium";
         diffEl.className = "meta-chip " + (plan.difficulty?.toLowerCase() === 'hard' ? 'difficulty-hard' : '');
     }
 
     if (tasksEl && plan.tasks) {
-        tasksEl.innerHTML = plan.tasks.map(t => `
-            <div style="display:flex;align-items:flex-start;gap:12px;margin-bottom:12px;">
-                <input type="checkbox" style="margin-top:4px;">
-                <span style="font-size:0.9rem;color:var(--text-secondary); line-height:1.4;">${t}</span>
-            </div>
-        `).join('');
+        tasksEl.innerHTML = plan.tasks.map(t => {
+            const renderedText = typeof marked !== 'undefined' ? marked.parseInline(t) : t;
+            return `
+                <div style="display:flex;align-items:flex-start;gap:12px;margin-bottom:12px;">
+                    <input type="checkbox" style="margin-top:4px;">
+                    <span style="font-size:0.9rem;color:var(--text-secondary); line-height:1.4;">${renderedText}</span>
+                </div>
+            `;
+        }).join('');
+    }
+
+    const missionCard = document.getElementById("missionCard");
+    if (missionCard && typeof renderMathInElement !== 'undefined') {
+        renderMathInElement(missionCard, {
+            delimiters: [
+                {left: '$$', right: '$$', display: true},
+                {left: '$', right: '$', display: false},
+                {left: '\\(', right: '\\)', display: false},
+                {left: '\\[', right: '\\]', display: true}
+            ],
+            throwOnError: false
+        });
     }
 
     const missionContainer = document.getElementById("missionContainer");
