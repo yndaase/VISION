@@ -1,25 +1,26 @@
 import { GoogleGenAI } from "@google/genai";
 
 const apiKey = process.env.GEMINI_API_KEY;
-const groqKey = process.env.GROQ_API_KEY;
+const azureKey = process.env.AZURE_OPENAI_KEY || process.env.GITHUB_TOKEN;
+const azureEndpoint = process.env.AZURE_OPENAI_ENDPOINT || "https://models.inference.ai.azure.com";
+const azureDeployment = process.env.AZURE_OPENAI_DEPLOYMENT || "gpt-4o-mini";
 const ai = new GoogleGenAI({ apiKey });
 
-const MODEL_PRO = "llama-3.3-70b-versatile"; // High-Intelligence Pro Model via Groq
 const MODEL_STANDARD = "gemini-2.5-flash";
 const MODEL_FALLBACK = "gemini-1.5-flash-8b";
 
 /**
- * AI Content Generation with Smart Provider Routing
+ * AI Content Generation with Multi-Provider Routing
  * Standard Users: Gemini (Google)
- * Pro Users: Llama 3 (Groq) - Near-instant and high-quota
+ * Pro Users: Azure OpenAI / Microsoft Copilot-grade intelligence
  */
 async function safeGenerateContent(contents, role = "student") {
-  // 1. Pro Routing (Groq)
-  if (role === "pro" && groqKey) {
+  // 1. Pro Routing (Microsoft Azure AI)
+  if (role === "pro" && azureKey) {
     try {
-      return await generateWithGroq(contents);
+      return await generateWithAzure(contents);
     } catch (err) {
-      console.warn("[Groq Error] Falling back to Gemini:", err.message);
+      console.warn("[Azure Error] Falling back to Gemini:", err.message);
     }
   }
 
@@ -43,6 +44,46 @@ async function safeGenerateContent(contents, role = "student") {
     }
     throw error;
   }
+}
+
+/**
+ * Microsoft Azure OpenAI / GitHub Models Fetch Handler
+ */
+async function generateWithAzure(contents) {
+  const messages = contents.map(msg => ({
+    role: msg.role === "model" ? "assistant" : msg.role,
+    content: msg.parts.map(p => p.text).join("\n")
+  }));
+
+  // Build the correct URL (GitHub Models vs Azure OpenAI)
+  let url = azureEndpoint;
+  if (!url.includes("models.inference")) {
+      const baseUrl = url.endsWith("/") ? url.slice(0, -1) : url;
+      url = `${baseUrl}/openai/deployments/${azureDeployment}/chat/completions?api-version=2024-02-15-preview`;
+  }
+
+  const response = await fetch(url, {
+    method: "POST",
+    headers: {
+      "api-key": azureKey,
+      "Authorization": `Bearer ${azureKey}`,
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      messages: messages,
+      model: azureDeployment, // Requirement for Inference API
+      temperature: 0.7,
+      max_tokens: 2048
+    })
+  });
+
+  const data = await response.json();
+  if (!response.ok) throw new Error(data.error?.message || "Azure API Error");
+
+  return {
+    text: data.choices[0].message.content,
+    get text() { return data.choices[0].message.content; }
+  };
 }
 
 /**

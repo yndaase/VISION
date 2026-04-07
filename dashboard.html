@@ -345,16 +345,16 @@
         </p>
 
         <!-- Pro Section Banner -->
-        <div id="proUpgradeCard" class="glass-card" style="display: none; margin-top: 2rem; border: 1px solid var(--primary); background: rgba(14, 165, 233, 0.05); padding: 1.5rem; position: relative; overflow: hidden;">
-          <div style="position: absolute; top: -10px; right: -10px; font-size: 4rem; opacity: 0.05; transform: rotate(15deg);">💎</div>
+        <div id="proUpgradeCard" class="glass-card" style="display: none; margin-top: 2rem; border: 1px solid #0078d4; background: rgba(0, 120, 212, 0.05); padding: 1.5rem; position: relative; overflow: hidden;">
+          <div style="position: absolute; top: -10px; right: -10px; font-size: 4rem; opacity: 0.05; transform: rotate(15deg);">☁️</div>
           <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 1.5rem;">
             <div style="flex: 1; min-width: 250px;">
-              <h3 style="color: #fbbf24; font-size: 1.2rem; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 8px;">
-                Vision Pro Membership <span class="pro-badge">Unlimited AI</span>
+              <h3 style="color: #0078d4; font-size: 1.2rem; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 8px;">
+                Vision Pro <span class="pro-badge" style="background: linear-gradient(135deg, #0078d4, #288ad6);">Azure AI Powered</span>
               </h3>
               <p style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.6;">
-                Unlock <strong>1,500+ Daily AI Requests</strong>, proctored Part B analysis, and comprehensive subject packs. 
-                Holiday Promo active: <strong>1.00 GHS only!</strong>
+                Unlock **Microsoft Copilot-grade Intelligence**, proctored Part B analysis, and comprehensive subject packs. 
+                Holiday Promo active: **1.00 GHS only!**
               </p>
             </div>
             <div style="display: flex; flex-direction: column; gap: 0.8rem; min-width: 200px;">
@@ -1167,7 +1167,7 @@
         
         // Add pro badge to username
         const nameEl = document.getElementById('welcomeName');
-        if (nameEl) nameEl.innerHTML += ' <span class="pro-badge">PRO</span>';
+        if (nameEl) nameEl.innerHTML += ' <span class="pro-badge" style="background: linear-gradient(135deg, #0078d4, #288ad6);">AZURE PRO</span>';
       } else {
         const promoStrip = document.getElementById('proPromoStrip');
         const promoCard = document.getElementById('proUpgradeCard');
