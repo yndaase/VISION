@@ -50,11 +50,16 @@ async function syncWithCloud(localUsers = getUsers()) {
 }
 function getSession() {
   // Read from sessionStorage first, then fall back to localStorage (survives refresh)
-  return JSON.parse(
-    sessionStorage.getItem(SESSION_KEY) ||
-      localStorage.getItem(SESSION_KEY) ||
-      "null",
-  );
+  const sessionString = sessionStorage.getItem(SESSION_KEY) || localStorage.getItem(SESSION_KEY);
+  if (!sessionString) return null;
+  
+  try {
+    const rawSession = JSON.parse(sessionString);
+    // CRITICAL: Always re-verify schema to catch expiry mid-session
+    return verifyUserSchema(rawSession);
+  } catch (e) {
+    return null;
+  }
 }
 function setSession(user) {
   const verified = verifyUserSchema(user);
@@ -727,12 +732,6 @@ async function handleSignup(e) {
   setTimeout(goToDashboard, 900);
 }
 
-//  Guest
-function continueAsGuest() {
-  const guest = { name: "Guest", email: "", provider: "guest", isGuest: true };
-  setSession(guest);
-  goToDashboard();
-}
 
 // (Second copy of settings functions removed for unification)
 
