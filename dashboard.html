@@ -168,6 +168,28 @@
       height: 16px;
       vertical-align: middle;
     }
+
+    /* Pulsing Get Pro Button */
+    .nav-get-pro {
+      display: none; /* Shown for non-pro */
+      margin-top: auto;
+      padding: 12px;
+      background: linear-gradient(135deg, #0078d4, #288ad6);
+      color: white !important;
+      border-radius: 12px;
+      margin-bottom: 20px;
+      text-decoration: none;
+      font-weight: 800;
+      font-size: 0.85rem;
+      text-align: center;
+      animation: pulse-pro 2s infinite;
+      box-shadow: 0 4px 15px rgba(0, 120, 212, 0.3);
+    }
+    @keyframes pulse-pro {
+      0% { transform: scale(1); box-shadow: 0 4px 15px rgba(0, 120, 212, 0.3); }
+      50% { transform: scale(1.02); box-shadow: 0 4px 25px rgba(0, 120, 212, 0.5); }
+      100% { transform: scale(1); box-shadow: 0 4px 15px rgba(0, 120, 212, 0.3); }
+    }
   </style>
 </head>
 
@@ -202,6 +224,9 @@
           <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM7 10h5v5H7z"/></svg>
         </span>
         <span>Study Planner</span>
+      </a>
+      <a href="pricing.html" class="nav-get-pro" id="sideNavGetPro">
+        <span>Get Vision Pro</span>
       </a>
     </nav>
     <div class="side-nav-footer">
@@ -361,9 +386,9 @@
             <div style="display: flex; flex-direction: column; gap: 0.8rem; min-width: 200px;">
               <div style="display: flex; gap: 0.5rem;">
                 <input type="text" id="promoCodeInput" placeholder="Promo Code" style="background: rgba(0,0,0,0.2); border: 1px solid var(--border); color: white; padding: 10px; border-radius: 8px; font-size: 0.8rem; width: 100%;">
-                <button onclick="applyAndGoPro()" class="hero-btn-primary" style="padding: 10px 20px; font-size: 0.85rem; white-space: nowrap;">Get Pro</button>
+                <button onclick="applyAndGoPro()" class="hero-btn-primary" style="padding: 10px 20px; font-size: 0.85rem; white-space: nowrap;">Upgrade</button>
               </div>
-              <p style="font-size: 0.7rem; color: #34d399; text-align: center;">* Use code <strong>AUGUSCO</strong> for special access</p>
+              <p style="font-size: 0.7rem; color: #34d399; text-align: center;">* Use <strong>AUGUSCO</strong> or <strong>STUDENTFREE</strong> for 1 GH₵</p>
             </div>
           </div>
         </div>
@@ -1139,10 +1164,14 @@
           if (proBadge) proBadge.style.display = "inline-flex";
           if (goProCard) goProCard.style.display = "none";
           if (promoStrip) promoStrip.style.display = "none";
+          const sideGetPro = document.getElementById("sideNavGetPro");
+          if (sideGetPro) sideGetPro.style.display = "none";
         } else {
           // Standard view
           if (goProCard) goProCard.style.display = "block";
           if (promoStrip) promoStrip.style.display = "block";
+          const sideGetPro = document.getElementById("sideNavGetPro");
+          if (sideGetPro) sideGetPro.style.display = "block";
         }
       }
 
@@ -1189,17 +1218,25 @@
       if (session && session.role === 'pro') {
         const promoStrip = document.getElementById('proPromoStrip');
         const promoCard = document.getElementById('proUpgradeCard');
+        const sideGetPro = document.getElementById("sideNavGetPro");
         if (promoStrip) promoStrip.style.display = 'none';
         if (promoCard) promoCard.style.display = 'none';
+        if (sideGetPro) sideGetPro.style.display = 'none';
         
         // Add pro badge to username
         const nameEl = document.getElementById('welcomeName');
-        if (nameEl) nameEl.innerHTML += ' <span class="pro-badge" style="background: linear-gradient(135deg, #0078d4, #288ad6);">AZURE PRO</span>';
+        if (nameEl) {
+            if (!nameEl.innerHTML.includes('AZURE PRO')) {
+                nameEl.innerHTML += ' <span class="pro-badge" style="background: linear-gradient(135deg, #0078d4, #288ad6);">AZURE PRO</span>';
+            }
+        }
       } else {
         const promoStrip = document.getElementById('proPromoStrip');
         const promoCard = document.getElementById('proUpgradeCard');
+        const sideGetPro = document.getElementById("sideNavGetPro");
         if (promoStrip) promoStrip.style.display = 'block';
         if (promoCard) promoCard.style.display = 'block';
+        if (sideGetPro) sideGetPro.style.display = 'block';
       }
     })();
   </script>
