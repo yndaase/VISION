@@ -34,7 +34,8 @@ async function safeGenerateContent(contents, role = "student") {
   // 1. Pro Routing (Microsoft Azure AI)
   if (role === "pro" && azureKey) {
     try {
-      return await generateWithAzure(contents);
+      const mode = contents.find(c => c.mode)?.mode || "examiner";
+      return await generateWithAzure(contents, mode);
     } catch (err) {
       console.warn("[Azure Error] Falling back to Gemini:", err.message);
     }
@@ -63,19 +64,23 @@ async function safeGenerateContent(contents, role = "student") {
 }
 
 /**
- * Microsoft Azure OpenAI SDK Handler with Expert Knowledge
+ * Microsoft Azure OpenAI SDK Handler with Dual-Mode Support
  */
-async function generateWithAzure(contents) {
+async function generateWithAzure(contents, mode = "examiner") {
   // Convert Gemini format to OpenAI format
-  const messages = contents.map(msg => ({
+  const messages = contents.filter(c => !c.mode).map(msg => ({
     role: msg.role === "model" ? "assistant" : msg.role,
     content: msg.parts.map(p => p.text).join("\n")
   }));
 
-  // INJECT EXPERT KNOWLEDGE (System Prompt Calibration)
-  const systemMessage = {
-    role: "system",
-    content: `You are the WAEC Chief Examiner for Core Mathematics (2026 Curriculum). 
+  // Branching System Prompt
+  let systemContent = "";
+  if (mode === "normal") {
+    systemContent = `You are a helpful, versatile, and supportive AI Academic Assistant for Vision Education. 
+    Provide clear and accurate answers to the student's questions on any academic topic. 
+    Be conversational, concise, and encourage critical thinking. Use LaTeX for math if needed.`;
+  } else {
+    systemContent = `You are the WAEC Chief Examiner for Core Mathematics (2026 Curriculum). 
     Your goal is to provide high-accuracy marking and encouraging academic tutoring.
     
     EXPERT RULES:
@@ -88,7 +93,12 @@ async function generateWithAzure(contents) {
     - If a student makes a unit error, give partial credit but flag the 'unit confusion'.
     - If a student forgets the tax threshold, explain WHY the GH 100 is subtracted first.
     
-    TONE: Professional, firm on accuracy, but helpful like a Senior Mentor.`
+    TONE: Professional, firm on accuracy, but helpful like a Senior Mentor.`;
+  }
+
+  const systemMessage = {
+    role: "system",
+    content: systemContent
   };
 
   // Add system message to the start
@@ -97,7 +107,7 @@ async function generateWithAzure(contents) {
   const response = await azureClient.chat.completions.create({
     model: azureDeployment,
     messages: messages,
-    temperature: 0.7,
+    temperature: mode === "normal" ? 0.7 : 0.4, // Examiner is more precise
     max_tokens: 4096
   });
 

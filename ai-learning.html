@@ -205,6 +205,31 @@
       color: var(--text-muted);
       padding: 0 1rem;
     }
+    .mode-selector {
+      display: none; /* Hidden by default, shown for Pro */
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 4px;
+      margin-bottom: 20px;
+      gap: 4px;
+      width: fit-content;
+    }
+    .mode-btn {
+      padding: 6px 16px;
+      border-radius: 16px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      cursor: pointer;
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      transition: all 0.2s;
+    }
+    .mode-btn.active {
+      background: var(--primary);
+      color: white;
+    }
     @media (max-width: 900px) {
       .learning-main { margin-left: 0; padding-bottom: 70px; }
     }
@@ -247,6 +272,12 @@
 
   <div class="learning-main">
     <section class="learning-workspace">
+      <!-- Premium Mode Selector -->
+      <div id="aiModeSelector" class="mode-selector">
+        <button class="mode-btn active" onclick="setAiMode('examiner')" id="btnExaminer">WAEC Mode</button>
+        <button class="mode-btn" onclick="setAiMode('normal')" id="btnNormal">Normal Chat</button>
+      </div>
+
       <div class="ai-vision-card">
         <h1 class="welcome-heading" style="font-size: 2.5rem;">AI <span class="brand-accent">Learning Hub</span></h1>
         <p class="welcome-sub" id="welcomeText">Select a subject to begin your specialized WASSCE tutoring session.</p>
@@ -351,6 +382,31 @@
       reader.readAsDataURL(file);
     }
 
+    let currentAiMode = 'examiner';
+
+    function setAiMode(mode) {
+      currentAiMode = mode;
+      document.getElementById('btnExaminer').classList.toggle('active', mode === 'examiner');
+      document.getElementById('btnNormal').classList.toggle('active', mode === 'normal');
+      
+      const welcome = document.querySelector('.bubble-ai');
+      if (welcome) {
+          welcome.textContent = mode === 'normal' 
+            ? "Normal Chat Mode Active. I'm ready for any academic topic or general question!" 
+            : "WASSCE Chief Examiner Mode Active. I'm ready to mark your Part B and guide your exam prep.";
+      }
+    }
+
+    // Auto-show selector for Pro
+    window.addEventListener('DOMContentLoaded', () => {
+      const session = typeof getSession === 'function' ? getSession() : null;
+      const isAdmin = session?.email?.toLowerCase() === 'gisgreat308@gmail.com';
+      if ((session?.role === 'pro') || isAdmin) {
+        const selector = document.getElementById('aiModeSelector');
+        if (selector) selector.style.display = 'flex';
+      }
+    });
+
     sendBtn.onclick = async () => {
       const message = chatInput.value.trim();
       if (!message && !currentBase64) return;
@@ -382,7 +438,8 @@
             userMessage: message,
             subject: currentSubject,
             role: userRole,
-            email: userEmail
+            email: userEmail,
+            contents: [{ role: "user", parts: [{ text: message }], mode: currentAiMode }]
           })
         });
 
