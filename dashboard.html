@@ -1016,14 +1016,11 @@
     <!-- SETTINGS MODAL -->
     <div class="modal-overlay" id="settingsModal" onclick="handleModalOutsideClick(event)">
       <div class="settings-modal" onclick="event.stopPropagation()">
-        <div class="modal-header">
-          <div style="display: flex; align-items: center; gap: 10px">
-            <span style="font-size: 1.3rem"></span>
-            <h3 class="modal-title">Settings &amp; Security</h3>
-          </div>
-          <button class="close-modal-btn" onclick="closeSettings()" aria-label="Close">
-            &#215;
+        <div class="modal-header" style="justify-content: flex-start; gap: 15px;">
+          <button class="close-modal-btn" onclick="closeSettings()" aria-label="Back" style="font-size: 0.9rem; font-weight: 700; color: var(--text-muted); background: var(--bg-input); border: 1px solid var(--border); padding: 5px 12px; border-radius: 6px; cursor: pointer; transition: all 0.2s ease; display: flex; align-items: center; gap: 5px;">
+            <span>&larr;</span> Back
           </button>
+          <h3 class="modal-title" style="font-size: 1.1rem; font-weight: 800; margin: 0; letter-spacing: -0.02em;">Settings & Security</h3>
         </div>
         <div class="modal-content">
           <div class="settings-user-card">
@@ -1039,11 +1036,9 @@
           <div class="setting-row">
             <div class="setting-label-wrap">
               <span class="setting-label"> Interface Theme</span>
-              <span class="setting-desc">Switch between dark and light mode.</span>
+              <span class="setting-desc">Optimized for high-performance dark mode.</span>
             </div>
-            <button class="theme-toggle-btn" onclick="toggleTheme()" id="settingsThemeBtn" title="Toggle Theme">
-
-            </button>
+            <div style="font-size: 0.75rem; font-weight: 700; color: var(--primary); background: var(--primary-dim); padding: 4px 10px; border-radius: 6px; text-transform: uppercase;">Dark (Enforced)</div>
           </div>
           <div class="setting-row">
             <div class="setting-label-wrap">
@@ -1071,12 +1066,12 @@
               autocomplete="new-password" />
             <div id="passChangeMsg" class="pass-change-msg" style="display: none"></div>
           </div>
-          <div class="modal-footer-btns">
-            <button class="modal-btn modal-btn-primary" onclick="unifiedChangePassword()">
+          <div class="modal-footer-btns" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 2rem;">
+            <button class="modal-btn modal-btn-primary" onclick="unifiedChangePassword()" style="padding: 12px; border-radius: 10px; font-weight: 700;">
               Update Password
             </button>
-            <button class="modal-btn modal-btn-ghost" onclick="closeSettings()">
-              Done
+            <button class="modal-btn modal-btn-ghost" onclick="handleLogout()" style="padding: 12px; border-radius: 10px; font-weight: 700; background: rgba(239, 68, 68, 0.1); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.2);">
+              Logout Account
             </button>
           </div>
         </div>
