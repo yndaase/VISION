@@ -332,7 +332,7 @@ function handle2FAToggle() {
   toggle2FA(session.email, !current);
 }
 
-//  Settings Modal Logic (Standard Site)
+//  Settings Immersive Logic
 function openSettings() {
   const session = getSession();
   if (!session) return;
@@ -348,32 +348,39 @@ function openSettings() {
   if (emailEl) emailEl.textContent = session.email;
   if (avEl) avEl.textContent = session.name.charAt(0).toUpperCase();
 
-  // Sync 2FA toggle state
+  // Sync 2FA state
   const enabled = is2FAEnabled(session.email);
   updateSecurityStatusUI(enabled);
 
-  // Sync theme button icon in settings
-  const themeBtn = document.getElementById("settingsThemeBtn");
-  if (themeBtn && window.getTheme) {
-    themeBtn.textContent =
-      getTheme() === "light" ? "\uD83C\uDF19" : "\u2600\uFE0F";
-  }
-
-  // Show modal  don't lock body scroll, overlay handles it
+  // Show immersive view
   modal.classList.add("visible");
+  document.body.style.overflow = "hidden"; // Prevent background scroll
 }
 
 function closeSettings() {
   const modal = document.getElementById("settingsModal");
   if (modal) {
     modal.classList.remove("visible");
+    document.body.style.overflow = ""; 
   }
 }
 
+/**
+ * Switch tabs in the immersive settings view
+ */
+function switchSettingsTab(tabId, btn) {
+  // Update nav buttons
+  document.querySelectorAll('.settings-nav-item').forEach(el => el.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+
+  // Update panes
+  document.querySelectorAll('.settings-pane').forEach(el => el.classList.remove('active'));
+  const target = document.getElementById(`pane-${tabId}`);
+  if (target) target.classList.add('active');
+}
+
 function handleModalOutsideClick(event) {
-  if (event.target === document.getElementById("settingsModal")) {
-    closeSettings();
-  }
+  // Immersive view doesn't close on outside click by design (it's full screen)
 }
 
 //  Google Sign-In callback (GIS)
