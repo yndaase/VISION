@@ -141,7 +141,8 @@ async function startFreeTrial() {
   const session = getSession();
   if (!session) return;
   
-  if (session.trialStartedAt > 0) {
+  // FIX: Detects both active trials (>0) and used/cancelled trials (-1)
+  if (session.trialStartedAt !== 0) {
     alert("You have already used your 1-day free trial.");
     return;
   }
