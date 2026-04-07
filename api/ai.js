@@ -1,10 +1,26 @@
 import { GoogleGenAI } from "@google/genai";
+import { AzureOpenAI } from "openai";
 
 const apiKey = process.env.GEMINI_API_KEY;
 const azureKey = process.env.AZURE_OPENAI_KEY || process.env.GITHUB_TOKEN;
 const azureEndpoint = process.env.AZURE_OPENAI_ENDPOINT || "https://models.inference.ai.azure.com";
-const azureDeployment = process.env.AZURE_OPENAI_DEPLOYMENT || "gpt-4o-mini";
+const azureDeployment = process.env.AZURE_OPENAI_DEPLOYMENT || "gpt-4o";
+const azureVersion = "2025-01-01-preview";
+
 const ai = new GoogleGenAI({ apiKey });
+
+/**
+ * Microsoft Azure OpenAI Client Initialization
+ */
+let azureClient = null;
+if (azureKey && azureEndpoint) {
+  azureClient = new AzureOpenAI({
+    endpoint: azureEndpoint,
+    apiKey: azureKey,
+    apiVersion: azureVersion,
+    deployment: azureDeployment
+  });
+}
 
 const MODEL_STANDARD = "gemini-2.5-flash";
 const MODEL_FALLBACK = "gemini-1.5-flash-8b";
@@ -47,42 +63,49 @@ async function safeGenerateContent(contents, role = "student") {
 }
 
 /**
- * Microsoft Azure OpenAI / GitHub Models Fetch Handler
+ * Microsoft Azure OpenAI SDK Handler with Expert Knowledge
  */
 async function generateWithAzure(contents) {
+  // Convert Gemini format to OpenAI format
   const messages = contents.map(msg => ({
     role: msg.role === "model" ? "assistant" : msg.role,
     content: msg.parts.map(p => p.text).join("\n")
   }));
 
-  // Build the correct URL (GitHub Models vs Azure OpenAI)
-  let url = azureEndpoint;
-  if (!url.includes("models.inference")) {
-      const baseUrl = url.endsWith("/") ? url.slice(0, -1) : url;
-      url = `${baseUrl}/openai/deployments/${azureDeployment}/chat/completions?api-version=2024-02-15-preview`;
-  }
+  // INJECT EXPERT KNOWLEDGE (System Prompt Calibration)
+  const systemMessage = {
+    role: "system",
+    content: `You are the WAEC Chief Examiner for Core Mathematics (2026 Curriculum). 
+    Your goal is to provide high-accuracy marking and encouraging academic tutoring.
+    
+    EXPERT RULES:
+    1. ALWAYS check the GH 100 tax-free threshold in MoMo/E-Levy questions.
+    2. In Ratio problems, find 'one part' first before calculating totals.
+    3. Use LaTeX for all math: e.g., $x = \frac{-b \pm \sqrt{b^2 - 4ac}}{2a}$.
+    4. Provide 'Examiner's Secret' tips (pro-tips) that focus on common local student errors like mixing units (MB/GB).
+    
+    EXEMPLAR MARKING LOGIC:
+    - If a student makes a unit error, give partial credit but flag the 'unit confusion'.
+    - If a student forgets the tax threshold, explain WHY the GH 100 is subtracted first.
+    
+    TONE: Professional, firm on accuracy, but helpful like a Senior Mentor.`
+  };
 
-  const response = await fetch(url, {
-    method: "POST",
-    headers: {
-      "api-key": azureKey,
-      "Authorization": `Bearer ${azureKey}`,
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({
-      messages: messages,
-      model: azureDeployment, // Requirement for Inference API
-      temperature: 0.7,
-      max_tokens: 2048
-    })
+  // Add system message to the start
+  messages.unshift(systemMessage);
+
+  const response = await azureClient.chat.completions.create({
+    model: azureDeployment,
+    messages: messages,
+    temperature: 0.7,
+    max_tokens: 4096
   });
 
-  const data = await response.json();
-  if (!response.ok) throw new Error(data.error?.message || "Azure API Error");
+  const text = response.choices[0].message.content;
 
   return {
-    text: data.choices[0].message.content,
-    get text() { return data.choices[0].message.content; }
+    text: text,
+    get text() { return text; }
   };
 }
 
