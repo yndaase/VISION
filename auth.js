@@ -302,6 +302,8 @@ function goToDashboard() {
 
   if (session && session.role === 'enterprise') {
     window.location.href = "/enterprise-dashboard";
+  } else if (session && session.institutionId) {
+    window.location.href = "/enterprise-student-dashboard";
   } else if (session && (session.role === 'admin' || session.email === 'gisgreat308@gmail.com')) {
     window.location.href = "/admin";
   } else {
@@ -1120,7 +1122,11 @@ async function adminInit() {
   await upsertAccount(adminEmail, "System Architect", "admin", expectedAdminHash);
   await upsertAccount(entEmail, "Vision Academy Admin", "enterprise", expectedEntHash, { schoolName: "Vision Academy", schoolLogo: "V" });
   await upsertAccount(teacherEmail, "Senior Faculty", "teacher", expectedTeacherHash, { institutionId: entEmail });
-  await upsertAccount(proStudentEmail, "Pro Candidate", "pro", expectedProHash, { subscriptionExpiry: Date.now() + (365 * 24 * 60 * 60 * 1000) });
+  await upsertAccount(proStudentEmail, "Pro Candidate", "pro", expectedProHash, { 
+    subscriptionExpiry: Date.now() + (365 * 24 * 60 * 60 * 1000),
+    institutionId: entEmail,
+    institutionName: "Vision Academy"
+  });
 
   saveUsers(users);
 }
