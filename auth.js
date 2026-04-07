@@ -1131,6 +1131,45 @@ async function adminInit() {
   saveUsers(users);
 }
 
+/**
+ * Validates a school code and links the current student to the institution.
+ */
+async function joinInstitution(code) {
+  const session = getSession();
+  if (!session) return { success: false, message: "Authentication required." };
+
+  const users = getUsers();
+  // Find the admin account that owns this code
+  const institutionAdmin = users.find(u => u.schoolCode === code.toUpperCase());
+  
+  if (!institutionAdmin) {
+    return { success: false, message: "Invalid enrollment code. Please check with your school." };
+  }
+
+  // Find current student in DB
+  const idx = users.findIndex(u => u.email === session.email);
+  if (idx !== -1) {
+    users[idx].institutionId = institutionAdmin.email;
+    users[idx].institutionName = institutionAdmin.schoolName || "Vision Academy";
+    users[idx].role = 'pro'; // Institutional students get Pro access
+    // Grant 1 year of access
+    users[idx].subscriptionExpiry = Date.now() + (365 * 24 * 60 * 60 * 1000);
+    
+    saveUsers(users);
+    
+    // Update active session
+    session.institutionId = users[idx].institutionId;
+    session.institutionName = users[idx].institutionName;
+    session.role = 'pro';
+    session.subscriptionExpiry = users[idx].subscriptionExpiry;
+    setSession(session);
+
+    return { success: true };
+  }
+  
+  return { success: false, message: "Account profile mismatch." };
+}
+
 //  Init on page load
 document.addEventListener("DOMContentLoaded", () => {
   // Always run migration first to ensure database is in sync

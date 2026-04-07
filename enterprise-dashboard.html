@@ -419,8 +419,8 @@
                             <input class="ent-input" id="setSchoolName" placeholder="e.g. Adisadel College">
                         </div>
                         <div class="form-group">
-                            <label class="form-label">Logo Initial / URL</label>
-                            <input class="ent-input" id="setSchoolLogo" placeholder="e.g. A or https://...">
+                            <label class="form-label">Institutional Enrollment Code</label>
+                            <input class="ent-input" id="setSchoolCode" placeholder="e.g. SKY-2026">
                         </div>
                         <button class="btn-ent btn-ent-primary" onclick="saveInstitutionalBranding()">Commit Branding Changes</button>
                     </div>
@@ -483,6 +483,7 @@
             document.getElementById("consoleLogo").textContent = enterpriseData.schoolLogo;
             document.getElementById("setSchoolName").value = enterpriseData.schoolName;
             document.getElementById("setSchoolLogo").value = enterpriseData.schoolLogo;
+            document.getElementById("setSchoolCode").value = enterpriseData.schoolCode || "";
             
             renderKeys();
             renderStudents();
@@ -566,15 +567,27 @@
         function saveInstitutionalBranding() {
             const name = document.getElementById("setSchoolName").value;
             const logo = document.getElementById("setSchoolLogo").value;
+            const code = document.getElementById("setSchoolCode").value.trim().toUpperCase();
             
             enterpriseData.schoolName = name;
             enterpriseData.schoolLogo = logo.charAt(0);
+            enterpriseData.schoolCode = code;
             saveData();
+
+            // Update user object globally so students can find it
+            const users = getUsers();
+            const idx = users.findIndex(u => u.email === session.email);
+            if (idx !== -1) {
+                users[idx].schoolCode = code;
+                users[idx].schoolName = name;
+                users[idx].schoolLogo = logo.charAt(0);
+                saveUsers(users);
+            }
             
             document.getElementById("consoleSchoolName").textContent = name;
             document.getElementById("consoleLogo").textContent = enterpriseData.schoolLogo;
             
-            showToast("Institutional branding deployed successfully.");
+            showToast("Institutional Protocol updated.");
         }
 
         function saveData() {
