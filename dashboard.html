@@ -284,6 +284,7 @@
 
         <div class="dash-nav-right">
           <span class="nav-badge">2026 WASSCE</span>
+          <span id="proHeaderBadge" class="pro-badge" style="display: none; background: linear-gradient(135deg, #0078d4, #288ad6); color: white;">AZURE PRO</span>
           <button class="theme-toggle-btn" onclick="toggleTheme()" title="Toggle Theme"></button>
           <div class="nav-user-chip" id="navUserChip" onclick="toggleUserDropdown()">
             <div class="nav-avatar" id="navAvatar"><img src="assets/yaw.jpg"
@@ -1119,10 +1120,7 @@
         })
         .join("");
 
-      // Show announcements
-      const anns = JSON.parse(
-        localStorage.getItem("vision_announcements") || "[]",
-      );
+      // Handle UI State based on Role
       const session = checkAuth();
       if (session) {
         document.getElementById("navName").textContent = session.name;
@@ -1134,12 +1132,24 @@
         if (isAdmin) session.role = 'pro';
 
         const proBadge = document.getElementById("proHeaderBadge");
-        const goProBanner = document.getElementById("goProBanner");
+        const goProCard = document.getElementById("proUpgradeCard");
+        const promoStrip = document.getElementById("proPromoStrip");
+        
         if (session.role === "pro") {
           if (proBadge) proBadge.style.display = "inline-flex";
-          if (goProBanner) goProBanner.style.display = "none";
+          if (goProCard) goProCard.style.display = "none";
+          if (promoStrip) promoStrip.style.display = "none";
+        } else {
+          // Standard view
+          if (goProCard) goProCard.style.display = "block";
+          if (promoStrip) promoStrip.style.display = "block";
         }
       }
+
+      // Show announcements
+      const anns = JSON.parse(
+        localStorage.getItem("vision_announcements") || "[]",
+      );
       const banner = document.getElementById("announceBanner");
       if (anns.length && banner) {
         banner.style.display = "block";
