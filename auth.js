@@ -148,14 +148,42 @@ async function startFreeTrial() {
     users[idx].trialStartedAt = startTime;
     users[idx].role = 'pro';
     
-    session.trialStartedAt = startTime;
+  session.trialStartedAt = startTime;
     session.role = 'pro';
     
     setSession(session);
     saveUsers(users);
     
     alert("Success! Your 24-hour Elite Trial is now active.");
+    if (window.updateSettingsSubUI) updateSettingsSubUI();
     window.location.href = "/dashboard";
+  }
+}
+
+/**
+ * Cancel an active 1-day free trial immediately
+ */
+async function cancelFreeTrial() {
+  const session = getSession();
+  if (!session) return;
+  
+  if (!isProUser(session)) return; // Already standard
+
+  const users = getUsers();
+  const idx = users.findIndex(u => u.email === session.email);
+  if (idx !== -1) {
+    // Flag it as -1 to mean "Used & Cancelled"
+    users[idx].trialStartedAt = -1;
+    users[idx].role = 'student';
+    
+    session.trialStartedAt = -1;
+    session.role = 'student';
+    
+    setSession(session);
+    saveUsers(users);
+    
+    alert("Your 1-Day Trial has been cancelled.");
+    if (window.updateSettingsSubUI) updateSettingsSubUI();
   }
 }
 
@@ -410,6 +438,11 @@ function openSettings() {
   // Show immersive view
   modal.classList.add("visible");
   document.body.style.overflow = "hidden"; // Prevent background scroll
+
+  // Refresh Subscription UI (fix for "Processing..." hang)
+  if (typeof updateSettingsSubUI === "function") {
+    updateSettingsSubUI();
+  }
 }
 
 function closeSettings() {

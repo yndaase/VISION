@@ -106,14 +106,37 @@
         }
 
         async function handlePricingUpgrade() {
-            const code = document.getElementById('pricingPromoCode').value;
-            // itemId: vision_pro_access, base: 5.00, name: Vision Pro
             if (typeof initiatePayment === 'function') {
-                await initiatePayment('vision_pro_access', 5.00, 'Vision Pro Access', code);
+                await initiatePayment('vision_pro_access', 30.00, 'Vision Pro Access');
             } else {
                 alert("Payment system loading... please try again.");
             }
         }
+
+        // Trial Visibility Logic
+        document.addEventListener("DOMContentLoaded", () => {
+            const session = typeof getSession === 'function' ? getSession() : null;
+            if (session && isProUser(session)) {
+                const trialBtn = document.getElementById('trialBtn');
+                if (trialBtn) trialBtn.style.display = 'none';
+                
+                // If paid pro, change subscribe button text
+                if (session.subscriptionExpiry > Date.now()) {
+                    const proLink = document.getElementById('proLink');
+                    if (proLink) {
+                        proLink.innerText = "Extend Membership";
+                    }
+                }
+            } else if (session && session.trialStartedAt > 0) {
+                // Trial already used or cancelled
+                const trialBtn = document.getElementById('trialBtn');
+                if (trialBtn) {
+                    trialBtn.innerText = "Trial Already Used";
+                    trialBtn.style.pointerEvents = "none";
+                    trialBtn.style.opacity = "0.5";
+                }
+            }
+        });
     </script>
 </body>
 </html>

@@ -397,7 +397,6 @@
                 <input type="text" id="promoCodeInput" placeholder="Promo Code" style="background: rgba(0,0,0,0.2); border: 1px solid var(--border); color: white; padding: 10px; border-radius: 8px; font-size: 0.8rem; width: 100%;">
                 <button onclick="applyAndGoPro()" class="hero-btn-primary" style="padding: 10px 20px; font-size: 0.85rem; white-space: nowrap;">Upgrade</button>
               </div>
-              <p style="font-size: 0.7rem; color: #34d399; text-align: center;">* Use <strong>AUGUSCO</strong> or <strong>STUDENTFREE</strong> for 1 GH₵</p>
             </div>
           </div>
         </div>
@@ -1122,6 +1121,7 @@
           <div id="trialUnlockContainer" style="display: none;">
              <button onclick="window.location.href='pricing.html'" class="hero-btn-primary" style="width: 100%; border-radius: 12px;">Upgrade to 30 GHS Premium</button>
           </div>
+          <button id="cancelTrialBtn" onclick="cancelFreeTrial()" style="display: none; width: 100%; margin-top: 1rem; border: 1px solid rgba(239, 68, 68, 0.2); background: rgba(239, 68, 68, 0.05); color: #f87171; padding: 10px; border-radius: 10px; font-weight: 700; cursor: pointer;">Cancel Active Trial</button>
         </div>
         <script>
            function updateSettingsSubUI() {
@@ -1154,12 +1154,14 @@
                 tierEl.innerHTML = "Vision <span style='color:var(--primary)'>TRIAL</span>";
                 descEl.textContent = "You are currently exploring the 24-hour Elite Trial. Upgrade to 30 GHS for uninterrupted 30-day access.";
                 document.getElementById("trialUnlockContainer").style.display = "block";
+                document.getElementById("cancelTrialBtn").style.display = "block";
               } else {
                 dateEl.textContent = "Subscription Expired";
                 badgeEl.textContent = "Inactive";
                 badgeEl.style.background = "#ef4444";
                 container.style.borderColor = "#ef4444";
                 document.getElementById("trialUnlockContainer").style.display = "block";
+                document.getElementById("cancelTrialBtn").style.display = "none";
               }
            }
            // Run after setting data
