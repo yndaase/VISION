@@ -63,13 +63,16 @@ async function initiatePayment(itemId, amount, itemName, promoCode = "") {
     return;
   }
 
-  // HOLIDAY PROMO & CODE SYSTEM
+  // PRICING & PROMO CODE SYSTEM
   let finalAmount = amount;
   if (itemId === 'vision_pro_access') {
-      // Holiday Promo: Global 1 GHS baseline
-      finalAmount = 1.00;
-      if (promoCode.toUpperCase() === 'AUGUSCO') {
-          console.log("[Promo] AUGUSCO code applied.");
+      // Base Price: 5.00 GHS
+      finalAmount = 5.00;
+      
+      // Promo code check
+      if (promoCode.trim().toUpperCase() === 'AUGUSCO') {
+          console.log("[Promo] AUGUSCO code applied: Price reduced to 1 GH₵");
+          finalAmount = 1.00;
       }
   }
 

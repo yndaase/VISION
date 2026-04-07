@@ -56,7 +56,7 @@
         <!-- PRO TIER -->
         <div class="price-card featured">
             <div class="tier-name">Vision Pro</div>
-            <div class="tier-price">GH₵ 1<span>/promo</span></div>
+            <div class="tier-price">GH₵ 5<span>/one-time</span></div>
             <p class="tier-desc">The ultimate "Copilot" for top-tier results.</p>
             <ul class="feature-list">
                 <li class="feature-item"><svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg> <strong>Azure GPT-4o "Copilot" AI</strong></li>
@@ -65,7 +65,14 @@
                 <li class="feature-item"><svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg> Verified Marking Schemes</li>
                 <li class="feature-item"><svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg> Offline Subject Access</li>
             </ul>
-            <a href="dashboard.html#pro-section" class="cta-btn primary" id="proLink">Upgrade Now</a>
+            
+            <!-- Promo Code Input -->
+            <div style="margin-bottom: 1.5rem;">
+                <input type="text" id="pricingPromoCode" placeholder="Promo Code (Optional)" style="width: 100%; padding: 10px; border-radius: 8px; background: rgba(255,255,255,0.05); border: 1px solid var(--border); color: white; font-size: 0.85rem; text-align: center;">
+                <p style="font-size: 0.65rem; color: #34d399; margin-top: 5px; text-align: center;">* Use AUGUSCO for Holiday Price (1 GH₵)</p>
+            </div>
+
+            <button onclick="handlePricingUpgrade()" class="cta-btn primary" id="proLink">Upgrade Now</button>
         </div>
 
         <!-- ENTERPRISE TIER -->
@@ -88,6 +95,7 @@
     </footer>
 
     <script src="auth.js"></script>
+    <script src="payment.js"></script>
     <script>
         // Check if already pro
         const session = typeof getSession === 'function' ? getSession() : null;
@@ -97,6 +105,16 @@
                 btn.innerText = "Current Active Plan";
                 btn.style.background = "#34d399";
                 btn.style.pointerEvents = "none";
+            }
+        }
+
+        async function handlePricingUpgrade() {
+            const code = document.getElementById('pricingPromoCode').value;
+            // itemId: vision_pro_access, base: 5.00, name: Vision Pro
+            if (typeof initiatePayment === 'function') {
+                await initiatePayment('vision_pro_access', 5.00, 'Vision Pro Access', code);
+            } else {
+                alert("Payment system loading... please try again.");
             }
         }
     </script>
