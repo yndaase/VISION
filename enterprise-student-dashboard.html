@@ -10,6 +10,16 @@
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="theme.css">
     <script src="auth.js"></script>
+    <script>
+        (function() {
+            const sessionStr = sessionStorage.getItem("waec_session") || localStorage.getItem("waec_session");
+            if (!sessionStr) { window.location.replace("/login"); return; }
+            const session = JSON.parse(sessionStr);
+            if (!session.institutionId && session.role !== 'enterprise') {
+                window.location.replace("/dashboard");
+            }
+        })();
+    </script>
     <style>
         :root {
             --est-primary: #6366f1;
@@ -215,15 +225,14 @@
     </main>
 
     <script>
-        const session = checkAuth();
-        if(!session || !session.institutionId) {
-            window.location.href = "/dashboard";
+        const session = getSession();
+        // UI Population
+        if(session) {
+            document.getElementById("candidateName").textContent = session.name;
+            document.getElementById("schoolNameDisplay").textContent = session.institutionName || "Vision Institute";
+            document.getElementById("schoolSubName").textContent = session.institutionName || "Vision Institute";
+            document.getElementById("logoBox").textContent = (session.institutionName || "V").charAt(0);
         }
-
-        document.getElementById("candidateName").textContent = session.name;
-        document.getElementById("schoolNameDisplay").textContent = session.institutionName || "Vision Institute";
-        document.getElementById("schoolSubName").textContent = session.institutionName || "Vision Institute";
-        document.getElementById("logoBox").textContent = (session.institutionName || "V").charAt(0);
     </script>
 </body>
 </html>
