@@ -271,14 +271,22 @@ async function handleVision(data, role, res) {
 }
 
 async function handleGenerateQuestions(data, role, res) {
-  const { subject, dateSeed } = data;
-  const prompt = `You are a Senior WASSCE Examiner. Generate a Daily AI Mock for ${subject} on ${dateSeed}.
+  const { subject, dateSeed, email = "" } = data;
+  
+  // ABSOLUTE ADMIN OVERRIDE (Hardcoded Pro)
+  const isHardcodedAdmin = email.toLowerCase() === 'gisgreat308@gmail.com';
+  const effectiveRole = isHardcodedAdmin ? 'pro' : role;
+  
+  const isPro = effectiveRole === 'pro';
+  
+  const prompt = `You are a ${isPro ? 'Senior Elite' : 'Senior'} WASSCE Examiner. Generate a ${isPro ? 'High-Precision Strategic' : 'Daily'} AI Mock for ${subject} on ${dateSeed}.
+  ${isPro ? 'Focus on advanced deductive reasoning and complex Section B scenarios.' : ''}
   Return exactly 5 MCQs and 2 Theory questions in a single JSON object.
   
   Format:
   {
     "mcqs": [
-      { "id": 100, "difficulty": "easy"|"medium"|"hard", "topic": "string", "question": "string", "options": { "A": "string", "B": "string", "C": "string", "D": "string" }, "correct": "A"|"B"|"C"|"D" }
+      { "id": 100, "difficulty": "${isPro ? 'hard' : 'medium'}", "topic": "string", "question": "string", "options": { "A": "string", "B": "string", "C": "string", "D": "string" }, "correct": "A"|"B"|"C"|"D" }
     ],
     "theory": [
       { "id": 200, "difficulty": "hard", "topic": "string", "question": "string", "markScheme": "string", "modelAnswer": "string" }
@@ -287,7 +295,7 @@ async function handleGenerateQuestions(data, role, res) {
   STRICT JSON ONLY. NO MARKDOWN. NO CODE BLOCKS.`;
   
   const contents = [{ role: "user", parts: [{ text: prompt }] }];
-  const response = await safeGenerateContent(contents, role);
+  const response = await safeGenerateContent(contents, effectiveRole);
   return res.status(200).json(extractJSON(response));
 }
 

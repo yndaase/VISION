@@ -62,8 +62,15 @@ document.addEventListener("DOMContentLoaded", async () => {
 });
 
 async function initAIMock() {
+  const session = typeof getSession === 'function' ? getSession() : JSON.parse(sessionStorage.getItem("waec_session") || "{}");
+  const isAdmin = (session.email || "").toLowerCase() === 'gisgreat308@gmail.com';
+  const isPro = session.role === 'pro' || isAdmin;
+  
   const qCard = document.getElementById("qDisplayCard");
-  if (qCard) qCard.innerHTML = "<div style='text-align:center; padding: 3rem;'><h2 style='color:var(--primary); animation: pulse 2s infinite;'>AI is setting your daily questions...</h2><p style='color:var(--text-muted);'>Gemini is analyzing the 2026 syllabus to build your mission of the day.</p></div>";
+  if (qCard) {
+    const engineName = isPro ? "Azure GPT-4o" : "Gemini AI";
+    qCard.innerHTML = `<div style='text-align:center; padding: 3rem;'><h2 style='color:var(--primary); animation: pulse 2s infinite;'>${engineName} is setting your daily questions...</h2><p style='color:var(--text-muted);'>Analysing the 2026 syllabus to build your ${isPro ? 'High-Precision' : ''} mission of the day.</p></div>`;
+  }
 
   try {
     const today = new Date().toISOString().split('T')[0];
@@ -73,7 +80,13 @@ async function initAIMock() {
     const res = await fetch('/api/ai', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ type: 'generate-questions', subject: 'Core Mathematics', dateSeed: today, role: userRole })
+      body: JSON.stringify({ 
+        type: 'generate-questions', 
+        subject: 'Core Mathematics', 
+        dateSeed: today, 
+        role: userRole,
+        email: session?.email || "" 
+      })
     });
     const data = await res.json();
     
