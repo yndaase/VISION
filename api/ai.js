@@ -74,7 +74,21 @@ export default async function handler(req, res) {
     }
   } catch (error) {
     console.error(`[AI Hub Error - ${type}]:`, error);
-    return res.status(500).json({ error: error.message || "AI System Error" });
+    let cleanMsg = error.message || "AI System Error";
+    
+    // Catch-all for SDK raw JSON in error messages
+    if (cleanMsg.includes('{') && cleanMsg.includes('}')) {
+      try {
+        const parsed = JSON.parse(cleanMsg.substring(cleanMsg.indexOf('{')));
+        if (parsed.error && parsed.error.message) cleanMsg = parsed.error.message;
+      } catch (e) { /* ignore */ }
+    }
+
+    if (cleanMsg.toLowerCase().includes("429") || cleanMsg.toLowerCase().includes("quota")) {
+      cleanMsg = "You've reached the free-tier limit for this model (20 requests/day). Please wait a few moments or try again tomorrow.";
+    }
+
+    return res.status(500).json({ error: cleanMsg });
   }
 }
 

@@ -279,7 +279,14 @@ async function markEssayWithAI(qId) {
         </div>
       `;
     } else {
-      feedbackEl.innerHTML = `<div class="ai-error">Error: ${result.error || 'Failed to analyze.'}</div>`;
+      feedbackEl.innerHTML = `
+        <div class="glass-card ai-error-card" style="border: 1px solid var(--error); padding: 1.5rem; text-align:center;">
+          <div style="font-size: 1.5rem; margin-bottom: 0.5rem;">⚠️</div>
+          <p style="color: var(--error); font-weight: 600; font-size: 0.9rem; margin-bottom: 0.5rem;">AI Brain is resting</p>
+          <p style="color: var(--text-muted); font-size: 0.8rem; line-height: 1.5;">${result.error || 'Failed to analyze.'}</p>
+          <button onclick="markEssayWithAI(${qId})" class="nav-btn" style="margin-top: 1rem; width: 100%; border-color: var(--error); color: var(--error);">Try Again</button>
+        </div>
+      `;
     }
 
     if (typeof renderMathInElement !== 'undefined') {
@@ -689,8 +696,12 @@ async function handleAISearch(manualPrompt) {
         const helpText = data.helpText || "I couldn't generate a response right now.";
         loader.innerHTML = typeof marked !== 'undefined' ? marked.parse(helpText) : helpText;
     } else {
-        loader.style.color = "var(--error)";
-        loader.textContent = `⚠️ ${data.error || "AI brain offline."}`;
+        loader.style.background = "rgba(248, 113, 113, 0.05)";
+        loader.style.border = "1px solid var(--error)";
+        loader.innerHTML = `
+          <div style="color: var(--error); font-size: 0.85rem; font-weight: 600; margin-bottom: 4px;">⚠️ AI Brain Exhaustion</div>
+          <div style="font-size: 0.8rem; color: var(--text-muted);">${data.error || "AI brain offline."}</div>
+        `;
     }
 
     if (typeof renderMathInElement !== 'undefined') {
