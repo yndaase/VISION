@@ -1145,43 +1145,16 @@
         })
         .join("");
 
-      // Handle UI State based on Role
-      const session = checkAuth();
-      if (session) {
-        document.getElementById("navName").textContent = session.name;
-        const avatarS = document.getElementById("navAvatar");
-        if (avatarS) avatarS.textContent = session.name.charAt(0).toUpperCase();
+        // Handle UI State based on Role
+        const session = checkAuth();
+        if (session) {
+          document.getElementById("navName").textContent = session.name;
+          const avatarS = document.getElementById("navAvatar");
+          if (avatarS) avatarS.textContent = session.name.charAt(0).toUpperCase();
 
-        // ABSOLUTE ADMIN OVERRIDE (For UI)
-        const isAdmin = session.email && session.email.toLowerCase() === 'gisgreat308@gmail.com';
-        if (isAdmin) session.role = 'pro';
-
-        const proBadge = document.getElementById("proHeaderBadge");
-        const goProCard = document.getElementById("proUpgradeCard");
-        const promoStrip = document.getElementById("proPromoStrip");
-        
-        if (session.role === "pro") {
-          if (proBadge) proBadge.style.display = "inline-flex";
-          // Admin can still see the Get Pro buttons for testing/oversight
-          if (!isAdmin) {
-            if (goProCard) goProCard.style.display = "none";
-            if (promoStrip) promoStrip.style.display = "none";
-            const sideGetPro = document.getElementById("sideNavGetPro");
-            if (sideGetPro) sideGetPro.style.display = "none";
-          } else {
-            if (goProCard) goProCard.style.display = "block";
-            if (promoStrip) promoStrip.style.display = "block";
-            const sideGetPro = document.getElementById("sideNavGetPro");
-            if (sideGetPro) sideGetPro.style.display = "block";
-          }
-        } else {
-          // Standard view
-          if (goProCard) goProCard.style.display = "block";
-          if (promoStrip) promoStrip.style.display = "block";
-          const sideGetPro = document.getElementById("sideNavGetPro");
-          if (sideGetPro) sideGetPro.style.display = "block";
+          // Initialize syncProUI
+          if (typeof syncProUI === 'function') syncProUI();
         }
-      }
 
       // Show announcements
       const anns = JSON.parse(
@@ -1220,15 +1193,24 @@
       }
     }
 
-    // Toggle Pro UI based on role
-    (function checkProStatus() {
+    // Global Pro UI Sync (Robust)
+    function syncProUI() {
       const session = typeof getSession === 'function' ? getSession() : null;
-      if (session && session.role === 'pro') {
-        const promoStrip = document.getElementById('proPromoStrip');
-        const promoCard = document.getElementById('proUpgradeCard');
-        const sideGetPro = document.getElementById("sideNavGetPro");
-        const isAdmin = session.email && session.email.toLowerCase() === 'gisgreat308@gmail.com';
+      if (!session) return;
 
+      const isAdmin = session.email && session.email.toLowerCase() === 'gisgreat308@gmail.com';
+      const isPro = session.role === 'pro' || isAdmin;
+
+      const promoStrip = document.getElementById('proPromoStrip');
+      const promoCard = document.getElementById('proUpgradeCard');
+      const sideGetPro = document.getElementById("sideNavGetPro");
+      const headerBadge = document.getElementById("proHeaderBadge");
+      const nameEl = document.getElementById('welcomeName');
+
+      if (isPro) {
+        if (headerBadge) headerBadge.style.display = 'inline-flex';
+        
+        // Hide upgrade cards ONLY if not admin (Admin sees all to monitor)
         if (!isAdmin) {
           if (promoStrip) promoStrip.style.display = 'none';
           if (promoCard) promoCard.style.display = 'none';
@@ -1238,23 +1220,25 @@
           if (promoCard) promoCard.style.display = 'block';
           if (sideGetPro) sideGetPro.style.display = 'block';
         }
-        
-        // Add pro badge to username (Admin always gets the badge)
-        const nameEl = document.getElementById('welcomeName');
-        if (nameEl) {
-            if (!nameEl.innerHTML.includes('AZURE PRO')) {
-                nameEl.innerHTML += ' <span class="pro-badge" style="background: linear-gradient(135deg, #0078d4, #288ad6);">AZURE PRO</span>';
-            }
+
+        // Add Pro Badge to Greeting
+        if (nameEl && !nameEl.innerHTML.includes('AZURE PRO')) {
+          nameEl.innerHTML += ' <span class="pro-badge" style="background: linear-gradient(135deg, #0078d4, #288ad6);">AZURE PRO</span>';
         }
       } else {
-        const promoStrip = document.getElementById('proPromoStrip');
-        const promoCard = document.getElementById('proUpgradeCard');
-        const sideGetPro = document.getElementById("sideNavGetPro");
+        // STANDARD USER UI
         if (promoStrip) promoStrip.style.display = 'block';
         if (promoCard) promoCard.style.display = 'block';
         if (sideGetPro) sideGetPro.style.display = 'block';
+        if (headerBadge) headerBadge.style.display = 'none';
       }
-    })();
+    }
+
+    // Run sync on load
+    window.addEventListener('load', syncProUI);
+    // Double safeguard for SPA-like transitions
+    setTimeout(syncProUI, 500);
+    setTimeout(syncProUI, 2000);
   </script>
 </body>
 

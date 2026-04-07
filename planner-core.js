@@ -48,8 +48,11 @@ function startCountdown() {
 }
 
 async function initializeMission(session) {
-    // 1. Paywall Check
-    if (typeof isPurchased === 'function' && !isPurchased('wassce_planner_access')) {
+    // 1. Vision Pro Access Check (Includes Admin Override via checkAuth)
+    const isAdmin = session.email && session.email.toLowerCase() === 'gisgreat308@gmail.com';
+    const isPro = session.role === 'pro' || isAdmin;
+
+    if (!isPro) {
         const paywall = document.getElementById("plannerPaywall");
         if (paywall) paywall.style.display = "flex";
         return;
