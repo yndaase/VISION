@@ -158,12 +158,15 @@
         <!-- Right: Mastery Gaps -->
         <div style="display: flex; flex-direction: column; gap: 1.5rem;">
             <div style="background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius-lg); padding:1.75rem;">
-                <h3 style="font-size:1.1rem; font-weight:800; margin-bottom:1.5rem; letter-spacing:-0.02em;">Syllabus Gaps</h3>
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem;">
+                    <h3 style="font-size:1.1rem; font-weight:800; margin:0; letter-spacing:-0.02em;">Syllabus Gaps</h3>
+                    <button onclick="refreshPlan()" style="background:var(--bg-input); border:1px solid var(--border); color:var(--text-muted); padding:6px 12px; border-radius:var(--radius-sm); font-size:0.75rem; cursor:pointer;" id="refreshBtn">Refresh Plan</button>
+                </div>
                 <div id="gapsContainer">
                     <!-- Gaps go here -->
                 </div>
                 <div style="margin-top:1rem; font-size:0.75rem; color:var(--text-muted); line-height:1.5; background:var(--bg-input); padding:10px; border-radius:8px;">
-                    📈 These scores are based on your most recent Mock Exam accuracy.
+                    🎯 Mastery levels are synced with your Mock history.
                 </div>
             </div>
         </div>
@@ -204,7 +207,6 @@
 <!-- Planner Paywall Overlay -->
 <div id="plannerPaywall" class="planner-paywall-overlay" style="display:none;">
     <div class="paywall-content">
-        <div class="paywall-icon">🚀</div>
         <h2 style="font-size: 1.75rem; font-weight: 800; margin-bottom: 1rem;">Unlock Your <span class="brand-accent">2026 Strategy</span></h2>
         <p style="color: var(--text-secondary); line-height: 1.6; margin-bottom: 2rem;">
             The AI Study Planner analyzes your performance to create a personalized mission every day. Get **Vision Pro** to bridge your syllabus gaps.

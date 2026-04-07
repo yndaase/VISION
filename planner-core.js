@@ -47,9 +47,9 @@ function startCountdown() {
     setInterval(update, 1000 * 60); // Update every minute
 }
 
-async function initializeMission(session) {
+async function initializeMission(session, forced = false) {
     // 1. Vision Pro Access Check (Includes Admin Override via checkAuth)
-    const isAdmin = session.email && session.email.toLowerCase() === 'gisgreat308@gmail.com';
+    const isAdmin = (session.email || "").toLowerCase() === 'gisgreat308@gmail.com';
     const isPro = session.role === 'pro' || isAdmin;
 
     if (!isPro) {
@@ -61,8 +61,8 @@ async function initializeMission(session) {
     const PLAN_KEY = `vision_plan_${session.email}`;
     const stored = JSON.parse(localStorage.getItem(PLAN_KEY) || 'null');
     
-    // Mission survives 24 hours
-    const isStale = stored && (Date.now() - stored.timestamp > 24 * 60 * 60 * 1000);
+    // Mission survives 24 hours unless forced
+    const isStale = forced || (stored && (Date.now() - stored.timestamp > 24 * 60 * 60 * 1000));
 
     if (stored && !isStale) {
         renderMission(stored.plan);
@@ -71,9 +71,28 @@ async function initializeMission(session) {
     }
 }
 
+async function refreshPlan() {
+    const session = typeof checkAuth === 'function' ? checkAuth() : null;
+    if (!session) return;
+    
+    const btn = document.getElementById('refreshBtn');
+    if (btn) {
+        btn.disabled = true;
+        btn.innerText = "Refreshing...";
+    }
+    await initializeMission(session, true);
+    if (btn) {
+        btn.disabled = false;
+        btn.innerText = "Refresh Plan";
+    }
+}
+
 async function generateNewMission(session, PLAN_KEY) {
     const missionContainer = document.getElementById("missionContainer");
-    if (missionContainer) missionContainer.innerHTML = "<p style='color:var(--text-muted);'>AI is auditing your mastery gaps...</p>";
+    const timetableEl = document.getElementById("planTimetable");
+    
+    if (missionContainer) missionContainer.style.opacity = "0.3";
+    if (timetableEl) timetableEl.innerHTML = "<p style='color:var(--primary); font-weight:600;'>AI is auditing your mastery gaps and building your 7-day strategy...</p>";
 
     // 1. Logic to find weakest subject from Mock History
     let prioritySubject = "Core Mathematics"; 
@@ -81,20 +100,14 @@ async function generateNewMission(session, PLAN_KEY) {
 
     try {
         const stats = typeof getStats === 'function' ? getStats() : { answered: 0, correct: 0 };
-        
         if (stats.mockHistory && stats.mockHistory.length > 0) {
             const subjects = {};
-            
-            // Map history to subject performance
             stats.mockHistory.forEach(m => {
-                // Extract subject from title (e.g. "Core Maths Mock" -> "Core Maths")
                 const subj = m.title.split('Mock')[0].trim();
                 if (!subjects[subj]) subjects[subj] = { acc: 0, count: 0 };
                 subjects[subj].acc += m.pct;
                 subjects[subj].count++;
             });
-
-            // Find lowest average
             for (const s in subjects) {
                 const avg = subjects[s].acc / subjects[s].count;
                 if (avg < worstAccuracy) {
@@ -102,10 +115,8 @@ async function generateNewMission(session, PLAN_KEY) {
                     prioritySubject = s;
                 }
             }
-        } else if (stats.answered > 0) {
-            worstAccuracy = Math.round((stats.correct / stats.answered) * 100);
         }
-    } catch (e) { console.warn("Failed to audit mock history:", e); }
+    } catch (e) { console.warn("Audit failed:", e); }
 
     try {
         const res = await fetch('/api/ai', {
@@ -116,15 +127,28 @@ async function generateNewMission(session, PLAN_KEY) {
                 subject: prioritySubject, 
                 accuracy: worstAccuracy,
                 name: session.name,
-                email: session.email // ABSOLUTE ADMIN OVERRIDE Handshake
+                email: session.email
             })
         });
+
+        if (!res.ok) {
+            const errData = await res.json();
+            throw new Error(errData.error || "AI Strategy Engine currently busy.");
+        }
+
         const plan = await res.json();
-        
         localStorage.setItem(PLAN_KEY, JSON.stringify({ plan, timestamp: Date.now() }));
         renderMission(plan);
     } catch (err) {
         console.error("Planner generation failed:", err);
+        if (timetableEl) {
+            timetableEl.innerHTML = `
+                <div style="background:rgba(239, 68, 68, 0.1); border:1px solid #ef4444; border-radius:8px; padding:1rem; color:#ef4444; font-size:0.85rem;">
+                    <strong>Generation Failed:</strong> ${err.message}<br>
+                    <button onclick="refreshPlan()" style="margin-top:10px; background:#ef4444; color:white; border:none; padding:5px 12px; border-radius:4px; cursor:pointer;">Try Again</button>
+                </div>
+            `;
+        }
     }
 }
 

@@ -158,21 +158,22 @@ async function generateWithGroq(contents) {
  * Strips AI conversation filler and extracts valid JSON blocks.
  */
 function extractJSON(response) {
-  const text = response.text;
+  const text = (response.text || "").trim();
   try {
     return JSON.parse(text);
   } catch (e) {
+    // Aggressive Regex to find the LARGEST JSON block
     const jsonMatch = text.match(/(\{[\s\S]*\}|\[[\s\S]*\])/);
     if (jsonMatch) {
+      const candidate = jsonMatch[0].trim();
       try {
-        return JSON.parse(jsonMatch[0]);
+        return JSON.parse(candidate);
       } catch (inner) {
-        console.error("[JSON Extract Error]: Found block but failed to parse.", text);
-        throw new Error("Invalid JSON structure in AI response.");
+        console.error("[JSON Extract Error]: Block failed to parse.", candidate);
+        throw new Error("AI data structure corrupted. Please try again.");
       }
     }
-    console.error("[JSON Extract Error]: No JSON found in response.", text);
-    throw new Error("AI failed to provide a structured data response.");
+    throw new Error("AI failed to provide technical data. Please refresh.");
   }
 }
 
@@ -248,7 +249,7 @@ async function handlePlanner(data, role, res) {
     "motivation": "A punchy motivational quote",
     "difficulty": "Easy"|"Medium"|"Hard"
   }
-  STRICT JSON ONLY. Markdown Table for the "timetable" field.`;
+  STRICT JSON ONLY. No conversational text. No markdown code blocks.`;
   
   const contents = [{ role: "user", parts: [{ text: prompt }] }];
   const response = await safeGenerateContent(contents, effectiveRole);
