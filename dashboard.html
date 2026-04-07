@@ -1123,6 +1123,23 @@
       const anns = JSON.parse(
         localStorage.getItem("vision_announcements") || "[]",
       );
+      const session = checkAuth();
+      if (session) {
+        document.getElementById("navName").textContent = session.name;
+        const avatarS = document.getElementById("navAvatar");
+        if (avatarS) avatarS.textContent = session.name.charAt(0).toUpperCase();
+
+        // ABSOLUTE ADMIN OVERRIDE (For UI)
+        const isAdmin = session.email && session.email.toLowerCase() === 'gisgreat308@gmail.com';
+        if (isAdmin) session.role = 'pro';
+
+        const proBadge = document.getElementById("proHeaderBadge");
+        const goProBanner = document.getElementById("goProBanner");
+        if (session.role === "pro") {
+          if (proBadge) proBadge.style.display = "inline-flex";
+          if (goProBanner) goProBanner.style.display = "none";
+        }
+      }
       const banner = document.getElementById("announceBanner");
       if (anns.length && banner) {
         banner.style.display = "block";

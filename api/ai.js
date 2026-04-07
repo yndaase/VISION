@@ -240,12 +240,16 @@ async function handlePlanner(data, role, res) {
 }
 
 async function handleVision(data, role, res) {
-  const { imageBase64, mimeType, userMessage, subject } = data;
+  const { imageBase64, mimeType, userMessage, subject, email = "" } = data;
   const parts = [{ text: `Vision Education AI Learning Specialist. Material: ${subject}. Request: "${userMessage || 'Explain this material.'}"` }];
   if (imageBase64) parts.push({ inlineData: { data: imageBase64, mimeType: mimeType || "image/jpeg" } });
   
+  // ABSOLUTE ADMIN OVERRIDE (Hardcoded Pro)
+  const isHardcodedAdmin = email.toLowerCase() === 'gisgreat308@gmail.com';
+  const effectiveRole = isHardcodedAdmin ? 'pro' : role;
+  
   const contents = [{ role: "user", parts }];
-  const response = await safeGenerateContent(contents, role);
+  const response = await safeGenerateContent(contents, effectiveRole);
   return res.status(200).json({ analysis: response.text });
 }
 

