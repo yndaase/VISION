@@ -2,7 +2,7 @@ import { GoogleGenAI } from "@google/genai";
 
 const apiKey = process.env.GEMINI_API_KEY;
 const ai = new GoogleGenAI({ apiKey });
-const model = "gemini-1.5-flash"; // Standardized high-performance model
+const model = "gemini-2.5-flash"; // Upgraded to latest high-performance model
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
