@@ -86,32 +86,54 @@ async function getBlacklist() {
  * Universal Sync Logic: Merges Local & Cloud DBs
  */
 async function handleSyncUsers(data, res) {
-  const { localUsers } = data;
+  const { localUsers = [] } = data;
   const cloudUsers = await getGlobalUsers();
   
+  console.log(`[Auth Sync] Start. Local: ${localUsers.length}, Cloud: ${cloudUsers.length}`);
+
   // Merge Strategy: Unique by Email
   const userMap = new Map();
-  // 1. Load Cloud
-  cloudUsers.forEach(u => userMap.set(u.email.toLowerCase(), u));
-  // 2. Merge Local
+  
+  // 1. Load Cloud first
+  cloudUsers.forEach(u => {
+    if (u && u.email) userMap.set(u.email.toLowerCase(), u);
+  });
+
+  // 2. Merge Local (Local overrides cloud if newer, except for roles)
   localUsers.forEach(u => {
+    if (!u || !u.email) return;
     const email = u.email.toLowerCase();
-    if (!userMap.has(email)) userMap.set(email, u);
-    else userMap.set(email, { ...userMap.get(email), ...u });
+    if (!userMap.has(email)) {
+        userMap.set(email, u);
+    } else {
+        // Merge but preserve existing Pro roles from cloud
+        const existing = userMap.get(email);
+        userMap.set(email, { ...existing, ...u, role: existing.role === 'pro' ? 'pro' : u.role });
+    }
   });
 
   // 3. ADMIN OVERRIDE (Permanent PRO)
   const adminEmail = 'gisgreat308@gmail.com';
-  if (userMap.has(adminEmail)) {
-    userMap.get(adminEmail).role = 'pro';
-  } else {
-    userMap.set(adminEmail, { email: adminEmail, role: 'pro', name: 'Vision Admin', provider: 'google' });
-  }
+  const adminAccount = userMap.get(adminEmail) || { email: adminEmail, name: 'Vision Admin', provider: 'google' };
+  adminAccount.role = 'pro';
+  userMap.set(adminEmail, adminAccount);
 
   const finalUsers = Array.from(userMap.values());
-  await put(USERS_PATH, JSON.stringify(finalUsers), { access: 'public', addRandomSuffix: false });
   
-  return res.status(200).json({ users: finalUsers });
+  console.log(`[Auth Sync] Completed. Final Global Count: ${finalUsers.length}`);
+
+  // Push to Cloud
+  await put(USERS_PATH, JSON.stringify(finalUsers), { 
+    access: 'public', 
+    addRandomSuffix: false,
+    contentType: 'application/json'
+  });
+  
+  return res.status(200).json({ 
+    success: true, 
+    users: finalUsers,
+    totalCount: finalUsers.length 
+  });
 }
 
 async function handleGetProUsers(req, res) {

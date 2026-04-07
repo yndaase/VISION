@@ -24,23 +24,48 @@
             <p>Direct oversight of the 2026 Cloud AI Database.</p>
         </header>
 
-        <section id="stats" style="margin-bottom: 2rem;">
-            <button class="btn-sync" onclick="fetchProUsers()">Refresh Global Pro List</button>
+        <section id="stats" style="margin-bottom: 2rem; display: flex; gap: 1rem;">
+            <button class="btn-sync" onclick="fetchProUsers()">Refresh Pro List</button>
+            <button class="btn-sync" style="background: grey;" onclick="forceSync()">Force Admin Sync</button>
         </section>
 
+        <div id="diagnostics" style="margin-bottom: 1rem; color: #38bdf8; font-size: 0.9rem;"></div>
+
         <div id="userList" class="user-list">
-            <p style="color: grey;">Click refresh to load the global Pro database...</p>
+            <p style="color: grey;">Ready for diagnostics...</p>
         </div>
     </div>
 
+    <script src="auth.js"></script>
     <script>
+        async function forceSync() {
+            const diag = document.getElementById('diagnostics');
+            diag.textContent = "⚙️ Triggering Global Sync...";
+            try {
+                // Use a mock local user list to force the cloud to update and include the admin
+                const res = await fetch('/api/auth-core', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ type: 'sync-users', localUsers: [] })
+                });
+                const data = await res.json();
+                diag.textContent = `✅ Global Sync Successful. Total Users in Cloud: ${data.totalCount}`;
+                fetchProUsers();
+            } catch (err) {
+                diag.textContent = "❌ Sync Failed. Check Vercel Logs.";
+            }
+        }
+
         async function fetchProUsers() {
             const listEl = document.getElementById('userList');
+            const diag = document.getElementById('diagnostics');
             listEl.innerHTML = '<div class="loader"></div>';
             
             try {
                 const res = await fetch('/api/auth-core?type=get-pro-users');
                 const data = await res.json();
+                
+                diag.textContent = `📊 Database Loaded. Looking for Pro status...`;
                 
                 if (data.proUsers && data.proUsers.length > 0) {
                     listEl.innerHTML = data.proUsers.map(email => `
@@ -50,7 +75,7 @@
                         </div>
                     `).join('');
                 } else {
-                    listEl.innerHTML = '<p>No Pro users found yet.</p>';
+                    listEl.innerHTML = '<p>No Pro users found in cloud. Try "Force Admin Sync" above.</p>';
                 }
             } catch (err) {
                 listEl.innerHTML = '<p style="color: red;">Error fetching cloud database.</p>';
