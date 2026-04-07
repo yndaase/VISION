@@ -131,11 +131,17 @@
 
     <!-- Split layout -->
     <div class="login-layout">
-      <a href="/about" class="about-brand-btn" title="About Vision Education">
-        <span class="about-icon">V</span>
-        <span>About Vision</span>
-      </a>
-      <button onclick="toggleTheme()" class="theme-toggle-btn" title="Toggle Theme" aria-label="Toggle theme">☀</button>
+      <div class="login-nav-top" style="position: absolute; top: 2rem; right: 2rem; display: flex; gap: 1rem; z-index: 100;">
+        <a href="pricing.html" class="about-brand-btn" title="View Vision Pro Pricing" style="position: relative; top: 0; left: 0;">
+          <span class="about-icon" style="background:var(--primary);">₵</span>
+          <span>View Pricing</span>
+        </a>
+        <a href="/about" class="about-brand-btn" title="About Vision Education" style="position: relative; top: 0; left: 0;">
+          <span class="about-icon">V</span>
+          <span>About Vision</span>
+        </a>
+        <button onclick="toggleTheme()" class="theme-toggle-btn" style="position: relative; top: 0; right: 0;" title="Toggle Theme" aria-label="Toggle theme">☀</button>
+      </div>
 
       <!--  LEFT PANEL (branding)  -->
       <aside class="login-left" aria-hidden="true">
