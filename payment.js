@@ -70,8 +70,9 @@ async function initiatePayment(itemId, amount, itemName, promoCode = "") {
       finalAmount = 5.00;
       
       // Promo code check
-      if (promoCode.trim().toUpperCase() === 'AUGUSCO') {
-          console.log("[Promo] AUGUSCO code applied: Price reduced to 1 GH₵");
+      const validCodes = ['AUGUSCO', 'STUDENTFREE'];
+      if (validCodes.includes(promoCode.trim().toUpperCase())) {
+          console.log(`[Promo] ${promoCode.toUpperCase()} code applied: Price reduced to 1 GH₵`);
           finalAmount = 1.00;
       }
   }
