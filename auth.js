@@ -1120,7 +1120,7 @@ async function adminInit() {
   };
 
   await upsertAccount(adminEmail, "System Architect", "admin", expectedAdminHash);
-  await upsertAccount(entEmail, "Vision Academy Admin", "enterprise", expectedEntHash, { schoolName: "Vision Academy", schoolLogo: "V" });
+  await upsertAccount(entEmail, "Vision Academy Admin", "enterprise", expectedEntHash, { schoolName: "Vision Academy", schoolLogo: "V", schoolCode: "VISION-2026" });
   await upsertAccount(teacherEmail, "Senior Faculty", "teacher", expectedTeacherHash, { institutionId: entEmail });
   await upsertAccount(proStudentEmail, "Pro Candidate", "pro", expectedProHash, { 
     subscriptionExpiry: Date.now() + (365 * 24 * 60 * 60 * 1000),
