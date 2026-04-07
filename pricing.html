@@ -127,8 +127,8 @@
                         proLink.innerText = "Extend Membership";
                     }
                 }
-            } else if (session && session.trialStartedAt > 0) {
-                // Trial already used or cancelled
+            } else if (session && session.trialStartedAt !== 0) {
+                // Trial already used or cancelled (-1)
                 const trialBtn = document.getElementById('trialBtn');
                 if (trialBtn) {
                     trialBtn.innerText = "Trial Already Used";
