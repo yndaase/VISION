@@ -1,18 +1,30 @@
 import { GoogleGenAI } from "@google/genai";
 
 const apiKey = process.env.GEMINI_API_KEY;
+const groqKey = process.env.GROQ_API_KEY;
 const ai = new GoogleGenAI({ apiKey });
 
-const MODEL_PRO = "gemini-1.5-flash";
+const MODEL_PRO = "llama-3.3-70b-versatile"; // High-Intelligence Pro Model via Groq
 const MODEL_STANDARD = "gemini-2.5-flash";
 const MODEL_FALLBACK = "gemini-1.5-flash-8b";
 
 /**
- * AI Content Generation with Smart Routing
- * Pro users get Gemini 1.5 (High Quota), others get Gemini 2.5 (Basic Tier).
+ * AI Content Generation with Smart Provider Routing
+ * Standard Users: Gemini (Google)
+ * Pro Users: Llama 3 (Groq) - Near-instant and high-quota
  */
 async function safeGenerateContent(contents, role = "student") {
-  const primaryModel = role === "pro" ? MODEL_PRO : MODEL_STANDARD;
+  // 1. Pro Routing (Groq)
+  if (role === "pro" && groqKey) {
+    try {
+      return await generateWithGroq(contents);
+    } catch (err) {
+      console.warn("[Groq Error] Falling back to Gemini:", err.message);
+    }
+  }
+
+  // 2. Standard Routing (Gemini)
+  const primaryModel = role === "pro" ? MODEL_FALLBACK : MODEL_STANDARD;
   
   try {
     return await ai.models.generateContent({
@@ -21,9 +33,9 @@ async function safeGenerateContent(contents, role = "student") {
     });
   } catch (error) {
     const errorMsg = error.message.toLowerCase();
-    // Fallback on 503 or 429 (Quota Exceeded) for Pro users
+    // Emergency Fallback
     if (errorMsg.includes("503") || errorMsg.includes("unavailable") || errorMsg.includes("429") || errorMsg.includes("quota")) {
-      console.warn(`[AI Fallback]: Routing to high-availability tier ${MODEL_FALLBACK}`);
+      console.warn(`[AI Final Fallback]: Routing to ${MODEL_FALLBACK}`);
       return await ai.models.generateContent({
         model: MODEL_FALLBACK,
         contents
@@ -31,6 +43,40 @@ async function safeGenerateContent(contents, role = "student") {
     }
     throw error;
   }
+}
+
+/**
+ * Groq (OpenAI-Compatible) Fetch Handler
+ */
+async function generateWithGroq(contents) {
+  // Convert Gemini format to OpenAI/Groq format
+  const messages = contents.map(msg => ({
+    role: msg.role === "model" ? "assistant" : msg.role,
+    content: msg.parts.map(p => p.text).join("\n")
+  }));
+
+  const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+    method: "POST",
+    headers: {
+      "Authorization": `Bearer ${groqKey}`,
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      model: MODEL_PRO,
+      messages: messages,
+      temperature: 0.7,
+      max_tokens: 2048
+    })
+  });
+
+  const data = await response.json();
+  if (!response.ok) throw new Error(data.error?.message || "Groq API Error");
+
+  return {
+    text: data.choices[0].message.content,
+    // Add raw text for JSON extractor
+    get text() { return data.choices[0].message.content; }
+  };
 }
 
 /**
