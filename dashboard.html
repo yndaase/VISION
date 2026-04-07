@@ -357,13 +357,11 @@
     </nav>
     
     <!-- PRO PROMO STRIP -->
-    <div id="proPromoStrip" style="display: none; background: linear-gradient(90deg, #1e1b4b, #312e81); border-bottom: 1px solid rgba(255,255,255,0.1); padding: 10px 0;">
-      <div class="dash-nav-inner" style="justify-content: center; gap: 1rem; font-size: 0.8rem; color: #e0e7ff;">
-        <span style="font-weight: 600;">🏖️ HOLIDAY SPECIAL: </span>
+    <div class="pro-promo-strip" id="proPromoStrip" style="background: rgba(251, 191, 36, 0.1); border-bottom: 1px solid rgba(251, 191, 36, 0.2); color: #fb923c; padding: 0.6rem 1rem; text-align: center; font-size: 0.82rem; z-index: 1000;">
+        <span style="font-weight: 600;">PROMO ACTIVE: </span>
         <span>Upgrade to <strong style="color: #fbbf24;">VISION PRO</strong> for just <strong>1 GHS</strong> (<s>5 GHS</s>)</span>
         <a href="pricing.html" style="color: #fbbf24; text-decoration: underline; font-weight: 700;">View Pricing</a>
       </div>
-    </div>
 
     <!--  HERO / WELCOME  -->
     <section class="dash-hero">
@@ -384,7 +382,6 @@
 
         <!-- Pro Section Banner -->
         <div id="proUpgradeCard" class="glass-card" style="display: none; margin-top: 2rem; border: 1px solid #0078d4; background: rgba(0, 120, 212, 0.05); padding: 1.5rem; position: relative; overflow: hidden;">
-          <div style="position: absolute; top: -10px; right: -10px; font-size: 4rem; opacity: 0.05; transform: rotate(15deg);">☁️</div>
           <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 1.5rem;">
             <div style="flex: 1; min-width: 250px;">
               <h3 style="color: #0078d4; font-size: 1.2rem; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 8px;">
@@ -414,8 +411,7 @@
           </a>
           <!-- Added Get Pro Button for Hero Visibility -->
           <a href="pricing.html" class="hero-btn hero-btn-pro" id="heroGetProBtn" style="display:none;">
-            <span class="hero-btn-icon">✨</span>
-            <span>Get Vision Pro</span>
+            <span>Upgrade to Pro</span>
           </a>
           <a href="ai-learning.html" class="hero-btn hero-btn-secondary" style="border-color: var(--primary); color: var(--primary); background: var(--primary-dim);">
             <span class="hero-btn-icon"></span>
@@ -1215,7 +1211,7 @@
       const session = typeof getSession === 'function' ? getSession() : null;
       if (!session) return;
 
-      const isAdmin = session.email && session.email.toLowerCase() === 'gisgreat308@gmail.com';
+      const isAdmin = (session.email || "").toLowerCase() === 'gisgreat308@gmail.com';
       const isPro = session.role === 'pro' || isAdmin;
 
       const promoStrip = document.getElementById('proPromoStrip');
@@ -1223,27 +1219,22 @@
       const sideGetPro = document.getElementById("sideNavGetPro");
       const heroGetPro = document.getElementById("heroGetProBtn");
       const headerBadge = document.getElementById("proHeaderBadge");
-      const nameEl = document.getElementById('welcomeName');
 
       if (isPro) {
         if (headerBadge) headerBadge.style.display = 'inline-flex';
         
-        // Hide upgrade cards ONLY if not admin (Admin sees all to monitor)
+        // Hide upgrade cards ONLY if not admin (Admin sees all to monitor/configure)
         if (!isAdmin) {
           if (promoStrip) promoStrip.style.display = 'none';
           if (promoCard) promoCard.style.display = 'none';
           if (sideGetPro) sideGetPro.style.display = 'none';
           if (heroGetPro) heroGetPro.style.display = 'none';
         } else {
+          // FORCE SHOW for ADMIN
           if (promoStrip) promoStrip.style.display = 'block';
           if (promoCard) promoCard.style.display = 'block';
           if (sideGetPro) sideGetPro.style.display = 'block';
           if (heroGetPro) heroGetPro.style.display = 'inline-flex';
-        }
-
-        // Add Pro Badge to Greeting
-        if (nameEl && !nameEl.innerHTML.includes('AZURE PRO')) {
-          nameEl.innerHTML += ' <span class="pro-badge" style="background: linear-gradient(135deg, #0078d4, #288ad6);">AZURE PRO</span>';
         }
       } else {
         // STANDARD USER UI
@@ -1251,7 +1242,6 @@
         if (promoCard) promoCard.style.display = 'block';
         if (sideGetPro) sideGetPro.style.display = 'block';
         if (heroGetPro) heroGetPro.style.display = 'inline-flex';
-        if (headerBadge) headerBadge.style.display = 'none';
       }
     }
 
