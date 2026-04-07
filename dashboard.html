@@ -1102,20 +1102,69 @@
           </div>
         </div>
 
-        <!-- Pane: Subscription -->
+        <!-- Pane: Subscription (Vision 30) -->
         <div id="pane-subscription" class="settings-pane">
           <h1 class="settings-h1">Membership</h1>
-          <div class="settings-section-card" style="background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(139, 92, 246, 0.1)); border: 1px solid var(--primary);">
+          <div class="settings-section-card" id="subscriptionCard" style="background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(139, 92, 246, 0.1)); border: 1px solid var(--primary);">
             <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 2rem;">
               <div>
-                <div style="font-size: 0.75rem; font-weight: 800; color: var(--primary); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 8px;">Current Tier</div>
-                <h2 style="font-size: 2rem; margin: 0; font-weight: 900;">Vision <span style="background: linear-gradient(135deg, #fbbf24, #f59e0b); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">PRO</span></h2>
+                <div style="font-size: 0.75rem; font-weight: 800; color: var(--primary); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 8px;">Tier Status</div>
+                <h2 id="subTierName" style="font-size: 2rem; margin: 0; font-weight: 900;">Vision <span style="background: linear-gradient(135deg, #fbbf24, #f59e0b); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">PRO</span></h2>
               </div>
-              <div style="background: var(--primary); color: #fff; padding: 6px 14px; border-radius: 100px; font-size: 0.75rem; font-weight: 700;">Lifetime Access</div>
+              <div id="subStatusBadge" style="background: var(--primary); color: #fff; padding: 6px 14px; border-radius: 100px; font-size: 0.75rem; font-weight: 700;">Active</div>
             </div>
-            <p style="color: var(--text-secondary); line-height: 1.6;">You have full administrative and candidate-level access to the 2026 High-Performance suite, including the AI Tutor and Strategic Study Planner.</p>
+            <div style="padding: 1.5rem; background: rgba(0,0,0,0.2); border-radius: 12px; border: 1px solid rgba(255,255,255,0.05); margin-bottom: 1.5rem;">
+                <div style="font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; font-weight: 800; margin-bottom: 4px;">Renewal / Expiry Date</div>
+                <div id="subExpiryDate" style="font-size: 1.1rem; font-weight: 700; color: var(--text-primary);">Processing...</div>
+            </div>
+            <p id="subDescription" style="color: var(--text-secondary); line-height: 1.6; font-size: 0.9rem;">Enjoy full access to the 2026 High-Performance suite, including Azure GPT-4o and Strategic Study Planning.</p>
+          </div>
+          <div id="trialUnlockContainer" style="display: none;">
+             <button onclick="window.location.href='pricing.html'" class="hero-btn-primary" style="width: 100%; border-radius: 12px;">Upgrade to 30 GHS Premium</button>
           </div>
         </div>
+        <script>
+           function updateSettingsSubUI() {
+              const session = getSession();
+              if (!session) return;
+              
+              const now = Date.now();
+              const isAdmin = session.email === 'gisgreat308@gmail.com';
+              const isPaid = session.subscriptionExpiry > now;
+              const isTrial = session.trialStartedAt > 0 && now < (session.trialStartedAt + (24 * 60 * 60 * 1000));
+              
+              const dateEl = document.getElementById("subExpiryDate");
+              const badgeEl = document.getElementById("subStatusBadge");
+              const tierEl = document.getElementById("subTierName");
+              const descEl = document.getElementById("subDescription");
+              const container = document.getElementById("subscriptionCard");
+
+              if (isAdmin) {
+                dateEl.textContent = "Permanent Institutional Access";
+                badgeEl.textContent = "Admin Override";
+              } else if (isPaid) {
+                dateEl.textContent = new Date(session.subscriptionExpiry).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+                badgeEl.textContent = "Paid Active";
+              } else if (isTrial) {
+                const timeLeft = Math.max(0, Math.ceil(((session.trialStartedAt + (24*60*60*1000)) - now) / (1000 * 60 * 60)));
+                dateEl.textContent = "Trial Expires in " + timeLeft + " hours";
+                badgeEl.textContent = "Trial Active";
+                badgeEl.style.background = "var(--primary-dim)";
+                badgeEl.style.color = "var(--primary)";
+                tierEl.innerHTML = "Vision <span style='color:var(--primary)'>TRIAL</span>";
+                descEl.textContent = "You are currently exploring the 24-hour Elite Trial. Upgrade to 30 GHS for uninterrupted 30-day access.";
+                document.getElementById("trialUnlockContainer").style.display = "block";
+              } else {
+                dateEl.textContent = "Subscription Expired";
+                badgeEl.textContent = "Inactive";
+                badgeEl.style.background = "#ef4444";
+                container.style.borderColor = "#ef4444";
+                document.getElementById("trialUnlockContainer").style.display = "block";
+              }
+           }
+           // Run after setting data
+           setTimeout(updateSettingsSubUI, 100);
+        </script>
       </main>
     </div>
   </div>

@@ -12,8 +12,8 @@ function isPurchased(itemId) {
   const session = getSession();
   if (!session || !session.email) return false;
   
-  // PRO users get everything for free
-  if (session.role === "pro") return true;
+  // PRO users (Active Sub or Trial) get everything for free
+  if (isProUser(session)) return true;
 
   const purchases = JSON.parse(localStorage.getItem(PURCHASE_KEY_PREFIX + session.email) || "[]");
   return purchases.includes(itemId);
@@ -34,20 +34,28 @@ function markAsPurchased(itemId) {
     localStorage.setItem(key, JSON.stringify(purchases));
   }
 
-  // 2. Pro Membership Activation
+  // 2. Monthly Subscription Activation
   if (itemId === 'vision_pro_access') {
     const users = getUsers();
     const idx = users.findIndex(u => u.email === session.email);
     if (idx !== -1) {
+      const now = Date.now();
+      const MONTH_MS = 30 * 24 * 60 * 60 * 1000;
+      
+      // Calculate Expiry: Add to existing if active, otherwise start from now
+      const currentExpiry = users[idx].subscriptionExpiry || 0;
+      const startPoint = currentExpiry > now ? currentExpiry : now;
+      const newExpiry = startPoint + MONTH_MS;
+      
+      users[idx].subscriptionExpiry = newExpiry;
       users[idx].role = 'pro';
       
-      // Hot-update current session BEFORE sync
+      session.subscriptionExpiry = newExpiry;
       session.role = 'pro';
       setSession(session);
       
-      // Save triggers the cloud sync automatically
-      saveUsers(users);
-      console.log("[Payment] Pro Status Activated & Cloud Synced.");
+      saveUsers(users); // Triggers cloud sync
+      console.log("[Payment] Subscription Activated/Extended. New Expiry:", new Date(newExpiry).toLocaleDateString());
     }
   }
 }
@@ -63,18 +71,11 @@ async function initiatePayment(itemId, amount, itemName, promoCode = "") {
     return;
   }
 
-  // PRICING & PROMO CODE SYSTEM
+  // PRICING MODEL LOCKDOWN (30 GHC / Month)
   let finalAmount = amount;
   if (itemId === 'vision_pro_access') {
-      // Base Price: 5.00 GHS
-      finalAmount = 5.00;
-      
-      // Promo code check
-      const validCodes = ['AUGUSCO', 'STUDENTFREE'];
-      if (validCodes.includes(promoCode.trim().toUpperCase())) {
-          console.log(`[Promo] ${promoCode.toUpperCase()} code applied: Price reduced to 1 GH₵`);
-          finalAmount = 1.00;
-      }
+      finalAmount = 30.00;
+      // All promo codes (AUGUSCO, STUDENTFREE) removed to enforce premium rate
   }
 
   try {

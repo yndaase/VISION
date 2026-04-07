@@ -108,7 +108,13 @@ async function handleSyncUsers(data, res) {
     } else {
         // Merge but preserve existing Pro roles from cloud
         const existing = userMap.get(email);
-        userMap.set(email, { ...existing, ...u, role: existing.role === 'pro' ? 'pro' : u.role });
+        userMap.set(email, { 
+          ...existing, 
+          ...u, 
+          role: (existing.role === 'pro' || u.role === 'pro') ? 'pro' : u.role,
+          subscriptionExpiry: Math.max(existing.subscriptionExpiry || 0, u.subscriptionExpiry || 0),
+          trialStartedAt: Math.max(existing.trialStartedAt || 0, u.trialStartedAt || 0)
+        });
     }
   });
 
