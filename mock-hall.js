@@ -67,10 +67,13 @@ async function initAIMock() {
 
   try {
     const today = new Date().toISOString().split('T')[0];
+    const session = typeof getSession === 'function' ? getSession() : null;
+    const userRole = session?.role || 'student';
+
     const res = await fetch('/api/ai', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ type: 'generate-questions', subject: 'Core Mathematics', dateSeed: today })
+      body: JSON.stringify({ type: 'generate-questions', subject: 'Core Mathematics', dateSeed: today, role: userRole })
     });
     const data = await res.json();
     
@@ -249,6 +252,9 @@ async function markEssayWithAI(qId) {
   feedbackEl.innerHTML = '<div class="ai-loader">Analyzing your answer...</div>';
 
   try {
+    const session = typeof getSession === 'function' ? getSession() : null;
+    const userRole = session?.role || 'student';
+
     const response = await fetch('/api/ai', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -260,7 +266,8 @@ async function markEssayWithAI(qId) {
           studentAnswer: answer,
           markScheme: q.markScheme,
           modelAnswer: q.modelAnswer
-        }]
+        }],
+        role: userRole
       })
     });
 
@@ -678,6 +685,9 @@ async function handleAISearch(manualPrompt) {
   const loader = appendMsg("Thinking...", 'ai');
 
   try {
+    const session = typeof getSession === 'function' ? getSession() : null;
+    const userRole = session?.role || 'student';
+
     const res = await fetch('/api/ai', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -687,7 +697,8 @@ async function handleAISearch(manualPrompt) {
         options: qData.options,
         subject: qData.subject || 'WASSCE Prep',
         topic: qData.topic || 'General',
-        userMessage: text
+        userMessage: text,
+        role: userRole
       })
     });
 

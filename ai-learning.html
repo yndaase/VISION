@@ -363,6 +363,9 @@
       chatInput.value = '';
       
       try {
+        const session = typeof getSession === 'function' ? getSession() : null;
+        const userRole = session?.role || 'student';
+
         const res = await fetch('/api/ai', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -371,7 +374,8 @@
             imageBase64: currentBase64,
             mimeType: currentMimeType,
             userMessage: message,
-            subject: currentSubject
+            subject: currentSubject,
+            role: userRole
           })
         });
 

@@ -317,6 +317,15 @@
         </div>
       </div>
     </nav>
+    
+    <!-- PRO PROMO STRIP -->
+    <div id="proPromoStrip" style="display: none; background: linear-gradient(90deg, #1e1b4b, #312e81); border-bottom: 1px solid rgba(255,255,255,0.1); padding: 10px 0;">
+      <div class="dash-nav-inner" style="justify-content: center; gap: 1rem; font-size: 0.8rem; color: #e0e7ff;">
+        <span style="font-weight: 600;">🏖️ HOLIDAY SPECIAL: </span>
+        <span>Upgrade to <strong style="color: #fbbf24;">VISION PRO</strong> for just <strong>1 GHS</strong> (<s>5 GHS</s>)</span>
+        <a href="#pro-section" style="color: #fbbf24; text-decoration: underline; font-weight: 700;">Claim Now</a>
+      </div>
+    </div>
 
     <!--  HERO / WELCOME  -->
     <section class="dash-hero">
@@ -334,6 +343,29 @@
         <p class="welcome-sub">
           Authorized 2026 Curriculum &middot; Specialised Section B Analysis.
         </p>
+
+        <!-- Pro Section Banner -->
+        <div id="proUpgradeCard" class="glass-card" style="display: none; margin-top: 2rem; border: 1px solid var(--primary); background: rgba(14, 165, 233, 0.05); padding: 1.5rem; position: relative; overflow: hidden;">
+          <div style="position: absolute; top: -10px; right: -10px; font-size: 4rem; opacity: 0.05; transform: rotate(15deg);">💎</div>
+          <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 1.5rem;">
+            <div style="flex: 1; min-width: 250px;">
+              <h3 style="color: #fbbf24; font-size: 1.2rem; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 8px;">
+                Vision Pro Membership <span class="pro-badge">Unlimited AI</span>
+              </h3>
+              <p style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.6;">
+                Unlock <strong>1,500+ Daily AI Requests</strong>, proctored Part B analysis, and comprehensive subject packs. 
+                Holiday Promo active: <strong>1.00 GHS only!</strong>
+              </p>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 0.8rem; min-width: 200px;">
+              <div style="display: flex; gap: 0.5rem;">
+                <input type="text" id="promoCodeInput" placeholder="Promo Code" style="background: rgba(0,0,0,0.2); border: 1px solid var(--border); color: white; padding: 10px; border-radius: 8px; font-size: 0.8rem; width: 100%;">
+                <button onclick="applyAndGoPro()" class="hero-btn-primary" style="padding: 10px 20px; font-size: 0.85rem; white-space: nowrap;">Get Pro</button>
+              </div>
+              <p style="font-size: 0.7rem; color: #34d399; text-align: center;">* Use code <strong>AUGUSCO</strong> for special access</p>
+            </div>
+          </div>
+        </div>
 
         <!-- Action Buttons -->
         <div class="hero-actions">
@@ -1113,6 +1145,36 @@
         .replace(/</g, "&lt;")
         .replace(/>/g, "&gt;");
     }
+    // Handle Pro Logic
+    function applyAndGoPro() {
+      const code = document.getElementById('promoCodeInput').value.trim();
+      // Price is handle by payment.js logic (currently 1 GHS promo)
+      if (typeof initiatePayment === 'function') {
+        initiatePayment('vision_pro_access', 5.00, 'Vision Pro Membership', code);
+      } else {
+        alert("Payment system loading... please try again.");
+      }
+    }
+
+    // Toggle Pro UI based on role
+    (function checkProStatus() {
+      const session = typeof getSession === 'function' ? getSession() : null;
+      if (session && session.role === 'pro') {
+        const promoStrip = document.getElementById('proPromoStrip');
+        const promoCard = document.getElementById('proUpgradeCard');
+        if (promoStrip) promoStrip.style.display = 'none';
+        if (promoCard) promoCard.style.display = 'none';
+        
+        // Add pro badge to username
+        const nameEl = document.getElementById('welcomeName');
+        if (nameEl) nameEl.innerHTML += ' <span class="pro-badge">PRO</span>';
+      } else {
+        const promoStrip = document.getElementById('proPromoStrip');
+        const promoCard = document.getElementById('proUpgradeCard');
+        if (promoStrip) promoStrip.style.display = 'block';
+        if (promoCard) promoCard.style.display = 'block';
+      }
+    })();
   </script>
 </body>
 

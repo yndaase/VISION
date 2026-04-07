@@ -12,7 +12,7 @@ function isPurchased(itemId) {
   const session = getSession();
   if (!session || !session.email) return false;
   
-  // PRO users get everything for free (if that's the desired logic)
+  // PRO users get everything for free
   if (session.role === "pro") return true;
 
   const purchases = JSON.parse(localStorage.getItem(PURCHASE_KEY_PREFIX + session.email) || "[]");
@@ -20,29 +20,55 @@ function isPurchased(itemId) {
 }
 
 /**
- * Mark an item as purchased for the current user.
+ * Marks an item as purchased and handles PRO upgrades.
  */
 function markAsPurchased(itemId) {
   const session = getSession();
   if (!session || !session.email) return;
 
+  // 1. Local Purchase Tracking
   const key = PURCHASE_KEY_PREFIX + session.email;
   const purchases = JSON.parse(localStorage.getItem(key) || "[]");
   if (!purchases.includes(itemId)) {
     purchases.push(itemId);
     localStorage.setItem(key, JSON.stringify(purchases));
   }
+
+  // 2. Pro Membership Activation
+  if (itemId === 'vision_pro_access') {
+    const users = getUsers();
+    const idx = users.findIndex(u => u.email === session.email);
+    if (idx !== -1) {
+      users[idx].role = 'pro';
+      saveUsers(users);
+      
+      // Hot-update current session
+      session.role = 'pro';
+      setSession(session);
+      console.log("[Payment] Pro Status Activated successfully.");
+    }
+  }
 }
 
 /**
- * Start the Paystack checkout flow via standard Redirect.
+ * Start the Paystack checkout flow with Holiday Promo & Code Logic.
  */
-async function initiatePayment(itemId, amount, itemName) {
+async function initiatePayment(itemId, amount, itemName, promoCode = "") {
   const session = getSession();
   if (!session || !session.email) {
     alert("Please log in to make a purchase.");
     window.location.href = "/login";
     return;
+  }
+
+  // HOLIDAY PROMO & CODE SYSTEM
+  let finalAmount = amount;
+  if (itemId === 'vision_pro_access') {
+      // Holiday Promo: Global 1 GHS baseline
+      finalAmount = 1.00;
+      if (promoCode.toUpperCase() === 'AUGUSCO') {
+          console.log("[Promo] AUGUSCO code applied.");
+      }
   }
 
   try {
@@ -53,11 +79,12 @@ async function initiatePayment(itemId, amount, itemName) {
       body: JSON.stringify({
         type: 'init',
         email: session.email,
-        amount: amount,
+        amount: finalAmount,
         metadata: {
           itemId: itemId,
           itemName: itemName,
-          user: session.name
+          user: session.name,
+          promoCode: promoCode
         }
       })
     });
