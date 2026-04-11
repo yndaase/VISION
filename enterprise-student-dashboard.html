@@ -1,238 +1,835 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html lang="en" data-theme="dark">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vision Institutional Student | Performance Dashboard</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="theme.css">
-    <script src="auth.js"></script>
-    <script>
-        (function() {
-            const sessionStr = sessionStorage.getItem("waec_session") || localStorage.getItem("waec_session");
-            if (!sessionStr) { window.location.replace("/login"); return; }
-            const session = JSON.parse(sessionStr);
-            if (!session.institutionId && session.role !== 'enterprise') {
-                window.location.replace("/dashboard");
-            }
-        })();
-    </script>
-    <style>
-        :root {
-            --est-primary: #6366f1;
-            --est-accent: #fbbf24;
-            --est-bg: #03050a;
-            --est-card: rgba(13, 17, 26, 0.7);
-            --est-border: rgba(255, 255, 255, 0.08);
-            --font-main: 'Outfit', sans-serif;
-        }
+  <meta charset="UTF-8" />
+  <script>
+    document.documentElement.setAttribute("data-theme", "dark");
+  </script>
+  <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests" />
+  <script defer src="/_vercel/insights/script.js"></script>
+  <script>
+    window.si =
+      window.si ||
+      function () {
+        (window.siq = window.siq || []).push(arguments);
+      };
+  </script>
+  <script defer src="/_vercel/speed-insights/script.js"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Institutional Dashboard | Vision Enterprise · 2026 WASSCE</title>
+  <meta name="description"
+    content="Enterprise student dashboard for institutional WASSCE preparation. Access subjects, mock exams, AI learning, and performance analytics." />
+  <meta name="robots" content="noindex, nofollow" />
 
-        body {
-            font-family: var(--font-main);
-            background: var(--est-bg);
-            background-image: 
-                radial-gradient(circle at 10% 10%, rgba(99, 102, 241, 0.1) 0%, transparent 40%),
-                radial-gradient(circle at 90% 90%, rgba(251, 191, 36, 0.05) 0%, transparent 40%);
-            color: #f1f5f9;
-            min-height: 100vh;
-            margin: 0;
-            display: grid;
-            grid-template-columns: 280px 1fr;
-        }
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#0ea5e9" />
+  <link rel="apple-touch-icon" href="assets/logo.png" />
 
-        /* --- SIDEBAR --- */
-        .sidebar {
-            background: rgba(8, 11, 21, 0.8);
-            backdrop-filter: blur(20px);
-            border-right: 1px solid var(--est-border);
-            padding: 2rem 1.5rem;
-            display: flex;
-            flex-direction: column;
-            position: sticky;
-            top: 0;
-            height: 100vh;
-        }
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="dashboard.css" />
+  <link rel="stylesheet" href="theme.css" />
 
-        .school-badge {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 3rem;
-            padding: 12px;
-            background: rgba(255, 255, 255, 0.03);
-            border-radius: 16px;
-            border: 1px solid var(--est-border);
-        }
+  <script src="theme.js"></script>
+  <script>
+    // Auth Guard — Enterprise students only
+    (function () {
+      const SESSION_KEY = "waec_session";
+      const sessionStr = sessionStorage.getItem(SESSION_KEY) || localStorage.getItem(SESSION_KEY);
+      if (!sessionStr) { window.location.href = "/login"; return; }
+      const session = JSON.parse(sessionStr);
+      if (!session.institutionId && session.role !== 'enterprise') {
+        window.location.href = "/dashboard";
+      }
+    })();
+  </script>
+  <style>
+    /* User Dropdown */
+    .nav-user-chip { position: relative; cursor: pointer; }
+    .nav-user-chip:focus-within .user-dropdown,
+    .nav-user-chip.open .user-dropdown { display: block; }
+    .user-dropdown {
+      display: none; position: absolute; top: calc(100% + 10px); right: 0;
+      min-width: 200px; background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: var(--radius-md); box-shadow: var(--shadow-premium);
+      z-index: 999; overflow: hidden; animation: fadeDown 0.15s ease;
+    }
+    @keyframes fadeDown { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: translateY(0); } }
+    .dropdown-header { padding: 14px 16px; border-bottom: 1px solid var(--border); }
+    .dropdown-header .dh-name { font-weight: 800; font-size: 0.9rem; color: var(--text-primary); }
+    .dropdown-header .dh-email { font-size: 0.75rem; color: var(--text-muted); margin-top: 2px; }
+    .dropdown-item {
+      display: flex; align-items: center; gap: 10px; padding: 11px 16px;
+      font-size: 0.85rem; color: var(--text-secondary); text-decoration: none;
+      cursor: pointer; background: none; border: none; width: 100%;
+      font-family: "Outfit", sans-serif; transition: background 0.15s; text-align: left;
+    }
+    .dropdown-item:hover { background: var(--primary-dim); color: var(--text-primary); }
+    .dropdown-item.danger { color: var(--error); }
+    .dropdown-item.danger:hover { background: rgba(248, 113, 113, 0.1); }
 
-        .school-logo {
-            width: 40px;
-            height: 40px;
-            background: linear-gradient(135deg, var(--est-primary), #8b5cf6);
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 800;
-            color: #fff;
-        }
+    /* Enterprise Badge */
+    .ent-badge {
+      font-size: 0.62rem; font-weight: 900;
+      background: linear-gradient(135deg, #fbbf24, #f59e0b); color: #000;
+      padding: 2px 8px; border-radius: 4px; text-transform: uppercase;
+      letter-spacing: 0.04em; box-shadow: 0 4px 10px rgba(251, 191, 36, 0.25);
+      display: inline-flex; align-items: center; line-height: 1; height: 16px;
+    }
 
-        .school-info { line-height: 1.2; }
-        .school-info .label { font-size: 0.65rem; font-weight: 800; color: var(--est-primary); text-transform: uppercase; }
-        .school-info .name { font-size: 0.9rem; font-weight: 700; color: #fff; }
-
-        .nav-menu { flex: 1; }
-        .nav-link {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 13px 16px;
-            border-radius: 12px;
-            color: #94a3b8;
-            text-decoration: none;
-            font-size: 0.9rem;
-            font-weight: 600;
-            margin-bottom: 6px;
-            transition: all 0.2s;
-        }
-        .nav-link:hover { background: rgba(255,255,255,0.05); color: #fff; }
-        .nav-link.active { background: var(--est-primary-dim, rgba(99, 102, 241, 0.1)); color: var(--est-primary); border: 1px solid rgba(99, 102, 241, 0.2); }
-
-        /* --- MAIN --- */
-        .main { padding: 3rem 4rem; }
-        .welcome-row { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 3.5rem; }
-        .welcome-text h1 { font-size: 2.2rem; font-weight: 800; letter-spacing: -0.03em; margin: 0; }
-        .welcome-text p { color: #94a3b8; margin-top: 8px; font-weight: 500; }
-
-        .hero-stats {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 1.5rem;
-            margin-bottom: 3.5rem;
-        }
-
-        .stat-card {
-            background: var(--est-card);
-            border: 1px solid var(--est-border);
-            border-radius: 24px;
-            padding: 1.8rem;
-            backdrop-filter: blur(10px);
-        }
-        .stat-card .label { font-size: 0.75rem; font-weight: 800; color: #64748b; text-transform: uppercase; margin-bottom: 12px; display: block; }
-        .stat-card .val { font-size: 2rem; font-weight: 900; color: #fff; }
-
-        /* --- TOP CORES --- */
-        .grid-2x2 {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 2rem;
-        }
-
-        .tool-card {
-            background: var(--est-card);
-            border: 1px solid var(--est-border);
-            border-radius: 30px;
-            padding: 2.5rem;
-            position: relative;
-            overflow: hidden;
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            text-decoration: none;
-            color: inherit;
-        }
-        .tool-card:hover { transform: translateY(-8px); border-color: var(--est-primary); box-shadow: 0 20px 40px rgba(0,0,0,0.4); }
-        .tool-icon {
-            width: 56px; height: 56px; border-radius: 16px; background: rgba(255,255,255,0.03);
-            display: flex; align-items: center; justify-content: center; font-size: 1.5rem; margin-bottom: 1.5rem;
-        }
-        .tool-card h3 { font-size: 1.25rem; font-weight: 800; margin-bottom: 0.5rem; }
-        .tool-card p { color: #94a3b8; font-size: 0.88rem; line-height: 1.6; }
-
-    </style>
+    /* Institutional branding row */
+    .inst-brand-row {
+      display: flex; align-items: center; gap: 14px; margin-bottom: 0.8rem;
+      padding: 12px 24px; background: rgba(251, 191, 36, 0.06);
+      border: 1px solid rgba(251, 191, 36, 0.15); border-radius: 20px;
+      width: fit-content; backdrop-filter: blur(10px); animation: fadeInUp 0.5s ease both;
+    }
+    .inst-logo {
+      width: 36px; height: 36px; background: linear-gradient(135deg, #fbbf24, #f59e0b);
+      border-radius: 10px; display: flex; align-items: center; justify-content: center;
+      font-weight: 800; font-size: 1rem; color: #000; box-shadow: 0 4px 12px rgba(251, 191, 36, 0.3);
+    }
+  </style>
 </head>
-<body>
 
-    <aside class="sidebar">
-        <div class="school-badge">
-            <div class="school-logo" id="logoBox">V</div>
-            <div class="school-info">
-                <div class="label">Institutional Elite</div>
-                <div class="name" id="schoolNameDisplay">Vision Academy</div>
-            </div>
+<body class="dashboard-page">
+  <!-- SIDE NAVIGATION -->
+  <aside class="side-nav">
+    <a class="side-nav-logo" href="enterprise-student-dashboard.html">
+      <img src="assets/logo.png" alt="Logo" style="height: 48px; width: 48px; object-fit: contain;">
+      <span>Vision Enterprise</span>
+    </a>
+    <nav class="side-nav-menu">
+      <a href="enterprise-student-dashboard.html" class="nav-item active">
+        <span class="nav-item-icon">🏠</span>
+        <span>Dashboard</span>
+      </a>
+      <a href="enterprise-mocks.html" class="nav-item">
+        <span class="nav-item-icon">📝</span>
+        <span>Mock Exams</span>
+      </a>
+      <a href="analytics.html" class="nav-item">
+        <span class="nav-item-icon">📊</span>
+        <span>Performance</span>
+      </a>
+      <a href="enterprise-ai-mission.html" class="nav-item">
+        <span class="nav-item-icon" style="display:flex; align-items:center; justify-content:center; filter: hue-rotate(240deg) saturate(1.5);">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M19 13l-1.26-2.74L15 9l2.74-1.26L19 5l1.26 2.74L23 9l-2.74 1.26L19 13zM9 13l-2.26-4.74L2 6l4.74-2.26L9 1.5l2.26 4.74L16 8.26l-4.74 2.26L9 13zm10 9.5l-1.26-2.74L15 18.5l2.74-1.26L19 14.5l1.26 2.74L23 18.5l-2.74 1.26L19 22.5z"/></svg>
+        </span>
+        <span>AI Learning Hub</span>
+      </a>
+      <a href="enterprise-planner.html" class="nav-item">
+        <span class="nav-item-icon" style="display:flex; align-items:center; justify-content:center; filter: hue-rotate(120deg);">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM7 10h5v5H7z"/></svg>
+        </span>
+        <span>Study Planner</span>
+      </a>
+    </nav>
+    <div class="side-nav-footer">
+      <a href="#" class="nav-item" onclick="openSettings(); return false;">
+        <span class="nav-item-icon">⚙️</span>
+        <span>Settings</span>
+      </a>
+      <a href="https://www.youtube.com/channel/UCo4k-_8Q92hXOcUdbAtwabg" target="_blank" rel="noopener" class="nav-item social-youtube" title="Vision YouTube">
+        <span class="nav-item-icon" style="display:flex; align-items:center; justify-content:center;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+        </span>
+        <span>YouTube</span>
+      </a>
+    </div>
+  </aside>
+
+  <!-- BOTTOM NAVIGATION (Mobile) -->
+  <nav class="bottom-nav">
+    <a href="enterprise-student-dashboard.html" class="bottom-nav-item active">
+      <span class="bottom-icon">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+      </span>
+      <span>Home</span>
+    </a>
+    <a href="enterprise-mocks.html" class="bottom-nav-item">
+      <span class="bottom-icon">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>
+      </span>
+      <span>Mocks</span>
+    </a>
+    <a href="enterprise-planner.html" class="bottom-nav-item">
+      <span class="bottom-icon">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM7 10h5v5H7z"/></svg>
+      </span>
+      <span>Plan</span>
+    </a>
+    <a href="enterprise-ai-mission.html" class="bottom-nav-item" style="color: #818cf8;">
+      <span class="bottom-icon" style="filter: drop-shadow(0 0 8px rgba(129, 140, 248, 0.5));">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor"><path d="M19 13l-1.26-2.74L15 9l2.74-1.26L19 5l1.26 2.74L23 9l-2.74 1.26L19 13zM9 13l-2.26-4.74L2 6l4.74-2.26L9 1.5l2.26 4.74L16 8.26l-4.74 2.26L9 13zm10 9.5l-1.26-2.74L15 18.5l2.74-1.26L19 14.5l1.26 2.74L23 18.5l-2.74 1.26L19 22.5z"/></svg>
+      </span>
+      <span style="font-weight: 800;">AI Hub</span>
+    </a>
+    <a href="analytics.html" class="bottom-nav-item">
+      <span class="bottom-icon">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/></svg>
+      </span>
+      <span>Stats</span>
+    </a>
+    <a href="#" class="bottom-nav-item" onclick="openSettings(); return false;">
+      <span class="bottom-icon">⚙️</span>
+      <span>Settings</span>
+    </a>
+  </nav>
+
+  <div class="main-wrapper">
+    <!-- NAVBAR -->
+    <nav class="dash-nav" id="dashNav">
+      <div class="dash-nav-inner">
+        <a class="dash-logo" href="enterprise-student-dashboard.html">
+          <img src="assets/logo.png" alt="Logo" style="height: 32px; width: 32px; object-fit: contain; margin-right: 10px;">
+          <span class="dash-logo-text">Vision <span class="brand-accent">Enterprise</span></span>
+        </a>
+
+        <!-- Global Search -->
+        <div class="nav-search-wrap">
+          <div class="nav-search-input-group">
+            <span class="search-icon">🔍</span>
+            <input type="search" id="globalSearch" placeholder="Search subjects, topics, or materials..." autocomplete="off" />
+            <kbd class="search-kbd">/</kbd>
+          </div>
+          <div class="search-results-overlay" id="searchResults"></div>
         </div>
 
-        <nav class="nav-menu">
-            <a href="enterprise-student-dashboard.html" class="nav-link active"><span>Overview</span></a>
-            <a href="enterprise-mocks.html" class="nav-link"><span>Mock Hall</span></a>
-            <a href="enterprise-ai-mission.html" class="nav-link"><span>AI Mission</span></a>
-            <a href="enterprise-planner.html" class="nav-link"><span>Study Planner</span></a>
-        </nav>
+        <div class="dash-nav-right">
+          <span class="nav-badge">2026 WASSCE</span>
+          <span class="ent-badge">ENTERPRISE</span>
+          <button class="theme-toggle-btn" onclick="toggleTheme()" title="Toggle Theme"></button>
+          <div class="nav-user-chip" id="navUserChip" onclick="toggleUserDropdown()">
+            <div class="nav-avatar" id="navAvatar">S</div>
+            <span class="nav-username" id="navUsername">Student</span>
+            <span style="font-size: 0.7rem; color: var(--text-muted); margin-left: 2px;">▾</span>
+            <div class="user-dropdown" id="userDropdown">
+              <div class="dropdown-header">
+                <div class="dh-name" id="dropdownName">Student</div>
+                <div class="dh-email" id="dropdownEmail">student@visionedu.online</div>
+              </div>
+              <button class="dropdown-item" onclick="openSettings(); closeUserDropdown();">⚙️ Settings</button>
+              <a class="dropdown-item" href="/analytics">📊 My Performance</a>
+              <button class="dropdown-item danger" onclick="handleLogout()">🚪 Log Out</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </nav>
 
+    <!-- HERO / WELCOME -->
+    <section class="dash-hero">
+      <div class="dash-hero-content">
+        <!-- Institutional Branding -->
+        <div class="inst-brand-row" id="schoolBrandingRow">
+          <div class="inst-logo" id="schoolLogo">V</div>
+          <div style="font-size: 0.95rem; font-weight: 800; color: var(--text-primary); letter-spacing: -0.01em;">
+            <span style="color: #fbbf24; opacity: 0.7; font-weight: 600;">Vision for</span> <span id="schoolName">Institution</span>
+          </div>
+        </div>
+
+        <div class="welcome-badge" id="welcomeBadge">
+          <span class="badge-dot"></span>
+          Institutional License &middot; 2026 WASSCE
+        </div>
+        <h1 class="welcome-heading">
+          Strategic Excellence,<br />
+          <span class="welcome-name gradient-text" id="welcomeName">Student</span>
+        </h1>
+        <p class="welcome-sub">
+          Authorized 2026 Curriculum &middot; Specialised Section B Analysis.
+        </p>
+
+        <!-- Action Buttons -->
+        <div class="hero-actions">
+          <a href="enterprise-mocks.html" class="hero-btn hero-btn-primary">
+            <span class="hero-btn-icon">📝</span>
+            <span>Start Mock Exam</span>
+            <span class="hero-btn-arrow">→</span>
+          </a>
+          <a href="enterprise-ai-mission.html" class="hero-btn hero-btn-secondary" style="border-color: var(--primary); color: var(--primary); background: var(--primary-dim);">
+            <span class="hero-btn-icon">✨</span>
+            <span>AI Learning Hub</span>
+          </a>
+          <a href="/analytics" class="hero-btn hero-btn-secondary">
+            <span class="hero-btn-icon">📊</span>
+            <span>View Analytics</span>
+          </a>
+        </div>
+
+        <!-- Stats row -->
+        <div class="dash-stats" id="dashStats">
+          <div class="dash-stat-chip">
+            <span class="dash-stat-num" id="statAnswered">0</span>
+            <span class="dash-stat-lbl">Questions Done</span>
+          </div>
+          <div class="dash-stat-chip">
+            <span class="dash-stat-num" id="statCorrect">0</span>
+            <span class="dash-stat-lbl">Correct</span>
+          </div>
+          <div class="dash-stat-chip">
+            <span class="dash-stat-num" id="statPct"></span>
+            <span class="dash-stat-lbl">Accuracy</span>
+          </div>
+          <div class="dash-stat-chip">
+            <span class="dash-stat-num">8</span>
+            <span class="dash-stat-lbl">Subjects</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TRUSTED SCHOOLS -->
+    <section class="trusted-schools">
+      <p class="trusted-label">Trusted by Top Institutions in Ghana</p>
+      <div class="trusted-pills">
+        <div class="institution-pill">
+          <div class="institution-avatar">🏫</div>
+          <span>St. Augustine's College</span>
+        </div>
+        <div class="institution-pill">
+          <div class="institution-avatar">🎓</div>
+          <span>Ghana Education Service</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- SUBJECTS GRID -->
+    <section class="subjects-section">
+      <div class="subjects-inner">
+        <div class="section-header">
+          <h2 class="section-title">Choose a Subject</h2>
+          <p class="section-sub">
+            WAEC 2026 syllabus · Crafted by Senior Curriculum Specialists
+          </p>
+        </div>
+
+        <div class="subjects-grid" id="subjectsGrid">
+          <!-- Core Mathematics -->
+          <a class="subject-card available" href="/?sub=maths" id="card-maths">
+            <div class="subject-card-inner">
+              <div class="subject-top">
+                <div class="subject-icon-wrap" style="--subj-color: var(--primary)">
+                  <span class="subject-icon">📐</span>
+                </div>
+                <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 4px;">
+                  <span class="subject-status available-tag">Available</span>
+                  <span style="font-size: 0.6rem; font-weight: 800; color: var(--primary); background: var(--primary-dim); padding: 2px 8px; border-radius: 4px; letter-spacing: 0.05em; border: 1px solid var(--border-accent);">WAEC VERIFIED</span>
+                </div>
+              </div>
+              <h3 class="subject-name">Core Mathematics</h3>
+              <p class="subject-desc">Algebra, Number Theory, Statistics, Geometry &amp; real-world word problems.</p>
+              <div class="subject-meta">
+                <span class="meta-chip">15 Questions</span>
+                <span class="meta-chip">3 Difficulty Levels</span>
+                <span class="meta-chip difficulty-hard">High-Difficulty</span>
+              </div>
+              <div class="subject-cta">Start Practice <span class="cta-arrow">→</span></div>
+            </div>
+          </a>
+
+          <!-- English Language -->
+          <a class="subject-card available" href="/?sub=english" id="card-english">
+            <div class="subject-card-inner">
+              <div class="subject-top">
+                <div class="subject-icon-wrap" style="--subj-color: #60a5fa">
+                  <span class="subject-icon">📖</span>
+                </div>
+                <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 4px;">
+                  <span class="subject-status available-tag">Available</span>
+                  <span style="font-size: 0.6rem; font-weight: 800; color: var(--primary); background: var(--primary-dim); padding: 2px 8px; border-radius: 4px; letter-spacing: 0.05em; border: 1px solid var(--border-accent);">2026 ALIGNED</span>
+                </div>
+              </div>
+              <h3 class="subject-name">English Language</h3>
+              <p class="subject-desc">Comprehension, essay writing, oral English &amp; language structure.</p>
+              <div class="subject-meta">
+                <span class="meta-chip">40+ Questions</span>
+                <span class="meta-chip">Essay + MCQ</span>
+              </div>
+              <div class="subject-cta">Start Practice <span class="cta-arrow">→</span></div>
+            </div>
+            <div class="subject-card-glow" style="--glow: #60a5fa"></div>
+          </a>
+
+          <!-- Integrated Science -->
+          <a class="subject-card available" href="/?sub=science" id="card-science">
+            <div class="subject-card-inner">
+              <div class="subject-top">
+                <div class="subject-icon-wrap" style="--subj-color: #34d399">
+                  <span class="subject-icon">🔬</span>
+                </div>
+                <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 4px;">
+                  <span class="subject-status available-tag">Available</span>
+                  <span style="font-size: 0.6rem; font-weight: 800; color: var(--primary); background: var(--primary-dim); padding: 2px 8px; border-radius: 4px; letter-spacing: 0.05em; border: 1px solid var(--border-accent);">EXPERT CURATED</span>
+                </div>
+              </div>
+              <h3 class="subject-name">Integrated Science</h3>
+              <p class="subject-desc">Biology, Chemistry &amp; Physics concepts in one integrated WAEC paper.</p>
+              <div class="subject-meta">
+                <span class="meta-chip">40+ Questions</span>
+                <span class="meta-chip">MCQ + Structured</span>
+              </div>
+              <div class="subject-cta">Start Practice <span class="cta-arrow">→</span></div>
+            </div>
+          </a>
+
+          <!-- Social Studies -->
+          <a class="subject-card available" href="/?sub=social" id="card-social">
+            <div class="subject-card-inner">
+              <div class="subject-top">
+                <div class="subject-icon-wrap" style="--subj-color: #a78bfa">
+                  <span class="subject-icon">🌍</span>
+                </div>
+                <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 4px;">
+                  <span class="subject-status available-tag">Available</span>
+                  <span style="font-size: 0.6rem; font-weight: 800; color: var(--primary); background: var(--primary-dim); padding: 2px 8px; border-radius: 4px; letter-spacing: 0.05em; border: 1px solid var(--border-accent);">2026 ALIGNED</span>
+                </div>
+              </div>
+              <h3 class="subject-name">Social Studies</h3>
+              <p class="subject-desc">Ghana's history, government, culture, citizenship &amp; global issues.</p>
+              <div class="subject-meta">
+                <span class="meta-chip">40+ Questions</span>
+                <span class="meta-chip">Essay + MCQ</span>
+              </div>
+              <div class="subject-cta">Start Practice <span class="cta-arrow">→</span></div>
+            </div>
+            <div class="subject-card-glow" style="--glow: #a78bfa"></div>
+          </a>
+
+          <!-- Physics -->
+          <a class="subject-card available" href="/?sub=physics" id="card-physics">
+            <div class="subject-card-inner">
+              <div class="subject-top">
+                <div class="subject-icon-wrap" style="--subj-color: #f87171">
+                  <span class="subject-icon">⚡</span>
+                </div>
+                <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 4px;">
+                  <span class="subject-status available-tag">Available</span>
+                  <span style="font-size: 0.6rem; font-weight: 800; color: var(--primary); background: var(--primary-dim); padding: 2px 8px; border-radius: 4px; letter-spacing: 0.05em; border: 1px solid var(--border-accent);">INSTITUTIONAL</span>
+                </div>
+              </div>
+              <h3 class="subject-name">Physics</h3>
+              <p class="subject-desc">Mechanics, waves, electricity, magnetism &amp; modern physics.</p>
+              <div class="subject-meta">
+                <span class="meta-chip">40+ Questions</span>
+                <span class="meta-chip difficulty-hard">High Difficulty</span>
+              </div>
+              <div class="subject-cta">Start Practice <span class="cta-arrow">→</span></div>
+            </div>
+            <div class="subject-card-glow" style="--glow: #f87171"></div>
+          </a>
+
+          <!-- Chemistry -->
+          <a class="subject-card available" href="/?sub=chemistry" id="card-chemistry">
+            <div class="subject-card-inner">
+              <div class="subject-top">
+                <div class="subject-icon-wrap" style="--subj-color: #fb923c">
+                  <span class="subject-icon">🧪</span>
+                </div>
+                <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 4px;">
+                  <span class="subject-status available-tag">Available</span>
+                  <span style="font-size: 0.6rem; font-weight: 800; color: var(--primary); background: var(--primary-dim); padding: 2px 8px; border-radius: 4px; letter-spacing: 0.05em; border: 1px solid var(--border-accent);">2026 ALIGNED</span>
+                </div>
+              </div>
+              <h3 class="subject-name">Chemistry</h3>
+              <p class="subject-desc">Atomic structure, bonding, organic chemistry &amp; stoichiometry.</p>
+              <div class="subject-meta">
+                <span class="meta-chip">40+ Questions</span>
+                <span class="meta-chip">MCQ + Theory</span>
+              </div>
+              <div class="subject-cta">Start Practice <span class="cta-arrow">→</span></div>
+            </div>
+            <div class="subject-card-glow" style="--glow: #fb923c"></div>
+          </a>
+
+          <!-- Biology -->
+          <a class="subject-card available" href="/?sub=biology" id="card-biology">
+            <div class="subject-card-inner">
+              <div class="subject-top">
+                <div class="subject-icon-wrap" style="--subj-color: #4ade80">
+                  <span class="subject-icon">🧬</span>
+                </div>
+                <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 4px;">
+                  <span class="subject-status available-tag">Available</span>
+                  <span style="font-size: 0.6rem; font-weight: 800; color: var(--primary); background: var(--primary-dim); padding: 2px 8px; border-radius: 4px; letter-spacing: 0.05em; border: 1px solid var(--border-accent);">EXPERT CURATED</span>
+                </div>
+              </div>
+              <h3 class="subject-name">Biology</h3>
+              <p class="subject-desc">Cell biology, genetics, ecology, reproduction &amp; human physiology.</p>
+              <div class="subject-meta">
+                <span class="meta-chip">40+ Questions</span>
+                <span class="meta-chip">MCQ + Essay</span>
+              </div>
+              <div class="subject-cta">Start Practice <span class="cta-arrow">→</span></div>
+            </div>
+            <div class="subject-card-glow" style="--glow: #4ade80"></div>
+          </a>
+
+          <!-- Economics -->
+          <a class="subject-card available" href="/?sub=economics" id="card-economics">
+            <div class="subject-card-inner">
+              <div class="subject-top">
+                <div class="subject-icon-wrap" style="--subj-color: #38bdf8">
+                  <span class="subject-icon">💰</span>
+                </div>
+                <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 4px;">
+                  <span class="subject-status available-tag">Available</span>
+                  <span style="font-size: 0.6rem; font-weight: 800; color: var(--primary); background: var(--primary-dim); padding: 2px 8px; border-radius: 4px; letter-spacing: 0.05em; border: 1px solid var(--border-accent);">2026 ALIGNED</span>
+                </div>
+              </div>
+              <h3 class="subject-name">Economics</h3>
+              <p class="subject-desc">Demand &amp; supply, national income, trade, banking &amp; development economics.</p>
+              <div class="subject-meta">
+                <span class="meta-chip">40+ Questions</span>
+                <span class="meta-chip">MCQ + Essay</span>
+              </div>
+              <div class="subject-cta">Start Practice <span class="cta-arrow">→</span></div>
+            </div>
+            <div class="subject-card-glow" style="--glow: #38bdf8"></div>
+          </a>
+
+          <!-- Computer Science -->
+          <a class="subject-card available" href="/?sub=cs" id="card-cs">
+            <div class="subject-card-inner">
+              <div class="subject-top">
+                <div class="subject-icon-wrap" style="--subj-color: #14b8a6">
+                  <span class="subject-icon">💻</span>
+                </div>
+                <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 4px;">
+                  <span class="subject-status available-tag">Available</span>
+                  <span style="font-size: 0.6rem; font-weight: 800; color: var(--primary); background: var(--primary-dim); padding: 2px 8px; border-radius: 4px; letter-spacing: 0.05em; border: 1px solid var(--border-accent);">INSTITUTIONAL</span>
+                </div>
+              </div>
+              <h3 class="subject-name">Computer Science</h3>
+              <p class="subject-desc">Programming, Algorithms, Data Structures, Hardware &amp; Networking.</p>
+              <div class="subject-meta">
+                <span class="meta-chip">15 Questions</span>
+                <span class="meta-chip difficulty-hard">High Difficulty</span>
+              </div>
+              <div class="subject-cta">Start Practice <span class="cta-arrow">→</span></div>
+            </div>
+            <div class="subject-card-glow" style="--glow: #14b8a6"></div>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- LEARNER MATERIALS -->
+    <section class="main-section" id="materialsSection" style="padding: 3rem 2rem">
+      <section class="about-hero">
+        <img src="assets/logo.png" alt="Vision Education"
+          style="height: 140px; width: 140px; object-fit: contain; margin-bottom: 2rem; filter: drop-shadow(0 0 30px rgba(14, 165, 233, 0.5));">
+        <h1>Pioneering Education <br /><span class="gradient-text">Technological Mastery</span></h1>
+        <p class="hero-subtext">Vision Education is Ghana's premier AI-integrated platform, built to empower every
+          WASSCE candidate with expert-reviewed transformation logic and real-world STEM contexts.</p>
+      </section>
+      <div class="section-header">
+        <div>
+          <h2 class="section-title">Learner Materials</h2>
+          <p class="section-sub">
+            Download official study packs, past questions, and revision guides for each subject.
+          </p>
+        </div>
+      </div>
+      <div id="materialsContainer" style="margin-top: 1.5rem"></div>
+    </section>
+
+    <!-- ANNOUNCEMENTS -->
+    <div id="announceBanner" style="display: none; padding: 0 2rem 1.5rem"></div>
+
+    <!-- FOOTER -->
+    <footer class="site-footer">
+      <p>
+        Built for Ghana SHS Students · 2026 WASSCE · Questions align with the WAEC Chief Examiner's 2025 Report
+      </p>
+      <p class="footer-note">
+        Practice tool only. Consult official syllabuses at <strong>waecgh.org</strong>.
+      </p>
+      <div style="margin-top: 1.5rem; display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; padding: 0 20px;">
+        <a href="/privacy" style="background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); color: #f1f5f9; font-size: 0.8rem; font-weight: 600; text-decoration: none; padding: 10px 20px; border-radius: 8px; transition: all 0.2s; display: inline-flex; align-items: center; gap: 8px;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          Privacy Policy
+        </a>
+        <a href="/terms" style="background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.1); color: #94a3b8; font-size: 0.8rem; font-weight: 600; text-decoration: none; padding: 10px 20px; border-radius: 8px; transition: all 0.2s; display: inline-flex; align-items: center; gap: 8px;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          Terms of Service
+        </a>
+        <a href="enterprise-dashboard.html" style="background: rgba(251, 191, 36, 0.05); border: 1px solid rgba(251, 191, 36, 0.15); color: #fbbf24; font-size: 0.75rem; text-decoration: none; padding: 10px 15px; border-radius: 8px; display: inline-flex; align-items: center; gap: 6px; font-weight: 700;">
+          🏛️ Admin Console
+        </a>
+      </div>
+    </footer>
+
+    <!-- IMMERSIVE SETTINGS -->
+    <div class="settings-immersive-view" id="settingsModal">
+      <aside class="settings-sidebar">
+        <div style="margin-bottom: 2rem;">
+          <img src="assets/logo.png" style="height: 32px; filter: grayscale(1) invert(1) brightness(2);">
+        </div>
+        <div class="settings-nav-group">
+          <div class="settings-nav-item active" onclick="switchSettingsTab('profile', this)">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            Account Profile
+          </div>
+          <div class="settings-nav-item" onclick="switchSettingsTab('security', this)">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            Security &amp; Auth
+          </div>
+          <div class="settings-nav-item" onclick="switchSettingsTab('subscription', this)">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            Vision Pro Status
+          </div>
+        </div>
         <div style="margin-top: auto;">
-            <button class="nav-link" onclick="handleLogout()" style="width:100%; border:none; background:none; color:#f87171;">Sign Out</button>
+          <button class="settings-nav-item" onclick="closeSettings()" style="border: none; background: none; width: 100%;">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+            Back to Dash
+          </button>
         </div>
-    </aside>
+      </aside>
 
-    <main class="main">
-        <div class="welcome-row">
-            <div class="welcome-text">
-                <h1>Morning, <span id="candidateName">Candidate</span></h1>
-                <p>Welcome back to the <span id="schoolSubName">Vision Academy</span> Command Center.</p>
+      <main class="settings-main">
+        <!-- Profile Pane -->
+        <div id="pane-profile" class="settings-pane active">
+          <h1 class="settings-h1">Account Profile</h1>
+          <div class="settings-section-card">
+            <div style="display: flex; align-items: center; gap: 24px; margin-bottom: 2rem;">
+              <div id="settingsAvatar" style="width: 80px; height: 80px; background: var(--primary); border-radius: 20px; display: flex; align-items: center; justify-content: center; font-size: 2rem; font-weight: 800; color: #fff;">S</div>
+              <div>
+                <h2 id="settingsName" style="margin: 0 0 4px 0; font-size: 1.5rem;">Student Name</h2>
+                <p id="settingsEmail" style="margin: 0; color: var(--text-muted);">student@visionedu.online</p>
+              </div>
             </div>
-            <div style="display: flex; gap: 8px; background: rgba(99, 102, 241, 0.1); border: 1px solid rgba(99, 102, 241, 0.2); padding: 8px 16px; border-radius: 100px; font-size: 0.8rem; font-weight: 800; color: var(--est-primary);">
-                <span>Institutional License Active</span>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+              <div style="padding: 1rem; background: rgba(255,255,255,0.03); border-radius: 12px; border: 1px solid rgba(255,255,255,0.05);">
+                <div style="font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; font-weight: 800; margin-bottom: 4px;">User Role</div>
+                <div style="font-weight: 600; color: #fbbf24;">Enterprise Student</div>
+              </div>
+              <div style="padding: 1rem; background: rgba(255,255,255,0.03); border-radius: 12px; border: 1px solid rgba(255,255,255,0.05);">
+                <div style="font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; font-weight: 800; margin-bottom: 4px;">Sync Status</div>
+                <div style="color: #4ade80; display: flex; align-items: center; gap: 6px; font-weight: 600;">
+                  <span style="width: 8px; height: 8px; background: #4ade80; border-radius: 50%;"></span> Cloud Active
+                </div>
+              </div>
             </div>
+          </div>
         </div>
 
-        <div class="hero-stats">
-            <div class="stat-card">
-                <span class="label">Academic Consistency</span>
-                <div class="val">92%</div>
+        <!-- Security Pane -->
+        <div id="pane-security" class="settings-pane">
+          <h1 class="settings-h1">Security Hub</h1>
+          <div class="settings-section-card">
+            <h2 class="settings-h2">Multi-Factor Authentication</h2>
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <div>
+                <p style="margin: 0; font-weight: 600;">Two-Factor Protocol</p>
+                <p style="margin: 4px 0 0 0; font-size: 0.85rem; color: var(--text-muted); max-width: 400px;">Verification code required for every login attempt.</p>
+              </div>
+              <div class="toggle-switch" id="tfaToggle" onclick="handle2FAToggle()"></div>
             </div>
-            <div class="stat-card">
-                <span class="label">Fleet Subject Rank</span>
-                <div class="val">Top 5%</div>
+            <div id="securityStatus" style="margin-top: 1.5rem; padding: 12px; border-radius: 10px; background: rgba(255,255,255,0.03); font-size: 0.85rem;">
+              <span class="status-warn">Level 1 Protection Active</span>
             </div>
-            <div class="stat-card">
-                <span class="label">Syllabus Coverage</span>
-                <div class="val">68.4%</div>
+          </div>
+
+          <div class="settings-section-card">
+            <h2 class="settings-h2">Credential Rotation</h2>
+            <div style="display: flex; flex-direction: column; gap: 12px;">
+              <input class="setting-input" type="password" id="setCurrentPass" placeholder="Current Security Password" style="background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.1); padding: 12px; border-radius: 10px; color: #fff;">
+              <input class="setting-input" type="password" id="setNewPass" placeholder="New Password (Min 6)" style="background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.1); padding: 12px; border-radius: 10px; color: #fff;">
+              <input class="setting-input" type="password" id="setConfirmPass" placeholder="Confirm New Password" style="background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.1); padding: 12px; border-radius: 10px; color: #fff;">
+              <div id="passChangeMsg" class="pass-change-msg" style="display: none; padding: 10px; border-radius: 8px;"></div>
+              <button class="hero-btn-primary" onclick="unifiedChangePassword()" style="margin-top: 8px; width: fit-content; padding: 12px 24px; height: auto;">Rotate Credentials</button>
             </div>
+          </div>
+
+          <div style="margin-top: auto; padding-top: 2rem;">
+            <button onclick="handleLogout()" style="background: rgba(239, 68, 68, 0.1); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.2); padding: 12px 24px; border-radius: 10px; cursor: pointer; font-weight: 700;">Terminate Session</button>
+          </div>
         </div>
 
-        <div class="grid-2x2">
-            <a href="enterprise-mocks.html" class="tool-card">
-                <div class="tool-icon">📝</div>
-                <h3>Institutional Mock Hall</h3>
-                <p>Full-length proctored WASSCE simulations optimized for institutional curriculum mastery.</p>
-            </a>
-            <a href="enterprise-ai-mission.html" class="tool-card">
-                <div class="tool-icon">🧠</div>
-                <h3>Enterprise AI Tutor</h3>
-                <p>High-precision syllabus navigation and real-time mission generation powered by Azure GPT-4o.</p>
-            </a>
-            <a href="enterprise-planner.html" class="tool-card">
-                <div class="tool-icon">📅</div>
-                <h3>Curriculum Planner</h3>
-                <p>Adaptive scheduling aligned with institutional milestones and teacher-led objectives.</p>
-            </a>
-            <div class="tool-card" style="opacity: 0.6;">
-                <div class="tool-icon">🔥</div>
-                <h3>Institutional Analytics</h3>
-                <p>Advanced metrics comparing your performance against your school's collective mastery.</p>
+        <!-- Subscription Pane -->
+        <div id="pane-subscription" class="settings-pane">
+          <h1 class="settings-h1">Membership</h1>
+          <div class="settings-section-card" id="subscriptionCard" style="background: linear-gradient(135deg, rgba(251, 191, 36, 0.05), rgba(0, 0, 0, 0.2)); border: 1px solid #fbbf24;">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 2rem;">
+              <div>
+                <div style="font-size: 0.75rem; font-weight: 800; color: #fbbf24; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 8px;">Tier Status</div>
+                <h2 id="subTierName" style="font-size: 2rem; margin: 0; font-weight: 900;">Vision <span style="color: #fbbf24;">ENTERPRISE</span></h2>
+              </div>
+              <div id="subStatusBadge" style="background: #fbbf24; color: #000; padding: 6px 14px; border-radius: 100px; font-size: 0.75rem; font-weight: 700;">Institutional</div>
             </div>
+            <div style="padding: 1.5rem; background: rgba(0,0,0,0.2); border-radius: 12px; border: 1px solid rgba(255,255,255,0.05); margin-bottom: 1.5rem;">
+              <div style="font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; font-weight: 800; margin-bottom: 4px;">Renewal / Expiry Date</div>
+              <div id="subExpiryDate" style="font-size: 1.1rem; font-weight: 700; color: var(--text-primary);">Managed by Institution</div>
+            </div>
+            <p id="subDescription" style="color: var(--text-secondary); line-height: 1.6; font-size: 0.9rem;">You are currently covered by an official institutional license. Full access to the 2026 Strategic Suite is active.</p>
+          </div>
         </div>
-    </main>
+      </main>
+    </div>
+  </div>
+  <!-- /main-wrapper -->
 
-    <script>
-        const session = getSession();
-        // UI Population
-        if(session) {
-            document.getElementById("candidateName").textContent = session.name;
-            document.getElementById("schoolNameDisplay").textContent = session.institutionName || "Vision Institute";
-            document.getElementById("schoolSubName").textContent = session.institutionName || "Vision Institute";
-            document.getElementById("logoBox").textContent = (session.institutionName || "V").charAt(0);
+  <script src="https://js.paystack.co/v2/inline.js"></script>
+  <script src="auth.js"></script>
+  <script src="payment.js"></script>
+  <script src="dashboard.js"></script>
+  <script src="materials.js"></script>
+  <script>
+    // === ENTERPRISE STUDENT DASHBOARD INIT ===
+    (function initEnterpriseDash() {
+      const session = typeof getSession === 'function' ? getSession() : null;
+      if (!session) return;
+
+      // Populate user info
+      const firstName = session.name ? session.name.split(" ")[0] : "Student";
+      const welcomeEl = document.getElementById("welcomeName");
+      if (welcomeEl) welcomeEl.textContent = firstName;
+
+      // Nav user chip
+      const navUsername = document.getElementById("navUsername");
+      const navAvatar = document.getElementById("navAvatar");
+      const dropdownName = document.getElementById("dropdownName");
+      const dropdownEmail = document.getElementById("dropdownEmail");
+
+      if (navUsername) navUsername.textContent = session.name || "Student";
+      if (navAvatar) navAvatar.textContent = (session.name || "S").charAt(0).toUpperCase();
+      if (dropdownName) dropdownName.textContent = session.name || "Student";
+      if (dropdownEmail) dropdownEmail.textContent = session.email || "";
+
+      // Settings info
+      const settingsName = document.getElementById("settingsName");
+      const settingsEmail = document.getElementById("settingsEmail");
+      const settingsAvatar = document.getElementById("settingsAvatar");
+      if (settingsName) settingsName.textContent = session.name || "Student";
+      if (settingsEmail) settingsEmail.textContent = session.email || "";
+      if (settingsAvatar) settingsAvatar.textContent = (session.name || "S").charAt(0).toUpperCase();
+
+      // Institutional branding
+      const brandingRow = document.getElementById("schoolBrandingRow");
+      const schoolNameEl = document.getElementById("schoolName");
+      const schoolLogoEl = document.getElementById("schoolLogo");
+
+      if (session.institutionId) {
+        const instData = JSON.parse(localStorage.getItem("vision_ext_" + session.institutionId) || "{}");
+        if (instData.schoolName && brandingRow) {
+          brandingRow.style.display = 'flex';
+          if (schoolNameEl) schoolNameEl.textContent = instData.schoolName;
+          if (schoolLogoEl) schoolLogoEl.textContent = instData.schoolLogo || instData.schoolName.charAt(0);
         }
-    </script>
+      } else if (session.institutionName) {
+        if (brandingRow) brandingRow.style.display = 'flex';
+        if (schoolNameEl) schoolNameEl.textContent = session.institutionName;
+        if (schoolLogoEl) schoolLogoEl.textContent = (session.institutionName || "V").charAt(0);
+      }
+
+      // Stats from localStorage
+      const stats = JSON.parse(localStorage.getItem("waec_stats") || "{}");
+      const answered = stats.totalAnswered || 0;
+      const correct = stats.totalCorrect || 0;
+      const pct = answered > 0 ? Math.round((correct / answered) * 100) + "%" : "—";
+
+      const statAnswered = document.getElementById("statAnswered");
+      const statCorrect = document.getElementById("statCorrect");
+      const statPct = document.getElementById("statPct");
+
+      if (statAnswered) statAnswered.textContent = answered;
+      if (statCorrect) statCorrect.textContent = correct;
+      if (statPct) statPct.textContent = pct;
+    })();
+
+    // User dropdown
+    function toggleUserDropdown() {
+      document.getElementById("navUserChip").classList.toggle("open");
+    }
+    function closeUserDropdown() {
+      document.getElementById("navUserChip").classList.remove("open");
+    }
+    document.addEventListener("click", (e) => {
+      const chip = document.getElementById("navUserChip");
+      if (chip && !chip.contains(e.target)) closeUserDropdown();
+    });
+
+    // Render Materials
+    (function renderDashMaterials() {
+      const container = document.getElementById("materialsContainer");
+      if (!container || typeof getMaterials !== 'function') return;
+
+      const all = getMaterials();
+      if (!all.length) {
+        container.innerHTML = '<p style="color:var(--text-muted);text-align:center;padding:2rem;">No materials uploaded yet. Check back soon!</p>';
+        return;
+      }
+
+      const bySubject = {};
+      if (typeof SUBJECTS_META !== 'undefined') {
+        SUBJECTS_META.forEach((s) => { bySubject[s.id] = []; });
+      }
+      all.forEach((m) => { if (bySubject[m.subject]) bySubject[m.subject].push(m); });
+
+      const activeSubjects = (typeof SUBJECTS_META !== 'undefined' ? SUBJECTS_META : []).filter(
+        (s) => (bySubject[s.id] || []).length > 0
+      );
+
+      container.innerHTML = activeSubjects.map((subj) => {
+        const mats = bySubject[subj.id] || [];
+        return `<div style="margin-bottom:1.75rem;">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:0.75rem;">
+            <span style="font-size:1.2rem">${subj.icon}</span>
+            <h3 style="font-size:0.95rem;font-weight:800;color:var(--text-primary);">${subj.name}</h3>
+            <span style="font-size:0.68rem;font-weight:700;background:var(--primary-dim);color:var(--primary);padding:2px 8px;border-radius:100px;border:1px solid var(--border-accent);">${mats.length} file${mats.length !== 1 ? "s" : ""}</span>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:10px;">
+            ${mats.map((m) => {
+              const typeColor = { PDF: "#f87171", VIDEO: "#fb923c", DOC: "#60a5fa", SLIDE: "#a78bfa", LINK: "#4ade80" }[m.type?.toUpperCase()] || "#94a3b8";
+              const noLink = !m.url || m.url === "#";
+              return `<div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-md);padding:1rem 1.25rem;display:flex;align-items:center;gap:12px;transition:border-color 0.2s;">
+                <span style="font-size:1.4rem;flex-shrink:0;">📄</span>
+                <div style="flex:1;min-width:0;">
+                  <div style="font-size:0.85rem;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${esc(m.title)}</div>
+                  <div style="display:flex;align-items:center;gap:6px;margin-top:4px;">
+                    <span style="padding:1px 7px;border-radius:4px;font-size:0.65rem;font-weight:800;background:${typeColor}22;color:${typeColor};">${m.type || "PDF"}</span>
+                    ${m.size ? `<span style="font-size:0.72rem;color:var(--text-muted);">${m.size}</span>` : ""}
+                  </div>
+                </div>
+                ${noLink
+                  ? `<span style="font-size:0.72rem;color:var(--text-muted);background:var(--bg-input);padding:6px 12px;border-radius:var(--radius-sm);border:1px dashed var(--border);flex-shrink:0;">Coming Soon</span>`
+                  : `<a href="${m.url}" target="_blank" rel="noopener" download style="display:inline-flex;align-items:center;gap:6px;padding:8px 14px;background:linear-gradient(135deg,var(--primary),#8b5cf6);color:#fff;text-decoration:none;border-radius:var(--radius-sm);font-size:0.78rem;font-weight:800;flex-shrink:0;">⬇ Download</a>`
+                }
+              </div>`;
+            }).join("")}
+          </div>
+        </div>`;
+      }).join("");
+    })();
+
+    function esc(s) {
+      return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+    }
+
+    // Announcements
+    (function showAnnouncements() {
+      const anns = JSON.parse(localStorage.getItem("vision_announcements") || "[]");
+      const banner = document.getElementById("announceBanner");
+      if (anns.length && banner) {
+        banner.style.display = "block";
+        banner.innerHTML = anns.slice(0, 2).map((a) => `
+          <div style="background:var(--primary-dim);border:1px solid var(--border-accent);border-radius:var(--radius-md);padding:0.875rem 1.25rem;margin-bottom:8px;display:flex;gap:10px;align-items:flex-start;">
+            <span style="font-size:1rem;">📢</span>
+            <div>
+              <div style="font-weight:700;font-size:0.88rem;">${esc(a.title)}</div>
+              <div style="font-size:0.8rem;color:var(--text-secondary);margin-top:2px;">${esc(a.body)}</div>
+            </div>
+          </div>`).join("");
+      }
+    })();
+  </script>
 </body>
 </html>

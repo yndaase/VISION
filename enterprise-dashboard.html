@@ -420,6 +420,10 @@
                             <input class="ent-input" id="setSchoolName" placeholder="e.g. Adisadel College">
                         </div>
                         <div class="form-group">
+                            <label class="form-label">Logo Initial (single character)</label>
+                            <input class="ent-input" id="setSchoolLogo" placeholder="e.g. A" maxlength="2" style="width: 120px;">
+                        </div>
+                        <div class="form-group">
                             <label class="form-label">Institutional Enrollment Code</label>
                             <div style="display: flex; gap: 8px;">
                                 <input class="ent-input" id="setSchoolCode" placeholder="e.g. SKY-2026" style="flex: 1;">
@@ -570,11 +574,12 @@
         // BRANDING
         function saveInstitutionalBranding() {
             const name = document.getElementById("setSchoolName").value;
-            const logo = document.getElementById("setSchoolLogo").value;
+            const logoEl = document.getElementById("setSchoolLogo");
+            const logo = logoEl ? logoEl.value : name.charAt(0);
             const code = document.getElementById("setSchoolCode").value.trim().toUpperCase();
             
             enterpriseData.schoolName = name;
-            enterpriseData.schoolLogo = logo.charAt(0);
+            enterpriseData.schoolLogo = logo.charAt(0) || name.charAt(0);
             enterpriseData.schoolCode = code;
             saveData();
 
