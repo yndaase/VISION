@@ -69,9 +69,10 @@ async function handleRiscReceiver(req, res) {
       }
     }
 
+    const CLIENT_ID = process.env.GOOGLE_CLIENT_ID || '378999569796-v8bj9miq61sggvpea5sbslc24dr9t71s.apps.googleusercontent.com';
     const { payload: decoded } = await jose.jwtVerify(token, JWKS, { 
       issuer: 'https://accounts.google.com/', 
-      audience: process.env.GOOGLE_CLIENT_ID 
+      audience: CLIENT_ID 
     });
 
     const events = decoded.events || {};
