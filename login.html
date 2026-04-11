@@ -699,8 +699,11 @@
 
 
           <!-- Disclaimer -->
-          <p class="auth-disclaimer">
+          <p class="auth-disclaimer" style="margin-bottom: 0.5rem;">
             Your data stays in your browser only. No server, no tracking.
+          </p>
+          <p class="auth-disclaimer" style="margin-bottom: 1.5rem; font-size: 0.7rem; opacity: 0.7; max-width: 400px; margin-left: auto; margin-right: auto;">
+            <strong>AI Transparency:</strong> This application integrates <strong>GPT-4.0</strong> and <strong>Gemini 2.5</strong> for intelligent educational assistance.
           </p>
 
           <!-- Professional Portals Access -->
@@ -728,9 +731,11 @@
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
               Privacy Policy
             </a>
-            <a href="/terms" class="legal-btn">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
               Terms of Service
+            </a>
+            <a href="javascript:void(0)" onclick="openAISecondary()" class="legal-btn" style="background: rgba(99, 102, 241, 0.08); color: var(--primary);">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+              AI Transparency
             </a>
           </div>
         </div>
@@ -739,6 +744,73 @@
     </div>
     <!-- /login-layout -->
 
+    <!--  AI TRANSPARENCY MODAL  -->
+    <div class="modal-overlay" id="aiModal">
+      <div class="settings-modal shadow-2xl" style="max-width: 500px; margin: 1rem;">
+        <div class="modal-header">
+          <h3 class="modal-title">AI Transparency</h3>
+          <button class="close-modal-btn" onclick="closeAISecondary()">
+            &times;
+          </button>
+        </div>
+        <div class="modal-content" style="padding: 1.5rem 2rem 2rem;">
+          <div class="settings-user-card" style="background: rgba(99, 102, 241, 0.1); border: 1px solid rgba(99, 102, 241, 0.2); margin-bottom: 1.5rem;">
+            <div class="settings-avatar" style="background: var(--primary); color: #fff;">AI</div>
+            <div class="settings-info">
+              <h4 style="margin:0; font-size: 1rem; color: var(--text-primary);">Integrated AI Services</h4>
+              <p style="margin:0; font-size: 0.85rem; color: var(--text-secondary);">GPT-4.0 & Gemini 2.5</p>
+            </div>
+          </div>
+
+          <div style="color: var(--text-secondary); font-size: 0.9rem; line-height: 1.6;">
+            <p style="margin-bottom: 1rem;">
+              Vision Education uses Artificial Intelligence to enhance academic preparation:
+            </p>
+            <ul style="list-style: none; padding: 0; margin-bottom: 1.5rem;">
+              <li style="margin-bottom: 0.75rem; display: flex; gap: 10px;">
+                <span style="color: var(--primary);">✦</span>
+                <span><strong>GPT-4.0:</strong> Powers our theory marking engine for logical evaluation of student work.</span>
+              </li>
+              <li style="margin-bottom: 0.75rem; display: flex; gap: 10px;">
+                <span style="color: var(--primary);">✦</span>
+                <span><strong>Gemini 2.5:</strong> Assists in curriculum alignment and content curation.</span>
+              </li>
+            </ul>
+            <p style="font-size: 0.8rem; color: var(--text-muted); padding-top: 1rem; border-top: 1px solid var(--border);">
+              No personal data is used to train these models. Evaluations are generated in real-time.
+            </p>
+          </div>
+
+          <button
+            class="auth-submit-btn"
+            onclick="closeAISecondary()"
+            style="margin-top: 2rem; width: 100%; background: var(--primary); color: #fff; border-radius: 12px;"
+          >
+            <span>Close Disclosure</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      function openAISecondary() {
+        const modal = document.getElementById('aiModal');
+        if (modal) {
+          modal.classList.add('active');
+          document.body.style.overflow = 'hidden';
+        }
+      }
+      function closeAISecondary() {
+        const modal = document.getElementById('aiModal');
+        if (modal) {
+          modal.classList.remove('active');
+          document.body.style.overflow = '';
+        }
+      }
+      window.addEventListener('click', (e) => {
+        if (e.target.id === 'aiModal') closeAISecondary();
+      });
+    </script>
     <script src="auth.js"></script>
   </body>
 </html>
