@@ -57,17 +57,81 @@ async function handleCheckRevocation(data, res) {
 }
 
 async function handleRiscReceiver(req, res) {
-  const token = req.body;
-  const { payload: decoded } = await jose.jwtVerify(token, JWKS, { issuer: 'https://accounts.google.com/', audience: process.env.GOOGLE_CLIENT_ID });
-  const current = await getBlacklist();
-  const events = decoded.events || {};
+  try {
+    // Depending on Next.js/Vercel body parsing for custom content-types, extract raw token
+    let token = req.body;
+    if (typeof token === 'object') {
+      // If parsed as JSON incorrectly, attempt to extract token or raw symbols
+      if (Object.keys(token).length === 1 && typeof Object.keys(token)[0] === 'string' && Object.keys(token)[0].startsWith('eyJ')) {
+        token = Object.keys(token)[0];
+      } else {
+        token = JSON.stringify(token); // Fallback
+      }
+    }
 
-  if (events['https://schemas.openid.net/secevent/risc/event-type/account-disabled']) {
-    const subject = events['https://schemas.openid.net/secevent/risc/event-type/account-disabled'].subject || {};
-    if (subject.sub && !current.revokedSubs.includes(subject.sub)) current.revokedSubs.push(subject.sub);
-    await put(BLACKLIST_PATH, JSON.stringify(current), { access: 'public', addRandomSuffix: false });
+    const { payload: decoded } = await jose.jwtVerify(token, JWKS, { 
+      issuer: 'https://accounts.google.com/', 
+      audience: process.env.GOOGLE_CLIENT_ID 
+    });
+
+    const events = decoded.events || {};
+    
+    // Check if it's just a verification event
+    if (events['https://schemas.openid.net/secevent/risc/event-type/verification']) {
+      return res.status(202).json({ status: 'Accepted' });
+    }
+
+    const current = await getBlacklist();
+    const jti = decoded.jti;
+
+    if (jti) {
+      if (!current.processedJtis) current.processedJtis = [];
+      if (current.processedJtis.includes(jti)) {
+        return res.status(202).json({ status: 'Already processed' });
+      }
+      current.processedJtis.push(jti);
+      if (current.processedJtis.length > 500) current.processedJtis.shift();
+    }
+
+    let shouldRevoke = false;
+    let revokedSub = null;
+
+    // Check multiple revocation events
+    const disabledEvent = events['https://schemas.openid.net/secevent/risc/event-type/account-disabled'];
+    const sessionsRevokedEvent = events['https://schemas.openid.net/secevent/risc/event-type/sessions-revoked'];
+    const tokensRevokedEvent = events['https://schemas.openid.net/secevent/oauth/event-type/tokens-revoked'];
+    const tokenRevokedEvent = events['https://schemas.openid.net/secevent/oauth/event-type/token-revoked'];
+
+    if (disabledEvent) {
+      revokedSub = disabledEvent.subject?.sub;
+      shouldRevoke = true;
+    } else if (sessionsRevokedEvent) {
+      revokedSub = sessionsRevokedEvent.subject?.sub;
+      shouldRevoke = true;
+    } else if (tokensRevokedEvent) {
+      revokedSub = tokensRevokedEvent.subject?.sub;
+      shouldRevoke = true;
+    } else if (tokenRevokedEvent) {
+      // Usually handles specific refresh tokens but we do a full sub blacklist for safety
+      revokedSub = tokenRevokedEvent.subject?.sub;
+      shouldRevoke = true;
+    }
+
+    if (shouldRevoke && revokedSub && !current.revokedSubs.includes(revokedSub)) {
+      current.revokedSubs.push(revokedSub);
+      await put(BLACKLIST_PATH, JSON.stringify(current), { access: 'public', addRandomSuffix: false });
+    }
+
+    return res.status(202).json({ status: 'Accepted' });
+  } catch (err) {
+    console.error("[RISC Receiver Error]:", err);
+    // As per JWT sec event docs, if token is malformed, we must return 400
+    // If it's another error, return 500
+    if (err.code === 'ERR_JWT_VERIFICATION_FAILED' || err.code === 'ERR_JWS_INVALID' || err.code === 'ERR_JWT_EXPIRED') {
+      return res.status(400).json({ error: 'Token validation failed' });
+    }
+    return res.status(500).json({ error: 'Internal Server Error' });
   }
-  return res.status(202).json({ status: 'Accepted' });
 }
 
 async function handleRiscGet(req, res) {
