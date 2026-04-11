@@ -57,6 +57,12 @@ async function handleCheckRevocation(data, res) {
 }
 
 async function handleRiscReceiver(req, res) {
+  // Validate Vision RISC Agent Key
+  const agentKey = req.query.agent_key || req.body?.agent_key;
+  if (agentKey !== 'ae57ad92f9ddb68fb145fbd6ac4c5a0738676db6') {
+    return res.status(403).json({ error: 'Unauthorized Access: Invalid Agent Key' });
+  }
+
   try {
     // Depending on Next.js/Vercel body parsing for custom content-types, extract raw token
     let token = req.body;

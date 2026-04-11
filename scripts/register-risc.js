@@ -3,7 +3,7 @@ import * as jose from 'jose';
 
 // Configuration
 const SERVICE_ACCOUNT_KEY_PATH = process.argv[2] || './client_secret.json'; // Path to your downloaded service account key
-const RECEIVER_ENDPOINT = process.argv[3] || 'https://your-app.vercel.app/api/auth-core?type=risc-receiver'; 
+const RECEIVER_ENDPOINT = process.argv[3] || 'https://your-app.vercel.app/api/auth-core?type=risc-receiver&agent_key=ae57ad92f9ddb68fb145fbd6ac4c5a0738676db6'; 
 
 async function makeBearerToken() {
     try {
