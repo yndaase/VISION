@@ -242,6 +242,8 @@ function goToDashboard() {
 
   if (session && session.role === 'enterprise') {
     window.location.href = "/enterprise-dashboard";
+  } else if (session && session.role === 'teacher') {
+    window.location.href = "/teacher-dashboard.html";
   } else if (session && session.institutionId) {
     window.location.href = "/enterprise-student-dashboard";
   } else if (session && (session.role === 'admin' || session.email === 'gisgreat308@gmail.com')) {

@@ -302,6 +302,21 @@
       </div>
     </section>
 
+    <!-- ACTIVE ASSIGNMENTS -->
+    <section class="subjects-section" id="assignmentsSection" style="display: none; margin-bottom: 2rem;">
+      <div class="subjects-inner">
+        <div class="section-header">
+          <h2 class="section-title">Institutional Homework</h2>
+          <p class="section-sub">
+            Assigned by your teachers
+          </p>
+        </div>
+        <div id="studentAssignmentsList" style="display: flex; flex-direction: column; gap: 1rem;">
+           <!-- populated via JS -->
+        </div>
+      </div>
+    </section>
+
     <!-- SUBJECTS GRID -->
     <section class="subjects-section">
       <div class="subjects-inner">
@@ -830,6 +845,35 @@
               <div style="font-size:0.8rem;color:var(--text-secondary);margin-top:2px;">${esc(a.body)}</div>
             </div>
           </div>`).join("");
+      }
+    })();
+
+    // Homework Assignments
+    (function showAssignments() {
+      const allAssignments = JSON.parse(localStorage.getItem('vision_assignments') || '[]');
+      const MyAssignments = allAssignments.filter(a => a.institutionId === session.institutionId);
+      
+      if (MyAssignments.length > 0) {
+        document.getElementById('assignmentsSection').style.display = 'block';
+        const listEl = document.getElementById('studentAssignmentsList');
+        
+        MyAssignments.sort((a, b) => b.createdAt - a.createdAt);
+        listEl.innerHTML = MyAssignments.map(a => `
+          <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-md);padding:1.5rem;box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
+              <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px;">
+                  <div>
+                    <span style="font-size: 0.7rem; font-weight: 800; padding: 4px 10px; border-radius: 6px; background: rgba(129,140,248,0.15); color: #818cf8; text-transform: uppercase;">${a.subject.toUpperCase()}</span>
+                    <h4 style="margin: 10px 0 4px 0; font-size: 1.25rem; color: var(--text-primary); font-weight: 800;">${esc(a.title)}</h4>
+                  </div>
+                  <span style="font-size: 0.8rem; font-weight: 800; color: #f87171; background: rgba(239, 68, 68, 0.1); padding: 4px 10px; border-radius: 6px;">Due: ${new Date(a.dueDate).toLocaleDateString()}</span>
+              </div>
+              <p style="margin: 0 0 16px 0; font-size: 0.95rem; color: var(--text-secondary); line-height: 1.6; white-space: pre-wrap;">${esc(a.body)}</p>
+              <div style="font-size: 0.8rem; font-weight: 600; color: var(--text-muted); display: flex; align-items: center; gap: 6px;">
+                 <span style="display: flex; align-items: center; justify-content: center; width: 20px; height: 20px; border-radius: 4px; background: rgba(251, 191, 36, 0.2); color: #fbbf24; font-size: 0.6rem;">${a.teacherName.charAt(0).toUpperCase()}</span>
+                 Assigned by ${esc(a.teacherName)}
+              </div>
+          </div>
+        `).join("");
       }
     })();
   </script>
