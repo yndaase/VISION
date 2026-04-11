@@ -286,9 +286,8 @@ function saveEssayAnswer(qId, text) {
 }
 
 // AI Marking Logic
-async function markEssayWithAI(qId) {
   const answer = examState.answers[qId];
-  const q = examState.questions.find(item => item.id === qId);
+  const q = examState.questions.find(item => item.id == qId);
   const feedbackEl = document.getElementById(`ai-feedback-${qId}`);
   
   if (!feedbackEl) return;
@@ -381,7 +380,7 @@ function selectAnswer(qId, letter) {
   examState.answers[qId] = letter;
 
   // Update visuals for all option rows of this question
-  const q = examState.questions[examState.currentIndex];
+  const q = examState.questions.find(item => item.id == qId);
   ["A", "B", "C", "D"].forEach((l) => {
     const row = document.getElementById(`opt-row-${qId}-${l}`);
     if (!row) return;
