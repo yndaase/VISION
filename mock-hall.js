@@ -293,18 +293,18 @@ async function markEssayWithAI(qId) {
           <div class="ai-verdict">${result.verdict}</div>
         </div>
         <div class="ai-feedback-text">${result.feedback}</div>
+        ${q.modelAnswer ? `
         <div class="ai-model-ans">
           <strong>Model Answer:</strong><br>
           ${q.modelAnswer}
-        </div>
+        </div>` : ''}
       `;
     } else {
       feedbackEl.innerHTML = `
-        <div class="glass-card ai-error-card" style="border: 1px solid var(--error); padding: 1.5rem; text-align:center;">
-          <div style="font-size: 1.5rem; margin-bottom: 0.5rem;">⚠️</div>
-          <p style="color: var(--error); font-weight: 600; font-size: 0.9rem; margin-bottom: 0.5rem;">AI Brain is resting</p>
-          <p style="color: var(--text-muted); font-size: 0.8rem; line-height: 1.5;">${result.error || 'Failed to analyze.'}</p>
-          <button onclick="markEssayWithAI(${qId})" class="nav-btn" style="margin-top: 1rem; width: 100%; border-color: var(--error); color: var(--error);">Try Again</button>
+        <div class="ai-error-card" style="border: 1px solid var(--error); padding: 1rem; border-radius: 8px; text-align:center;">
+          <p style="color: var(--error); font-weight: 600; font-size: 0.85rem; margin-bottom: 0.5rem;">AI Brain is resting</p>
+          <p style="color: var(--text-muted); font-size: 0.8rem;">${result.error || 'Failed to analyze.'}</p>
+          <button onclick="markEssayWithAI(${qId})" class="nav-btn" style="margin-top: 0.5rem; width: 100%; font-size: 0.75rem;">Try Again</button>
         </div>
       `;
     }
@@ -599,28 +599,33 @@ async function performAIGrading(stats) {
     
     // Aggregate AI results back into final view
     let aiHtml = `
-      <div class="glass-card" style="margin-top: 2rem; border: 1px solid var(--primary); padding: 2rem; animation: slideUp 0.5s ease-out;">
-        <h3 style="font-size: 1.5rem; color: var(--primary); margin-bottom: 1.5rem; display: flex; align-items:center; gap:10px;">
-          <span style="font-size: 1.2rem;">✨</span> Chief Examiner's Critique
+      <div class="ai-feedback-box" style="background: rgba(99, 102, 241, 0.08); border: 1.5px solid var(--primary); margin-top: 2rem;">
+        <h3 style="font-size: 1.25rem; color: var(--primary); margin-bottom: 1.5rem; display: flex; align-items:center; gap:10px; font-weight: 800;">
+          <span>✨</span> Chief Examiner's Critique
         </h3>
     `;
-    results.forEach(r => {
+    
+    // Ensure results is an array
+    const resultsList = Array.isArray(results) ? results : (results.results || []);
+
+    resultsList.forEach((r, idx) => {
       aiHtml += `
-        <div style="background: rgba(255,255,255,0.03); padding: 1.5rem; border-radius: 12px; margin-bottom: 1.2rem; border: 1px solid var(--border);">
-          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.8rem;">
-            <strong style="color:var(--text-secondary);">Question ${r.questionId || 'Theory'}</strong>
-            <span style="color:var(--primary); font-weight:800; background: var(--primary-dim); padding: 4px 12px; border-radius: 20px; font-size:0.85rem;">
-              ${r.score} / ${r.maxScore} Marks
+        <div style="background: rgba(255,255,255,0.03); padding: 1.25rem; border-radius: 12px; margin-bottom: 1rem; border: 1px solid var(--border);">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.75rem;">
+            <strong style="color:var(--text-secondary); font-size: 0.9rem;">Question ${r.questionId || (idx + 1)}</strong>
+            <span class="ai-score-badge">
+              ${r.score} / ${r.maxScore || 10} Marks
             </span>
           </div>
-          <p style="font-size: 1rem; line-height:1.7; color:var(--text-muted); font-style:italic; margin:0;">
-            "${r.critique}"
+          <p style="font-size: 0.95rem; line-height:1.6; color:var(--text-muted); font-style:italic; margin:0;">
+            "${r.critique || r.feedback || 'No specific critique provided.'}"
           </p>
         </div>
       `;
     });
+    
     aiHtml += `
-        <button onclick="window.location.reload()" class="start-mock-btn" style="width: 100%; margin-top: 1rem;">Back to Hall</button>
+        <button onclick="window.location.reload()" class="submit-hall-btn" style="width: 100%; margin-top: 1rem; padding: 12px;">Back to Mock Hall</button>
       </div>
     `;
 
