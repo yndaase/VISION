@@ -24,8 +24,13 @@ document.addEventListener("DOMContentLoaded", async () => {
   const mockId = params.get("id") || "math_mock_a";
 
   if (mockId === "daily_ai_mock") {
-    // Generate AI Mock for today
     await initAIMock();
+    return;
+  }
+
+  // Universal AI Mock Router — any id starting with ai_mock_ generates via AI
+  if (mockId.startsWith("ai_mock_")) {
+    await initSingleSubjectAIMock(mockId);
     return;
   }
 
@@ -60,6 +65,136 @@ document.addEventListener("DOMContentLoaded", async () => {
   renderQuestion();
   startTimer();
 });
+
+// ============================================================
+// AI Mock Configuration Registry
+// Format: ai_mock_<id> -> { subject, title, mcqCount, theoryCount, timeLimit }
+// ============================================================
+const AI_MOCK_CONFIGS = {
+  ai_mock_maths:       { subject: "Core Mathematics",    title: "Core Maths AI Mock",          mcqCount: 50, theoryCount: 10, timeLimit: 150 },
+  ai_mock_science:     { subject: "Integrated Science",  title: "Integrated Science AI Mock",   mcqCount: 50, theoryCount: 10, timeLimit: 150 },
+  ai_mock_english:     { subject: "English Language",    title: "English Language AI Mock",     mcqCount: 80, theoryCount: 10, timeLimit: 120 },
+  ai_mock_social:      { subject: "Social Studies",      title: "Social Studies AI Mock",       mcqCount: 50, theoryCount: 10, timeLimit: 150 },
+  ai_mock_cs:          { subject: "Computer Science",    title: "Computer Science AI Mock",     mcqCount: 50, theoryCount: 10, timeLimit: 150 },
+  ai_mock_economics:   { subject: "Economics",           title: "Economics AI Mock",            mcqCount: 50, theoryCount: 10, timeLimit: 150 },
+  ai_mock_geography:   { subject: "Geography",           title: "Geography AI Mock",            mcqCount: 50, theoryCount: 10, timeLimit: 150 },
+  ai_mock_elective_maths: { subject: "Elective Mathematics", title: "Elective Maths AI Mock",  mcqCount: 50, theoryCount: 10, timeLimit: 180 },
+  ai_mock_physics:     { subject: "Physics",             title: "Physics AI Mock",              mcqCount: 50, theoryCount: 10, timeLimit: 150 },
+  ai_mock_chemistry:   { subject: "Chemistry",           title: "Chemistry AI Mock",            mcqCount: 50, theoryCount: 10, timeLimit: 150 },
+  ai_mock_biology:     { subject: "Biology",             title: "Biology AI Mock",              mcqCount: 50, theoryCount: 10, timeLimit: 150 },
+};
+
+// ============================================================
+// Single-Subject AI Mock Generator
+// ============================================================
+async function initSingleSubjectAIMock(mockId) {
+  const config = AI_MOCK_CONFIGS[mockId];
+  if (!config) {
+    alert("AI Mock config not found for: " + mockId);
+    window.location.href = "/mocks";
+    return;
+  }
+
+  const session = typeof getSession === 'function' ? getSession() : JSON.parse(sessionStorage.getItem("waec_session") || "{}");
+  const isAdmin = (session.email || "").toLowerCase() === 'gisgreat308@gmail.com';
+  const isPro = session.role === 'pro' || isAdmin;
+  const engineName = isPro ? "Azure GPT-4o" : "Gemini AI";
+
+  const qCard = document.getElementById("qDisplayCard");
+  if (qCard) {
+    qCard.innerHTML = `
+      <div style='text-align:center; padding: 3rem;'>
+        <h2 style='color:var(--primary); margin-bottom:1rem;'>${engineName} is generating your ${config.title}...</h2>
+        <p style='color:var(--text-secondary); margin-bottom: 2rem; font-size: 0.9rem;'>Generating ${config.mcqCount} objective + ${config.theoryCount} theory questions. This may take up to 30 seconds.</p>
+        <div class="pixel-loader" style="margin: 0 auto;"></div>
+      </div>`;
+  }
+
+  const today = new Date().toISOString().split('T')[0];
+  const userRole = session?.role || 'student';
+  const email = session?.email || "";
+
+  try {
+    const res = await fetch('/api/ai', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        type: 'generate-questions',
+        subject: config.subject,
+        mcqCount: config.mcqCount,
+        theoryCount: config.theoryCount,
+        dateSeed: today,
+        role: userRole,
+        email: email
+      })
+    });
+
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data = await res.json();
+
+    let allQuestions = [];
+    if (data.mcqs && Array.isArray(data.mcqs)) {
+      allQuestions.push(...data.mcqs.map((q, i) => ({
+        ...q,
+        id: `ai-mcq-${mockId}-${i}`,
+        type: 'mcq',
+        topic: q.topic || config.subject
+      })));
+    }
+    if (data.theory && Array.isArray(data.theory)) {
+      allQuestions.push(...data.theory.map((q, i) => ({
+        ...q,
+        id: `ai-theory-${mockId}-${i}`,
+        type: 'essay',
+        topic: q.topic || config.subject
+      })));
+    }
+
+    if (allQuestions.length === 0) {
+      if (qCard) {
+        qCard.innerHTML = `
+          <div style='text-align:center; padding: 3rem;'>
+            <h2 style='color:var(--error); margin-bottom:1rem;'>Generation Failed</h2>
+            <p style='color:var(--text-secondary); margin-bottom: 2rem;'>The AI could not generate questions right now. Please try again.</p>
+            <button class="cta-btn" onclick="window.location.reload()" style="margin-right:12px;">Retry</button>
+            <button class="nav-btn" onclick="window.location.href='/mocks'">Back to Mocks</button>
+          </div>`;
+      }
+      return;
+    }
+
+    examState.mockId = mockId;
+    examState.mockConfig = {
+      title: config.title,
+      description: `AI-Generated ${config.subject} mock — ${allQuestions.length} questions, ${config.timeLimit} minutes.`,
+      timeLimit: config.timeLimit
+    };
+    examState.timeRemaining = config.timeLimit * 60;
+    examState.questions = allQuestions;
+
+    document.getElementById("infoMockTitle").textContent = config.title;
+    document.getElementById("topbarMockTitle").textContent = config.title;
+    document.getElementById("infoMockDesc").textContent = examState.mockConfig.description;
+    document.getElementById("statTotal").textContent = allQuestions.length;
+    document.getElementById("totalQNum").textContent = allQuestions.length;
+    examState.startTime = Date.now();
+
+    renderPalette();
+    renderQuestion();
+    startTimer();
+  } catch (err) {
+    console.error("AI Mock Generation Error:", err);
+    if (qCard) {
+      qCard.innerHTML = `
+        <div style='text-align:center; padding: 3rem;'>
+          <h2 style='color:var(--error); margin-bottom:1rem;'>Generation Error</h2>
+          <p style='color:var(--text-secondary); margin-bottom: 2rem;'>${err.message || 'Please try again.'}</p>
+          <button class="cta-btn" onclick="window.location.reload()" style="margin-right:12px;">Retry</button>
+          <button class="nav-btn" onclick="window.location.href='/mocks'">Back to Mocks</button>
+        </div>`;
+    }
+  }
+}
 
 async function initAIMock() {
   const session = typeof getSession === 'function' ? getSession() : JSON.parse(sessionStorage.getItem("waec_session") || "{}");
