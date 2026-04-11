@@ -113,10 +113,9 @@ async function generateWithAzure(contents, mode = "examiner") {
 
   const text = response.choices[0].message.content;
 
-  return {
-    text: text,
-    get text() { return text; }
-  };
+  // Return a plain object with a `text` property so it's compatible
+  // with the Gemini SDK response format used by extractJSON.
+  return { text };
 }
 
 /**
@@ -158,7 +157,11 @@ async function generateWithGroq(contents) {
  * Strips AI conversation filler and extracts valid JSON blocks.
  */
 function extractJSON(response) {
-  const text = (response.text || "").trim();
+  let text = (response.text || "").trim();
+
+  // Strip common markdown code fences that Azure/GPT-4o often wraps output in
+  text = text.replace(/^```json\s*/i, "").replace(/^```\s*/i, "").replace(/\s*```$/i, "").trim();
+
   try {
     return JSON.parse(text);
   } catch (e) {
