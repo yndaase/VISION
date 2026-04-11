@@ -802,6 +802,73 @@
         font-weight: 700;
         cursor: pointer;
       }
+      /* --- Essay / Theory Question Styles --- */
+      .essay-container {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+      }
+      .essay-input {
+        width: 100%;
+        min-height: 180px;
+        background: var(--bg-input);
+        border: 1.5px solid var(--border);
+        border-radius: var(--radius-md);
+        color: var(--text-primary);
+        font-family: "Outfit", sans-serif;
+        font-size: 0.95rem;
+        line-height: 1.7;
+        padding: 1.25rem;
+        resize: vertical;
+        outline: none;
+        transition: border-color 0.2s;
+      }
+      .essay-input:focus {
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+      }
+      .essay-input::placeholder {
+        color: var(--text-muted);
+        font-style: italic;
+      }
+      .essay-actions {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+      }
+      .ai-mark-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        background: linear-gradient(135deg, var(--primary), #8b5cf6);
+        color: white;
+        border: none;
+        padding: 12px 24px;
+        border-radius: var(--radius-sm);
+        font-family: "Outfit", sans-serif;
+        font-weight: 700;
+        font-size: 0.9rem;
+        cursor: pointer;
+        transition: all 0.2s;
+        align-self: flex-start;
+        box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
+      }
+      .ai-mark-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(99, 102, 241, 0.5);
+      }
+      .ai-mark-btn:active {
+        transform: translateY(0);
+      }
+      .sparkle-icon {
+        font-size: 1rem;
+        filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.8));
+      }
+      .theory-tag {
+        background: rgba(139, 92, 246, 0.12);
+        color: #a78bfa;
+        border: 1px solid rgba(139, 92, 246, 0.3) !important;
+      }
       /* --- AI Marking Styles --- */
       .ai-feedback-box {
         margin-top: 1.5rem;

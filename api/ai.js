@@ -300,14 +300,42 @@ async function handleGenerateQuestions(data, role, res) {
 }
 
 async function handleMarkExam(data, role, res) {
-  const { studentResponses } = data;
-  const prompt = `You are the WASSCE Chief Examiner. Mark these responses: ${JSON.stringify(studentResponses)}.
+  const { studentResponses, singleQuestion } = data;
+
+  if (singleQuestion && studentResponses && studentResponses.length === 1) {
+    // Single question mode - used by "Mark with AI" button on essay questions
+    const q = studentResponses[0];
+    const prompt = `You are the WASSCE Chief Examiner. Mark the following student response strictly.
+
+Question: ${q.question}
+${q.markScheme ? `Mark Scheme: ${JSON.stringify(q.markScheme)}` : ''}
+${q.modelAnswer ? `Model Answer: ${q.modelAnswer}` : ''}
+Student's Answer: ${q.studentAnswer}
+
+Return ONLY valid JSON in this exact format (no markdown, no text outside):
+{
+  "success": true,
+  "score": <number>,
+  "maxPoints": <number>,
+  "verdict": "<Excellent|Good|Satisfactory|Needs Improvement|Insufficient>",
+  "feedback": "<specific, constructive 2-3 sentence feedback>",
+  "modelAnswerSummary": "<brief model answer if not provided>"
+}`;
+
+    const contents = [{ role: "user", parts: [{ text: prompt }] }];
+    const response = await safeGenerateContent(contents, role);
+    const parsed = extractJSON(response);
+    return res.status(200).json({ ...parsed, success: true });
+  }
+
+  // Bulk mode - used on exam submit for all theory questions
+  const prompt = `You are the WASSCE Chief Examiner. Mark these student responses: ${JSON.stringify(studentResponses)}.
   Return a JSON ARRAY of results:
   [
-    { "questionId": "string", "score": number, "maxScore": number, "critique": "short critique" }
+    { "questionId": "string", "score": number, "maxScore": number, "critique": "short critique<50 words" }
   ]
-  JSON ONLY.`;
-  
+  JSON ONLY. No markdown. No text outside the array.`;
+
   const contents = [{ role: "user", parts: [{ text: prompt }] }];
   const response = await safeGenerateContent(contents, role);
   return res.status(200).json(extractJSON(response));

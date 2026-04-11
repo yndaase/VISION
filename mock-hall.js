@@ -256,8 +256,9 @@ async function markEssayWithAI(qId) {
   const q = examState.questions.find(item => item.id === qId);
   const feedbackEl = document.getElementById(`ai-feedback-${qId}`);
   
+  if (!feedbackEl) return;
   if (!answer || answer.trim().length < 10) {
-    alert("Please provide a more detailed answer before marking.");
+    alert("Please write a more detailed answer (at least 10 characters) before requesting AI marking.");
     return;
   }
 
@@ -273,12 +274,13 @@ async function markEssayWithAI(qId) {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         type: 'mark-exam',
+        singleQuestion: true,
         studentResponses: [{
           questionId: q.id,
           question: q.question,
           studentAnswer: answer,
-          markScheme: q.markScheme,
-          modelAnswer: q.modelAnswer
+          markScheme: q.markScheme || null,
+          modelAnswer: q.modelAnswer || null
         }],
         role: userRole
       })
@@ -287,23 +289,35 @@ async function markEssayWithAI(qId) {
     const result = await response.json();
     
     if (result.success) {
+      const verdictColor = {
+        'Excellent': 'var(--success)',
+        'Good': '#34d399',
+        'Satisfactory': 'var(--warning)',
+        'Needs Improvement': 'var(--error)',
+        'Insufficient': 'var(--error)'
+      }[result.verdict] || 'var(--primary)';
+
       feedbackEl.innerHTML = `
         <div class="ai-score-row">
-          <div class="ai-score-badge">${result.score} / ${result.maxPoints}</div>
-          <div class="ai-verdict">${result.verdict}</div>
+          <div class="ai-score-badge">${result.score} / ${result.maxPoints} Marks</div>
+          <div class="ai-verdict" style="color: ${verdictColor}">${result.verdict}</div>
         </div>
         <div class="ai-feedback-text">${result.feedback}</div>
         ${q.modelAnswer ? `
         <div class="ai-model-ans">
-          <strong>Model Answer:</strong><br>
+          <strong>Model Answer Reference:</strong><br>
           ${q.modelAnswer}
+        </div>` : result.modelAnswerSummary ? `
+        <div class="ai-model-ans">
+          <strong>Key Points:</strong><br>
+          ${result.modelAnswerSummary}
         </div>` : ''}
       `;
     } else {
       feedbackEl.innerHTML = `
         <div class="ai-error-card" style="border: 1px solid var(--error); padding: 1rem; border-radius: 8px; text-align:center;">
-          <p style="color: var(--error); font-weight: 600; font-size: 0.85rem; margin-bottom: 0.5rem;">AI Brain is resting</p>
-          <p style="color: var(--text-muted); font-size: 0.8rem;">${result.error || 'Failed to analyze.'}</p>
+          <p style="color: var(--error); font-weight: 600; font-size: 0.85rem; margin-bottom: 0.5rem;">AI Marking Unavailable</p>
+          <p style="color: var(--text-muted); font-size: 0.8rem;">${result.error || 'Could not analyze response. Please try again.'}</p>
           <button onclick="markEssayWithAI(${qId})" class="nav-btn" style="margin-top: 0.5rem; width: 100%; font-size: 0.75rem;">Try Again</button>
         </div>
       `;
@@ -321,8 +335,8 @@ async function markEssayWithAI(qId) {
       });
     }
   } catch (err) {
-    console.error(err);
-    feedbackEl.innerHTML = '<div class="ai-error">Connection error. Please try again.</div>';
+    console.error('AI Mark Error:', err);
+    feedbackEl.innerHTML = '<div class="ai-error-card" style="padding:1rem; border: 1px solid var(--error); border-radius:8px; color:var(--error); font-size:0.85rem;">Network error. Please check your connection and try again.</div>';
   }
 }
 
@@ -544,8 +558,9 @@ function saveExamResult({
     stats.answered = (stats.answered || 0) + (correct + wrong);
     stats.correct = (stats.correct || 0) + correct;
 
-    // AI Grading Handshake for Daily Mocks
-    if (examState.mockId === "daily_ai_mock") {
+    // AI Grading Handshake for any mock with theory/essay questions
+    const hasEssayQuestions = examState.questions.some(q => q.type === 'essay');
+    if (examState.mockId === "daily_ai_mock" || hasEssayQuestions) {
       performAIGrading(stats);
       return; 
     }
@@ -593,7 +608,7 @@ async function performAIGrading(stats) {
     const res = await fetch('/api/ai', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ type: 'mark-exam', studentResponses })
+      body: JSON.stringify({ type: 'mark-exam', studentResponses, singleQuestion: false })
     });
     const results = await res.json();
     
@@ -643,8 +658,16 @@ async function performAIGrading(stats) {
         });
       }
     }
+    // Always save stats after AI grading
+    saveStats(stats);
   } catch (err) {
     console.error("AI Marking Failed:", err);
+    if (resultArea) {
+      resultArea.innerHTML = `<div style="padding:1.5rem; background:rgba(248,113,113,0.05); border:1px solid var(--error); border-radius:12px; text-align:center; margin-top:1rem;">
+        <p style="color:var(--error); font-weight:700; margin-bottom:0.5rem;">AI Examiner Unavailable</p>
+        <p style="color:var(--text-muted); font-size:0.85rem;">Theory marking could not be completed. Your MCQ results have been saved.</p>
+      </div>`;
+    }
     saveStats(stats);
   }
 }

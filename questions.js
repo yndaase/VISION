@@ -3891,7 +3891,7 @@ const MOCK_EXAMS = {
     subject: "maths",
     title: "Core Mathematics Mock A",
     description:
-      "Full-length 50-question simulation focusing on the 2026 WASSCE syllabus core topics.",
+      "Full-length 50-question simulation focusing on the 2026 WASSCE syllabus core topics, including AI-marked theory questions.",
     timeLimit: 150, // 2.5 hours in minutes
     questionCount: 50,
     questions: [
@@ -3899,6 +3899,7 @@ const MOCK_EXAMS = {
       22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39,
       40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50,
     ],
+    essayQuestions: [1001, 1002, 1003, 1004, 1005],
   },
   mock_english_b: {
     id: "mock_english_b",
@@ -3913,10 +3914,11 @@ const MOCK_EXAMS = {
     id: "mock_cs_a",
     subject: "cs",
     title: "Computer Science Mock A",
-    description: "Programming, Algorithms & Hardware.",
+    description: "Programming, Algorithms & Hardware with AI-marked theory section.",
     timeLimit: 150, // 2.5 Hours
     questionCount: 5,
     questions: [201, 202, 203, 204, 205],
+    essayQuestions: [2001],
   },
   science_mock_1: {
     id: "science_mock_1",
