@@ -71,7 +71,7 @@ async function initAIMock() {
     const engineName = isPro ? "Azure GPT-4o" : "Gemini AI";
     qCard.innerHTML = `
       <div style='text-align:center; padding: 3rem;'>
-        <div class="ai-sparkles" style="font-size: 3rem; margin-bottom: 1rem;">✨</div>
+        <div class="ai-sparkles" style="font-size: 3rem; margin-bottom: 1rem;"></div>
         <h2 style='color:var(--primary); animation: pulse 2s infinite;'>${engineName} is building your Multi-Subject Mission...</h2>
         <p style='color:var(--text-secondary); margin-bottom: 2rem;'>Curating 50 precision questions across Maths, Science, English, Social, and CS for today.</p>
         <div class="pixel-loader" style="margin: 0 auto;"></div>
@@ -201,10 +201,10 @@ function renderQuestion() {
         <textarea id="essay-ans-${q.id}" 
                   class="essay-input" 
                   placeholder="Type your detailed answer here..."
-                  oninput="saveEssayAnswer(${q.id}, this.value)">${chosen || ""}</textarea>
+                  oninput="saveEssayAnswer('${q.id}', this.value)">${chosen || ""}</textarea>
         <div class="essay-actions">
-          <button class="ai-mark-btn" onclick="markEssayWithAI(${q.id})">
-            <span class="sparkle-icon">✨</span> Mark with AI
+          <button class="ai-mark-btn" onclick="markEssayWithAI('${q.id}')">
+            Mark with AI
           </button>
           <div id="ai-feedback-${q.id}" class="ai-feedback-box" style="display:none">
             <div class="ai-loader">Analyzing your answer...</div>
@@ -220,7 +220,7 @@ function renderQuestion() {
             (letter) => `
           <div class="option-row ${chosen === letter ? "selected" : ""}"
                id="opt-row-${q.id}-${letter}"
-               onclick="selectAnswer(${q.id}, '${letter}')">
+               onclick="selectAnswer('${q.id}', '${letter}')">
             <div class="option-letter-box">${letter}</div>
             <div class="option-text">${q.options[letter]}</div>
           </div>
