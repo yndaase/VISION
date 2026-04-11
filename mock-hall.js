@@ -334,6 +334,7 @@ function saveEssayAnswer(qId, text) {
 }
 
 // AI Marking Logic
+async function markEssayWithAI(qId) {
   const answer = examState.answers[qId];
   const q = examState.questions.find(item => item.id == qId);
   const feedbackEl = document.getElementById(`ai-feedback-${qId}`);
