@@ -3,7 +3,12 @@
   "trailingSlash": false,
   "redirects": [
     { "source": "/(.*)\\.html", "destination": "/$1", "permanent": true },
-    { "source": "https://www.visionedu.online/:path*", "destination": "https://visionedu.online/:path*", "permanent": true }
+    {
+      "source": "/:path*",
+      "has": [{ "type": "host", "value": "www.visionedu.online" }],
+      "destination": "https://visionedu.online/:path*",
+      "permanent": true
+    }
   ],
   "github": {
     "silent": true
