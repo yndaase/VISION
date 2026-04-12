@@ -14,5 +14,4 @@ Disallow: /robotics-dashboard
 Disallow: /mock-hall
 Disallow: /api/
 
-# Sitemap location
-Sitemap: https://www.visionedu.online/sitemap.xml
+Sitemap: https://visionedu.online/sitemap.xml
