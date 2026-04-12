@@ -756,6 +756,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
   if (!session) return;
 
+  // Upgrade Begin Session button to scroll to quiz for logged-in users
+  const beginBtn = document.getElementById('heroBeginBtn');
+  if (beginBtn && beginBtn.dataset.authHref) {
+    beginBtn.href = beginBtn.dataset.authHref;
+  }
+
   // Safe Initialization
   QUESTIONS = getDailyQuestions(currentSubjectStr, currentMode);
   activeQuestions = QUESTIONS.slice(0, DISPLAY_COUNT);
