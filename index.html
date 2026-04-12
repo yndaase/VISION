@@ -2,69 +2,46 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta
-      http-equiv="Content-Security-Policy"
-      content="upgrade-insecure-requests"
-    />
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests" />
     <script defer src="/_vercel/insights/script.js"></script>
     <script>
-      window.si =
-        window.si ||
-        function () {
-          (window.siq = window.siq || []).push(arguments);
-        };
+      window.si = window.si || function () { (window.siq = window.siq || []).push(arguments); };
     </script>
     <script defer src="/_vercel/speed-insights/script.js"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>WASSCE & WAEC Prep 2026 | Official Core Mathematics Hub · Vision Education</title>
-    <meta
-      name="description"
-      content="Prepare for the 2026 WASSCE with the official WAEC prep hub. Access 1000+ past questions, AI-powered theory marking, and Ghanaian curriculum standards. Free for all SHS students."
-    />
+    <title>WASSCE &amp; WAEC Prep 2026 | Official Core Mathematics Hub · Vision Education</title>
+    <meta name="description" content="Prepare for the 2026 WASSCE with the official WAEC prep hub. Access 1000+ past questions, AI-powered theory marking, and Ghanaian curriculum standards. Free for all SHS students." />
     <link rel="manifest" href="manifest.json" />
-    <meta name="theme-color" content="#0ea5e9" />
+    <meta name="theme-color" content="#6366f1" />
     <link rel="apple-touch-icon" href="assets/logo.png" />
     <meta property="og:image" content="https://visionedu.online/assets/logo.png" />
-    <meta
-      name="keywords"
-      content="waec prep, wassce prep, wassce, core maths wassce, ghana shs prep, vision education wassce, waec past questions, wassce 2026"
-    />
+    <meta name="keywords" content="waec prep, wassce prep, wassce, core maths wassce, ghana shs prep, vision education wassce, waec past questions, wassce 2026" />
     <link rel="canonical" href="https://visionedu.online/" />
     <!-- Search Engine Verifications -->
     <meta name="google-site-verification" content="8VjUXai1M7bWr3hxdDlaS-D65zBSdLrEovKpkSDv-hA" />
     <meta name="msvalidate.01" content="REPLACE_WITH_BING_CODE" />
-
     <!-- Microsoft / Bing Tiles -->
-    <meta name="msapplication-TileColor" content="#0ea5e9" />
+    <meta name="msapplication-TileColor" content="#6366f1" />
     <meta name="msapplication-TileImage" content="assets/logo.png" />
-
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website" />
-    <meta
-      property="og:title"
-      content="WASSCE & WAEC Prep 2026 | Vision Education"
-    />
-    <meta
-      property="og:description"
-      content="Premium 2026 WASSCE preparation platform for Ghanaian students. Practice WAEC Core Math with AI-powered feedback."
-    />
+    <meta property="og:title" content="WASSCE &amp; WAEC Prep 2026 | Vision Education" />
+    <meta property="og:description" content="Premium 2026 WASSCE preparation platform for Ghanaian students. Practice WAEC Core Math with AI-powered feedback." />
     <meta property="og:url" content="https://visionedu.online/" />
-
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="WASSCE & WAEC Prep 2026 | Vision Education" />
+    <meta name="twitter:title" content="WASSCE &amp; WAEC Prep 2026 | Vision Education" />
     <meta name="twitter:description" content="Official 2026 WASSCE preparation hub for Ghana SHS students." />
     <meta name="twitter:image" content="https://visionedu.online/assets/logo.png" />
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap"
-      rel="stylesheet"
-    />
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="theme.css" />
     <link rel="stylesheet" href="style.css" />
     <link rel="stylesheet" href="dashboard.css" />
+    <link rel="stylesheet" href="homepage.css" />
+
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
@@ -82,16 +59,8 @@
       {
         "@context": "https://schema.org",
         "@type": "BreadcrumbList",
-        "itemListElement": [{
-          "@type": "ListItem",
-          "position": 1,
-          "name": "Home",
-          "item": "https://visionedu.online"
-        },{
-          "@type": "ListItem",
-          "position": 2,
-          "name": "Login",
-          "item": "https://visionedu.online/login"
+        "itemListElement": [{"@type": "ListItem","position": 1,"name": "Home","item": "https://visionedu.online"},{
+          "@type": "ListItem","position": 2,"name": "Login","item": "https://visionedu.online/login"
         }]
       }
     </script>
@@ -117,341 +86,568 @@
           "@type": "OfferCatalog",
           "name": "WASSCE Prep Subjects",
           "itemListElement": [
-            {
-              "@type": "Offer",
-              "itemOffered": {
-                "@type": "Course",
-                "name": "Core Mathematics"
-              }
-            },
-            {
-              "@type": "Offer",
-              "itemOffered": {
-                "@type": "Course",
-                "name": "Integrated Science"
-              }
-            },
-            {
-              "@type": "Offer",
-              "itemOffered": {
-                "@type": "Course",
-                "name": "Computer Science"
-              }
-            }
+            {"@type":"Offer","itemOffered":{"@type":"Course","name":"Core Mathematics"}},
+            {"@type":"Offer","itemOffered":{"@type":"Course","name":"Integrated Science"}},
+            {"@type":"Offer","itemOffered":{"@type":"Course","name":"Computer Science"}}
           ]
         }
       }
     </script>
   </head>
   <body>
-    <!--  NAVBAR (shared component)  -->
-    <nav class="dash-nav" id="dashNav">
-      <div class="dash-nav-inner">
-        <div style="display: flex; align-items: center; gap: 16px">
-          <a class="back-btn" href="/dashboard" title="Back to Dashboard">
-            <span class="back-arrow">←</span>
-            <span class="back-label">Dashboard</span>
-          </a>
-          <div class="nav-divider"></div>
-          <span class="nav-subject-label">Core Mathematics</span>
 
+    <!-- ═══════════════════════════════════════════
+         TOP NAVIGATION BAR
+    ═══════════════════════════════════════════ -->
+    <nav class="hp-nav" id="hpNav" role="navigation" aria-label="Main navigation">
+      <a class="hp-nav-brand" href="/" aria-label="Vision Education Home">
+        <img src="assets/logo.png" alt="Vision Education Logo" width="34" height="34" loading="eager" />
+        <span class="hp-nav-brand-text">Vision <span>Education</span></span>
+      </a>
+
+      <div class="hp-nav-links" role="menubar">
+        <a href="#subjects" class="hp-nav-link" role="menuitem">Subjects</a>
+        <a href="#features" class="hp-nav-link" role="menuitem">Features</a>
+        <a href="#how-it-works" class="hp-nav-link" role="menuitem">How It Works</a>
+        <a href="#about" class="hp-nav-link" role="menuitem">About</a>
+      </div>
+
+      <div class="hp-nav-cta">
+        <a href="/login" class="hp-btn-outline" id="navLoginBtn">Log In</a>
+        <a href="/dashboard" class="hp-btn-primary" id="navStartBtn">Start Free →</a>
+      </div>
+
+      <button class="hp-nav-hamburger" id="hpHamburger" aria-label="Open menu" aria-expanded="false">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+          <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
+        </svg>
+      </button>
+    </nav>
+
+    <!-- ═══════════════════════════════════════════
+         HERO SECTION
+    ═══════════════════════════════════════════ -->
+    <header class="hp-hero" id="top" role="banner">
+      <!-- Animated background orbs -->
+      <div class="hp-hero-orbs" aria-hidden="true">
+        <div class="hp-orb hp-orb-1"></div>
+        <div class="hp-orb hp-orb-2"></div>
+        <div class="hp-orb hp-orb-3"></div>
+      </div>
+
+      <div class="hp-hero-inner">
+
+        <!-- Status badge -->
+        <div class="hp-badge" role="status">
+          <span class="hp-badge-dot" aria-hidden="true"></span>
+          WAEC Ghana · 2026 WASSCE · Expert-Reviewed
         </div>
 
-        <div class="dash-nav-right">
-          <span class="nav-badge">Official 2026 WASSCE Prep</span>
-          <div class="nav-user-chip" id="navUserChip">
-            <div class="nav-avatar" id="navAvatar">K</div>
-            <span class="nav-username" id="navUsername">Student</span>
-          </div>
-          <button
-            class="nav-logout-btn"
-            id="navLogoutBtn"
-            onclick="handleLogout()"
-            title="Log out"
-          >
-            <span>Log out</span>
-            <span>→</span>
+        <!-- Primary headline -->
+        <h1 class="hp-hero-h1">
+          Official 2026<br />
+          <span class="hp-gradient-text">WASSCE Prep Hub</span>
+        </h1>
+
+        <!-- Sub headline -->
+        <p class="hp-hero-sub">
+          Ghana's most advanced exam preparation platform. Practice 1000+ WAEC past questions,
+          get AI-powered theory marking, and master Core Mathematics, Integrated Science &amp; Computer Science.
+        </p>
+
+        <!-- Mode selector -->
+        <div class="hp-mode-row" id="hp-mode-row">
+          <button class="hp-mode-btn" id="mode-subj" onclick="switchMode('subjective')" aria-label="Switch to Subjective mode">
+            <span class="hp-mode-btn-icon">📝</span>
+            <span class="hp-mode-btn-label">
+              <strong>Subjective</strong>
+              <span>Theory with AI Marking</span>
+            </span>
           </button>
+          <button class="hp-mode-btn" onclick="switchMode('objective')" aria-label="Switch to Objective mode">
+            <span class="hp-mode-btn-icon">🎯</span>
+            <span class="hp-mode-btn-label">
+              <strong>Objective</strong>
+              <span>Multiple Choice Practice</span>
+            </span>
+          </button>
+        </div>
+
+        <!-- CTA buttons -->
+        <div class="hp-cta-row">
+          <a href="#quiz-section" class="hp-cta-primary" id="heroBeginBtn">
+            Begin Session ↓
+          </a>
+          <a href="/dashboard" class="hp-cta-secondary" id="heroDashBtn">
+            Go to Dashboard →
+          </a>
+        </div>
+
+        <!-- Stat chips -->
+        <div class="hp-stats-strip" role="list" aria-label="Platform statistics">
+          <div class="hp-stat" role="listitem">
+            <span class="hp-stat-num">30+</span>
+            <span class="hp-stat-lbl">Premium Units</span>
+          </div>
+          <div class="hp-stat" role="listitem">
+            <span class="hp-stat-num">AI</span>
+            <span class="hp-stat-lbl">Feedback</span>
+          </div>
+          <div class="hp-stat" role="listitem">
+            <span class="hp-stat-num">2026</span>
+            <span class="hp-stat-lbl">Standards</span>
+          </div>
         </div>
 
       </div>
-    </nav>
 
-    <!-- ===== HERO ===== -->
-    <header class="hero" id="top">
-      <div class="hero-bg-orbs">
-        <div class="hero-content">
-          <div class="badge">
-            <span class="badge-dot"></span>
-            WAEC Ghana · 2026 WASSCE · Expert-Reviewed
-          </div>
-          <h1>
-            Official 2026<br />
-            <span
-              class="gradient-text"
-              style="
-                background: linear-gradient(135deg, var(--primary), #d97706);
-                -webkit-background-clip: text;
-                background-clip: text;
-                -webkit-text-fill-color: transparent;
-              "
-              >WASSCE Prep Hub</span
-            >
-          </h1>
-          <button
-            class="mode-btn"
-            id="mode-subj"
-            onclick="switchMode('subjective')"
-          >
-            <span class="mode-icon"></span>
-            <div class="mode-info">
-              <span class="mode-title">Subjective</span>
-              <span class="mode-desc">Theory with AI Marking</span>
-            </div>
-          </button>
-        </div>
-
-          <div class="dash-logo">
-            <img src="assets/logo.png" alt="Vision Education official logo - 2026 WASSCE Prep" style="height: 36px; width: 36px; object-fit: contain; margin-right: 12px;" loading="lazy">
-            <span class="dash-logo-text"
-              >Vision <span class="brand-accent">Education</span></span
-            >
-          </div> <div class="hero-stats">
-          <div class="stat-chip">
-            <span class="stat-num">30+</span
-            ><span class="stat-lbl">Premium Units</span>
-          </div>
-          <div class="stat-chip">
-            <span class="stat-num">AI</span
-            ><span class="stat-lbl">Feedback</span>
-          </div>
-          <div class="stat-chip">
-            <span class="stat-num">2026</span
-            ><span class="stat-lbl">Standards</span>
-          </div>
-        </div>
-        <a href="#quiz-section" class="cta-btn">Begin Session ↓</a>
+      <!-- Scroll hint -->
+      <div class="hp-scroll-hint" aria-hidden="true">
+        <span>Scroll to explore</span>
+        <div class="hp-scroll-arrow">↓</div>
       </div>
     </header>
 
-    <!-- ===== PROGRESS BAR ===== -->
-    <div class="progress-bar-wrapper" id="progressBarWrapper">
+    <!-- ═══════════════════════════════════════════
+         QUIZ SECTION (existing engine — preserved)
+    ═══════════════════════════════════════════ -->
+
+    <!-- PROGRESS BAR -->
+    <div class="progress-bar-wrapper" id="progressBarWrapper" role="status" aria-label="Quiz progress">
       <div class="progress-meta">
-        <span id="progressLabel"
-          >Question <span id="currentQ">1</span> of 15</span
-        >
-        <span id="scoreLabel"
-          >Score: <span id="liveScore">0</span> /
-          <span id="attempted">0</span></span
-        >
+        <span id="progressLabel">Question <span id="currentQ">1</span> of 15</span>
+        <span id="scoreLabel">Score: <span id="liveScore">0</span> / <span id="attempted">0</span></span>
       </div>
-      <div class="progress-track">
+      <div class="progress-track" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
         <div class="progress-fill" id="progressFill" style="width: 0%"></div>
       </div>
-      <div class="difficulty-legend">
-        <span class="legend-dot" style="background: var(--success)"></span>Level
-        1 (Easy)
-        <span class="legend-dot" style="background: var(--primary)"></span>Level
-        2 (Medium)
-        <span class="legend-dot" style="background: var(--error)"></span>Level 3
-        (Hard)
+      <div class="difficulty-legend" aria-label="Difficulty legend">
+        <span class="legend-dot" style="background: var(--success)"></span>Level 1 (Easy)
+        <span class="legend-dot" style="background: var(--primary)"></span>Level 2 (Medium)
+        <span class="legend-dot" style="background: var(--error)"></span>Level 3 (Hard)
       </div>
     </div>
 
-    <!-- ===== FILTER TABS (Conditional) ===== -->
-    <section id="quiz-section">
-      <div class="filter-bar" id="objective-filters">
-        <button
-          class="filter-btn active"
-          data-filter="all"
-          onclick="filterQuestions('all', this)"
-        >
-          All Practice
-        </button>
-        <button
-          class="filter-btn"
-          data-filter="easy"
-          onclick="filterQuestions('easy', this)"
-        >
-          Easy
-        </button>
-        <button
-          class="filter-btn"
-          data-filter="medium"
-          onclick="filterQuestions('medium', this)"
-        >
-          Medium
-        </button>
-        <button
-          class="filter-btn"
-          data-filter="hard"
-          onclick="filterQuestions('hard', this)"
-        >
-          Hard
-        </button>
+    <!-- FILTER TABS -->
+    <section id="quiz-section" aria-label="Quiz practice section">
+      <div class="filter-bar" id="objective-filters" role="group" aria-label="Filter questions by difficulty">
+        <button class="filter-btn active" data-filter="all"    onclick="filterQuestions('all', this)">All Practice</button>
+        <button class="filter-btn"        data-filter="easy"   onclick="filterQuestions('easy', this)">Easy</button>
+        <button class="filter-btn"        data-filter="medium" onclick="filterQuestions('medium', this)">Medium</button>
+        <button class="filter-btn"        data-filter="hard"   onclick="filterQuestions('hard', this)">Hard</button>
       </div>
 
-      <!-- ===== SUBJECTIVE HEADER (Conditional) ===== -->
-      <div class="theory-header" id="subjective-header" style="display: none">
+      <!-- SUBJECTIVE MODE HEADER -->
+      <div class="theory-header" id="subjective-header" style="display: none" role="heading" aria-level="2">
         <div class="theory-title-wrap">
           <h2>Section B: Theory &amp; Operations</h2>
-          <p>
-            Type your full workings. Our Specialist AI will mark your logic,
-            steps, and final accuracy.
-          </p>
+          <p>Type your full workings. Our Specialist AI will mark your logic, steps, and final accuracy.</p>
         </div>
       </div>
 
-      <!-- ===== QUESTION CARDS ===== -->
-      <div class="questions-grid" id="questionsGrid">
-        <!-- JS renders cards (Mode-dependent) here -->
-      </div>
+      <!-- Question Cards (JS renders here) -->
+      <div class="questions-grid" id="questionsGrid" role="list" aria-label="Practice questions"></div>
     </section>
 
-    <!-- ===== RESULTS PANEL ===== -->
-    <section class="results-section" id="resultsSection" style="display: none">
+    <!-- RESULTS PANEL -->
+    <section class="results-section" id="resultsSection" style="display: none" aria-label="Quiz results">
       <div class="results-card">
-        <div class="results-emoji" id="resultsEmoji"></div>
+        <div class="results-emoji" id="resultsEmoji" aria-hidden="true"></div>
         <h2 id="resultsTitle">Quiz Complete!</h2>
         <p id="resultsMsg"></p>
         <div class="results-breakdown" id="resultsBreakdown"></div>
         <div class="results-actions">
-          <button class="cta-btn" onclick="resetQuiz()">Retry All →</button>
-          <a class="side-nav-logo" href="/dashboard">
-        <img src="assets/logo.png" alt="Vision Education Footer Logo" style="height: 48px; width: 48px; object-fit: contain;" loading="lazy">
-        <span>Vision Edu</span>
-      </a></div>
-      </div>
-    </section>
-
-    <!-- ===== ABOUT SECTION ===== -->
-    <section class="about-section" id="about">
-      <div class="about-card">
-        <div class="about-header">
-          <div class="about-avatar">YN</div>
-          <div>
-            <h2 class="about-name">Yaw Ndaase Mensuoh</h2>
-            <p class="about-title">
-              Computer Science Student, St. Augustine's College (Cape Coast)
-            </p>
-          </div>
-        </div>
-        <div class="about-body">
-          <p>
-            This platform was created to help Ghanaian Senior High School
-            students excel in their WASSCE Core Mathematics examinations. By
-            focusing on real-world STEM applicationsfrom Fintech setups to
-            everyday utility calculationsthe project redefines how students
-            approach modern exam questions, directly aligning with WAEC's latest
-            curriculum guidelines.
-          </p>
-
-          <a
-            href="https://www.instagram.com/yndaase/"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="instagram-btn"
-          >
-            <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
-              <path
-                d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"
-              />
-            </svg>
-            Let's connect on Instagram
+          <button class="cta-btn" onclick="resetQuiz()" id="retryBtn">Retry All →</button>
+          <a class="hp-btn-outline" href="/dashboard" id="dashboardLink" style="padding:15px 28px;border-radius:8px;text-decoration:none;font-weight:700;font-size:0.88rem;">
+            Dashboard →
           </a>
         </div>
       </div>
     </section>
 
-    <!-- ===== FOOTER ===== -->
-    <footer class="site-footer">
+    <!-- ═══════════════════════════════════════════
+         SUBJECTS SECTION
+    ═══════════════════════════════════════════ -->
+    <section class="hp-section-alt" id="subjects" aria-labelledby="subjects-heading">
+      <div class="hp-section">
+
+        <div class="hp-reveal">
+          <div class="hp-section-label">Curriculum</div>
+          <h2 class="hp-section-title" id="subjects-heading">All subjects. One platform.</h2>
+          <p class="hp-section-sub">
+            Comprehensive coverage of the 2026 WASSCE syllabus across three core disciplines,
+            aligned directly with WAEC Chief Examiner guidelines.
+          </p>
+        </div>
+
+        <div class="hp-subjects-grid">
+          <!-- Core Maths -->
+          <a href="/" class="hp-subject-card hp-reveal hp-reveal-delay-1"
+             id="subjectCoreMaths"
+             style="--card-accent:#6366f1;--card-icon-bg:rgba(99,102,241,0.12);--card-icon-border:rgba(99,102,241,0.25);"
+             aria-label="Practice Core Mathematics">
+            <span class="hp-card-icon">📐</span>
+            <div>
+              <div class="hp-card-title">Core Mathematics</div>
+              <p class="hp-card-desc">
+                Numbers, algebra, geometry, statistics and calculus. 1000+ past questions
+                mapped to WAEC's 2026 marking scheme with step-by-step workings.
+              </p>
+            </div>
+            <div class="hp-card-footer">
+              <span class="hp-card-tag">WAEC Aligned</span>
+              <span class="hp-card-arrow">→</span>
+            </div>
+          </a>
+
+          <!-- Integrated Science -->
+          <a href="/mocks" class="hp-subject-card hp-reveal hp-reveal-delay-2"
+             id="subjectIntScience"
+             style="--card-accent:#10b981;--card-icon-bg:rgba(16,185,129,0.12);--card-icon-border:rgba(16,185,129,0.25);"
+             aria-label="Practice Integrated Science">
+            <span class="hp-card-icon">🔬</span>
+            <div>
+              <div class="hp-card-title">Integrated Science</div>
+              <p class="hp-card-desc">
+                Physics, Chemistry, and Biology in one unified syllabus. AI-assisted objective
+                and theory questions for 2026 WASSCE mastery.
+              </p>
+            </div>
+            <div class="hp-card-footer">
+              <span class="hp-card-tag" style="background:rgba(16,185,129,0.12);color:#34d399;">WASSCE 2026</span>
+              <span class="hp-card-arrow">→</span>
+            </div>
+          </a>
+
+          <!-- Computer Science -->
+          <a href="/mocks" class="hp-subject-card hp-reveal hp-reveal-delay-3"
+             id="subjectCompSci"
+             style="--card-accent:#fbbf24;--card-icon-bg:rgba(251,191,36,0.12);--card-icon-border:rgba(251,191,36,0.25);"
+             aria-label="Practice Computer Science">
+            <span class="hp-card-icon">💻</span>
+            <div>
+              <div class="hp-card-title">Computer Science</div>
+              <p class="hp-card-desc">
+                Programming fundamentals, data structures, networks and systems.
+                60 AI-generated questions targeting Ghana SHS Computer Science objectives.
+              </p>
+            </div>
+            <div class="hp-card-footer">
+              <span class="hp-card-tag" style="background:rgba(251,191,36,0.12);color:#fbbf24;">60 Questions</span>
+              <span class="hp-card-arrow">→</span>
+            </div>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════
+         FEATURES BENTO GRID
+    ═══════════════════════════════════════════ -->
+    <section id="features" aria-labelledby="features-heading">
+      <div class="hp-section">
+        <div class="hp-reveal">
+          <div class="hp-section-label">Platform Features</div>
+          <h2 class="hp-section-title" id="features-heading">Built different.<br/>Built for WASSCE.</h2>
+          <p class="hp-section-sub">
+            Every feature is purpose-built around the 2026 WASSCE curriculum and Ghana SHS student needs.
+          </p>
+        </div>
+
+        <div class="hp-features-bento">
+
+          <!-- AI Marking — wide card -->
+          <div class="hp-bento-item hp-bento-wide accent-glow hp-reveal">
+            <div class="hp-bento-label">AI Engine</div>
+            <div class="hp-bento-title">Specialist AI marks your theory workings</div>
+            <p class="hp-bento-desc">
+              Our Specialist AI will mark your logic, steps, and final accuracy on Section B subjective questions —
+              just like a real WAEC examiner. Get instant, granular feedback on where marks were awarded or lost.
+            </p>
+            <div class="hp-ai-pill">
+              <span class="hp-ai-dot" aria-hidden="true"></span>
+              GPT-4.0 &amp; Gemini 2.5 · Live Feedback
+            </div>
+          </div>
+
+          <!-- Difficulty levels — narrow card -->
+          <div class="hp-bento-item hp-bento-narrow hp-reveal hp-reveal-delay-1">
+            <div class="hp-bento-label">Difficulty System</div>
+            <div class="hp-bento-title">3-tier adaptive difficulty</div>
+            <p class="hp-bento-desc">Questions progress from foundational to exam-standard.</p>
+            <div class="hp-diff-row">
+              <span class="hp-diff-badge easy">Level 1 (Easy)</span>
+              <span class="hp-diff-badge medium">Level 2 (Medium)</span>
+              <span class="hp-diff-badge hard">Level 3 (Hard)</span>
+            </div>
+          </div>
+
+          <!-- Progress tracking -->
+          <div class="hp-bento-item hp-bento-half hp-reveal hp-reveal-delay-1">
+            <div class="hp-bento-label">Progress Tracking</div>
+            <div class="hp-bento-title">Know exactly where you stand</div>
+            <p class="hp-bento-desc">Real-time score tracking across every session and subject.</p>
+            <div class="hp-progress-demo" aria-label="Sample progress indicators">
+              <div class="hp-prog-row">
+                <span class="hp-prog-label">Algebra</span>
+                <div class="hp-prog-track"><div class="hp-prog-fill green" style="width:82%"></div></div>
+                <span class="hp-prog-pct">82%</span>
+              </div>
+              <div class="hp-prog-row">
+                <span class="hp-prog-label">Statistics</span>
+                <div class="hp-prog-track"><div class="hp-prog-fill yellow" style="width:67%"></div></div>
+                <span class="hp-prog-pct">67%</span>
+              </div>
+              <div class="hp-prog-row">
+                <span class="hp-prog-label">Geometry</span>
+                <div class="hp-prog-track"><div class="hp-prog-fill indigo" style="width:54%"></div></div>
+                <span class="hp-prog-pct">54%</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Mock Exams -->
+          <div class="hp-bento-item hp-bento-half hp-reveal hp-reveal-delay-2">
+            <div class="hp-bento-label">Mock Exams</div>
+            <div class="hp-bento-title">Full timed mock examinations</div>
+            <p class="hp-bento-desc">
+              Simulate real WASSCE exam conditions. Timed sessions, randomised question sets,
+              and full breakdown reports at the end of every mock.
+            </p>
+            <a href="/mocks" class="hp-plan-btn primary" id="featMocksBtn" style="display:inline-block;margin-top:1.25rem;max-width:200px;text-align:center;">
+              Take a Mock →
+            </a>
+          </div>
+
+          <!-- Filter by topic -->
+          <div class="hp-bento-item hp-bento-third hp-reveal">
+            <div class="hp-bento-label">Topic Filter</div>
+            <div class="hp-bento-title">Filter by topic or difficulty</div>
+            <p class="hp-bento-desc">Pinpoint weak areas and drill them with targeted practice sets.</p>
+          </div>
+
+          <!-- Past Questions -->
+          <div class="hp-bento-item hp-bento-third hp-reveal hp-reveal-delay-1">
+            <div class="hp-bento-label">Past Questions</div>
+            <div class="hp-bento-title">Real WAEC past questions</div>
+            <p class="hp-bento-desc">
+              Questions align with the WAEC Chief Examiner's 2025 Report — not made up examples.
+            </p>
+          </div>
+
+          <!-- Enterprise / Institutional -->
+          <div class="hp-bento-item hp-bento-third hp-reveal hp-reveal-delay-2 gold-glow"
+               style="border-color:rgba(251,191,36,0.15);">
+            <div class="hp-bento-label" style="color:#fbbf24;">
+              <span style="margin-right:4px">&#11088;</span>Enterprise
+            </div>
+            <div class="hp-bento-title">Institutional Access</div>
+            <p class="hp-bento-desc">
+              School-level subscriptions with teacher dashboards, class analytics and student management.
+            </p>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════
+         HOW IT WORKS
+    ═══════════════════════════════════════════ -->
+    <section class="hp-section-alt" id="how-it-works" aria-labelledby="hiw-heading">
+      <div class="hp-section">
+        <div class="hp-reveal">
+          <div class="hp-section-label">Process</div>
+          <h2 class="hp-section-title" id="hiw-heading">How it works</h2>
+          <p class="hp-section-sub">Three steps from sign-up to WASSCE confidence.</p>
+        </div>
+
+        <div class="hp-steps-grid">
+          <div class="hp-step-card hp-reveal">
+            <div class="hp-step-num">01</div>
+            <div class="hp-step-title">Choose your subject</div>
+            <p class="hp-step-desc">
+              Select Core Mathematics, Integrated Science or Computer Science.
+              Switch between Subjective (Theory with AI Marking) and Objective (multiple choice) modes.
+            </p>
+          </div>
+          <div class="hp-step-card hp-reveal hp-reveal-delay-1">
+            <div class="hp-step-num">02</div>
+            <div class="hp-step-title">Practice &amp; get AI feedback</div>
+            <p class="hp-step-desc">
+              Work through WAEC-aligned questions. Filter by difficulty — Easy, Medium or Hard.
+              On theory questions, type your full workings and let our AI mark your logic step by step.
+            </p>
+          </div>
+          <div class="hp-step-card hp-reveal hp-reveal-delay-2">
+            <div class="hp-step-num">03</div>
+            <div class="hp-step-title">Track, improve, repeat</div>
+            <p class="hp-step-desc">
+              Review your results breakdown after every session. Automatically sync the latest
+              AI-curated exam questions daily. Walk into your WASSCE exam ready.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════
+         ABOUT / CREATOR SECTION
+    ═══════════════════════════════════════════ -->
+    <section id="about" aria-labelledby="about-heading">
+      <div class="hp-section">
+
+        <div class="hp-reveal">
+          <div class="hp-section-label">The Creator</div>
+          <h2 class="hp-section-title" id="about-heading">Built by a student, for students.</h2>
+        </div>
+
+        <div class="hp-about-grid">
+
+          <!-- Profile card -->
+          <div class="hp-about-profile hp-reveal">
+            <div class="hp-about-avatar" aria-hidden="true">YN</div>
+            <div class="hp-about-name">Yaw Ndaase Mensuoh</div>
+            <div class="hp-about-role">Computer Science Student<br/>St. Augustine's College (Cape Coast)</div>
+            <a href="https://www.instagram.com/yndaase/" target="_blank" rel="noopener noreferrer"
+               class="hp-about-social" id="instagramLink" aria-label="Connect on Instagram">
+              <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16" aria-hidden="true">
+                <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/>
+              </svg>
+              Let's connect on Instagram
+            </a>
+          </div>
+
+          <!-- Content column -->
+          <div class="hp-about-content">
+            <div class="hp-about-body hp-reveal">
+              <p>
+                This platform was created to help Ghanaian Senior High School
+                students excel in their WASSCE Core Mathematics examinations. By
+                focusing on real-world STEM applications — from Fintech setups to
+                everyday utility calculations — the project redefines how students
+                approach modern exam questions, directly aligning with WAEC's latest
+                curriculum guidelines.
+              </p>
+            </div>
+
+            <!-- AI Transparency card -->
+            <div class="hp-ai-card hp-reveal hp-reveal-delay-1">
+              <div class="hp-ai-card-icon" aria-hidden="true">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#818cf8" stroke-width="2">
+                  <circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/>
+                </svg>
+              </div>
+              <div class="hp-ai-card-content">
+                <div class="hp-ai-card-title">AI Transparency</div>
+                <p class="hp-ai-card-desc">
+                  This application integrates <strong style="color:#f1f5f9;">GPT-4.0</strong> and
+                  <strong style="color:#f1f5f9;">Gemini 2.5</strong> to provide intelligent feedback,
+                  marking, and educational assistance. We are committed to transparency in AI usage.
+                  Data sent to these services is anonymized and used solely for generating educational feedback.
+                </p>
+                <div class="hp-ai-services">
+                  <span class="hp-ai-service-tag">GPT-4.0 · Theory Marking</span>
+                  <span class="hp-ai-service-tag">Gemini 2.5 · Content Curation</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Quick access cards -->
+            <div class="hp-plan-strip hp-reveal hp-reveal-delay-2">
+              <div class="hp-plan-card">
+                <span class="hp-plan-tag free">Free</span>
+                <div class="hp-plan-name">Student Access</div>
+                <p class="hp-plan-desc">Full access to practice questions, AI feedback, and mock exams. No credit card needed.</p>
+                <ul class="hp-plan-feats">
+                  <li>All practice questions</li>
+                  <li>AI theory marking</li>
+                  <li>Progress tracking</li>
+                  <li>Mock exam mode</li>
+                </ul>
+                <a href="/login" class="hp-plan-btn primary" id="planStudentBtn">Get Started Free →</a>
+              </div>
+              <div class="hp-plan-card featured">
+                <span class="hp-plan-tag premium">Premium</span>
+                <div class="hp-plan-name">Institutional Access</div>
+                <p class="hp-plan-desc">Enterprise-grade access for schools with teacher dashboards and class analytics.</p>
+                <ul class="hp-plan-feats">
+                  <li>Everything in Free</li>
+                  <li>Teacher dashboard</li>
+                  <li>Class analytics</li>
+                  <li>Student management</li>
+                </ul>
+                <a href="/pricing" class="hp-plan-btn ghost" id="planEnterpriseBtn">View Enterprise Plans →</a>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════
+         WAEC ACADEMIC NOTE BAND
+    ═══════════════════════════════════════════ -->
+    <div class="hp-note-band" role="note" aria-label="Academic disclaimer">
       <p>
         Built for Ghana SHS Students · 2026 WASSCE Core Mathematics · Questions
         align with the WAEC Chief Examiner's 2025 Report
       </p>
-      <p class="footer-note">
-        Practice tool only. Consult official syllabuses at
-        <strong>waecgh.org</strong>.
+      <p style="margin-top:6px">
+        Practice tool only. Consult official syllabuses at <strong><a href="https://waecgh.org" target="_blank" rel="noopener noreferrer">waecgh.org</a></strong>.
       </p>
-      <p class="footer-note" style="margin-top: 1rem; opacity: 0.8; max-width: 600px; margin-left: auto; margin-right: auto;">
-        <strong>AI Transparency:</strong> This application integrates <strong>GPT-4.0</strong> and <strong>Gemini 2.5</strong> to provide intelligent feedback, marking, and educational assistance. We are committed to transparency in AI usage.
-      </p>
-      <!-- Legal Footer - Prominent Buttons for Google Verification -->
-      <div style="margin-top: 1.5rem; display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; padding: 0 20px; align-items: center;">
-        <a href="https://www.youtube.com/channel/UCo4k-_8Q92hXOcUdbAtwabg" target="_blank" rel="noopener" class="social-youtube" title="Watch on YouTube" style="text-decoration:none; margin-right: 8px;">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+    </div>
+
+    <!-- ═══════════════════════════════════════════
+         FOOTER
+    ═══════════════════════════════════════════ -->
+    <footer class="hp-footer" role="contentinfo">
+      <div class="hp-footer-inner">
+        <a class="hp-footer-brand" href="/" aria-label="Vision Education">
+          <img src="assets/logo.png" alt="Vision Education Footer Logo" width="34" height="34" loading="lazy" />
+          <span class="hp-footer-brand-name">Vision <span>Education</span></span>
         </a>
-        <a href="/privacy" style="
-          background: rgba(255, 255, 255, 0.05);
-          border: 1px solid rgba(255, 255, 255, 0.1);
-          color: #f1f5f9;
-          font-size: 0.8rem;
-          font-weight: 600;
-          text-decoration: none;
-          padding: 10px 20px;
-          border-radius: 8px;
-          transition: all 0.2s;
-          display: inline-flex;
-          align-items: center;
-          gap: 8px;
-        "
-        onmouseover="this.style.background='rgba(255, 255, 255, 0.1)'; this.style.borderColor='var(--primary)';"
-        onmouseout="this.style.background='rgba(255, 255, 255, 0.05)'; this.style.borderColor='rgba(255, 255, 255, 0.1)';"
-        >
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-          Privacy Policy
-        </a>
-        <a href="/terms" style="
-          background: rgba(255, 255, 255, 0.03);
-          border: 1px solid rgba(255, 255, 255, 0.1);
-          color: #94a3b8;
-          font-size: 0.8rem;
-          font-weight: 600;
-          text-decoration: none;
-          padding: 10px 20px;
-          border-radius: 8px;
-          transition: all 0.2s;
-          display: inline-flex;
-          align-items: center;
-          gap: 8px;
-        "
-        onmouseover="this.style.background='rgba(255, 255, 255, 0.08)'; this.style.color='#f1f5f9';"
-        onmouseout="this.style.background='rgba(255, 255, 255, 0.03)'; this.style.color='#94a3b8';"
-        >
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-          Terms of Service
-        </a>
-        <a href="javascript:void(0)" onclick="openAISecondary()" style="
-          background: rgba(99, 102, 241, 0.1);
-          border: 1px solid rgba(99, 102, 241, 0.2);
-          color: var(--primary);
-          font-size: 0.8rem;
-          font-weight: 600;
-          text-decoration: none;
-          padding: 10px 20px;
-          border-radius: 8px;
-          transition: all 0.2s;
-          display: inline-flex;
-          align-items: center;
-          gap: 8px;
-        "
-        onmouseover="this.style.background='rgba(99, 102, 241, 0.2)'; this.style.borderColor='var(--primary)';"
-        onmouseout="this.style.background='rgba(99, 102, 241, 0.1)'; this.style.borderColor='rgba(99, 102, 241, 0.2)';"
-        >
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
-          AI Transparency
-        </a>
+
+        <p class="hp-footer-meta">
+          Built for Ghana SHS Students · 2026 WASSCE Core Mathematics ·
+          <strong>AI Transparency:</strong> This application integrates <strong>GPT-4.0</strong> and <strong>Gemini 2.5</strong>
+          to provide intelligent feedback, marking, and educational assistance. We are committed to transparency in AI usage.
+        </p>
+
+        <div class="hp-footer-links" role="navigation" aria-label="Footer navigation">
+          <a href="https://www.youtube.com/channel/UCo4k-_8Q92hXOcUdbAtwabg" target="_blank" rel="noopener" class="hp-footer-yt" title="Watch on YouTube" aria-label="YouTube channel">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+            </svg>
+          </a>
+          <a href="/privacy" class="hp-footer-link" id="footerPrivacyLink">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            Privacy Policy
+          </a>
+          <a href="/terms" class="hp-footer-link" id="footerTermsLink">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            Terms of Service
+          </a>
+          <button class="hp-footer-link ai-link" onclick="openAISecondary()" id="footerAIBtn" type="button">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+            AI Transparency
+          </button>
+        </div>
+
+        <div class="hp-footer-divider" role="separator"></div>
+        <p class="hp-footer-bottom">© 2026 Vision Education · Made with ♥ in Ghana</p>
       </div>
     </footer>
 
-    <!--  SETTINGS MODAL  -->
-    <div class="modal-overlay" id="settingsModal">
+    <!-- ══════════════════════════════════════════
+         SETTINGS MODAL (preserved)
+    ══════════════════════════════════════════ -->
+    <div class="modal-overlay" id="settingsModal" role="dialog" aria-modal="true" aria-label="Settings and Security">
       <div class="settings-modal shadow-2xl">
         <div class="modal-header">
-          <h3 class="modal-title">Settings & Security</h3>
-          <button class="close-modal-btn" onclick="closeSettings()">
-            &times;
-          </button>
+          <h3 class="modal-title">Settings &amp; Security</h3>
+          <button class="close-modal-btn" onclick="closeSettings()" aria-label="Close settings">&times;</button>
         </div>
         <div class="modal-content">
           <div class="settings-user-card">
@@ -461,75 +657,45 @@
               <p id="settingsEmail">student@visionedu.online</p>
             </div>
           </div>
-
           <div class="security-status" id="securityStatus">
             <span class="status-secure"> Level 1 Protected</span>
           </div>
-
           <div class="setting-row">
             <div class="setting-label-wrap">
               <span class="setting-label">Two-Factor Authentication</span>
-              <span class="setting-desc"
-                >Add an extra layer of security. A code will be required at
-                every login.</span
-              >
+              <span class="setting-desc">Add an extra layer of security. A code will be required at every login.</span>
             </div>
-            <div
-              class="toggle-switch"
-              id="tfaToggle"
-              onclick="handle2FAToggle()"
-            ></div>
+            <div class="toggle-switch" id="tfaToggle" onclick="handle2FAToggle()" role="switch" aria-checked="false"></div>
           </div>
-
-          <div
-            class="setting-row"
-            style="
-              border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-              margin-bottom: 1.5rem;
-            "
-          >
+          <div class="setting-row" style="border-bottom: 1px solid rgba(255,255,255,0.05); margin-bottom: 1.5rem;">
             <div class="setting-label-wrap">
               <span class="setting-label">Sync Questions Daily</span>
-              <span class="setting-desc"
-                >Automatically fetch the latest AI-curated exam questions every
-                24h.</span
-              >
+              <span class="setting-desc">Automatically fetch the latest AI-curated exam questions every 24h.</span>
             </div>
-            <div
-              class="toggle-switch active"
-              style="pointer-events: none; opacity: 0.6"
-            ></div>
+            <div class="toggle-switch active" style="pointer-events: none; opacity: 0.6" role="switch" aria-checked="true"></div>
           </div>
-
-          <button
-            class="auth-submit-btn"
-            onclick="closeSettings()"
-            style="margin-top: 1rem; background: var(--gold); color: #000"
-          >
+          <button class="auth-submit-btn" onclick="closeSettings()" style="margin-top: 1rem; background: var(--gold); color: #000">
             <span>Save Changes</span>
           </button>
         </div>
       </div>
     </div>
 
-    <!--  AI TRANSPARENCY MODAL  -->
-    <div class="modal-overlay" id="aiModal">
+    <!-- AI TRANSPARENCY MODAL (preserved) -->
+    <div class="modal-overlay" id="aiModal" role="dialog" aria-modal="true" aria-label="AI Transparency Disclosure">
       <div class="settings-modal shadow-2xl" style="max-width: 600px;">
         <div class="modal-header">
           <h3 class="modal-title">AI Transparency Disclosure</h3>
-          <button class="close-modal-btn" onclick="closeAISecondary()">
-            &times;
-          </button>
+          <button class="close-modal-btn" onclick="closeAISecondary()" aria-label="Close AI transparency">&times;</button>
         </div>
         <div class="modal-content">
-          <div class="settings-user-card" style="background: rgba(99, 102, 241, 0.1); border: 1px solid rgba(99, 102, 241, 0.2);">
+          <div class="settings-user-card" style="background: rgba(99,102,241,0.1); border: 1px solid rgba(99,102,241,0.2);">
             <div class="settings-avatar" style="background: var(--primary); color: #fff;">AI</div>
             <div class="settings-info">
               <h4>Integrated AI services</h4>
-              <p>GPT-4.0 & Gemini 2.5</p>
+              <p>GPT-4.0 &amp; Gemini 2.5</p>
             </div>
           </div>
-
           <div style="margin-top: 1.5rem; color: var(--text-secondary); font-size: 0.95rem; line-height: 1.6;">
             <p style="margin-bottom: 1rem;">
               Vision Education utilizes state-of-the-art Artificial Intelligence to provide students with a premium learning experience:
@@ -548,36 +714,54 @@
               Data sent to these services is anonymized and used solely for generating educational feedback.
             </p>
           </div>
-
-          <button
-            class="auth-submit-btn"
-            onclick="closeAISecondary()"
-            style="margin-top: 2rem; background: var(--primary); color: #fff"
-          >
+          <button class="auth-submit-btn" onclick="closeAISecondary()" style="margin-top: 2rem; background: var(--primary); color: #fff">
             <span>I Understand</span>
           </button>
         </div>
       </div>
     </div>
 
+    <!-- ═══════════════════════════════════════════
+         INLINE SCRIPTS
+    ═══════════════════════════════════════════ -->
     <script>
+      // Modal helpers
       function openAISecondary() {
-        const modal = document.getElementById('aiModal');
-        if (modal) {
-          modal.classList.add('active');
-          document.body.style.overflow = 'hidden';
-        }
+        const m = document.getElementById('aiModal');
+        if (m) { m.classList.add('active'); document.body.style.overflow = 'hidden'; }
       }
       function closeAISecondary() {
-        const modal = document.getElementById('aiModal');
-        if (modal) {
-          modal.classList.remove('active');
-          document.body.style.overflow = '';
-        }
+        const m = document.getElementById('aiModal');
+        if (m) { m.classList.remove('active'); document.body.style.overflow = ''; }
       }
-      // Close on outside click
       window.addEventListener('click', (e) => {
         if (e.target.id === 'aiModal') closeAISecondary();
+      });
+
+      // Sticky nav scroll effect
+      const hpNav = document.getElementById('hpNav');
+      window.addEventListener('scroll', () => {
+        hpNav.classList.toggle('scrolled', window.scrollY > 60);
+      }, { passive: true });
+
+      // Reveal on scroll (IntersectionObserver)
+      const revealEls = document.querySelectorAll('.hp-reveal');
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(e => {
+          if (e.isIntersecting) { e.target.classList.add('revealed'); observer.unobserve(e.target); }
+        });
+      }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+      revealEls.forEach(el => observer.observe(el));
+
+      // Smooth scroll for nav links
+      document.querySelectorAll('a[href^="#"]').forEach(a => {
+        a.addEventListener('click', e => {
+          const target = document.querySelector(a.getAttribute('href'));
+          if (target) {
+            e.preventDefault();
+            target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }
+        });
       });
     </script>
 
