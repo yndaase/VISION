@@ -158,14 +158,18 @@
         <!-- Mode selector -->
         <div class="hp-mode-row" id="hp-mode-row">
           <button class="hp-mode-btn" id="mode-subj" onclick="switchMode('subjective')" aria-label="Switch to Subjective mode">
-            <span class="hp-mode-btn-icon">📝</span>
+            <span class="hp-mode-btn-icon" aria-hidden="true">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+            </span>
             <span class="hp-mode-btn-label">
               <strong>Subjective</strong>
               <span>Theory with AI Marking</span>
             </span>
           </button>
           <button class="hp-mode-btn" onclick="switchMode('objective')" aria-label="Switch to Objective mode">
-            <span class="hp-mode-btn-icon">🎯</span>
+            <span class="hp-mode-btn-icon" aria-hidden="true">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
+            </span>
             <span class="hp-mode-btn-label">
               <strong>Objective</strong>
               <span>Multiple Choice Practice</span>
@@ -204,7 +208,9 @@
       <!-- Scroll hint -->
       <div class="hp-scroll-hint" aria-hidden="true">
         <span>Scroll to explore</span>
-        <div class="hp-scroll-arrow">↓</div>
+        <div class="hp-scroll-arrow" aria-hidden="true">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+        </div>
       </div>
     </header>
 
@@ -286,7 +292,9 @@
              id="subjectCoreMaths"
              style="--card-accent:#6366f1;--card-icon-bg:rgba(99,102,241,0.12);--card-icon-border:rgba(99,102,241,0.25);"
              aria-label="Practice Core Mathematics">
-            <span class="hp-card-icon">📐</span>
+            <span class="hp-card-icon" aria-hidden="true">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="2" y1="20" x2="22" y2="20"/><line x1="22" y1="20" x2="12" y2="4"/><line x1="12" y1="4" x2="2" y2="20"/><line x1="7" y1="12" x2="17" y2="12"/></svg>
+            </span>
             <div>
               <div class="hp-card-title">Core Mathematics</div>
               <p class="hp-card-desc">
@@ -305,7 +313,9 @@
              id="subjectIntScience"
              style="--card-accent:#10b981;--card-icon-bg:rgba(16,185,129,0.12);--card-icon-border:rgba(16,185,129,0.25);"
              aria-label="Practice Integrated Science">
-            <span class="hp-card-icon">🔬</span>
+            <span class="hp-card-icon" aria-hidden="true">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3H5a2 2 0 0 0-2 2v4m6-6h10a2 2 0 0 1 2 2v4M9 3v18m0 0h10a2 2 0 0 0 2-2V9M9 21H5a2 2 0 0 1-2-2V9m0 0h18"/></svg>
+            </span>
             <div>
               <div class="hp-card-title">Integrated Science</div>
               <p class="hp-card-desc">
@@ -324,7 +334,9 @@
              id="subjectCompSci"
              style="--card-accent:#fbbf24;--card-icon-bg:rgba(251,191,36,0.12);--card-icon-border:rgba(251,191,36,0.25);"
              aria-label="Practice Computer Science">
-            <span class="hp-card-icon">💻</span>
+            <span class="hp-card-icon" aria-hidden="true">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+            </span>
             <div>
               <div class="hp-card-title">Computer Science</div>
               <p class="hp-card-desc">
@@ -439,7 +451,7 @@
           <div class="hp-bento-item hp-bento-third hp-reveal hp-reveal-delay-2 gold-glow"
                style="border-color:rgba(251,191,36,0.15);">
             <div class="hp-bento-label" style="color:#fbbf24;">
-              <span style="margin-right:4px">&#11088;</span>Enterprise
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="#fbbf24" style="margin-right:5px;vertical-align:middle;" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>Enterprise
             </div>
             <div class="hp-bento-title">Institutional Access</div>
             <p class="hp-bento-desc">
