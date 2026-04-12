@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Features | Vision Education</title>
+    <meta name="theme-color" content="#6366f1" />
+    <link rel="icon" href="assets/logo.png" />
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+    
+    <link rel="stylesheet" href="theme.css" />
+    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="homepage.css" />
+  </head>
+  <body>
+
+    <!-- ═══════════════════════════════════════════
+         TOP NAVIGATION BAR
+    ═══════════════════════════════════════════ -->
+    <nav class="hp-nav" id="hpNav" role="navigation" aria-label="Main navigation">
+      <a class="hp-nav-brand" href="/" aria-label="Vision Education Home">
+        <img src="assets/logo.png" alt="Vision Education Logo" width="34" height="34" loading="eager" />
+        <span class="hp-nav-brand-text">Vision <span>Education</span></span>
+      </a>
+
+      <div class="hp-nav-links" role="menubar">
+        <a href="/mocks" class="hp-nav-link" role="menuitem">Subjects</a>
+        <a href="/features.html" class="hp-nav-link" role="menuitem">Features</a>
+        <a href="/about.html" class="hp-nav-link" role="menuitem">About</a>
+      </div>
+
+      <div class="hp-nav-cta">
+        <a href="/about.html" class="hp-btn-outline" id="navAboutBtn">About</a>
+        <a href="/login" class="hp-btn-outline" id="navLoginBtn">Log In</a>
+        <a href="/dashboard" class="hp-btn-primary" id="navStartBtn">Start Free
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </a>
+      </div>
+
+      <button class="hp-nav-hamburger" id="hpHamburger" aria-label="Open menu">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+          <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
+        </svg>
+      </button>
+    </nav>
+
+    <!-- ═══════════════════════════════════════════
+         HEADER
+    ═══════════════════════════════════════════ -->
+    <header class="hp-slider-wrap" style="min-height: 40vh; display: flex; align-items: center; border-bottom: 0;">
+      <div class="hp-hero-orbs" aria-hidden="true">
+        <div class="hp-orb hp-orb-1"></div>
+        <div class="hp-orb hp-orb-2"></div>
+        <div class="hp-orb hp-orb-3"></div>
+      </div>
+      <div class="hp-hero-inner" style="margin-top: 40px;">
+        <div class="hp-section-label">Capabilities</div>
+        <h1 class="hp-hero-h1">Platform <span class="hp-gradient-text">Features</span></h1>
+        <p class="hp-hero-sub">Explore the powerful toolset driving thousands of top WASSCE grades.</p>
+      </div>
+    </header>
+
+    <!-- ═══════════════════════════════════════════
+         GATEWAY GRID (Remaining content)
+    ═══════════════════════════════════════════ -->
+    <section class="hp-gateway-section" aria-label="Quick Links & Features" style="padding-top: 0;">
+      <div class="hp-gateway-grid">
+      
+        <!-- AI Engine -->
+        <div class="hp-bento-item glow-indigo">
+          <div class="hp-bento-label">AI Engine</div>
+          <div class="hp-bento-title">Specialist AI marks your theory workings</div>
+          <p class="hp-bento-desc">Our Specialist AI will mark your logic, steps, and final accuracy on Section B subjective questions — just like a real WAEC examiner. Get instant, granular feedback on where marks were awarded or lost.</p>
+          <div class="hp-ai-pill"><span class="hp-ai-dot"></span>GPT-4.0 &amp; Gemini 2.5 · Live Feedback</div>
+        </div>
+
+        <!-- Mock Exams -->
+        <div class="hp-bento-item">
+          <div class="hp-bento-label">Mock Exams</div>
+          <div class="hp-bento-title">Full timed mock examinations</div>
+          <p class="hp-bento-desc">Simulate real WASSCE exam conditions. Timed sessions, randomised question sets, and full breakdown reports at the end of every mock.</p>
+          <a href="/mocks" class="hp-plan-btn primary" style="margin-top:auto;max-width:200px">Take a Mock →</a>
+        </div>
+
+        <!-- Difficulty System & Topic Filter -->
+        <div class="hp-bento-item">
+          <div class="hp-bento-label">Difficulty System</div>
+          <div class="hp-bento-title">3-tier adaptive difficulty</div>
+          <p class="hp-bento-desc">Questions progress from foundational to exam-standard.</p>
+          <div class="hp-diff-row" style="margin-bottom:1.5rem">
+            <span class="hp-diff-badge easy">Level 1 (Easy)</span><span class="hp-diff-badge medium">Level 2 (Medium)</span><span class="hp-diff-badge hard">Level 3 (Hard)</span>
+          </div>
+          <div class="hp-bento-label">Topic Filter</div>
+          <div class="hp-bento-title">Filter by topic or difficulty</div>
+          <p class="hp-bento-desc">Pinpoint weak areas and drill them with targeted practice sets.</p>
+        </div>
+
+        <!-- Progress Tracking & Past Questions -->
+        <div class="hp-bento-item glow-gold">
+          <div class="hp-bento-label">Past Questions</div>
+          <div class="hp-bento-title">Real WAEC past questions</div>
+          <p class="hp-bento-desc" style="margin-bottom:1.5rem">Questions align with the WAEC Chief Examiner's 2025 Report — not made up examples.</p>
+          
+          <div class="hp-bento-label">Progress Tracking</div>
+          <div class="hp-bento-title">Know exactly where you stand</div>
+          <p class="hp-bento-desc">Real-time score tracking across every session and subject.</p>
+          <div class="hp-progress-demo" aria-label="Sample progress indicators">
+            <div class="hp-prog-row"><span class="hp-prog-label">Algebra</span><div class="hp-prog-track"><div class="hp-prog-fill" style="background:#22c55e;width:82%"></div></div><span class="hp-prog-pct">82%</span></div>
+            <div class="hp-prog-row"><span class="hp-prog-label">Statistics</span><div class="hp-prog-track"><div class="hp-prog-fill" style="background:#fbbf24;width:67%"></div></div><span class="hp-prog-pct">67%</span></div>
+            <div class="hp-prog-row"><span class="hp-prog-label">Geometry</span><div class="hp-prog-track"><div class="hp-prog-fill" style="background:#6366f1;width:54%"></div></div><span class="hp-prog-pct">54%</span></div>
+          </div>
+        </div>
+
+        <!-- Access Plans -->
+        <div class="hp-bento-item">
+          <div class="hp-bento-label">Built different. Built for WASSCE.</div>
+          <div class="hp-bento-title">Every feature is purpose-built around the 2026 WASSCE curriculum and Ghana SHS student needs.</div>
+          <div class="hp-plan-strip">
+            <div class="hp-plan-card">
+              <span class="hp-plan-tag free">Free</span>
+              <div class="hp-plan-name">Student Access</div>
+              <p class="hp-plan-desc" style="font-size:0.8rem;color:#94a3b8">Full access to practice questions, AI feedback, and mock exams.</p>
+              <ul class="hp-plan-feats"><li>All practice questions</li><li>AI theory marking</li><li>Progress tracking</li><li>Mock exam mode</li></ul>
+              <a href="/login" class="hp-plan-btn primary">Get Started Free →</a>
+            </div>
+            <div class="hp-plan-card">
+              <span class="hp-plan-tag premium">Premium</span>
+              <div class="hp-plan-name">Institutional Access</div>
+              <p class="hp-plan-desc" style="font-size:0.8rem;color:#94a3b8">Enterprise-grade access for schools. School-level subscriptions with teacher dashboards, class analytics and student management.</p>
+              <ul class="hp-plan-feats"><li>Everything in Free</li><li>Teacher dashboard</li><li>Class analytics</li><li>Student management</li></ul>
+              <a href="/pricing" class="hp-plan-btn ghost">View Enterprise Plans →</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- The Creator -->
+        <div class="hp-bento-item">
+          <div class="hp-bento-label">The Creator</div>
+          <div class="hp-bento-title">Built by a student, for students.</div>
+          <p class="hp-bento-desc">This platform was created to help Ghanaian Senior High School students excel in their WASSCE Core Mathematics examinations. By focusing on real-world STEM applications — from Fintech setups to everyday utility calculations — the project redefines how students approach modern exam questions, directly aligning with WAEC's latest curriculum guidelines.</p>
+          <div class="hp-creator-wrap">
+            <div class="hp-creator-avatar">YN</div>
+            <div class="hp-creator-info">
+              <h4>Yaw Ndaase Mensuoh</h4>
+              <p>Computer Science Student<br>St. Augustine's College (Cape Coast)</p>
+            </div>
+          </div>
+          <div class="hp-social-links">
+             <a href="https://www.instagram.com/officialmryaw/" target="_blank" class="hp-social-btn">Connect on Instagram</a>
+             <a href="https://x.com/yndaase" target="_blank" class="hp-social-btn">Follow on X</a>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════
+         WAEC ACADEMIC NOTE BAND
+    ═══════════════════════════════════════════ -->
+    <div class="hp-note-band" role="note" aria-label="Academic disclaimer">
+      <p>Built for Ghana SHS Students · 2026 WASSCE Core Mathematics · Questions align with the WAEC Chief Examiner's 2025 Report</p>
+      <p style="margin-top:6px">Practice tool only. Consult official syllabuses at <strong><a href="https://waecgh.org" target="_blank" rel="noopener noreferrer">waecgh.org</a></strong>.</p>
+    </div>
+
+    <!-- ═══════════════════════════════════════════
+         FOOTER
+    ═══════════════════════════════════════════ -->
+    <footer class="hp-footer" role="contentinfo">
+      <div class="hp-footer-inner">
+        <a class="hp-footer-brand" href="/" aria-label="Vision Education">
+          <img src="assets/logo.png" alt="Vision Education Footer Logo" width="34" height="34" loading="lazy" />
+          <span class="hp-footer-brand-name">Vision <span>Education</span></span>
+        </a>
+        <p class="hp-footer-meta">
+          Built for Ghana SHS Students · 2026 WASSCE Core Mathematics ·
+          <strong>AI Transparency:</strong> This application integrates <strong>GPT-4.0</strong> and <strong>Gemini 2.5</strong>
+          to provide intelligent feedback, marking, and educational assistance. We are committed to transparency in AI usage.
+        </p>
+        <div class="hp-footer-divider" role="separator"></div>
+        <p class="hp-footer-bottom">© 2026 Vision Education · Made with ♥ in Ghana</p>
+      </div>
+    </footer>
+
+    <script>
+      // Sticky nav scroll effect
+      const hpNav = document.getElementById('hpNav');
+      window.addEventListener('scroll', () => {
+        hpNav.classList.toggle('scrolled', window.scrollY > 60);
+      }, { passive: true });
+    </script>
+  </body>
+</html>

@@ -106,10 +106,10 @@
       </a>
 
       <div class="hp-nav-links" role="menubar">
-        <a href="#subjects" class="hp-nav-link" role="menuitem">Subjects</a>
-        <a href="#features" class="hp-nav-link" role="menuitem">Features</a>
-        <a href="#how-it-works" class="hp-nav-link" role="menuitem">How It Works</a>
-        <a href="#about" class="hp-nav-link" role="menuitem">About</a>
+        <a href="javascript:void(0)" onclick="goToSlide(1)" class="hp-nav-link" role="menuitem">Subjects</a>
+        <a href="/features.html" class="hp-nav-link" role="menuitem">Features</a>
+        <a href="javascript:void(0)" onclick="goToSlide(2)" class="hp-nav-link" role="menuitem">Process</a>
+        <a href="/about.html" class="hp-nav-link" role="menuitem">About</a>
       </div>
 
       <div class="hp-nav-cta">
@@ -313,88 +313,6 @@
     </section>
 
     <!-- ═══════════════════════════════════════════
-         GATEWAY GRID (Remaining content)
-    ═══════════════════════════════════════════ -->
-    <section class="hp-gateway-section" aria-label="Quick Links & Features">
-      <div class="hp-gateway-grid">
-      
-        <!-- AI Engine -->
-        <div class="hp-bento-item glow-indigo">
-          <div class="hp-bento-label">AI Engine</div>
-          <div class="hp-bento-title">Specialist AI marks your theory workings</div>
-          <p class="hp-bento-desc">Our Specialist AI will mark your logic, steps, and final accuracy on Section B subjective questions — just like a real WAEC examiner. Get instant, granular feedback on where marks were awarded or lost.</p>
-          <div class="hp-ai-pill"><span class="hp-ai-dot"></span>GPT-4.0 &amp; Gemini 2.5 · Live Feedback</div>
-        </div>
-
-        <!-- Mock Exams -->
-        <div class="hp-bento-item">
-          <div class="hp-bento-label">Mock Exams</div>
-          <div class="hp-bento-title">Full timed mock examinations</div>
-          <p class="hp-bento-desc">Simulate real WASSCE exam conditions. Timed sessions, randomised question sets, and full breakdown reports at the end of every mock.</p>
-          <a href="/mocks" class="hp-plan-btn primary" style="margin-top:auto;max-width:200px">Take a Mock →</a>
-        </div>
-
-        <!-- Difficulty System & Topic Filter -->
-        <div class="hp-bento-item">
-          <div class="hp-bento-label">Difficulty System</div>
-          <div class="hp-bento-title">3-tier adaptive difficulty</div>
-          <p class="hp-bento-desc">Questions progress from foundational to exam-standard.</p>
-          <div class="hp-diff-row" style="margin-bottom:1.5rem">
-            <span class="hp-diff-badge easy">Level 1 (Easy)</span><span class="hp-diff-badge medium">Level 2 (Medium)</span><span class="hp-diff-badge hard">Level 3 (Hard)</span>
-          </div>
-          <div class="hp-bento-label">Topic Filter</div>
-          <div class="hp-bento-title">Filter by topic or difficulty</div>
-          <p class="hp-bento-desc">Pinpoint weak areas and drill them with targeted practice sets.</p>
-        </div>
-
-        <!-- Progress Tracking & Past Questions -->
-        <div class="hp-bento-item glow-gold">
-          <div class="hp-bento-label">Past Questions</div>
-          <div class="hp-bento-title">Real WAEC past questions</div>
-          <p class="hp-bento-desc" style="margin-bottom:1.5rem">Questions align with the WAEC Chief Examiner's 2025 Report — not made up examples.</p>
-          
-          <div class="hp-bento-label">Progress Tracking</div>
-          <div class="hp-bento-title">Know exactly where you stand</div>
-          <p class="hp-bento-desc">Real-time score tracking across every session and subject.</p>
-          <div class="hp-progress-demo" aria-label="Sample progress indicators">
-            <div class="hp-prog-row"><span class="hp-prog-label">Algebra</span><div class="hp-prog-track"><div class="hp-prog-fill" style="background:#22c55e;width:82%"></div></div><span class="hp-prog-pct">82%</span></div>
-            <div class="hp-prog-row"><span class="hp-prog-label">Statistics</span><div class="hp-prog-track"><div class="hp-prog-fill" style="background:#fbbf24;width:67%"></div></div><span class="hp-prog-pct">67%</span></div>
-            <div class="hp-prog-row"><span class="hp-prog-label">Geometry</span><div class="hp-prog-track"><div class="hp-prog-fill" style="background:#6366f1;width:54%"></div></div><span class="hp-prog-pct">54%</span></div>
-          </div>
-        </div>
-
-        <!-- Access Plans -->
-        <div class="hp-bento-item">
-          <div class="hp-bento-label">Built different. Built for WASSCE.</div>
-          <div class="hp-bento-title">Every feature is purpose-built around the 2026 WASSCE curriculum and Ghana SHS student needs.</div>
-          <div class="hp-plan-strip">
-            <div class="hp-plan-card">
-              <span class="hp-plan-tag free">Free</span>
-              <div class="hp-plan-name">Student Access</div>
-              <p class="hp-plan-desc" style="font-size:0.8rem;color:#94a3b8">Full access to practice questions, AI feedback, and mock exams.</p>
-              <ul class="hp-plan-feats"><li>All practice questions</li><li>AI theory marking</li><li>Progress tracking</li><li>Mock exam mode</li></ul>
-              <a href="/login" class="hp-plan-btn primary">Get Started Free →</a>
-            </div>
-            <div class="hp-plan-card">
-              <span class="hp-plan-tag premium">Premium</span>
-              <div class="hp-plan-name">Institutional Access</div>
-              <p class="hp-plan-desc" style="font-size:0.8rem;color:#94a3b8">Enterprise-grade access for schools. School-level subscriptions with teacher dashboards, class analytics and student management.</p>
-              <ul class="hp-plan-feats"><li>Everything in Free</li><li>Teacher dashboard</li><li>Class analytics</li><li>Student management</li></ul>
-              <a href="/pricing" class="hp-plan-btn ghost">View Enterprise Plans →</a>
-            </div>
-          </div>
-        </div>
-
-        <!-- The Creator -->
-        <div class="hp-bento-item">
-          <div class="hp-bento-label">The Creator</div>
-          <div class="hp-bento-title">Built by a student, for students.</div>
-          <p class="hp-bento-desc">This platform was created to help Ghanaian Senior High School students excel in their WASSCE Core Mathematics examinations. By focusing on real-world STEM applications — from Fintech setups to everyday utility calculations — the project redefines how students approach modern exam questions, directly aligning with WAEC's latest curriculum guidelines.</p>
-          <div class="hp-creator-wrap">
-            <div class="hp-creator-avatar">YN</div>
-            <div class="hp-creator-info">
-              <h4>Yaw Ndaase Mensuoh</h4>
-              <p>Computer Science Student<br>St. Augustine's College (Cape Coast)</p>
             </div>
           </div>
           <div class="hp-social-links">
