@@ -50,7 +50,7 @@ function startCountdown() {
 async function initializeMission(session, forced = false) {
     // 1. Vision Pro Access Check (Includes Admin Override via checkAuth)
     const isAdmin = (session.email || "").toLowerCase() === 'gisgreat308@gmail.com';
-    const isPro = session.role === 'pro' || isAdmin;
+    const isPro = session.role === 'pro' || isAdmin || session.role === 'enterprise' || !!session.institutionId;
 
     if (!isPro) {
         const paywall = document.getElementById("plannerPaywall");
