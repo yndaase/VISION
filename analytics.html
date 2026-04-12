@@ -250,6 +250,16 @@
       function handleLogout() {
         window.location.href = "/login";
       }
+
+      // Enterprise Dashboard Redirection Fix
+      (function() {
+        const session = typeof checkAuth === 'function' ? checkAuth() : null;
+        if (session && session.institutionId) {
+            document.querySelectorAll('a[href="/dashboard"], a[href="dashboard.html"]').forEach(el => {
+                el.href = "enterprise-student-dashboard.html";
+            });
+        }
+      })();
     </script>
   </body>
 </html>
