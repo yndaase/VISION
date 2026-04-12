@@ -645,7 +645,115 @@ function initNavUserChip() {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-  const session = checkAuth();
+  const isHomepage =
+    window.location.pathname === "/" ||
+    window.location.pathname === "/index" ||
+    window.location.pathname === "/index.html";
+
+  const session = getSession();
+
+  if (isHomepage && !session) {
+    // ── GUEST MODE: Show landing page, hide quiz engine ──────────────────
+    const progressBar   = document.getElementById("progressBarWrapper");
+    const quizSection   = document.getElementById("quiz-section");
+    const resultsSection = document.getElementById("resultsSection");
+
+    if (progressBar)    progressBar.style.display = "none";
+    if (quizSection)    quizSection.style.display  = "none";
+    if (resultsSection) resultsSection.style.display = "none";
+
+    // Show a prominent login CTA banner below the hero
+    const ctaBanner = document.createElement("div");
+    ctaBanner.id = "guestCtaBanner";
+    ctaBanner.innerHTML = `
+      <div style="
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 3rem 2rem;
+        text-align: center;
+      ">
+        <div style="
+          background: rgba(99,102,241,0.06);
+          border: 1px solid rgba(99,102,241,0.25);
+          border-radius: 20px;
+          padding: 3rem 2.5rem;
+          position: relative;
+          overflow: hidden;
+        ">
+          <div style="
+            position: absolute; inset: 0; pointer-events: none;
+            background: radial-gradient(ellipse 70% 60% at 50% 0%, rgba(99,102,241,0.12), transparent);
+          "></div>
+          <div style="position:relative; z-index:1;">
+            <div style="
+              display: inline-flex; align-items: center; gap: 8px;
+              background: rgba(34,197,94,0.1); border: 1px solid rgba(34,197,94,0.25);
+              color: #4ade80; font-size: 0.7rem; font-weight: 800;
+              letter-spacing: 0.12em; text-transform: uppercase;
+              padding: 6px 16px; border-radius: 100px; margin-bottom: 1.5rem;
+            ">
+              <span style="width:6px;height:6px;border-radius:50%;background:#22c55e;display:inline-block;"></span>
+              Free for All SHS Students
+            </div>
+            <h2 style="
+              font-size: clamp(1.6rem, 4vw, 2.2rem); font-weight: 900;
+              color: #f1f5f9; letter-spacing: -0.03em; margin-bottom: 0.75rem;
+            ">Ready to begin your 2026 WASSCE prep?</h2>
+            <p style="
+              font-size: 0.96rem; color: #64748b; max-width: 480px;
+              margin: 0 auto 2rem; line-height: 1.7;
+            ">
+              Create a free account to access 1000+ past questions, AI theory marking,
+              and full mock exams. Join thousands of Ghana SHS students already preparing.
+            </p>
+            <div style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">
+              <a href="/login" id="guestSignupBtn" style="
+                display: inline-flex; align-items: center; gap: 10px;
+                background: linear-gradient(135deg, #6366f1, #818cf8);
+                color: #fff; font-weight: 800; font-size: 0.95rem;
+                padding: 15px 36px; border-radius: 10px; text-decoration: none;
+                box-shadow: 0 6px 24px rgba(99,102,241,0.35);
+                transition: all 0.2s;
+              " onmouseover="this.style.transform='translateY(-2px)';this.style.filter='brightness(1.1)'"
+                 onmouseout="this.style.transform='';this.style.filter=''">
+                Get Started Free →
+              </a>
+              <a href="/login" id="guestLoginBtn" style="
+                display: inline-flex; align-items: center; gap: 10px;
+                background: transparent; color: #94a3b8; font-weight: 700;
+                font-size: 0.9rem; padding: 14px 28px; border-radius: 10px;
+                border: 1px solid rgba(255,255,255,0.12); text-decoration: none;
+                transition: all 0.2s;
+              " onmouseover="this.style.color='#f1f5f9';this.style.borderColor='rgba(255,255,255,0.22)'"
+                 onmouseout="this.style.color='#94a3b8';this.style.borderColor='rgba(255,255,255,0.12)'">
+                Log In
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+
+    // Insert after the hero
+    const hero = document.querySelector(".hp-hero") || document.querySelector(".hero");
+    if (hero && hero.parentNode) {
+      hero.parentNode.insertBefore(ctaBanner, hero.nextSibling);
+    } else {
+      document.body.insertBefore(ctaBanner, document.body.firstChild);
+    }
+    return; // Stop — don't load quiz for guests
+  }
+
+  // ── LOGGED-IN MODE (or non-homepage protected page) ──────────────────
+  if (!isHomepage) {
+    // Strict auth guard for all other pages
+    if (!session) {
+      const isRobotics = window.location.pathname.includes("robotics");
+      window.location.href = isRobotics ? "/robotics-login" : "/login";
+      return;
+    }
+  }
+
   if (!session) return;
 
   // Safe Initialization
