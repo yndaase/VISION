@@ -131,16 +131,18 @@
 
     <!-- Split layout -->
     <div class="login-layout">
-      <div class="login-nav-top" style="position: absolute; top: 2rem; right: 2rem; display: flex; gap: 1rem; z-index: 100;">
-        <a href="pricing.html" class="about-brand-btn" title="View Vision Pro Pricing" style="position: relative; top: 0; left: 0;">
-          <span class="about-icon" style="background:var(--primary);">₵</span>
+      <div class="login-nav-top">
+        <a href="pricing.html" class="about-brand-btn" title="View Vision Pro Pricing">
+          <span class="about-icon" style="background:var(--primary);">&#8373;</span>
           <span>View Pricing</span>
         </a>
-        <a href="/about" class="about-brand-btn" title="About Vision Education" style="position: relative; top: 0; left: 0;">
+        <a href="/" class="about-brand-btn" title="Back to Homepage">
           <span class="about-icon">V</span>
-          <span>About Vision</span>
+          <span>Back to Home</span>
         </a>
-        <button onclick="toggleTheme()" class="theme-toggle-btn" style="position: relative; top: 0; right: 0;" title="Toggle Theme" aria-label="Toggle theme">☀</button>
+        <button onclick="toggleTheme()" class="theme-toggle-btn" title="Toggle Theme" aria-label="Toggle theme">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+        </button>
       </div>
 
       <!--  LEFT PANEL (branding)  -->
@@ -400,7 +402,9 @@
 
             <button type="submit" class="auth-submit-btn" id="loginSubmit">
               <span>Sign In</span>
-              <span class="btn-arrow">→</span>
+              <span class="btn-arrow">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+              </span>
             </button>
           </form>
 
@@ -510,7 +514,9 @@
 
             <button type="submit" class="auth-submit-btn" id="signupSubmit">
               <span>Create Account</span>
-              <span class="btn-arrow">→</span>
+              <span class="btn-arrow">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+              </span>
             </button>
           </form>
 
@@ -547,7 +553,9 @@
             </div>
             <button type="submit" class="auth-submit-btn" id="forgotSubmit">
               <span id="forgotBtnText">Send Reset Code</span>
-              <span class="btn-arrow" id="forgotBtnArrow">→</span>
+              <span class="btn-arrow" id="forgotBtnArrow">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+              </span>
             </button>
             <div style="text-align: center; margin-top: 10px">
               <a
@@ -619,7 +627,9 @@
             </div>
             <button type="submit" class="auth-submit-btn" id="resetSubmit">
               <span>Update Password</span>
-              <span class="btn-arrow">→</span>
+              <span class="btn-arrow">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+              </span>
             </button>
           </form>
 
@@ -684,7 +694,9 @@
             </div>
             <button type="submit" class="auth-submit-btn" id="2faSubmit">
               <span>Verify Identity</span>
-              <span class="btn-arrow">→</span>
+              <span class="btn-arrow">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+              </span>
             </button>
             <div style="text-align: center; margin-top: 15px">
               <a
@@ -772,11 +784,15 @@
             </p>
             <ul style="list-style: none; padding: 0; margin-bottom: 1.5rem;">
               <li style="margin-bottom: 0.75rem; display: flex; gap: 10px;">
-                <span style="color: var(--primary);">✦</span>
+                <span style="color:var(--primary);display:flex;align-items:center;">
+                  <svg width="8" height="8" viewBox="0 0 8 8" fill="currentColor" aria-hidden="true"><circle cx="4" cy="4" r="4"/></svg>
+                </span>
                 <span><strong>GPT-4.0:</strong> Powers our theory marking engine for logical evaluation of student work.</span>
               </li>
               <li style="margin-bottom: 0.75rem; display: flex; gap: 10px;">
-                <span style="color: var(--primary);">✦</span>
+                <span style="color:var(--primary);display:flex;align-items:center;">
+                  <svg width="8" height="8" viewBox="0 0 8 8" fill="currentColor" aria-hidden="true"><circle cx="4" cy="4" r="4"/></svg>
+                </span>
                 <span><strong>Gemini 2.5:</strong> Assists in curriculum alignment and content curation.</span>
               </li>
             </ul>
