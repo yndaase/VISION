@@ -550,16 +550,15 @@
 
            <!-- Pane: Parent Link -->
            <div id="pane-parent" class="settings-pane hidden space-y-10">
-              <h2 class="text-4xl font-black mb-10">Guardian Authorization Console</h2>
+              <h2 class="text-4xl font-black mb-10 text-white">Parent Dashboard Link</h2>
               <div class="p-10 glass rounded-[3rem] border-white/5 space-y-8">
-                 <h3 class="text-xl font-black">Authorized Monitoring Pipeline</h3>
-                 <p class="text-gray-400 leading-relaxed font-medium">Generate a temporary 6-digit initialization vector (IV) to link your progress telemetry with a secondary Guardian account. Access persists for 24-hour cycles.</p>
-                 <button onclick="generateParentCode()" class="hp-btn-primary px-10 py-5 font-black text-xs uppercase tracking-widest">Initialize Link IV</button>
+                 <p class="text-gray-400 leading-relaxed font-medium">Generate a 6-digit code to link your account with your parent's dashboard.</p>
+                 <button onclick="generateParentCode()" class="hp-btn-primary px-10 py-5 font-black text-xs uppercase tracking-widest">Generate Link Code</button>
                  
-                 <div id="parentCodeDisplay" class="hidden p-12 glass border-emerald-500/20 rounded-[3rem] text-center space-y-6">
-                    <p class="text-[10px] font-black text-emerald-400 uppercase tracking-[0.3em]">Guardian Access Vector</p>
-                    <p id="parentCodeValue" class="text-7xl font-mono font-black text-white tracking-[0.2em] italic">000000</p>
-                    <p class="text-gray-500 text-xs font-bold uppercase tracking-widest">Valid for 24H · Provide to Guardian</p>
+                 <div id="parentCodeDisplay" class="hidden p-12 glass border-emerald-500/20 rounded-[3rem] text-center space-y-4">
+                    <p class="text-[10px] font-black text-emerald-400 uppercase tracking-widest">Your Shareable Code</p>
+                    <p id="parentCodeValue" class="text-7xl font-mono font-black text-white tracking-widest">000000</p>
+                    <p class="text-gray-500 text-xs font-bold uppercase tracking-widest">Expires in 24 Hours</p>
                  </div>
               </div>
            </div>
