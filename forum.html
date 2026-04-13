@@ -1,0 +1,396 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <script>document.documentElement.setAttribute("data-theme", "dark");</script>
+  <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Community Forum | Vision Education · 2026 WASSCE Prep</title>
+  <meta name="description" content="Ask questions, share tips, and discuss WASSCE subjects with fellow Ghana SHS students on the Vision Education community forum." />
+  <link rel="canonical" href="https://www.visionedu.online/forum" />
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#6366f1" />
+  <link rel="apple-touch-icon" href="assets/logo.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="dashboard.css" />
+  <link rel="stylesheet" href="theme.css" />
+  <link rel="stylesheet" href="forum.css" />
+  <script src="theme.js"></script>
+  <script>
+    (function () {
+      const SESSION_KEY = "waec_session";
+      const session = sessionStorage.getItem(SESSION_KEY) || localStorage.getItem(SESSION_KEY);
+      if (!session) { window.location.href = "/login"; }
+    })();
+  </script>
+</head>
+<body class="dashboard-page">
+
+  <!-- SIDE NAVIGATION -->
+  <aside class="side-nav">
+    <a class="side-nav-logo" href="/dashboard">
+      <img src="assets/logo.png" alt="Logo" style="height:48px;width:48px;object-fit:contain;">
+      <span>Vision Edu</span>
+    </a>
+    <nav class="side-nav-menu">
+      <a href="/dashboard" class="nav-item">
+        <span class="nav-item-icon"><svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg></span>
+        <span>Dashboard</span>
+      </a>
+      <a href="/mocks" class="nav-item">
+        <span class="nav-item-icon"><svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg></span>
+        <span>Mock Exams</span>
+      </a>
+      <a href="/leaderboard" class="nav-item">
+        <span class="nav-item-icon"><svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M7.5 21H2V9h5.5v12zm7.25-18h-5.5v18h5.5V3zM22 11h-5.5v10H22V11z"/></svg></span>
+        <span>Leaderboard</span>
+      </a>
+      <a href="/forum" class="nav-item active">
+        <span class="nav-item-icon"><svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M21 6h-2v9H6v2c0 .55.45 1 1 1h11l4 4V7c0-.55-.45-1-1-1zm-4 6V3c0-.55-.45-1-1-1H3c-.55 0-1 .45-1 1v14l4-4h10c.55 0 1-.45 1-1z"/></svg></span>
+        <span>Forum</span>
+      </a>
+      <a href="/analytics" class="nav-item">
+        <span class="nav-item-icon"><svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/></svg></span>
+        <span>Performance</span>
+      </a>
+    </nav>
+    <div class="side-nav-footer">
+      <a href="#" class="nav-item" onclick="openSettings(); return false;">
+        <span class="nav-item-icon"><svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58a.49.49 0 00.12-.61l-1.92-3.32a.49.49 0 00-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54a.484.484 0 00-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96a.49.49 0 00-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.07.62-.07.94s.02.64.07.94l-2.03 1.58a.49.49 0 00-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6A3.6 3.6 0 1115.6 12 3.611 3.611 0 0112 15.6z"/></svg></span>
+        <span>Settings</span>
+      </a>
+    </div>
+  </aside>
+
+  <!-- BOTTOM NAVIGATION (Mobile) -->
+  <nav class="bottom-nav">
+    <a href="/dashboard" class="bottom-nav-item"><span class="bottom-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg></span><span>Home</span></a>
+    <a href="/mocks" class="bottom-nav-item"><span class="bottom-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6z"/></svg></span><span>Mocks</span></a>
+    <a href="/leaderboard" class="bottom-nav-item"><span class="bottom-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M7.5 21H2V9h5.5v12zm7.25-18h-5.5v18h5.5V3zM22 11h-5.5v10H22V11z"/></svg></span><span>Ranks</span></a>
+    <a href="/forum" class="bottom-nav-item active"><span class="bottom-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M21 6h-2v9H6v2c0 .55.45 1 1 1h11l4 4V7c0-.55-.45-1-1-1zm-4 6V3c0-.55-.45-1-1-1H3c-.55 0-1 .45-1 1v14l4-4h10c.55 0 1-.45 1-1z"/></svg></span><span>Forum</span></a>
+    <a href="/analytics" class="bottom-nav-item"><span class="bottom-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/></svg></span><span>Stats</span></a>
+  </nav>
+
+  <div class="main-wrapper">
+    <!-- NAVBAR -->
+    <nav class="dash-nav">
+      <div class="dash-nav-inner">
+        <a class="dash-logo" href="/dashboard">
+          <img src="assets/logo.png" alt="Logo" style="height:32px;width:32px;object-fit:contain;margin-right:10px;">
+          <span class="dash-logo-text">Vision <span class="brand-accent">Forum</span></span>
+        </a>
+        <div class="dash-nav-right">
+          <span class="nav-badge">Community</span>
+          <button class="theme-toggle-btn" onclick="toggleTheme()" title="Toggle Theme"></button>
+          <div class="nav-user-chip">
+            <div class="nav-avatar" id="navAvatar">S</div>
+            <span class="nav-username" id="navUsername">Student</span>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <!-- FORUM CONTENT -->
+    <main class="forum-container">
+      <!-- Thread List View -->
+      <div id="forumListView">
+        <header class="forum-header">
+          <div>
+            <h1 class="forum-title">Community Forum</h1>
+            <p class="forum-subtitle">Ask questions, share tips, and help fellow students prepare for the 2026 WASSCE.</p>
+          </div>
+          <button class="forum-new-btn" onclick="openNewThreadModal()">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            New Thread
+          </button>
+        </header>
+
+        <div class="forum-categories" id="forumCategories">
+          <button class="forum-cat-btn active" onclick="filterForum('all', this)">All</button>
+          <button class="forum-cat-btn" onclick="filterForum('maths', this)"><span class="cat-dot cat-dot-maths"></span>Maths</button>
+          <button class="forum-cat-btn" onclick="filterForum('english', this)"><span class="cat-dot cat-dot-english"></span>English</button>
+          <button class="forum-cat-btn" onclick="filterForum('science', this)"><span class="cat-dot cat-dot-science"></span>Science</button>
+          <button class="forum-cat-btn" onclick="filterForum('social', this)"><span class="cat-dot cat-dot-social"></span>Social</button>
+          <button class="forum-cat-btn" onclick="filterForum('general', this)"><span class="cat-dot cat-dot-general"></span>General</button>
+        </div>
+
+        <div class="forum-thread-list" id="forumThreadList">
+          <!-- Populated by JS -->
+        </div>
+        <div class="forum-empty" id="forumEmpty" style="display:none;">
+          <div class="forum-empty-icon">💬</div>
+          <p>No threads yet. Start a conversation!</p>
+        </div>
+      </div>
+
+      <!-- Thread Detail View -->
+      <div id="forumDetailView" class="forum-detail">
+        <button class="forum-back-btn" onclick="showThreadList()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+          Back to Threads
+        </button>
+        <div id="forumDetailContent">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- New Thread Modal -->
+  <div class="forum-modal-overlay" id="newThreadModal">
+    <div class="forum-modal">
+      <div class="forum-modal-header">
+        <span class="forum-modal-title">Start a New Thread</span>
+        <button class="forum-modal-close" onclick="closeNewThreadModal()">&times;</button>
+      </div>
+      <div class="forum-modal-body">
+        <div>
+          <label>Category</label>
+          <select class="forum-select" id="newThreadCategory">
+            <option value="maths">Core Mathematics</option>
+            <option value="english">English Language</option>
+            <option value="science">Integrated Science</option>
+            <option value="social">Social Studies</option>
+            <option value="general">General Discussion</option>
+          </select>
+        </div>
+        <div>
+          <label>Title</label>
+          <input class="forum-input" id="newThreadTitle" placeholder="What's your question?" maxlength="120" />
+        </div>
+        <div>
+          <label>Content</label>
+          <textarea class="forum-textarea" id="newThreadBody" placeholder="Explain your question or topic in detail..." style="min-height:120px;"></textarea>
+        </div>
+        <button class="forum-submit-btn" onclick="submitNewThread()">Post Thread</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="auth.js"></script>
+  <script>
+    // ─── Forum Data Engine ───
+    const FORUM_KEY = 'vision_forum_threads';
+
+    const SEED_THREADS = [
+      { id: 't1', category: 'maths', title: 'How do you solve simultaneous equations with 3 unknowns?', body: 'I keep getting confused when there are 3 variables. Can someone explain the elimination method step by step?', author: 'Kwame A.', authorEmail: 'kwame@demo.gh', createdAt: Date.now() - 86400000 * 2, replies: [
+        { id: 'r1', author: 'Ama S.', authorEmail: 'ama@demo.gh', body: 'First, pick two pairs of equations and eliminate one variable from each pair. That gives you 2 equations with 2 unknowns. Then solve normally!', createdAt: Date.now() - 86400000 }
+      ]},
+      { id: 't2', category: 'science', title: 'Can someone explain the Krebs cycle in simple terms?', body: 'Biology section is killing me. I need a simple breakdown of the Krebs cycle that I can actually remember for the exam.', author: 'Efua D.', authorEmail: 'efua@demo.gh', createdAt: Date.now() - 86400000 * 3, replies: [
+        { id: 'r2', author: 'Kofi M.', authorEmail: 'kofi@demo.gh', body: 'Think of it as a cycle that breaks down acetyl-CoA (from glucose) step by step, releasing CO2 and producing ATP, NADH, and FADH2. The products power the electron transport chain.', createdAt: Date.now() - 86400000 * 2 }
+      ]},
+      { id: 't3', category: 'english', title: 'Tips for the comprehension passage section?', body: 'I always run out of time reading the comprehension passage. Any tips for answering faster while still being accurate?', author: 'Nana A.', authorEmail: 'nana@demo.gh', createdAt: Date.now() - 86400000 * 1, replies: [] },
+      { id: 't4', category: 'general', title: 'Who else is writing WASSCE November 2026?', body: 'Just curious how many of us are here preparing. Drop your school name below!', author: 'Adwoa F.', authorEmail: 'adwoa@demo.gh', createdAt: Date.now() - 86400000 * 5, replies: [
+        { id: 'r3', author: 'Papa K.', authorEmail: 'papa@demo.gh', body: 'Adisadel College here! Let\'s go 🔥', createdAt: Date.now() - 86400000 * 4 },
+        { id: 'r4', author: 'Akua T.', authorEmail: 'akua@demo.gh', body: 'St. Louis SHS checking in!', createdAt: Date.now() - 86400000 * 3 }
+      ]},
+      { id: 't5', category: 'social', title: 'Best way to memorize Ghana constitution chapters?', body: 'Social studies keeps asking about the constitution. How do you guys memorize the chapters and articles?', author: 'Yaw B.', authorEmail: 'yaw@demo.gh', createdAt: Date.now() - 86400000, replies: [] }
+    ];
+
+    function getThreads() {
+      try {
+        const stored = JSON.parse(localStorage.getItem(FORUM_KEY));
+        return stored && stored.length ? stored : SEED_THREADS;
+      } catch (e) {
+        return SEED_THREADS;
+      }
+    }
+    function saveThreads(threads) {
+      localStorage.setItem(FORUM_KEY, JSON.stringify(threads));
+    }
+
+    let currentCategory = 'all';
+
+    function renderThreadList() {
+      const threads = getThreads();
+      const list = document.getElementById('forumThreadList');
+      const empty = document.getElementById('forumEmpty');
+      
+      const filtered = currentCategory === 'all' ? threads : threads.filter(t => t.category === currentCategory);
+      
+      if (filtered.length === 0) {
+        list.innerHTML = '';
+        empty.style.display = 'block';
+        return;
+      }
+      empty.style.display = 'none';
+
+      // Sort by newest first
+      filtered.sort((a, b) => b.createdAt - a.createdAt);
+
+      list.innerHTML = filtered.map(t => {
+        const initial = t.author.charAt(0).toUpperCase();
+        const timeAgo = getTimeAgo(t.createdAt);
+        return `
+          <div class="forum-thread-card" onclick="viewThread('${t.id}')">
+            <div class="forum-thread-top">
+              <div class="forum-thread-avatar">${initial}</div>
+              <div class="forum-thread-author">${t.author}</div>
+              <div class="forum-thread-time">${timeAgo}</div>
+            </div>
+            <div class="forum-thread-title">${escapeHtml(t.title)}</div>
+            <div class="forum-thread-preview">${escapeHtml(t.body)}</div>
+            <div class="forum-thread-footer">
+              <span class="forum-thread-cat forum-thread-cat-${t.category}">${t.category}</span>
+              <span class="forum-thread-replies">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                ${t.replies ? t.replies.length : 0} replies
+              </span>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function viewThread(threadId) {
+      const threads = getThreads();
+      const thread = threads.find(t => t.id === threadId);
+      if (!thread) return;
+
+      document.getElementById('forumListView').style.display = 'none';
+      const detail = document.getElementById('forumDetailView');
+      detail.className = 'forum-detail active';
+
+      const initial = thread.author.charAt(0).toUpperCase();
+      const replies = thread.replies || [];
+
+      document.getElementById('forumDetailContent').innerHTML = `
+        <div class="forum-post">
+          <div class="forum-post-header">
+            <div class="forum-thread-avatar">${initial}</div>
+            <div>
+              <div class="forum-thread-author">${thread.author}</div>
+              <div class="forum-thread-time">${getTimeAgo(thread.createdAt)}</div>
+            </div>
+            <span class="forum-thread-cat forum-thread-cat-${thread.category}" style="margin-left:auto;">${thread.category}</span>
+          </div>
+          <h2 style="font-size:1.2rem;font-weight:800;margin-bottom:0.75rem;">${escapeHtml(thread.title)}</h2>
+          <div class="forum-post-body">${escapeHtml(thread.body)}</div>
+        </div>
+        <h3 style="font-size:0.82rem;font-weight:800;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:0.75rem;">${replies.length} Replies</h3>
+        ${replies.map(r => `
+          <div class="forum-reply">
+            <div class="forum-reply-header">
+              <div class="forum-reply-avatar">${r.author.charAt(0).toUpperCase()}</div>
+              <span style="font-size:0.82rem;font-weight:700;">${r.author}</span>
+              <span style="font-size:0.7rem;color:var(--text-muted);margin-left:auto;">${getTimeAgo(r.createdAt)}</span>
+            </div>
+            <div class="forum-reply-body">${escapeHtml(r.body)}</div>
+          </div>
+        `).join('')}
+        <div class="forum-reply-form">
+          <label>Write a Reply</label>
+          <textarea class="forum-textarea" id="replyInput" placeholder="Share your thoughts..."></textarea>
+          <button class="forum-submit-btn" onclick="submitReply('${threadId}')">Post Reply</button>
+        </div>
+      `;
+    }
+
+    function showThreadList() {
+      document.getElementById('forumListView').style.display = 'block';
+      document.getElementById('forumDetailView').className = 'forum-detail';
+      renderThreadList();
+    }
+
+    function submitReply(threadId) {
+      const input = document.getElementById('replyInput');
+      const body = input ? input.value.trim() : '';
+      if (!body) return;
+
+      const session = typeof getSession === 'function' ? getSession() : null;
+      const threads = getThreads();
+      const thread = threads.find(t => t.id === threadId);
+      if (!thread) return;
+      if (!thread.replies) thread.replies = [];
+
+      thread.replies.push({
+        id: 'r' + Date.now(),
+        author: session ? session.name : 'Anonymous',
+        authorEmail: session ? session.email : '',
+        body: body,
+        createdAt: Date.now()
+      });
+
+      saveThreads(threads);
+      viewThread(threadId);
+    }
+
+    function openNewThreadModal() {
+      document.getElementById('newThreadModal').classList.add('active');
+    }
+    function closeNewThreadModal() {
+      document.getElementById('newThreadModal').classList.remove('active');
+    }
+
+    function submitNewThread() {
+      const title = document.getElementById('newThreadTitle').value.trim();
+      const body = document.getElementById('newThreadBody').value.trim();
+      const category = document.getElementById('newThreadCategory').value;
+      if (!title || !body) return;
+
+      const session = typeof getSession === 'function' ? getSession() : null;
+      const threads = getThreads();
+
+      threads.push({
+        id: 't' + Date.now(),
+        category: category,
+        title: title,
+        body: body,
+        author: session ? session.name : 'Anonymous',
+        authorEmail: session ? session.email : '',
+        createdAt: Date.now(),
+        replies: []
+      });
+
+      saveThreads(threads);
+      closeNewThreadModal();
+      document.getElementById('newThreadTitle').value = '';
+      document.getElementById('newThreadBody').value = '';
+      renderThreadList();
+    }
+
+    function filterForum(cat, btn) {
+      currentCategory = cat;
+      document.querySelectorAll('.forum-cat-btn').forEach(b => b.classList.remove('active'));
+      if (btn) btn.classList.add('active');
+      renderThreadList();
+    }
+
+    // Utility
+    function getTimeAgo(timestamp) {
+      const diff = Date.now() - timestamp;
+      const mins = Math.floor(diff / 60000);
+      if (mins < 1) return 'Just now';
+      if (mins < 60) return mins + 'm ago';
+      const hrs = Math.floor(mins / 60);
+      if (hrs < 24) return hrs + 'h ago';
+      const days = Math.floor(hrs / 24);
+      if (days < 7) return days + 'd ago';
+      return new Date(timestamp).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
+    }
+    function escapeHtml(str) {
+      const div = document.createElement('div');
+      div.textContent = str;
+      return div.innerHTML;
+    }
+
+    // Init
+    document.addEventListener('DOMContentLoaded', () => {
+      const session = typeof checkAuth === 'function' ? checkAuth() : null;
+      if (session) {
+        const navAvatar = document.getElementById('navAvatar');
+        const navUsername = document.getElementById('navUsername');
+        if (navAvatar) navAvatar.textContent = session.name ? session.name.charAt(0).toUpperCase() : 'S';
+        if (navUsername) navUsername.textContent = session.name || 'Student';
+      }
+      renderThreadList();
+    });
+    window.addEventListener('click', (e) => {
+      if (e.target.id === 'newThreadModal') closeNewThreadModal();
+    });
+  </script>
+</body>
+</html>

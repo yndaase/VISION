@@ -1,0 +1,208 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Parent Portal | Vision Education · Monitor Your Child's Progress</title>
+  <meta name="description" content="Monitor your child's WASSCE preparation progress on Vision Education. View study streaks, mock scores, and subject mastery." />
+  <link rel="canonical" href="https://www.visionedu.online/parent-portal" />
+  <meta name="theme-color" content="#10b981" />
+  <link rel="apple-touch-icon" href="assets/logo.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="parent-portal.css" />
+</head>
+<body class="parent-page">
+
+  <!-- Background -->
+  <div class="parent-bg">
+    <span class="bg-orb bg-orb-1"></span>
+    <span class="bg-orb bg-orb-2"></span>
+  </div>
+
+  <!-- Main Card -->
+  <div class="parent-card" id="parentCard">
+    <!-- Login View -->
+    <div id="parentLoginView">
+      <div class="parent-header">
+        <img src="assets/logo.png" alt="Vision Education" class="parent-logo" />
+        <h1>Parent / Guardian Portal</h1>
+        <p>Enter the 6-digit access code provided by your child to view their study progress.</p>
+      </div>
+
+      <form class="parent-form" onsubmit="handleParentLogin(event)">
+        <div>
+          <label class="parent-label">Access Code</label>
+          <input type="text" class="parent-code-input" id="parentCodeInput" placeholder="000000" maxlength="6" inputmode="numeric" autocomplete="off" required />
+        </div>
+        <p class="parent-error" id="parentError">Invalid or expired access code. Please check with your child.</p>
+        <button type="submit" class="parent-submit-btn">View Progress</button>
+      </form>
+
+      <div class="parent-footer">
+        <p>Your child can generate an access code from their <strong>Settings</strong> page on Vision Education.</p>
+        <p style="margin-top:8px;"><a href="/">Back to Vision Education</a></p>
+      </div>
+    </div>
+
+    <!-- Dashboard View -->
+    <div id="parentDashView" class="parent-dashboard">
+      <div class="parent-child-header">
+        <div class="parent-child-avatar" id="childAvatar">S</div>
+        <div>
+          <div class="parent-child-name" id="childName">Student Name</div>
+          <div class="parent-child-school" id="childSchool">School Name</div>
+        </div>
+      </div>
+
+      <div class="parent-stats-grid">
+        <div class="parent-stat-card">
+          <div class="parent-stat-val" id="childAccuracy">0%</div>
+          <div class="parent-stat-label">Accuracy Rate</div>
+        </div>
+        <div class="parent-stat-card">
+          <div class="parent-stat-val" id="childQuestions">0</div>
+          <div class="parent-stat-label">Questions Solved</div>
+        </div>
+        <div class="parent-stat-card">
+          <div class="parent-stat-val" id="childStreak" style="color:#fbbf24;">0</div>
+          <div class="parent-stat-label">Study Streak (days)</div>
+        </div>
+        <div class="parent-stat-card">
+          <div class="parent-stat-val" id="childSubjects" style="color:#818cf8;">0</div>
+          <div class="parent-stat-label">Subjects Practiced</div>
+        </div>
+      </div>
+
+      <div class="parent-activity">
+        <div class="parent-activity-title">Recent Activity</div>
+        <div id="childActivityList">
+          <div class="parent-activity-item">
+            <span class="parent-activity-dot"></span>
+            <span class="parent-activity-text">No recent activity found.</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="parent-footer" style="margin-top:1.5rem;">
+        <p>This data is a real-time snapshot of your child's activity on Vision Education.</p>
+        <p style="margin-top:8px;"><a href="/" style="color:#10b981;">Back to Vision Education</a> · <a href="#" onclick="parentLogout(); return false;" style="color:#f87171;">Exit Portal</a></p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ─── Parent Portal Access Logic ───
+    const PARENT_CODE_KEY = 'vision_parent_codes';
+
+    function handleParentLogin(e) {
+      e.preventDefault();
+      const code = document.getElementById('parentCodeInput').value.trim();
+      const errorEl = document.getElementById('parentError');
+
+      if (code.length !== 6) {
+        errorEl.style.display = 'block';
+        errorEl.textContent = 'Please enter a 6-digit code.';
+        return;
+      }
+
+      // Check if code matches any stored parent code
+      const codes = getParentCodes();
+      const match = codes.find(c => c.code === code && c.expiresAt > Date.now());
+
+      if (!match) {
+        errorEl.style.display = 'block';
+        errorEl.textContent = 'Invalid or expired access code. Please check with your child.';
+        shakeCard();
+        return;
+      }
+
+      errorEl.style.display = 'none';
+      showParentDashboard(match);
+    }
+
+    function showParentDashboard(matchData) {
+      document.getElementById('parentLoginView').style.display = 'none';
+      const dash = document.getElementById('parentDashView');
+      dash.className = 'parent-dashboard active';
+
+      // Populate with child's data
+      const name = matchData.childName || 'Student';
+      document.getElementById('childAvatar').textContent = name.charAt(0).toUpperCase();
+      document.getElementById('childName').textContent = name;
+      document.getElementById('childSchool').textContent = matchData.childSchool || 'Ghana SHS';
+
+      // Pull stats from localStorage (if available on this device)
+      const statsKey = 'waec_stats_' + matchData.childEmail;
+      let stats = { answered: 0, correct: 0 };
+      try { stats = JSON.parse(localStorage.getItem(statsKey)) || stats; } catch(e) {}
+      
+      const accuracy = stats.answered > 0 ? Math.round((stats.correct / stats.answered) * 100) : 0;
+      document.getElementById('childAccuracy').textContent = accuracy + '%';
+      document.getElementById('childQuestions').textContent = stats.answered || 0;
+
+      // Streak data
+      const streakKey = 'vision_streak_' + matchData.childEmail;
+      let streak = { currentStreak: 0 };
+      try { streak = JSON.parse(localStorage.getItem(streakKey)) || streak; } catch(e) {}
+      document.getElementById('childStreak').textContent = streak.currentStreak || 0;
+
+      // Subjects (estimate)
+      document.getElementById('childSubjects').textContent = stats.answered > 0 ? Math.min(8, Math.ceil(stats.answered / 15)) : 0;
+
+      // Activity
+      const actList = document.getElementById('childActivityList');
+      if (stats.answered > 0) {
+        actList.innerHTML = `
+          <div class="parent-activity-item">
+            <span class="parent-activity-dot"></span>
+            <span class="parent-activity-text">Answered ${stats.answered} questions total</span>
+            <span class="parent-activity-date">Ongoing</span>
+          </div>
+          <div class="parent-activity-item">
+            <span class="parent-activity-dot" style="background:#fbbf24;"></span>
+            <span class="parent-activity-text">Current study streak: ${streak.currentStreak || 0} days</span>
+            <span class="parent-activity-date">Today</span>
+          </div>
+          <div class="parent-activity-item">
+            <span class="parent-activity-dot" style="background:#818cf8;"></span>
+            <span class="parent-activity-text">Overall accuracy: ${accuracy}%</span>
+            <span class="parent-activity-date">All-time</span>
+          </div>
+        `;
+      }
+    }
+
+    function parentLogout() {
+      document.getElementById('parentLoginView').style.display = 'block';
+      document.getElementById('parentDashView').className = 'parent-dashboard';
+      document.getElementById('parentCodeInput').value = '';
+    }
+
+    function getParentCodes() {
+      try {
+        return JSON.parse(localStorage.getItem(PARENT_CODE_KEY)) || [];
+      } catch(e) { return []; }
+    }
+
+    function shakeCard() {
+      const card = document.getElementById('parentCard');
+      card.style.animation = 'none';
+      card.offsetHeight; // trigger reflow
+      card.style.animation = 'shake 0.45s ease';
+    }
+
+    // Add shake keyframe
+    const style = document.createElement('style');
+    style.textContent = `
+      @keyframes shake {
+        0%,100% { transform: translateX(0); }
+        20%,60% { transform: translateX(-5px); }
+        40%,80% { transform: translateX(5px); }
+      }
+    `;
+    document.head.appendChild(style);
+  </script>
+</body>
+</html>

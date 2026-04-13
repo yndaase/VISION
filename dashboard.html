@@ -46,6 +46,7 @@
   <link rel="stylesheet" href="style.css" />
   <link rel="stylesheet" href="dashboard.css" />
   <link rel="stylesheet" href="theme.css" />
+  <link rel="stylesheet" href="leaderboard.css" />
 
   <script src="theme.js"></script>
   <script>
@@ -250,6 +251,18 @@
         </span>
         <span>Study Planner</span>
       </a>
+      <a href="leaderboard.html" class="nav-item">
+        <span class="nav-item-icon">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M7.5 21H2V9h5.5v12zm7.25-18h-5.5v18h5.5V3zM22 11h-5.5v10H22V11z"/></svg>
+        </span>
+        <span>Leaderboard</span>
+      </a>
+      <a href="forum.html" class="nav-item">
+        <span class="nav-item-icon">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M21 6h-2v9H6v2c0 .55.45 1 1 1h11l4 4V7c0-.55-.45-1-1-1zm-4 6V3c0-.55-.45-1-1-1H3c-.55 0-1 .45-1 1v14l4-4h10c.55 0 1-.45 1-1z"/></svg>
+        </span>
+        <span>Forum</span>
+      </a>
       <a href="pricing.html" class="nav-get-pro" id="sideNavGetPro">
         <span>Get Vision Pro</span>
       </a>
@@ -440,6 +453,19 @@
             <span class="hero-btn-icon"></span>
             <span>View Analytics</span>
           </a>
+        </div>
+
+        <!-- Streak Card -->
+        <div class="streak-card" style="margin-bottom: 1.5rem;">
+          <div class="streak-fire streak-fire-cold" id="streakFire">🔥</div>
+          <div class="streak-info">
+            <span class="streak-count" id="streakCurrent">0</span>
+            <span class="streak-label">Day Streak</span>
+          </div>
+          <div class="streak-meta">
+            <span class="streak-longest">Best: <span id="streakLongest">0</span> days</span>
+            <span class="streak-status" id="streakStatus"></span>
+          </div>
         </div>
 
         <!-- Stats row -->
@@ -1481,6 +1507,13 @@
                 err.style.display = "block";
             }
         }
+    </script>
+    <script src="streaks.js"></script>
+    <script>
+      // Show streak toast on dashboard load
+      window.addEventListener('DOMContentLoaded', () => {
+        setTimeout(showStreakToast, 1500);
+      });
     </script>
 </body>
 </html>

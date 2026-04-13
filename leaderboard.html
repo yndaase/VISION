@@ -1,0 +1,301 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <script>document.documentElement.setAttribute("data-theme", "dark");</script>
+  <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Leaderboard | Vision Education · 2026 WASSCE Prep</title>
+  <meta name="description" content="See the top-performing WASSCE students on Vision Education. Compete for the #1 spot across Core Maths, English, Science, and more." />
+  <link rel="canonical" href="https://www.visionedu.online/leaderboard" />
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#6366f1" />
+  <link rel="apple-touch-icon" href="assets/logo.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="dashboard.css" />
+  <link rel="stylesheet" href="theme.css" />
+  <link rel="stylesheet" href="leaderboard.css" />
+  <script src="theme.js"></script>
+  <script>
+    (function () {
+      const SESSION_KEY = "waec_session";
+      const session = sessionStorage.getItem(SESSION_KEY) || localStorage.getItem(SESSION_KEY);
+      if (!session) { window.location.href = "/login"; }
+    })();
+  </script>
+</head>
+<body class="dashboard-page">
+
+  <!-- SIDE NAVIGATION -->
+  <aside class="side-nav">
+    <a class="side-nav-logo" href="/dashboard">
+      <img src="assets/logo.png" alt="Logo" style="height:48px;width:48px;object-fit:contain;">
+      <span>Vision Edu</span>
+    </a>
+    <nav class="side-nav-menu">
+      <a href="/dashboard" class="nav-item">
+        <span class="nav-item-icon"><svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg></span>
+        <span>Dashboard</span>
+      </a>
+      <a href="/mocks" class="nav-item">
+        <span class="nav-item-icon"><svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg></span>
+        <span>Mock Exams</span>
+      </a>
+      <a href="/leaderboard" class="nav-item active">
+        <span class="nav-item-icon"><svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M7.5 21H2V9h5.5v12zm7.25-18h-5.5v18h5.5V3zM22 11h-5.5v10H22V11z"/></svg></span>
+        <span>Leaderboard</span>
+      </a>
+      <a href="/forum" class="nav-item">
+        <span class="nav-item-icon"><svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M21 6h-2v9H6v2c0 .55.45 1 1 1h11l4 4V7c0-.55-.45-1-1-1zm-4 6V3c0-.55-.45-1-1-1H3c-.55 0-1 .45-1 1v14l4-4h10c.55 0 1-.45 1-1z"/></svg></span>
+        <span>Forum</span>
+      </a>
+      <a href="/analytics" class="nav-item">
+        <span class="nav-item-icon"><svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/></svg></span>
+        <span>Performance</span>
+      </a>
+    </nav>
+    <div class="side-nav-footer">
+      <a href="#" class="nav-item" onclick="openSettings(); return false;">
+        <span class="nav-item-icon"><svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58a.49.49 0 00.12-.61l-1.92-3.32a.49.49 0 00-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54a.484.484 0 00-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96a.49.49 0 00-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.07.62-.07.94s.02.64.07.94l-2.03 1.58a.49.49 0 00-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6A3.6 3.6 0 1115.6 12 3.611 3.611 0 0112 15.6z"/></svg></span>
+        <span>Settings</span>
+      </a>
+    </div>
+  </aside>
+
+  <!-- BOTTOM NAVIGATION (Mobile) -->
+  <nav class="bottom-nav">
+    <a href="/dashboard" class="bottom-nav-item">
+      <span class="bottom-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg></span>
+      <span>Home</span>
+    </a>
+    <a href="/mocks" class="bottom-nav-item">
+      <span class="bottom-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg></span>
+      <span>Mocks</span>
+    </a>
+    <a href="/leaderboard" class="bottom-nav-item active">
+      <span class="bottom-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M7.5 21H2V9h5.5v12zm7.25-18h-5.5v18h5.5V3zM22 11h-5.5v10H22V11z"/></svg></span>
+      <span>Ranks</span>
+    </a>
+    <a href="/forum" class="bottom-nav-item">
+      <span class="bottom-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M21 6h-2v9H6v2c0 .55.45 1 1 1h11l4 4V7c0-.55-.45-1-1-1zm-4 6V3c0-.55-.45-1-1-1H3c-.55 0-1 .45-1 1v14l4-4h10c.55 0 1-.45 1-1z"/></svg></span>
+      <span>Forum</span>
+    </a>
+    <a href="/analytics" class="bottom-nav-item">
+      <span class="bottom-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/></svg></span>
+      <span>Stats</span>
+    </a>
+  </nav>
+
+  <div class="main-wrapper">
+    <!-- NAVBAR -->
+    <nav class="dash-nav" id="dashNav">
+      <div class="dash-nav-inner">
+        <a class="dash-logo" href="/dashboard">
+          <img src="assets/logo.png" alt="Logo" style="height:32px;width:32px;object-fit:contain;margin-right:10px;">
+          <span class="dash-logo-text">Vision <span class="brand-accent">Rankings</span></span>
+        </a>
+        <div class="dash-nav-right">
+          <span class="nav-badge">2026 WASSCE</span>
+          <button class="theme-toggle-btn" onclick="toggleTheme()" title="Toggle Theme"></button>
+          <div class="nav-user-chip">
+            <div class="nav-avatar" id="navAvatar">S</div>
+            <span class="nav-username" id="navUsername">Student</span>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <!-- LEADERBOARD CONTENT -->
+    <main class="leaderboard-container">
+      <header class="lb-header">
+        <h1 class="lb-title">Leaderboard</h1>
+        <p class="lb-subtitle">Top-performing students on Vision Education. Study more to climb the ranks!</p>
+      </header>
+
+      <!-- Filter Tabs -->
+      <div class="lb-filters" id="lbFilters">
+        <button class="lb-filter-btn active" data-subject="all" onclick="filterLeaderboard('all', this)">All Subjects</button>
+        <button class="lb-filter-btn" data-subject="maths" onclick="filterLeaderboard('maths', this)">Core Maths</button>
+        <button class="lb-filter-btn" data-subject="english" onclick="filterLeaderboard('english', this)">English</button>
+        <button class="lb-filter-btn" data-subject="science" onclick="filterLeaderboard('science', this)">Science</button>
+        <button class="lb-filter-btn" data-subject="social" onclick="filterLeaderboard('social', this)">Social Studies</button>
+      </div>
+
+      <!-- Podium -->
+      <div class="lb-podium" id="lbPodium">
+        <!-- 2nd Place -->
+        <div class="lb-podium-item">
+          <div class="podium-avatar silver" id="podium2Avatar">2</div>
+          <div class="podium-name" id="podium2Name">—</div>
+          <div class="podium-score" id="podium2Score">—</div>
+          <div class="podium-bar second"></div>
+        </div>
+        <!-- 1st Place -->
+        <div class="lb-podium-item">
+          <div class="podium-avatar gold" id="podium1Avatar">1</div>
+          <div class="podium-name" id="podium1Name">—</div>
+          <div class="podium-score" id="podium1Score">—</div>
+          <div class="podium-bar first"></div>
+        </div>
+        <!-- 3rd Place -->
+        <div class="lb-podium-item">
+          <div class="podium-avatar bronze" id="podium3Avatar">3</div>
+          <div class="podium-name" id="podium3Name">—</div>
+          <div class="podium-score" id="podium3Score">—</div>
+          <div class="podium-bar third"></div>
+        </div>
+      </div>
+
+      <!-- Rankings Table -->
+      <div class="lb-table-wrap">
+        <table class="lb-table" id="lbTable">
+          <thead>
+            <tr>
+              <th style="width:50px;">Rank</th>
+              <th>Student</th>
+              <th style="width:100px;">Score</th>
+              <th>Accuracy</th>
+            </tr>
+          </thead>
+          <tbody id="lbTableBody">
+            <!-- Populated by JS -->
+          </tbody>
+        </table>
+        <div class="lb-empty" id="lbEmpty" style="display:none;">
+          <div class="lb-empty-icon">🏆</div>
+          <p>No rankings yet. Start practicing to appear on the leaderboard!</p>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="auth.js"></script>
+  <script src="streaks.js"></script>
+  <script>
+    // ─── Leaderboard Data Engine ───
+    const DEMO_STUDENTS = [
+      { name: 'Kwame Asante', school: "St. Augustine's College", score: 487, accuracy: 94, email: 'kwame@demo.gh' },
+      { name: 'Ama Serwaa', school: 'Wesley Girls', score: 462, accuracy: 91, email: 'ama@demo.gh' },
+      { name: 'Kofi Mensah', school: 'Mfantsipim School', score: 445, accuracy: 89, email: 'kofi@demo.gh' },
+      { name: 'Abena Osei', school: 'Achimota School', score: 431, accuracy: 87, email: 'abena@demo.gh' },
+      { name: 'Yaw Boateng', school: 'Prempeh College', score: 418, accuracy: 85, email: 'yaw@demo.gh' },
+      { name: 'Efua Dadzie', school: 'Holy Child School', score: 405, accuracy: 84, email: 'efua@demo.gh' },
+      { name: 'Nana Agyeman', school: 'Opoku Ware School', score: 392, accuracy: 82, email: 'nana@demo.gh' },
+      { name: 'Adwoa Frimpong', school: 'Aburi Girls', score: 380, accuracy: 80, email: 'adwoa@demo.gh' },
+      { name: 'Papa Kwesi', school: 'Adisadel College', score: 367, accuracy: 78, email: 'papa@demo.gh' },
+      { name: 'Akua Tawiah', school: 'St. Louis SHS', score: 354, accuracy: 76, email: 'akua@demo.gh' },
+    ];
+
+    let currentFilter = 'all';
+
+    function getLeaderboardData() {
+      // Merge demo students with current user data
+      const session = typeof getSession === 'function' ? getSession() : null;
+      const students = [...DEMO_STUDENTS];
+
+      if (session) {
+        const stats = typeof getStats === 'function' ? getStats() : { answered: 0, correct: 0 };
+        const accuracy = stats.answered > 0 ? Math.round((stats.correct / stats.answered) * 100) : 0;
+        const existing = students.findIndex(s => s.email === session.email);
+        const userData = {
+          name: session.name || 'You',
+          school: session.school || 'Your School',
+          score: stats.correct * 10 + stats.answered,
+          accuracy: accuracy,
+          email: session.email,
+          isMe: true
+        };
+        if (existing !== -1) {
+          students[existing] = userData;
+        } else {
+          students.push(userData);
+        }
+      }
+
+      // Sort by score descending
+      students.sort((a, b) => b.score - a.score);
+      return students;
+    }
+
+    function renderLeaderboard() {
+      const students = getLeaderboardData();
+      const tbody = document.getElementById('lbTableBody');
+      const empty = document.getElementById('lbEmpty');
+
+      if (students.length === 0) {
+        empty.style.display = 'block';
+        return;
+      }
+      empty.style.display = 'none';
+
+      // Update Podium
+      for (let i = 1; i <= 3; i++) {
+        const s = students[i - 1];
+        if (!s) continue;
+        const avatarEl = document.getElementById(`podium${i}Avatar`);
+        const nameEl = document.getElementById(`podium${i}Name`);
+        const scoreEl = document.getElementById(`podium${i}Score`);
+        if (avatarEl) avatarEl.textContent = s.name.charAt(0).toUpperCase();
+        if (nameEl) nameEl.textContent = s.name.split(' ')[0];
+        if (scoreEl) scoreEl.textContent = s.score + ' pts';
+      }
+
+      // Render Table
+      tbody.innerHTML = students.map((s, idx) => {
+        const rank = idx + 1;
+        const initial = s.name.charAt(0).toUpperCase();
+        const rankClass = rank <= 3 ? `rank-${rank}` : '';
+        const meClass = s.isMe ? 'lb-me' : '';
+        const medal = rank === 1 ? '🥇' : rank === 2 ? '🥈' : rank === 3 ? '🥉' : '';
+
+        return `
+          <tr class="${meClass}">
+            <td><span class="lb-rank ${rankClass}">${medal || rank}</span></td>
+            <td>
+              <div class="lb-user-cell">
+                <div class="lb-avatar" style="background:${s.isMe ? 'var(--primary)' : getAvatarColor(rank)}">${initial}</div>
+                <div>
+                  <div class="lb-name">${s.name}${s.isMe ? ' <span style="font-size:0.7rem;color:var(--primary);">(You)</span>' : ''}</div>
+                  <div class="lb-school">${s.school}</div>
+                </div>
+              </div>
+            </td>
+            <td style="font-weight:800;font-family:'JetBrains Mono',monospace;">${s.score}</td>
+            <td>
+              ${s.accuracy}%
+              <div class="lb-accuracy-bar"><div class="lb-accuracy-fill" style="width:${s.accuracy}%"></div></div>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function getAvatarColor(rank) {
+      const colors = ['#fbbf24', '#94a3b8', '#f97316', '#6366f1', '#10b981', '#f43f5e', '#8b5cf6', '#0ea5e9', '#ec4899', '#14b8a6'];
+      return colors[(rank - 1) % colors.length];
+    }
+
+    function filterLeaderboard(subject, btn) {
+      currentFilter = subject;
+      document.querySelectorAll('.lb-filter-btn').forEach(b => b.classList.remove('active'));
+      if (btn) btn.classList.add('active');
+      renderLeaderboard();
+    }
+
+    // Init
+    document.addEventListener('DOMContentLoaded', () => {
+      const session = typeof checkAuth === 'function' ? checkAuth() : null;
+      if (session) {
+        const navAvatar = document.getElementById('navAvatar');
+        const navUsername = document.getElementById('navUsername');
+        if (navAvatar) navAvatar.textContent = session.name ? session.name.charAt(0).toUpperCase() : 'S';
+        if (navUsername) navUsername.textContent = session.name || 'Student';
+      }
+      renderLeaderboard();
+    });
+  </script>
+</body>
+</html>
