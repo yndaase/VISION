@@ -6,7 +6,7 @@
     document.documentElement.setAttribute("data-theme", "dark");
   </script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Student Command | Vision Education 2026</title>
+  <title>Dashboard | Vision Education 2026</title>
   
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -122,7 +122,7 @@
     <div class="p-8 border-t border-white/5 space-y-4">
        <button onclick="openSettings()" class="w-full flex items-center gap-4 px-4 py-3.5 rounded-2xl font-bold text-sm text-gray-400 hover:bg-white/5 hover:text-white transition-all outline-none">
           <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
-          Command Settings
+          Dashboard Settings
        </button>
     </div>
   </aside>
@@ -135,12 +135,16 @@
        <div class="flex items-center gap-6">
           <a href="/" class="hp-btn-glass px-4 py-2 text-[10px] font-black uppercase tracking-widest no-underline flex items-center gap-2">
              <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
-             Primary Exit
+             Return to Hub
           </a>
           <span class="w-px h-6 bg-white/10"></span>
-          <div class="flex items-center gap-2 px-4 py-2 bg-indigo-500/10 border border-indigo-500/20 rounded-full">
-             <div class="w-1.5 h-1.5 bg-indigo-400 rounded-full animate-pulse shadow-[0_0_10px_#6366f1]"></div>
-             <span class="text-[9px] font-black text-indigo-400 uppercase tracking-widest">Live Core Hub</span>
+          <div class="flex items-center gap-6">
+             <h2 class="text-xl font-black tracking-tighter uppercase italic text-indigo-400">Academic <span class="text-white">Analytics</span></h2>
+             <span class="w-px h-6 bg-white/10"></span>
+             <div class="flex items-center gap-2 px-4 py-2 bg-indigo-500/10 border border-indigo-500/20 rounded-full">
+                <div class="w-1.5 h-1.5 bg-indigo-400 rounded-full animate-pulse shadow-[0_0_10px_#6366f1]"></div>
+                <span class="text-[9px] font-black text-indigo-400 uppercase tracking-widest">Network Active</span>
+             </div>
           </div>
        </div>
 
@@ -166,7 +170,7 @@
           
           <div class="flex flex-col md:flex-row justify-between items-end gap-8 mb-4">
              <div>
-                <h1 class="text-5xl font-black mb-4 leading-tight tracking-tighter">Command <span class="text-indigo-400 italic">Overview.</span></h1>
+                <h1 class="text-5xl font-black mb-4 leading-tight tracking-tighter">Vision Education <span class="text-indigo-400 italic">Dashboard.</span></h1>
                 <p class="text-gray-400 text-lg font-medium">Synchronized academic telemetry for the 2026 WASSCE.</p>
              </div>
              <div id="proPromoStrip" class="hidden">
@@ -191,17 +195,19 @@
              </div>
              <div class="glass-card p-10 rounded-[3rem] border-white/5 group bg-emerald-500/5 border-emerald-500/10">
                 <p class="text-[10px] font-black text-emerald-400 uppercase tracking-widest mb-6">Active Streak</p>
-                <div class="flex items-center gap-4">
-                   <h3 id="studyStreak" class="text-6xl font-black text-white leading-none">0</h3>
-                   <div class="w-10 h-10 rounded-full bg-emerald-400 flex items-center justify-center text-navy font-black text-xs shadow-[0_0_20px_#34d399]">🔥</div>
-                </div>
-                <p class="text-[10px] font-bold text-emerald-500/60 uppercase mt-4">Days Consistent</p>
+                 <div class="flex items-center gap-4">
+                    <h3 id="streakCurrent" class="text-6xl font-black text-white leading-none">0</h3>
+                    <div id="streakFire" class="w-10 h-10 rounded-full bg-emerald-400 flex items-center justify-center text-navy font-black text-xs shadow-[0_0_20px_#34d399]">🔥</div>
+                 </div>
+                 <p id="streakStatus" class="text-[10px] font-bold text-emerald-500/60 uppercase mt-4">Days Consistent</p>
              </div>
              <div class="glass-card p-10 rounded-[3rem] border-white/5 group bg-indigo-500/5 border-indigo-500/10">
-                <p class="text-[10px] font-black text-indigo-400 uppercase tracking-widest mb-6">Mastery Level</p>
-                <h3 id="masteryLevel" class="text-6xl font-black text-white">S1</h3>
-                <p class="text-[10px] font-bold text-indigo-500/60 uppercase mt-4 font-mono">Rank: Elite Candidate</p>
-             </div>
+                 <p class="text-[10px] font-black text-indigo-400 uppercase tracking-widest mb-6">Longest Session</p>
+                 <div class="flex items-baseline gap-2">
+                    <h3 id="streakLongest" class="text-6xl font-black text-white">0</h3>
+                    <span class="text-xs font-bold text-indigo-500 uppercase font-mono tracking-tighter">Elite Rank</span>
+                 </div>
+              </div>
           </div>
 
           <!-- ANALYTICS GRID -->
@@ -362,24 +368,56 @@
 
        <!-- 4. PLANNER SECTION -->
        <section class="main-section space-y-12" id="planner">
-          <div class="text-center mb-16">
-             <h2 class="text-6xl font-black mb-6 tracking-tighter">Study <span class="text-indigo-500 italic">Planner.</span></h2>
-             <p class="text-gray-400 text-xl font-medium max-w-2xl mx-auto italic">"Execution is the difference between ambition and result."</p>
-          </div>
-          
-          <div class="max-w-5xl mx-auto glass-card rounded-[4rem] p-12 md:p-20 border-white/5 text-center">
-             <div class="w-24 h-24 bg-indigo-500/10 rounded-[2.5rem] border border-indigo-500/20 flex items-center justify-center text-indigo-400 mx-auto mb-10 shadow-[0_0_50px_rgba(99,102,241,0.15)]">
-                <svg width="40" height="40" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-             </div>
-             <h3 class="text-3xl font-black mb-6">Autonomous Scheduling</h3>
-             <p class="text-gray-400 text-lg leading-relaxed max-w-2xl mx-auto mb-12 font-medium">
-                Our AI engine is currently mapping your weak areas to create a personalized revision schedule for the next 14 days. 
-                Keep practicing to refine the algorithm.
-             </p>
-             <div class="flex flex-col sm:flex-row justify-center gap-6">
-                <button class="hp-btn-primary px-10 py-5 font-black text-xs uppercase tracking-widest shadow-2xl">Force Generation</button>
-             </div>
-          </div>
+           <div class="text-center mb-16">
+              <h2 class="text-6xl font-black mb-6 tracking-tighter">Study <span class="text-indigo-500 italic">Planner.</span></h2>
+              <div class="flex justify-center gap-10 mb-8">
+                 <div class="text-center">
+                    <p id="cdDays" class="text-4xl font-black text-white">00</p>
+                    <p class="text-[8px] font-black text-gray-600 uppercase tracking-widest">Days</p>
+                 </div>
+                 <div class="text-center">
+                    <p id="cdHours" class="text-4xl font-black text-white">00</p>
+                    <p class="text-[8px] font-black text-gray-600 uppercase tracking-widest">Hours</p>
+                 </div>
+                 <div class="text-center">
+                    <p id="cdMins" class="text-4xl font-black text-white">00</p>
+                    <p class="text-[8px] font-black text-gray-600 uppercase tracking-widest">Mins</p>
+                 </div>
+              </div>
+              <p class="text-gray-400 text-xl font-medium max-w-2xl mx-auto italic">"Execution is the difference between ambition and result."</p>
+           </div>
+           
+           <div class="max-w-5xl mx-auto space-y-12" id="missionContainer">
+              <div class="glass-card rounded-[4rem] p-12 md:p-20 border-white/5 relative overflow-hidden" id="missionCard">
+                 <div class="absolute top-0 right-0 px-8 py-3 bg-indigo-500 text-navy font-black text-[10px] uppercase tracking-widest rounded-bl-3xl">AI Active Mission</div>
+                 
+                 <div class="space-y-8 text-left">
+                    <div>
+                       <span class="text-[10px] font-black text-indigo-400 uppercase tracking-widest mb-2 block">Current Strategic Topic</span>
+                       <h3 id="planTopic" class="text-3xl font-black text-white">Loading Strategy...</h3>
+                    </div>
+
+                    <div id="planTimetable" class="prose prose-invert max-w-none text-gray-400">
+                       <p>Auditing your performance packets...</p>
+                    </div>
+
+                    <div class="grid md:grid-cols-2 gap-10 pt-8 border-t border-white/5">
+                       <div class="space-y-4">
+                          <p class="text-[10px] font-black text-gray-500 uppercase tracking-widest">Mission Tasks</p>
+                          <div id="planTasks" class="space-y-3 text-sm text-gray-400 font-medium"></div>
+                       </div>
+                       <div class="space-y-4">
+                          <p class="text-[10px] font-black text-gray-500 uppercase tracking-widest">Tactical Motivation</p>
+                          <p id="planMotivation" class="text-sm italic text-indigo-400 leading-relaxed"></p>
+                       </div>
+                    </div>
+                 </div>
+              </div>
+
+              <div class="flex justify-center gap-6">
+                 <button id="refreshBtn" onclick="refreshPlan()" class="hp-btn-primary px-10 py-5 font-black text-xs uppercase tracking-widest shadow-2xl">Re-Generate Mission</button>
+              </div>
+           </div>
        </section>
        
        <!-- 5. MATERIALS SECTION -->
@@ -433,7 +471,7 @@
            
            <!-- Pane: Profile -->
            <div id="pane-profile" class="settings-pane space-y-12">
-              <h2 class="text-4xl font-black mb-10 text-white">Candidate Node Identification</h2>
+              <h2 class="text-4xl font-black mb-10 text-white">Account Profile</h2>
               <div class="flex items-center gap-10 p-10 glass rounded-[2.5rem] border-white/5">
                  <div id="settingsAvatar" class="w-24 h-24 bg-indigo-500 rounded-3xl flex items-center justify-center text-white text-3xl font-black border border-indigo-500/30">S</div>
                  <div class="space-y-2">
@@ -447,7 +485,7 @@
               </div>
               <div class="grid grid-cols-2 gap-8">
                  <div class="p-8 glass rounded-[2rem] border-white/5">
-                    <p class="text-[9px] font-black text-gray-500 uppercase tracking-widest mb-2">Academic Role</p>
+                    <p class="text-[9px] font-black text-gray-500 uppercase tracking-widest mb-2">Academic Status</p>
                     <p class="text-white font-bold italic">Primary Candidate 2026</p>
                  </div>
                  <div class="p-8 glass rounded-[2rem] border-white/5">
@@ -649,7 +687,49 @@
 
     // Update Setting Subscription UI
     setTimeout(updateSettingsSubUI, 100);
-
   </script>
+
+  <!-- External Feature Enforcements -->
+  <script src="auth.js"></script>
+  <script src="streaks.js"></script>
+  <script src="materials.js"></script>
+  <script src="planner-core.js"></script>
+  <script src="dashboard.js"></script>
+
+  <script>
+      // Settings Workspace Logic
+      function switchSettingsTab(tabId, btn) {
+        document.querySelectorAll('.settings-pane').forEach(p => p.classList.add('hidden'));
+        const target = document.getElementById('pane-' + tabId);
+        if (target) target.classList.remove('hidden');
+        
+        // Update sidebar button states
+        document.querySelectorAll('[onclick*="switchSettingsTab"]').forEach(b => {
+          b.classList.remove('bg-white/5', 'border-white/10', 'text-white');
+          b.classList.add('text-gray-400');
+        });
+        if(btn) {
+           btn.classList.add('bg-white/5', 'border-white/10', 'text-white');
+           btn.classList.remove('text-gray-400');
+        }
+      }
+
+      function openSettings() {
+        const m = document.getElementById('settingsModal');
+        if (m) {
+          m.classList.remove('opacity-0', 'pointer-events-none');
+          document.body.style.overflow = 'hidden';
+        }
+      }
+
+      function closeSettings() {
+        const m = document.getElementById('settingsModal');
+        if (m) {
+          m.classList.add('opacity-0', 'pointer-events-none');
+          document.body.style.overflow = 'auto';
+        }
+      }
+    </script>
 </body>
 </html>
+

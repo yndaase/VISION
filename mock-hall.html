@@ -60,19 +60,49 @@
     #timerClock.critical { color: #ef4444; animation: blink 1s infinite; }
     @keyframes blink { 50% { opacity: 0.5; } }
 
-    .palette-num { transition: all 0.2s; cursor: pointer; }
-    .palette-num.pn-active { background: rgba(99, 102, 241, 0.2); border-color: #6366f1; color: #6366f1; }
+    .palette-num { transition: all 0.2s; cursor: pointer; height: 40px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.8rem; color: #64748b; }
+    .palette-num.pn-active { background: rgba(99, 102, 241, 0.2); border-color: #6366f1; color: #fff; }
     .palette-num.pn-answered { background: #6366f1; color: white; border-color: #6366f1; }
     .palette-num.pn-flagged { background: #f59e0b; color: white; border-color: #f59e0b; }
     .palette-num.pn-answered.pn-flagged { background: linear-gradient(135deg, #6366f1, #f59e0b); }
 
-    .option-row.selected { background: rgba(99, 102, 241, 0.1); border-color: #6366f1; }
-    .option-row.selected .option-letter-box { background: #6366f1; color: white; border-color: #6366f1; }
-
     .ai-drawer { transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1); transform: translateX(100%); }
     .ai-drawer.open { transform: translateX(0); }
 
-    /* For original JS hooks support */
+    /* MISSION-CRITICAL CLASSES FOR JS-GENERATED CONTENT */
+    .q-header-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; }
+    .q-num-badge { padding: 6px 16px; background: rgba(99, 102, 241, 0.1); border: 1px solid rgba(99, 102, 241, 0.2); border-radius: 12px; font-size: 10px; font-weight: 800; text-transform: uppercase; color: #818cf8; }
+    .q-tags { display: flex; gap: 8px; }
+    .q-tag { padding: 4px 12px; background: rgba(255,255,255,0.05); border-radius: 8px; font-size: 9px; font-weight: 700; text-transform: uppercase; color: #94a3b8; }
+    .q-tag.diff-easy { color: #10b981; background: rgba(16, 185, 129, 0.1); }
+    .q-tag.diff-medium { color: #f59e0b; background: rgba(245, 158, 11, 0.1); }
+    .q-tag.diff-hard { color: #ef4444; background: rgba(239, 68, 68, 0.1); }
+    .theory-tag { color: #818cf8; background: rgba(99, 102, 241, 0.1); border: 1px solid rgba(99, 102, 241, 0.2); }
+    
+    .q-text { font-size: 1.25rem; font-weight: 600; line-height: 1.6; color: #f1f5f9; margin-bottom: 3rem; }
+    
+    .options-stack { display: flex; flex-direction: column; gap: 1rem; }
+    .option-row { display: flex; align-items: center; gap: 1.25rem; padding: 1.25rem; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); border-radius: 1.5rem; cursor: pointer; transition: all 0.2s; }
+    .option-row:hover { background: rgba(255,255,255,0.04); border-color: rgba(255,255,255,0.1); transform: translateX(4px); }
+    .option-row.selected { background: rgba(99, 102, 241, 0.1); border-color: #6366f1; }
+    
+    .option-letter-box { width: 40px; height: 40px; border-radius: 12px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.9rem; color: #94a3b8; }
+    .option-row.selected .option-letter-box { background: #6366f1; color: white; border-color: transparent; }
+    .option-text { font-weight: 500; font-size: 1rem; color: #cbd5e1; }
+
+    .essay-container { display: flex; flex-direction: column; gap: 1.5rem; }
+    .essay-input { width: 100%; height: 300px; background: rgba(5, 8, 15, 0.4); border: 1px solid rgba(255,255,255,0.08); border-radius: 2rem; padding: 2rem; color: white; font-size: 1rem; outline: none; focus: border-color: #6366f1; resize: none; }
+    .ai-mark-btn { align-self: flex-start; padding: 12px 24px; background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); color: #34d399; font-weight: 800; font-size: 10px; text-transform: uppercase; border-radius: 12px; cursor: pointer; }
+    .ai-feedback-box { padding: 2rem; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.08); border-radius: 2rem; margin-top: 1rem; }
+    
+    .ai-gen-loading { text-align: center; padding: 4rem 2rem; }
+    .ai-sparkles { font-size: 3rem; margin-bottom: 1rem; animation: float 3s infinite ease-in-out; }
+    .pixel-loader { width: 40px; height: 40px; border: 4px solid #6366f1; border-top-color: transparent; border-radius: 50%; margin: 2rem auto; animation: spin 1s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .user-msg { padding: 1rem 1.5rem; background: rgba(255,255,255,0.05); border-radius: 1.5rem 1.5rem 0 1.5rem; align-self: flex-end; font-size: 0.8rem; color: white; max-width: 85%; margin-left: auto; }
+    .ai-msg { padding: 1rem 1.5rem; background: rgba(99, 102, 241, 0.1); border-radius: 1.5rem 1.5rem 1.5rem 0; align-self: flex-start; font-size: 0.8rem; color: #cbd5e1; max-width: 85%; border-left: 3px solid #6366f1; }
+
     #resultsModal { display: none; }
   </style>
 </head>
@@ -142,10 +172,10 @@
                  <div class="w-3 h-3 rounded bg-indigo-500"></div> Transmitted
               </div>
               <div class="flex items-center gap-3 text-[10px] font-bold text-gray-600">
-                 <div class="w-3 h-3 rounded bg-indigo-500/20 border border-indigo-500/50"></div> Parsing
+                 <div class="w-3 h-3 rounded bg-indigo-200"></div> Parsing
               </div>
               <div class="flex items-center gap-3 text-[10px] font-bold text-gray-600">
-                 <div class="w-3 h-3 rounded bg-f59e0b"></div> Marked
+                 <div class="w-3 h-3 rounded bg-orange-500"></div> Marked
               </div>
            </div>
         </div>
@@ -164,7 +194,7 @@
            
            <div class="flex justify-between items-center bg-white/2 border border-white/5 rounded-2xl p-4">
               <div class="flex gap-2">
-                 <button id="flagBtn" onclick="toggleFlag()" class="px-6 py-2 glass border-indigo-500/20 rounded-xl text-[9px] font-black uppercase tracking-widest text-indigo-400 hover:bg-indigo-500 hover:text-navy transition-all">Flag For Analysis</button>
+                 <button id="flagBtn" onclick="toggleFlag()" class="px-6 py-2 glass border-indigo-500/20 rounded-xl text-[9px] font-black uppercase tracking-widest text-indigo-400 hover:bg-indigo-500 hover:text-navy transition-all">Flag for Review</button>
               </div>
               <div class="flex gap-2">
                  <button onclick="navigateQ(-1)" class="w-10 h-10 glass border-white/10 rounded-xl flex items-center justify-center text-gray-500 hover:text-white transition-all">
@@ -179,15 +209,6 @@
 
            <div id="qDisplayCard" class="glass-card rounded-[3.5rem] p-12 md:p-16 border-white/5 space-y-12">
               <!-- Dynamically rendered -->
-              <div class="animate-pulse space-y-8">
-                 <div class="h-6 bg-white/5 rounded w-1/4"></div>
-                 <div class="h-12 bg-white/5 rounded w-full"></div>
-                 <div class="space-y-4">
-                    <div class="h-12 bg-white/5 rounded w-full"></div>
-                    <div class="h-12 bg-white/5 rounded w-full"></div>
-                    <div class="h-12 bg-white/5 rounded w-full"></div>
-                 </div>
-              </div>
            </div>
 
         </div>
@@ -203,7 +224,7 @@
 
   </div>
 
-  <!-- RESULTS OVERLAY (Controlled by original JS) -->
+  <!-- RESULTS OVERLAY -->
   <div id="resultsModal" class="fixed inset-0 z-[200] bg-navy/95 backdrop-blur-3xl overflow-y-auto p-10">
      <div class="max-w-2xl mx-auto space-y-12">
         
@@ -215,6 +236,9 @@
               <p id="gradeBreakdown" class="text-[10px] font-black text-gray-500 uppercase tracking-widest">41 / 50 VALIDATED</p>
            </div>
         </div>
+
+        <!-- AI EXAMINER FEEDBACK AREA -->
+        <div id="resultArea" class="space-y-6"></div>
 
         <div class="grid grid-cols-2 gap-6">
            <div class="glass-card p-10 rounded-3xl border-white/5 text-center">
@@ -239,7 +263,6 @@
            <a href="/analytics" class="flex-1 py-5 bg-indigo-500 text-navy font-black text-xs uppercase tracking-widest rounded-2xl text-center shadow-xl shadow-indigo-500/20">Deep Diagnostics</a>
            <a href="/mocks" class="flex-1 py-5 glass border-white/10 text-white font-black text-xs uppercase tracking-widest rounded-2xl text-center">Session Exit</a>
         </div>
-
      </div>
   </div>
 
@@ -254,9 +277,7 @@
         <button id="closeDrawer" class="text-gray-500 hover:text-white text-3xl font-light">&times;</button>
      </div>
      <div id="aiChatHistory" class="flex-1 overflow-y-auto p-8 space-y-6">
-        <div class="p-6 glass rounded-2xl border-white/10 text-xs font-medium leading-relaxed">
-           Diagnostic link active. Target packet #${examState.currentIndex + 1} analyzed. How should we proceed?
-        </div>
+        <div class="ai-msg">Diagnostic link active. Target session analyzed. How should we proceed?</div>
      </div>
      <div class="p-8 border-t border-white/10 bg-white/2 space-y-6">
         <div class="flex gap-2">
@@ -273,12 +294,5 @@
   <script src="questions.js"></script>
   <script src="auth.js"></script>
   <script src="mock-hall.js"></script>
-  <script>
-    // Overriding some styles dynamically if needed through scripts for JS interactions
-    const originalRenderQuestion = typeof renderQuestion === 'function' ? renderQuestion : null;
-    if(originalRenderQuestion) {
-       // We can extend or hook if needed, but the redesign keeps IDs and classes stable
-    }
-  </script>
 </body>
 </html>
