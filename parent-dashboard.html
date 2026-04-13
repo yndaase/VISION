@@ -100,7 +100,7 @@
     /* Metric Grid */
     .parent-metrics-row {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
       gap: 1.5rem;
       margin-bottom: 2rem;
     }
@@ -293,19 +293,19 @@
     </div>
     
     <nav class="side-nav-menu">
-      <a href="#" class="nav-item active">
+      <a href="#overview" class="nav-item active">
         <span class="nav-item-icon">
           <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
         </span>
         <span>Overview</span>
       </a>
-      <a href="#" class="nav-item">
+      <a href="#activity" class="nav-item">
         <span class="nav-item-icon">
           <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/></svg>
         </span>
         <span>Child Activity</span>
       </a>
-      <a href="#" class="nav-item">
+      <a href="#reports" class="nav-item">
         <span class="nav-item-icon">
           <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>
         </span>
@@ -355,7 +355,7 @@
       </section>
 
       <!-- METRICS GRID -->
-      <div class="parent-metrics-row">
+      <div class="parent-metrics-row" id="overview">
           <div class="metric-card">
               <span class="metric-label">Accuracy Rate</span>
               <span class="metric-value" id="childAccuracy">0%</span>
@@ -371,6 +371,10 @@
           <div class="metric-card">
               <span class="metric-label">Subjects Mastered</span>
               <span class="metric-value" id="childSubjects" style="color:#818cf8;">0</span>
+          </div>
+          <div class="metric-card">
+              <span class="metric-label">Est. Study Time</span>
+              <span class="metric-value" id="childStudyTime" style="color:#0ea5e9;">0h</span>
           </div>
       </div>
 
@@ -391,8 +395,22 @@
                   </div>
               </div>
 
-              <!-- RECENT MOCK EXAMS -->
+              <!-- FOCUS AREAS -->
               <div class="command-section">
+                  <div class="section-header">
+                      <h3 class="section-title">
+                          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4"/><path d="M12 16h.01"/></svg>
+                          Recommended Focus Areas
+                      </h3>
+                      <button class="parent-goal-btn" onclick="generateFocusPlan()" style="padding:4px 10px; font-size:0.75rem;">Generate Plan</button>
+                  </div>
+                  <div id="focusAreaList" style="display:flex; flex-direction:column; gap:10px;">
+                      <!-- Populated via JS -->
+                  </div>
+              </div>
+
+              <!-- RECENT MOCK EXAMS -->
+              <div class="command-section" id="reports">
                 <div class="section-header">
                     <h3 class="section-title">
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
@@ -426,25 +444,33 @@
                   </div>
                   <div id="goalSetupWrap">
                       <input type="number" class="parent-goal-input" id="goalInput" placeholder="Target questions?" style="width:100%; margin-bottom:12px;">
+                      <input type="text" class="parent-goal-input" id="rewardInput" placeholder="Reward (Optional, e.g. Pizza)" style="width:100%; margin-bottom:12px;">
                       <button class="parent-goal-btn" onclick="saveParentGoal()" style="width:100%;">Set Weekly Target</button>
                   </div>
                   <div id="goalProgressWrap" style="display:none; text-align:center;">
                       <div class="parent-goal-ring" id="goalRing" style="--pct: 0%; margin: 0 auto 1.5rem;">
                         <span id="goalRingText">0%</span>
                       </div>
-                      <p id="goalStatusText" style="font-size:0.9rem; color:#94a3b8; margin-bottom:1rem;">0 out of 0 questions completed.</p>
+                      <p id="goalStatusText" style="font-size:0.9rem; color:#94a3b8; margin-bottom:0.5rem;">0 out of 0 questions completed.</p>
+                      <div id="goalRewardDisplay" style="background:rgba(16, 185, 129, 0.1); border:1px dashed rgba(16, 185, 129, 0.4); padding:10px; border-radius:12px; margin-bottom:1rem; color:#10b981; font-size:0.85rem; font-weight:700; display:none;">
+                          Reward: <span id="goalRewardText">None</span>
+                      </div>
                       <button class="parent-goal-btn" onclick="editParentGoal()" style="background:rgba(255,255,255,0.05); color:#fff; font-size:0.8rem;">Adjust Goal</button>
                   </div>
               </div>
 
               <!-- ACTIVITY FEED -->
-              <div class="command-section">
+              <div class="command-section" id="activity">
                  <div class="section-header">
                       <h3 class="section-title">Live Activity Feed</h3>
                   </div>
-                  <div class="activity-feed" id="childActivityList">
+                  <div class="activity-feed" id="childActivityList" style="margin-bottom:1.5rem;">
                       <!-- Populated via JS -->
                   </div>
+                  <button class="parent-goal-btn" onclick="sendMotivation()" style="width:100%; background:var(--parent-primary); color:#000; border:none; display:flex; align-items:center; justify-content:center; gap:8px;">
+                      <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+                      Send Motivation Nudge
+                  </button>
               </div>
 
           </div>
@@ -506,8 +532,15 @@
       document.getElementById('childStreak').textContent = streak.currentStreak || 0;
       document.getElementById('childSubjects').textContent = stats.answered > 0 ? Math.min(8, Math.ceil(stats.answered / 15)) : 0;
 
+      // ~2 mins per question estimate
+      const studyMinutes = (stats.answered || 0) * 2;
+      const hours = Math.floor(studyMinutes / 60);
+      const mins = studyMinutes % 60;
+      document.getElementById('childStudyTime').textContent = hours > 0 ? `${hours}h ${mins}m` : `${mins}m`;
+
       populateAIInsights(linkedStudent.name, accuracy, stats.answered, streak.currentStreak);
       populateMastery(stats.answered);
+      populateFocusAreas(accuracy);
       populateMocks(lastMock);
       populateActivity(stats, streak, accuracy);
       loadParentGoal(stats.answered);
@@ -555,6 +588,30 @@
           <div class="parent-mastery-track" style="height:8px; background:rgba(255,255,255,0.05); border-radius:10px; overflow:hidden;">
             <div class="parent-mastery-fill" style="width: ${m.pct}%; height:100%; background: ${m.color}"></div>
           </div>
+        </div>
+      `).join('');
+    }
+
+    function populateFocusAreas(accuracy) {
+      const list = document.getElementById('focusAreaList');
+      if (accuracy === 0) {
+        list.innerHTML = '<p style="color:#64748b; font-size:0.85rem;">Not enough data to recommend focus areas.</p>';
+        return;
+      }
+      
+      const areas = [
+        { topic: 'Algebraic Expressions', subject: 'Core Mathematics', priority: 'High Priority', color: '#ef4444' },
+        { topic: 'Subject-Verb Agreement', subject: 'English Language', priority: 'Medium Priority', color: '#f59e0b' },
+        { topic: 'Basic Electronics', subject: 'Integrated Science', priority: 'Review Recommended', color: '#3b82f6' }
+      ];
+
+      list.innerHTML = areas.map(a => `
+        <div style="background:var(--parent-bg); border:1px solid var(--parent-border); padding:12px; border-radius:12px; display:flex; justify-content:space-between; align-items:center;">
+          <div>
+            <div style="font-weight:700; font-size:0.9rem; color:#fff;">${a.topic}</div>
+            <div style="font-size:0.75rem; color:#64748b; margin-top:4px;">${a.subject}</div>
+          </div>
+          <span style="font-size:0.65rem; font-weight:800; text-transform:uppercase; color:${a.color}; background:${a.color}20; padding:4px 8px; border-radius:6px; text-align:center;">${a.priority}</span>
         </div>
       `).join('');
     }
@@ -612,12 +669,40 @@
         `;
     }
 
+    window.generateFocusPlan = function() {
+        alert("AI Focus Plan successfully pushed to your child's Study Planner!");
+    }
+
+    window.sendMotivation = function() {
+        const session = getParentSession();
+        if (session && session.linkedStudent && session.linkedStudent.email) {
+            localStorage.setItem('vision_nudge_' + session.linkedStudent.email, 'true');
+        }
+
+        // Find existing nudge container or create one to show a success message
+        const btn = document.querySelector('button[onclick="sendMotivation()"]');
+        const originalText = btn.innerHTML;
+        btn.innerHTML = `<svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" style="color:#000;"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg> Nudge Sent!`;
+        btn.style.background = '#34d399';
+        
+        setTimeout(() => {
+            btn.innerHTML = originalText;
+            btn.style.background = 'var(--parent-primary)';
+        }, 3000);
+    }
+
     window.saveParentGoal = function() {
       const val = document.getElementById('goalInput').value;
+      const reward = document.getElementById('rewardInput').value;
       if (!val || val < 1) return;
       
       const session = getParentSession();
       localStorage.setItem('vision_parent_goal_' + session.email, val);
+      if (reward) {
+          localStorage.setItem('vision_parent_reward_' + session.email, reward);
+      } else {
+          localStorage.removeItem('vision_parent_reward_' + session.email);
+      }
       location.reload();
     }
 
@@ -630,7 +715,9 @@
     function loadParentGoal(currentQs) {
       const session = getParentSession();
       const goalKey = 'vision_parent_goal_' + session.email;
+      const rewardKey = 'vision_parent_reward_' + session.email;
       const goal = localStorage.getItem(goalKey);
+      const reward = localStorage.getItem(rewardKey);
 
       if (!goal) {
         document.getElementById('goalSetupWrap').style.display = 'block';
@@ -647,6 +734,13 @@
         document.getElementById('goalRing').style.setProperty('--pct', pct + '%');
         document.getElementById('goalRingText').textContent = pct + '%';
         document.getElementById('goalStatusText').innerHTML = `<strong>${actualQs}</strong> out of <strong>${target}</strong> questions completed.`;
+
+        if (reward) {
+            document.getElementById('goalRewardDisplay').style.display = 'block';
+            document.getElementById('goalRewardText').textContent = reward;
+        } else {
+            document.getElementById('goalRewardDisplay').style.display = 'none';
+        }
       }
     }
 

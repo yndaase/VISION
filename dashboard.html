@@ -1556,6 +1556,18 @@
       // Show streak toast on dashboard load
       window.addEventListener('DOMContentLoaded', () => {
         setTimeout(showStreakToast, 1500);
+
+        // Check for Parent Nudges
+        const session = typeof getSession === 'function' ? getSession() : null;
+        if (session && session.email) {
+            const nudgeKey = 'vision_nudge_' + session.email;
+            if (localStorage.getItem(nudgeKey)) {
+                setTimeout(() => {
+                    alert("A message from your Vision Guardian:\n\nKeep up the great work! You can do this!");
+                    localStorage.removeItem(nudgeKey);
+                }, 2000);
+            }
+        }
       });
     </script>
 </body>
