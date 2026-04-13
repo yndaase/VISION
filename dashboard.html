@@ -6,7 +6,7 @@
     document.documentElement.setAttribute("data-theme", "dark");
   </script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Dashboard | Vision Education 2026</title>
+  <title>Vision Education Dashboard | 2026 Academic Fleet</title>
   
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -42,61 +42,51 @@
       }
     }
   </script>
+
   <style>
-    .glass { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.1); }
-    .glass-card { background: rgba(255, 255, 255, 0.02); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.08); transition: all 0.3s ease; }
-    .glass-card:hover { border-color: rgba(99, 102, 241, 0.3); transform: translateY(-4px); background: rgba(255, 255, 255, 0.04); }
-    
-    .bg-orb { position: absolute; border-radius: 50%; filter: blur(120px); opacity: 0.15; z-index: 0; pointer-events: none; }
-    .bg-orb-1 { width: 600px; height: 600px; background: #6366f1; top: -100px; right: -100px; }
-    .bg-orb-2 { width: 500px; height: 500px; background: #10b981; bottom: -100px; left: -100px; }
-
-    .sidebar-item { transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); }
-    .sidebar-item.active { background: rgba(99, 102, 241, 0.15); color: #fff; border-right: 3px solid #6366f1; }
-    
-    .main-section { display: none; }
-    .main-section.active { display: block; animation: sectionFade 0.5s ease-out forwards; }
-    @keyframes sectionFade { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
-    .subject-pill { font-size: 0.6rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; padding: 2px 8px; rounded: 4px; border: 1px solid rgba(255,255,255,0.1); }
-    
-    /* Custom Scrollbar */
+    :root { color-scheme: dark; }
     ::-webkit-scrollbar { width: 6px; }
-    ::-webkit-scrollbar-track { background: rgba(5, 8, 15, 0.2); }
-    ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); border-radius: 10px; }
-    ::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.2); }
+    ::-webkit-scrollbar-track { background: rgba(0,0,0,0.1); }
+    ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.2); }
 
-    .glow-indigo { box-shadow: 0 0 30px rgba(99, 102, 241, 0.1); }
-    .glow-emerald { box-shadow: 0 0 30px rgba(16, 185, 129, 0.1); }
+    .glass { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.1); }
+    .glass-card { background: rgba(255, 255, 255, 0.02); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.08); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+    .glass-card:hover { background: rgba(255, 255, 255, 0.04); border-color: rgba(255, 255, 255, 0.15); transform: translateY(-4px); }
+    
+    .sidebar-item { transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); position: relative; }
+    .sidebar-item.active { background: rgba(99, 102, 241, 0.1); color: #818cf8; }
+    .sidebar-item.active::after { content: ''; position: absolute; right: 0; top: 20%; bottom: 20%; width: 3px; background: #6366f1; border-radius: 4px 0 0 4px; box-shadow: 0 0 15px #6366f1; }
+
+    .main-section { display: none; }
+    .main-section.active { display: block; animation: fadeIn 0.4s ease-out; }
+
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+    .hp-btn-glass { background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.1); transition: all 0.3s; }
+    .hp-btn-glass:hover { background: rgba(255, 255, 255, 0.08); border-color: rgba(255, 255, 255, 0.2); }
+    
+    .hp-btn-primary { background: #6366f1; color: #05080f; transition: all 0.3s; }
+    .hp-btn-primary:hover { background: #818cf8; transform: scale(1.02); box-shadow: 0 0 30px rgba(99, 102, 241, 0.4); }
+
+    canvas { filter: drop-shadow(0 0 20px rgba(99, 102, 241, 0.15)); }
   </style>
 </head>
 <body class="bg-navy text-white font-sans min-h-screen flex selection:bg-indigo-500/30 overflow-x-hidden">
 
-  <!-- BG Decor -->
-  <div class="fixed inset-0 z-0 pointer-events-none">
-     <div class="bg-orb bg-orb-1 opacity-10"></div>
-     <div class="bg-orb bg-orb-2 opacity-10"></div>
-  </div>
-
-  <!-- Sidebar Component -->
+  <!-- LEFT SIDEBAR -->
   <aside class="w-80 border-r border-white/5 bg-navy-light/40 backdrop-blur-3xl sticky top-0 h-screen flex flex-col z-30 shrink-0">
-    <div class="p-8 border-b border-white/5 flex items-center justify-between">
-       <a href="/" class="flex items-center gap-3 group">
-          <div class="w-10 h-10 bg-indigo-600 rounded-xl flex items-center justify-center text-white font-black text-xl shadow-[0_0_20px_rgba(99,102,241,0.3)]">V</div>
-          <span class="font-black text-lg tracking-tight uppercase italic group-hover:text-indigo-400 transition-colors">Vision</span>
-       </a>
-       <span id="proHeaderBadge" class="hidden px-2.5 py-1 bg-gradient-to-r from-indigo-500 to-indigo-700 text-[9px] font-black text-white rounded-lg uppercase tracking-tighter">Pro Access</span>
-    </div>
-
-    <div class="p-8 border-b border-white/5 flex items-center gap-4 group cursor-pointer" onclick="openSettings()">
-       <div id="navAvatar" class="w-12 h-12 bg-indigo-500/10 rounded-2xl flex items-center justify-center text-indigo-400 font-black text-xl border border-indigo-500/20 group-hover:border-indigo-500 transition-all">S</div>
-       <div class="overflow-hidden">
-          <p id="navName" class="font-bold text-sm text-white truncate group-hover:text-indigo-400 transition-colors">Loading Name...</p>
-          <p class="text-[9px] font-black text-gray-500 uppercase tracking-widest">WASSCE candidate 2026</p>
+    <div class="p-10 border-b border-white/5 flex items-center justify-between">
+       <div class="flex items-center gap-4 group">
+          <div class="w-12 h-12 bg-indigo-600 rounded-2xl flex items-center justify-center text-white font-black text-2xl shadow-[0_0_30px_rgba(99,102,241,0.3)]">V</div>
+          <div class="flex flex-col">
+             <span class="font-black text-xl tracking-tighter uppercase italic group-hover:text-indigo-400 transition-colors">Vision</span>
+             <span class="text-[9px] font-black text-gray-600 uppercase tracking-[0.4em] leading-none">Edu 2026</span>
+          </div>
        </div>
     </div>
 
-    <nav class="flex-1 p-6 space-y-2 overflow-y-auto">
+    <nav class="flex-1 p-6 space-y-3 overflow-y-auto">
        <button onclick="showSection('overview', this)" class="sidebar-item active w-full flex items-center gap-4 px-4 py-3.5 rounded-2xl font-bold text-sm tracking-tight text-gray-400 hover:text-white group outline-none">
           <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
           Overview
@@ -114,9 +104,13 @@
           Study Planner
        </button>
        <button onclick="showSection('materials', this)" class="sidebar-item w-full flex items-center gap-4 px-4 py-3.5 rounded-2xl font-bold text-sm tracking-tight text-gray-400 hover:text-white group outline-none">
-          <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M8 14v20M12 22l4 4 4-4M12 18V4"/></svg>
+          <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
           Learner Materials
        </button>
+       <a href="ai-learning.html" class="sidebar-item w-full flex items-center gap-4 px-4 py-3.5 rounded-2xl font-bold text-sm tracking-tight text-gray-400 hover:text-white group outline-none">
+          <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+          AI Learning Hub
+       </a>
     </nav>
 
     <div class="p-8 border-t border-white/5 space-y-4">
@@ -127,18 +121,18 @@
     </div>
   </aside>
 
-  <!-- Main Sub-wrapper -->
-  <div class="flex-1 flex flex-col z-20 overflow-y-auto h-screen">
+  <!-- MAIN SUB-WRAPPER -->
+  <div class="flex-1 flex flex-col z-20 overflow-y-auto h-screen relative">
     
     <!-- Top Nav -->
     <header class="h-24 sticky top-0 bg-navy/80 backdrop-blur-2xl z-40 border-b border-white/5 px-10 flex items-center justify-between">
        <div class="flex items-center gap-6">
-          <a href="/" class="hp-btn-glass px-4 py-2 text-[10px] font-black uppercase tracking-widest no-underline flex items-center gap-2">
-             <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
-             Return to Hub
-          </a>
-          <span class="w-px h-6 bg-white/10"></span>
-          <div class="flex items-center gap-6">
+          <div class="flex items-center gap-6 text-gray-400">
+             <a href="/" class="hp-btn-glass px-4 py-2 text-[10px] font-black uppercase tracking-widest no-underline flex items-center gap-2">
+                <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+                Site Home
+             </a>
+             <span class="w-px h-6 bg-white/10"></span>
              <h2 class="text-xl font-black tracking-tighter uppercase italic text-indigo-400">Academic <span class="text-white">Analytics</span></h2>
              <span class="w-px h-6 bg-white/10"></span>
              <div class="flex items-center gap-2 px-4 py-2 bg-indigo-500/10 border border-indigo-500/20 rounded-full">
@@ -245,15 +239,15 @@
                          <div class="text-2xl group-hover:scale-125 transition-transform">📐</div>
                          <span class="text-[9px] font-black text-gray-500 group-hover:text-white uppercase tracking-widest">Maths Core</span>
                       </a>
-                      <a href="/mocks.html" class="p-6 glass rounded-3xl flex flex-col items-center justify-center gap-3 hover:border-emerald-500/50 transition-all group">
+                      <a href="mocks.html" class="p-6 glass rounded-3xl flex flex-col items-center justify-center gap-3 hover:border-emerald-500/50 transition-all group">
                          <div class="text-2xl group-hover:scale-125 transition-transform">⏱️</div>
                          <span class="text-[9px] font-black text-gray-500 group-hover:text-emerald-400 uppercase tracking-widest">Mock Lab</span>
                       </a>
-                      <a href="/ai-learning.html" class="p-6 glass rounded-3xl flex flex-col items-center justify-center gap-3 hover:border-indigo-500/50 transition-all group">
+                      <a href="ai-learning.html" class="p-6 glass rounded-3xl flex flex-col items-center justify-center gap-3 hover:border-indigo-500/50 transition-all group">
                          <div class="text-2xl group-hover:scale-125 transition-transform">🧠</div>
                          <span class="text-[9px] font-black text-gray-500 group-hover:text-indigo-400 uppercase tracking-widest">AI Theory</span>
                       </a>
-                      <a href="/analytics.html" class="p-6 glass rounded-3xl flex flex-col items-center justify-center gap-3 hover:border-white/50 transition-all group">
+                      <a href="analytics.html" class="p-6 glass rounded-3xl flex flex-col items-center justify-center gap-3 hover:border-white/50 transition-all group">
                          <div class="text-2xl group-hover:scale-125 transition-transform">📊</div>
                          <span class="text-[9px] font-black text-gray-500 group-hover:text-white uppercase tracking-widest">Detailed Stats</span>
                       </a>
@@ -449,9 +443,9 @@
        <div class="max-w-7xl mx-auto px-10">
           <p class="text-gray-600 text-[10px] font-bold uppercase tracking-[0.5em] mb-4 italic">Vision Education Initiative · High-Performance Suite 2026</p>
           <div class="flex justify-center gap-10 text-[9px] font-black text-gray-500 uppercase tracking-widest">
-             <a href="/privacy" class="hover:text-white transition-colors">Privacy Alpha</a>
-             <a href="/terms" class="hover:text-white transition-colors">Terminal Terms</a>
-             <a href="/admin" class="hover:text-white transition-colors">Engineering Console</a>
+             <a href="privacy.html" class="hover:text-white transition-colors">Privacy Alpha</a>
+             <a href="terms.html" class="hover:text-white transition-colors">Terminal Terms</a>
+             <a href="admin.html" class="hover:text-white transition-colors">Engineering Console</a>
           </div>
        </div>
     </footer>
@@ -465,7 +459,7 @@
         <aside class="w-full md:w-72 border-r border-white/5 bg-white/2 shrink-0 p-10 flex flex-col items-center md:items-start text-center md:text-left">
            <div class="w-14 h-14 bg-indigo-600 rounded-2xl flex items-center justify-center text-white mb-10 shadow-2xl">V</div>
            <div class="w-full space-y-4">
-              <button onclick="switchSettingsTab('profile', this)" class="w-full px-6 py-4 rounded-2xl text-[10px] font-black uppercase tracking-widest text-left transition-all bg-white/5 border border-white/10 text-white">Account Node</button>
+              <button onclick="switchSettingsTab('profile', this)" class="w-full px-6 py-4 rounded-2xl text-[10px] font-black uppercase tracking-widest text-left transition-all bg-white/5 border border-white/10 text-white">Account Profile</button>
               <button onclick="switchSettingsTab('security', this)" class="w-full px-6 py-4 rounded-2xl text-[10px] font-black uppercase tracking-widest text-left transition-all text-gray-400 hover:text-white">Security Auth</button>
               <button onclick="switchSettingsTab('subscription', this)" class="w-full px-6 py-4 rounded-2xl text-[10px] font-black uppercase tracking-widest text-left transition-all text-gray-400 hover:text-white italic">Vision Pro Status</button>
               <button onclick="switchSettingsTab('parent', this)" class="w-full px-6 py-4 rounded-2xl text-[10px] font-black uppercase tracking-widest text-left transition-all text-gray-400 hover:text-white">Guardian Link</button>
@@ -574,14 +568,12 @@
      </div>
   </div>
 
-  <!-- LOADERS / OVERLAYS (Keep same IDs) -->
   <div id="screenOverlay" class="fixed inset-0 z-[200] bg-navy/80 backdrop-blur-xl hidden"></div>
   <div id="syncLoader" class="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-[201] hidden flex flex-col items-center gap-6">
      <div class="w-20 h-20 border-t-4 border-indigo-500 border-r-4 border-transparent rounded-full animate-spin shadow-[0_0_30px_rgba(99,102,241,0.2)]"></div>
      <p class="text-xs font-black text-gray-500 uppercase tracking-[0.3em] font-mono">Persistence Syncing...</p>
   </div>
 
-  <!-- DATA & LOGIC (KEEP ENTIRE SCRIPT) -->
   <script src="https://js.paystack.co/v2/inline.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script type="module" src="firebase.js"></script>
@@ -591,7 +583,6 @@
   <script src="materials.js"></script>
   
   <script>
-    // CORE DASHBOARD BRIDGE (Redux-like state management)
     function showSection(id, btn) {
       document.querySelectorAll('.main-section').forEach(s => s.classList.remove('active'));
       const target = document.getElementById(id);
@@ -613,20 +604,6 @@
       modal.classList.remove('opacity-100');
     }
 
-    function switchSettingsTab(paneId, btn) {
-      document.querySelectorAll('.settings-pane').forEach(p => p.classList.add('hidden'));
-      document.getElementById('pane-'+paneId).classList.remove('hidden');
-      
-      const sidebar = btn.parentElement;
-      sidebar.querySelectorAll('button').forEach(b => {
-        b.classList.remove('bg-white/5', 'border', 'border-white/10', 'text-white');
-        b.classList.add('text-gray-400');
-      });
-      btn.classList.add('bg-white/5', 'border', 'border-white/10', 'text-white');
-      btn.classList.remove('text-gray-400');
-    }
-
-    // Material Rendering Bridge
     (function renderDashMaterials() {
       const container = document.getElementById("materialsContainer");
       if (!container) return;
@@ -666,7 +643,6 @@
       }).join('');
     })();
 
-    // Pro / Institutional Logic
     function updateSettingsSubUI() {
       const session = getSession();
       if (!session) return;
@@ -693,12 +669,9 @@
           date.textContent = "Pack Inactive";
       }
     }
-
-    // Update Setting Subscription UI
     setTimeout(updateSettingsSubUI, 100);
   </script>
 
-  <!-- External Feature Enforcements -->
   <script src="auth.js"></script>
   <script src="streaks.js"></script>
   <script src="materials.js"></script>
@@ -707,13 +680,11 @@
   <script src="dashboard.js"></script>
 
   <script>
-      // Settings Workspace Logic
       function switchSettingsTab(tabId, btn) {
         document.querySelectorAll('.settings-pane').forEach(p => p.classList.add('hidden'));
         const target = document.getElementById('pane-' + tabId);
         if (target) target.classList.remove('hidden');
         
-        // Update sidebar button states
         document.querySelectorAll('[onclick*="switchSettingsTab"]').forEach(b => {
           b.classList.remove('bg-white/5', 'border-white/10', 'text-white');
           b.classList.add('text-gray-400');
@@ -742,4 +713,3 @@
     </script>
 </body>
 </html>
-

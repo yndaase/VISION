@@ -56,9 +56,6 @@
     .sidebar-item { transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); }
     .sidebar-item.active { background: rgba(99, 102, 241, 0.15); color: #fff; border-right: 3px solid #6366f1; }
     
-    .subject-pill { transition: all 0.2s; cursor: pointer; }
-    .subject-pill.active { background: #6366f1; color: white; border-color: #6366f1; box-shadow: 0 0 20px rgba(99, 102, 241, 0.3); }
-    
     .chat-messages::-webkit-scrollbar { width: 4px; }
     .chat-messages::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); border-radius: 10px; }
 
@@ -78,24 +75,24 @@
     </div>
 
     <nav class="flex-1 p-6 space-y-2 overflow-y-auto">
-       <a href="/dashboard" class="sidebar-item w-full flex items-center gap-4 px-4 py-3.5 rounded-2xl font-bold text-sm tracking-tight text-gray-400 hover:text-white group outline-none">
+       <a href="dashboard.html" class="sidebar-item w-full flex items-center gap-4 px-4 py-3.5 rounded-2xl font-bold text-sm tracking-tight text-gray-400 hover:text-white group outline-none">
           <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
           Overview
        </a>
-       <a href="/mocks" class="sidebar-item w-full flex items-center gap-4 px-4 py-3.5 rounded-2xl font-bold text-sm tracking-tight text-gray-400 hover:text-white group outline-none">
+       <a href="mocks.html" class="sidebar-item w-full flex items-center gap-4 px-4 py-3.5 rounded-2xl font-bold text-sm tracking-tight text-gray-400 hover:text-white group outline-none">
           <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
           Mock Exams
        </a>
-       <a href="/ai-learning.html" class="sidebar-item active w-full flex items-center gap-4 px-4 py-3.5 rounded-2xl font-bold text-sm tracking-tight text-gray-400 hover:text-white group outline-none">
+       <a href="ai-learning.html" class="sidebar-item active w-full flex items-center gap-4 px-4 py-3.5 rounded-2xl font-bold text-sm tracking-tight text-gray-400 hover:text-white group outline-none">
           <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
           AI Learning Hub
        </a>
     </nav>
 
     <div class="p-8 border-t border-white/5">
-       <a href="/dashboard" class="w-full flex items-center gap-4 px-4 py-3.5 rounded-2xl font-bold text-sm text-gray-400 hover:bg-white/5 transition-all">
+       <a href="dashboard.html" class="w-full flex items-center gap-4 px-4 py-3.5 rounded-2xl font-bold text-sm text-gray-400 hover:bg-white/5 transition-all">
           <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M15 19l-7-7 7-7"/></svg>
-          Back to Hub
+          Return to Hub
        </a>
     </div>
   </aside>
@@ -106,7 +103,7 @@
     <!-- Top Nav -->
     <header class="h-24 sticky top-0 bg-navy/80 backdrop-blur-2xl z-40 border-b border-white/5 px-10 flex items-center justify-between">
        <div class="flex items-center gap-6">
-          <h2 class="text-xl font-black tracking-tighter uppercase italic text-indigo-400">Hub <span class="text-white">Workspace</span></h2>
+          <h2 class="text-xl font-black tracking-tighter uppercase italic text-indigo-400">AI Learning <span class="text-white">Hub</span></h2>
           <span class="w-px h-6 bg-white/10"></span>
           <div id="aiModeSelector" class="hidden items-center p-1 bg-white/5 rounded-2xl border border-white/10">
              <button onclick="setAiMode('examiner')" id="btnExaminer" class="px-4 py-1.5 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all bg-indigo-500 text-white">WAEC Mode</button>
@@ -127,7 +124,7 @@
           <div class="absolute top-0 right-0 p-12 opacity-5 italic font-black text-8xl pointer-events-none">ACADEMIC</div>
           
           <div class="space-y-4">
-             <h1 class="text-5xl font-black tracking-tighter">AI <span class="text-indigo-400 italic">Vision.</span></h1>
+             <h1 class="text-5xl font-black tracking-tighter">AI Learning <span class="text-indigo-400 italic">Vision.</span></h1>
              <p class="text-gray-400 text-lg font-medium max-w-xl mx-auto" id="welcomeText">Select a subject to begin your specialized WASSCE tutoring session.</p>
           </div>
 
@@ -192,8 +189,10 @@
   <script src="auth.js"></script>
   <script>
     // Logic - Must exactly match original functional behavior
-    const session = checkAuth();
-    if (!session) throw new Error("Authentication required");
+    const session = typeof getSession === 'function' ? getSession() : JSON.parse(sessionStorage.getItem('waec_session') || '{}');
+    if (!session || !session.email) {
+       window.location.href = "login.html";
+    }
 
     const fileInput = document.getElementById('fileInput');
     const imagePreview = document.getElementById('imagePreview');
