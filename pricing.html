@@ -1,286 +1,686 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Pricing & Plans | Vision Education 2026</title>
-    <meta name="description" content="Transparent pricing for Vision Education's 2026 WASSCE prep platform. Free for students, Pro for serious learners, Enterprise for institutions." />
-    
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
-    
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-      tailwind.config = {
-        theme: {
-          extend: {
-            fontFamily: {
-              sans: ['Outfit', 'sans-serif'],
-              mono: ['JetBrains Mono', 'monospace'],
-            },
-            colors: {
-              navy: {
-                DEFAULT: '#05080f',
-                light: '#0a101f',
-                accent: '#1e293b'
-              },
-              emerald: {
-                DEFAULT: '#10b981',
-                light: '#34d399',
-                dark: '#059669'
-              },
-              indigo: {
-                DEFAULT: '#6366f1',
-                light: '#818cf8',
-                dark: '#4f46e5'
-              }
-            },
-          }
-        }
-      }
-    </script>
-    <style>
-      .glass { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.1); }
-      .glass-card { background: rgba(255, 255, 255, 0.02); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.08); transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1); }
-      .glass-card:hover { border-color: rgba(16, 185, 129, 0.3); transform: translateY(-4px); background: rgba(255, 255, 255, 0.05); }
-      
-      .hp-nav { transition: all 0.4s; }
-      .hp-nav.scrolled { background: rgba(5, 8, 15, 0.8); backdrop-filter: blur(20px); border-bottom: 1px solid rgba(255, 255, 255, 0.05); padding: 0.75rem 0.5rem; }
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pricing | Vision Education 2026</title>
+  <meta name="description" content="Transparent pricing for Vision Education's 2026 WASSCE prep platform. Free for all students, Pro for serious learners, Enterprise for schools." />
+  <link rel="canonical" href="https://visionedu.online/pricing" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="theme.css" />
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    /* ── Reset & Base ─────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Outfit', sans-serif;
+      background: #05080f;
+      color: #f1f5f9;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
 
-      .hp-btn-glass { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); color: #fff; border-radius: 12px; transition: all 0.3s; }
-      .hp-btn-glass:hover { background: rgba(255, 255, 255, 0.1); border-color: rgba(255, 255, 255, 0.2); }
-      
-      .hp-btn-primary { background: linear-gradient(135deg, #10b981, #6366f1); color: #fff; border-radius: 12px; box-shadow: 0 10px 20px rgba(99, 102, 241, 0.3); transition: all 0.3s; }
-      .hp-btn-primary:hover { transform: translateY(-2px); box-shadow: 0 15px 30px rgba(99, 102, 241, 0.4); }
+    /* ── Topbar ───────────────────────────────────── */
+    .pr-nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 900;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 2rem; height: 64px;
+      background: rgba(5,8,15,0.85);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+    .pr-nav-brand {
+      display: flex; align-items: center; gap: 10px;
+      text-decoration: none;
+    }
+    .pr-nav-brand-name {
+      font-size: 1rem; font-weight: 800; color: #f1f5f9;
+    }
+    .pr-nav-brand-name span { color: #fbbf24; }
+    .pr-nav-back {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-size: 0.82rem; font-weight: 600; color: #64748b;
+      text-decoration: none; padding: 7px 14px;
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 8px; transition: all 0.2s;
+    }
+    .pr-nav-back:hover { color: #f1f5f9; border-color: rgba(255,255,255,0.15); }
 
-      .hero-gradient { background: radial-gradient(circle at top right, rgba(16, 185, 129, 0.1), transparent), radial-gradient(circle at bottom left, rgba(99, 102, 241, 0.1), transparent); }
-      
-      .faq-item.open .faq-answer { display: block; }
-      .faq-item.open .faq-chevron { transform: rotate(180deg); }
-    </style>
-  </head>
-  <body class="bg-navy text-white font-sans selection:bg-indigo-500/30">
-    <!-- Background Decor -->
-    <div class="fixed inset-0 z-0 hero-gradient pointer-events-none"></div>
+    /* ── Hero ─────────────────────────────────────── */
+    .pr-hero {
+      padding: 140px 2rem 80px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .pr-hero::before {
+      content: '';
+      position: absolute; inset: 0; pointer-events: none;
+      background:
+        radial-gradient(ellipse 70% 50% at 50% 0%, rgba(99,102,241,0.14), transparent),
+        radial-gradient(ellipse 40% 30% at 80% 60%, rgba(251,191,36,0.06), transparent);
+    }
+    .pr-hero-label {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-size: 0.68rem; font-weight: 800; letter-spacing: 0.14em;
+      text-transform: uppercase; color: #6366f1;
+      margin-bottom: 1.25rem;
+    }
+    .pr-hero-label::before {
+      content: ''; width: 24px; height: 2px;
+      background: #6366f1; border-radius: 2px;
+    }
+    .pr-hero h1 {
+      font-size: clamp(2.4rem, 6vw, 4rem);
+      font-weight: 900; letter-spacing: -0.04em;
+      line-height: 1.1; color: #f1f5f9;
+      margin-bottom: 1rem;
+    }
+    .pr-hero h1 span {
+      background: linear-gradient(135deg, #a5b4fc, #818cf8 40%, #fbbf24);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .pr-hero-sub {
+      font-size: 1.05rem; color: #64748b;
+      max-width: 520px; margin: 0 auto; line-height: 1.75;
+    }
 
-    <!-- Navigation (Unified) -->
-    <nav class="fixed top-0 left-0 right-0 z-50 px-6 py-6 hp-nav" id="hpNav">
-      <div class="max-w-7xl mx-auto flex justify-between items-center">
-        <a href="/" class="flex items-center gap-3">
-          <div class="w-10 h-10 bg-gradient-to-br from-emerald-500 to-indigo-600 rounded-xl flex items-center justify-center text-white font-bold text-lg shadow-lg">V</div>
-          <span class="font-bold text-xl tracking-tight hidden sm:block">Vision Education</span>
-        </a>
+    /* ── Toggle (Monthly / Annual placeholder) ──── */
+    .pr-toggle-row {
+      display: flex; justify-content: center;
+      margin: 2.5rem 0 0;
+    }
+    .pr-toggle-pill {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: rgba(34,197,94,0.1);
+      border: 1px solid rgba(34,197,94,0.25);
+      color: #4ade80; font-size: 0.75rem; font-weight: 700;
+      padding: 8px 20px; border-radius: 100px;
+      letter-spacing: 0.05em;
+    }
+    .pr-toggle-dot {
+      width: 7px; height: 7px; border-radius: 50%;
+      background: #22c55e;
+      animation: pricingPulse 2s ease-in-out infinite;
+    }
+    @keyframes pricingPulse {
+      0%,100% { opacity:1; transform:scale(1); }
+      50% { opacity:0.4; transform:scale(0.65); }
+    }
 
-        <div class="hidden md:flex items-center gap-14 text-sm font-bold text-gray-400 uppercase tracking-widest">
-          <a href="/features.html" class="hover:text-white transition-colors">Features</a>
-          <a href="/parent-portal.html" class="hover:text-emerald-400 transition-colors">Parent Portal</a>
-          <a href="/about.html" class="hover:text-white transition-colors">About</a>
-        </div>
+    /* ── Grid ─────────────────────────────────────── */
+    .pr-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.25rem;
+      max-width: 1160px;
+      margin: 4rem auto;
+      padding: 0 2rem;
+      align-items: start;
+    }
 
-        <div class="flex items-center gap-6">
-          <a href="/login.html" class="hp-btn-glass px-6 py-3 text-sm font-bold">Log In</a>
-          <a href="/dashboard.html" class="hp-btn-primary px-6 py-3 text-sm font-bold">Start Free</a>
-        </div>
+    /* ── Cards ────────────────────────────────────── */
+    .pr-card {
+      background: #0d1117;
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 20px;
+      padding: 2.25rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      position: relative;
+      transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
+      overflow: hidden;
+    }
+    .pr-card:hover {
+      border-color: rgba(255,255,255,0.13);
+      transform: translateY(-4px);
+      box-shadow: 0 24px 60px rgba(0,0,0,0.5);
+    }
+    .pr-card.featured {
+      border-color: rgba(99,102,241,0.4);
+      background: linear-gradient(135deg, rgba(99,102,241,0.05) 0%, #0d1117 60%);
+    }
+    .pr-card.featured:hover {
+      border-color: rgba(99,102,241,0.6);
+      box-shadow: 0 24px 60px rgba(99,102,241,0.15);
+    }
+    /* Gradient top border */
+    .pr-card::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0;
+      height: 2px;
+      background: var(--card-top, rgba(255,255,255,0.04));
+      border-radius: 20px 20px 0 0;
+    }
+    .pr-card.standard::before { background: rgba(255,255,255,0.06); }
+    .pr-card.featured::before {
+      background: linear-gradient(90deg, #6366f1, #818cf8, #a5b4fc);
+    }
+    .pr-card.enterprise::before {
+      background: linear-gradient(90deg, #fbbf24, #f59e0b);
+    }
+
+    /* Badge */
+    .pr-badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: 0.65rem; font-weight: 800; letter-spacing: 0.12em;
+      text-transform: uppercase; padding: 5px 14px;
+      border-radius: 100px; margin-bottom: 1.5rem;
+      width: fit-content;
+    }
+    .pr-badge.free    { background: rgba(34,197,94,0.1);  color: #4ade80;  border: 1px solid rgba(34,197,94,0.2); }
+    .pr-badge.pro     { background: rgba(99,102,241,0.12); color: #818cf8;  border: 1px solid rgba(99,102,241,0.25); }
+    .pr-badge.ent     { background: rgba(251,191,36,0.1);  color: #fbbf24;  border: 1px solid rgba(251,191,36,0.2); }
+
+    /* Recommended ribbon */
+    .pr-ribbon {
+      position: absolute; top: 16px; right: 16px;
+      background: rgba(99,102,241,0.15);
+      border: 1px solid rgba(99,102,241,0.3);
+      color: #818cf8;
+      font-size: 0.6rem; font-weight: 800; letter-spacing: 0.1em;
+      text-transform: uppercase; padding: 4px 12px;
+      border-radius: 100px;
+    }
+
+    /* Tier name */
+    .pr-tier-name {
+      font-size: 1.3rem; font-weight: 800;
+      color: #f1f5f9; letter-spacing: -0.02em;
+      margin-bottom: 0.4rem;
+    }
+
+    /* Price */
+    .pr-price {
+      display: flex; align-items: baseline; gap: 6px;
+      margin: 1rem 0 0.6rem;
+    }
+    .pr-price-currency {
+      font-size: 1.1rem; font-weight: 700; color: #94a3b8;
+      align-self: flex-start; margin-top: 6px;
+    }
+    .pr-price-amount {
+      font-size: 3.4rem; font-weight: 900;
+      letter-spacing: -0.05em; color: #f1f5f9;
+      line-height: 1;
+    }
+    .pr-price-period {
+      font-size: 0.82rem; color: #475569; font-weight: 500;
+      align-self: flex-end; padding-bottom: 6px;
+    }
+
+    /* Desc */
+    .pr-desc {
+      font-size: 0.88rem; color: #64748b;
+      line-height: 1.65; margin-bottom: 1.75rem;
+      min-height: 42px;
+    }
+
+    /* Divider */
+    .pr-divider {
+      height: 1px; background: rgba(255,255,255,0.05);
+      margin-bottom: 1.5rem;
+    }
+
+    /* Feature list */
+    .pr-features {
+      list-style: none; padding: 0;
+      display: flex; flex-direction: column; gap: 12px;
+      margin-bottom: 2rem; flex: 1;
+    }
+    .pr-feature {
+      display: flex; align-items: flex-start; gap: 10px;
+      font-size: 0.86rem; color: #94a3b8; line-height: 1.5;
+    }
+    .pr-feature-check {
+      width: 18px; height: 18px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; margin-top: 1px;
+    }
+    .pr-feature-check.on  { background: rgba(34,197,94,0.12);  color: #22c55e; }
+    .pr-feature-check.off { background: rgba(255,255,255,0.04); color: #334155; }
+    .pr-feature.dim { color: #334155; }
+    .pr-feature strong { color: #f1f5f9; font-weight: 600; }
+
+    /* CTA */
+    .pr-cta {
+      display: block; width: 100%;
+      padding: 13px 20px; border-radius: 10px;
+      text-align: center; font-size: 0.9rem; font-weight: 700;
+      text-decoration: none; border: none; cursor: pointer;
+      font-family: 'Outfit', sans-serif;
+      transition: all 0.2s;
+    }
+    .pr-cta.primary {
+      background: linear-gradient(135deg, #6366f1, #818cf8);
+      color: #fff;
+      box-shadow: 0 4px 18px rgba(99,102,241,0.3);
+    }
+    .pr-cta.primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 28px rgba(99,102,241,0.45);
+    }
+    .pr-cta.ghost {
+      background: transparent;
+      color: #94a3b8;
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+    .pr-cta.ghost:hover {
+      background: rgba(255,255,255,0.05);
+      color: #f1f5f9;
+      border-color: rgba(255,255,255,0.18);
+    }
+    .pr-cta.gold {
+      background: linear-gradient(135deg, #fbbf24, #f59e0b);
+      color: #0a0d14;
+    }
+    .pr-cta.gold:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 28px rgba(251,191,36,0.35);
+    }
+    .pr-cta-note {
+      text-align: center; font-size: 0.72rem; color: #334155;
+      margin-top: 10px; font-weight: 500;
+    }
+
+    /* ── FAQ / Guarantee Band ─────────────────────── */
+    .pr-trust-band {
+      max-width: 900px; margin: 0 auto 5rem;
+      padding: 0 2rem;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1rem;
+    }
+    .pr-trust-item {
+      background: #0d1117;
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 14px;
+      padding: 1.5rem;
+      display: flex;
+      gap: 1rem;
+      align-items: flex-start;
+      transition: all 0.2s;
+    }
+    .pr-trust-item:hover {
+      border-color: rgba(255,255,255,0.1);
+      transform: translateY(-2px);
+    }
+    .pr-trust-icon {
+      width: 38px; height: 38px; border-radius: 10px;
+      background: rgba(99,102,241,0.1);
+      border: 1px solid rgba(99,102,241,0.2);
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; color: #818cf8;
+    }
+    .pr-trust-title {
+      font-size: 0.86rem; font-weight: 700;
+      color: #f1f5f9; margin-bottom: 4px;
+    }
+    .pr-trust-desc {
+      font-size: 0.78rem; color: #475569; line-height: 1.55;
+    }
+
+    /* ── FAQ ──────────────────────────────────────── */
+    .pr-faq-section {
+      max-width: 720px; margin: 0 auto 5rem;
+      padding: 0 2rem;
+    }
+    .pr-faq-heading {
+      font-size: 1.6rem; font-weight: 800; letter-spacing: -0.03em;
+      color: #f1f5f9; margin-bottom: 1.5rem; text-align: center;
+    }
+    .pr-faq-item {
+      background: #0d1117;
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 12px;
+      padding: 1.25rem 1.5rem;
+      margin-bottom: 0.75rem;
+      cursor: pointer;
+      transition: border-color 0.2s;
+    }
+    .pr-faq-item:hover { border-color: rgba(255,255,255,0.12); }
+    .pr-faq-q {
+      font-size: 0.9rem; font-weight: 700;
+      color: #f1f5f9; display: flex;
+      justify-content: space-between; align-items: center; gap: 1rem;
+    }
+    .pr-faq-a {
+      font-size: 0.85rem; color: #64748b; line-height: 1.7;
+      margin-top: 0.75rem; display: none;
+    }
+    .pr-faq-item.open .pr-faq-a { display: block; }
+    .pr-faq-chevron {
+      flex-shrink: 0; transition: transform 0.2s; color: #475569;
+    }
+    .pr-faq-item.open .pr-faq-chevron { transform: rotate(180deg); }
+
+    /* ── Footer ───────────────────────────────────── */
+    .pr-footer {
+      border-top: 1px solid rgba(255,255,255,0.05);
+      padding: 2.5rem 2rem;
+      text-align: center;
+    }
+    .pr-footer p { font-size: 0.78rem; color: #334155; line-height: 1.8; }
+    .pr-footer a { color: #475569; text-decoration: none; }
+    .pr-footer a:hover { color: #94a3b8; }
+
+    @media (max-width: 768px) {
+      .pr-grid { grid-template-columns: 1fr; margin: 2.5rem auto; }
+      .pr-card.featured { transform: none; }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Nav -->
+  <nav class="pr-nav" role="navigation" aria-label="Pricing navigation">
+    <a href="/" class="pr-nav-brand" aria-label="Vision Education Home">
+      <span class="pr-nav-brand-name">Vision <span>Education</span></span>
+    </a>
+    <a href="/" class="pr-nav-back">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+      Back to Home
+    </a>
+  </nav>
+
+  <!-- Hero -->
+  <section class="pr-hero" aria-labelledby="pricing-heading">
+    <div class="pr-hero-label">Pricing</div>
+    <h1 id="pricing-heading">Choose Your<br /><span>Learning Edge</span></h1>
+    <p class="pr-hero-sub">
+      Elite AI tutoring tailored for the 2026 WASSCE syllabus.
+      Transparent pricing — no hidden fees, no lock-in.
+    </p>
+    <div class="pr-toggle-row">
+      <div class="pr-toggle-pill">
+        <span class="pr-toggle-dot" aria-hidden="true"></span>
+        All plans include free access to Core Mathematics
       </div>
-    </nav>
+    </div>
+  </section>
 
-    <!-- Main Content -->
-    <main class="relative z-10 pt-48 pb-24">
-      
-      <!-- HERO -->
-      <section class="max-w-7xl mx-auto px-6 mb-24 text-center">
-        <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full glass text-emerald-400 font-bold text-[10px] tracking-widest uppercase mb-8 border-emerald-500/20">
-          Transparent Pricing
-        </div>
-        <h1 class="text-6xl md:text-8xl font-black text-white leading-[1.05] tracking-tight mb-8">
-          Invest in your <br/>
-          <span class="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-indigo-500 italic">Academic Future.</span>
-        </h1>
-        <p class="text-lg text-gray-400 leading-relaxed max-w-xl mx-auto">
-          From basic practice to institutional-grade analytics, we have a plan designed to help you dominate the 2026 WASSCE.
-        </p>
-      </section>
+  <!-- Pricing Grid -->
+  <div class="pr-grid" role="list" aria-label="Pricing plans">
 
-      <!-- PRICING GRID -->
-      <section class="max-w-7xl mx-auto px-6 mb-32">
-        <div class="grid md:grid-cols-3 gap-8">
-          
-          <!-- FREE PLAN -->
-          <div class="glass-card rounded-[3rem] p-10 border-white/5 flex flex-col">
-            <div class="mb-8">
-              <span class="px-3 py-1 bg-white/5 rounded-lg text-[10px] font-black text-gray-400 tracking-widest uppercase border border-white/10">Standard</span>
-              <h3 class="text-3xl font-black mt-4">Free Access</h3>
-              <div class="mt-4 flex items-baseline gap-1">
-                 <span class="text-5xl font-black">GH₵0</span>
-                 <span class="text-gray-500 text-sm font-bold uppercase italic tracking-widest">/forever</span>
-              </div>
-            </div>
-            <p class="text-gray-400 text-sm leading-relaxed mb-8 flex-1">
-              Full preparation for every Ghanaian student. Access Core Mathematics mock exams and basic AI assistance at no cost.
-            </p>
-            <ul class="space-y-4 mb-10 text-sm">
-               <li class="flex gap-3 text-gray-300">
-                  <svg class="shrink-0 text-emerald-400" width="18" height="18" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg>
-                  Gemini 2.5 AI Assistant
-               </li>
-               <li class="flex gap-3 text-gray-300">
-                  <svg class="shrink-0 text-emerald-400" width="18" height="18" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg>
-                  2026 Core Maths Mocks
-               </li>
-               <li class="flex gap-3 text-gray-500 italic">
-                  <svg class="shrink-0" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M6 18L18 6M6 6l12 12"/></svg>
-                  Azure GPT-4o Copilot
-               </li>
-            </ul>
-            <a href="dashboard.html" class="hp-btn-glass w-full py-4 font-bold text-center">Get Started</a>
-          </div>
+    <!-- STANDARD (Free) -->
+    <div class="pr-card standard" role="listitem">
+      <span class="pr-badge free">Standard</span>
+      <div class="pr-tier-name">Free Access</div>
+      <div class="pr-desc">Full preparation for every Ghanaian student. No card required, no expiry.</div>
+      <div class="pr-price">
+        <span class="pr-price-currency">GH₵</span>
+        <span class="pr-price-amount">0</span>
+        <span class="pr-price-period">/forever</span>
+      </div>
+      <div class="pr-divider"></div>
+      <ul class="pr-features" aria-label="Standard plan features">
+        <li class="pr-feature">
+          <span class="pr-feature-check on" aria-hidden="true">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+          </span>
+          <span>Gemini 2.5 AI Assistant</span>
+        </li>
+        <li class="pr-feature">
+          <span class="pr-feature-check on" aria-hidden="true">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+          </span>
+          <span>2026 Core Mathematics Mock Exams</span>
+        </li>
+        <li class="pr-feature">
+          <span class="pr-feature-check on" aria-hidden="true">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+          </span>
+          <span>Basic Progress Tracking</span>
+        </li>
+        <li class="pr-feature">
+          <span class="pr-feature-check on" aria-hidden="true">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+          </span>
+          <span>WAEC-aligned Past Questions</span>
+        </li>
+        <li class="pr-feature dim">
+          <span class="pr-feature-check off" aria-hidden="true">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </span>
+          <span>Azure GPT-4o Copilot AI</span>
+        </li>
+        <li class="pr-feature dim">
+          <span class="pr-feature-check off" aria-hidden="true">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </span>
+          <span>Section B Step-by-Step Marking</span>
+        </li>
+      </ul>
+      <a href="/login" class="pr-cta ghost" id="standardCta">Start for Free</a>
+    </div>
 
-          <!-- PRO PLAN -->
-          <div class="glass-card rounded-[3rem] p-10 border-indigo-500/20 bg-indigo-500/5 relative overflow-hidden flex flex-col scale-105 shadow-2xl z-10">
-            <div class="absolute top-0 right-0 px-6 py-2 bg-indigo-500 text-white font-black text-[10px] tracking-[0.2em] uppercase rounded-bl-3xl">Recommended</div>
-            <div class="mb-8">
-              <span class="px-3 py-1 bg-indigo-500/20 rounded-lg text-[10px] font-black text-indigo-400 tracking-widest uppercase border border-indigo-500/30">Pro Access</span>
-              <h3 class="text-3xl font-black mt-4">Vision Pro</h3>
-              <div class="mt-4 flex items-baseline gap-1">
-                 <span class="text-5xl font-black">GH₵30</span>
-                 <span class="text-indigo-400 text-sm font-bold uppercase italic tracking-widest">/month</span>
-              </div>
-            </div>
-            <p class="text-gray-300 text-sm leading-relaxed mb-8 flex-1">
-              The ultimate high-fidelity prep engine. Unlocks elite AI theory marking and granular examiner feedback.
-            </p>
-            <ul class="space-y-4 mb-10 text-sm">
-               <li class="flex gap-3 text-white font-bold">
-                  <svg class="shrink-0 text-emerald-400" width="18" height="18" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg>
-                  Azure GPT-4o Copilot AI
-               </li>
-               <li class="flex gap-3 text-white font-bold">
-                  <svg class="shrink-0 text-emerald-400" width="18" height="18" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg>
-                  Section B Step-by-Step Marking
-               </li>
-               <li class="flex gap-3 text-white font-bold">
-                  <svg class="shrink-0 text-emerald-400" width="18" height="18" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg>
-                  Institutional Verified Schemes
-               </li>
-            </ul>
-            <button onclick="handlePricingUpgrade()" class="hp-btn-primary w-full py-5 font-bold text-lg">Subscribe Now</button>
-          </div>
+    <!-- PRO (Vision 30) -->
+    <div class="pr-card featured" role="listitem">
+      <span class="pr-badge pro">Vision Pro</span>
+      <span class="pr-ribbon" aria-label="Recommended plan">Recommended</span>
+      <div class="pr-tier-name">Pro Access</div>
+      <div class="pr-desc">The ultimate Copilot for top-tier WASSCE results. Trusted by serious students.</div>
+      <div class="pr-price">
+        <span class="pr-price-currency">GH₵</span>
+        <span class="pr-price-amount">30</span>
+        <span class="pr-price-period">/month</span>
+      </div>
+      <div class="pr-divider"></div>
+      <ul class="pr-features" aria-label="Pro plan features">
+        <li class="pr-feature">
+          <span class="pr-feature-check on" aria-hidden="true">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+          </span>
+          <span><strong>Azure GPT-4o Copilot AI</strong> — premium engine</span>
+        </li>
+        <li class="pr-feature">
+          <span class="pr-feature-check on" aria-hidden="true">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+          </span>
+          <span>Chief Examiner Marking Mode</span>
+        </li>
+        <li class="pr-feature">
+          <span class="pr-feature-check on" aria-hidden="true">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+          </span>
+          <span>Detailed Section B Feedback</span>
+        </li>
+        <li class="pr-feature">
+          <span class="pr-feature-check on" aria-hidden="true">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+          </span>
+          <span>Verified WAEC Marking Schemes</span>
+        </li>
+        <li class="pr-feature">
+          <span class="pr-feature-check on" aria-hidden="true">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+          </span>
+          <span>Offline Subject Access</span>
+        </li>
+        <li class="pr-feature">
+          <span class="pr-feature-check on" aria-hidden="true">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+          </span>
+          <span>Priority Support</span>
+        </li>
+      </ul>
+      <button onclick="handlePricingUpgrade()" class="pr-cta primary" id="proLink">Subscribe — GH₵ 30/mo</button>
+      <p class="pr-cta-note">Official Institutional License Required · Cancel anytime</p>
+    </div>
 
-          <!-- ENTERPRISE -->
-          <div class="glass-card rounded-[3rem] p-10 border-white/5 flex flex-col">
-            <div class="mb-8">
-              <span class="px-3 py-1 bg-white/5 rounded-lg text-[10px] font-black text-emerald-400 tracking-widest uppercase border border-emerald-500/10">Institutional</span>
-              <h3 class="text-3xl font-black mt-4">Enterprise</h3>
-              <div class="mt-4 flex items-baseline gap-1">
-                 <span class="text-2xl font-black text-gray-400 italic">Custom Quote</span>
-              </div>
-            </div>
-            <p class="text-gray-400 text-sm leading-relaxed mb-8 flex-1">
-              Bulk licensing for schools and institutions. Includes school-wide analytics and teacher dashboards.
-            </p>
-            <ul class="space-y-4 mb-10 text-sm">
-               <li class="flex gap-3 text-gray-300">
-                  <svg class="shrink-0 text-emerald-400" width="18" height="18" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg>
-                  Teacher Control Console
-               </li>
-               <li class="flex gap-3 text-gray-300">
-                  <svg class="shrink-0 text-emerald-400" width="18" height="18" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg>
-                  Student Management System
-               </li>
-               <li class="flex gap-3 text-gray-300">
-                  <svg class="shrink-0 text-emerald-400" width="18" height="18" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg>
-                  Priority 24/7 Support
-               </li>
-            </ul>
-            <a href="mailto:mensuohyaw@gmail.com" class="hp-btn-glass w-full py-4 font-bold text-center">Contact Sales</a>
-          </div>
+    <!-- ENTERPRISE -->
+    <div class="pr-card enterprise" role="listitem">
+      <span class="pr-badge ent">Enterprise</span>
+      <div class="pr-tier-name">Institutional Access</div>
+      <div class="pr-desc">Bulk licensing for schools and institutions. Custom pricing, dedicated support.</div>
+      <div class="pr-price">
+        <span class="pr-price-amount" style="font-size:2rem;color:#94a3b8;letter-spacing:-0.02em;">Contact Sales</span>
+        <span class="pr-price-period">/annual</span>
+      </div>
+      <div class="pr-divider"></div>
+      <ul class="pr-features" aria-label="Enterprise plan features">
+        <li class="pr-feature">
+          <span class="pr-feature-check on" style="background:rgba(251,191,36,0.1);color:#fbbf24;" aria-hidden="true">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+          </span>
+          <span>Everything in Pro</span>
+        </li>
+        <li class="pr-feature">
+          <span class="pr-feature-check on" style="background:rgba(251,191,36,0.1);color:#fbbf24;" aria-hidden="true">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+          </span>
+          <span>Teacher Dashboard &amp; Analytics</span>
+        </li>
+        <li class="pr-feature">
+          <span class="pr-feature-check on" style="background:rgba(251,191,36,0.1);color:#fbbf24;" aria-hidden="true">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+          </span>
+          <span>Student Management Console</span>
+        </li>
+        <li class="pr-feature">
+          <span class="pr-feature-check on" style="background:rgba(251,191,36,0.1);color:#fbbf24;" aria-hidden="true">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+          </span>
+          <span>Institution White-labeling</span>
+        </li>
+        <li class="pr-feature">
+          <span class="pr-feature-check on" style="background:rgba(251,191,36,0.1);color:#fbbf24;" aria-hidden="true">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+          </span>
+          <span>Dedicated School Support Line</span>
+        </li>
+      </ul>
+      <a href="mailto:mensuohyaw@gmail.com?subject=Enterprise Inquiry | Vision Education" class="pr-cta gold" id="enterpriseCta">
+        Contact Sales
+      </a>
+      <p class="pr-cta-note">For schools, districts &amp; tutoring centres</p>
+    </div>
+  </div>
 
-        </div>
-      </section>
+  <!-- Trust Band -->
+  <div class="pr-trust-band" role="complementary" aria-label="Trust indicators">
+    <div class="pr-trust-item">
+      <div class="pr-trust-icon" aria-hidden="true">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      </div>
+      <div>
+        <div class="pr-trust-title">Secure Payments</div>
+        <div class="pr-trust-desc">Powered by Paystack. All transactions encrypted with bank-grade TLS.</div>
+      </div>
+    </div>
+    <div class="pr-trust-item">
+      <div class="pr-trust-icon" aria-hidden="true">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      </div>
+      <div>
+        <div class="pr-trust-title">Cancel Anytime</div>
+        <div class="pr-trust-desc">No minimum term on Pro. Cancel at any time, no questions asked.</div>
+      </div>
+    </div>
+    <div class="pr-trust-item">
+      <div class="pr-trust-icon" aria-hidden="true">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+      </div>
+      <div>
+        <div class="pr-trust-title">WAEC Aligned</div>
+        <div class="pr-trust-desc">Every question mapped to the WAEC Chief Examiner's 2025 Report.</div>
+      </div>
+    </div>
+    <div class="pr-trust-item">
+      <div class="pr-trust-icon" aria-hidden="true">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      </div>
+      <div>
+        <div class="pr-trust-title">Built for Ghana</div>
+        <div class="pr-trust-desc">Tailored specifically for the Ghana SHS curriculum and 2026 WASSCE.</div>
+      </div>
+    </div>
+  </div>
 
-      <!-- FAQ SECTION -->
-      <section class="max-w-3xl mx-auto px-6 mb-32">
-        <h2 class="text-4xl font-black mb-16 text-center">Common Questions</h2>
-        <div class="space-y-4">
-           
-           <div class="faq-item glass rounded-2xl border-white/5 overflow-hidden">
-              <button onclick="toggleFaq(this)" class="w-full p-6 text-left flex justify-between items-center group">
-                 <span class="font-bold">Is the free plan really free forever?</span>
-                 <svg class="faq-chevron transition-transform text-gray-500 group-hover:text-white" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M19 9l-7 7-7-7"/></svg>
-              </button>
-              <div class="faq-answer hidden p-6 pt-0 text-gray-400 text-sm leading-relaxed border-t border-white/5">
-                 Yes. The Standard plan is permenently free. No credit card is required to access Core Mathematics practice sessions and mock exams.
-              </div>
-           </div>
+  <!-- FAQ -->
+  <section class="pr-faq-section" aria-labelledby="faq-heading">
+    <h2 class="pr-faq-heading" id="faq-heading">Frequently asked questions</h2>
 
-           <div class="faq-item glass rounded-2xl border-white/5 overflow-hidden">
-              <button onclick="toggleFaq(this)" class="w-full p-6 text-left flex justify-between items-center group">
-                 <span class="font-bold">What is Azure GPT-4o Copilot?</span>
-                 <svg class="faq-chevron transition-transform text-gray-500 group-hover:text-white" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M19 9l-7 7-7-7"/></svg>
-              </button>
-              <div class="faq-answer hidden p-6 pt-0 text-gray-400 text-sm leading-relaxed border-t border-white/5">
-                 This is our most advanced AI logic engine. Unlike standard AI, it is specifically fine-tuned on the WASSCE Chief Examiner's reporting standards to give you precise, marks-awarded feedback on your Section B theory workings.
-              </div>
-           </div>
+    <div class="pr-faq-item" onclick="toggleFaq(this)">
+      <div class="pr-faq-q">
+        Is the free plan really free forever?
+        <svg class="pr-faq-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="pr-faq-a">Yes — the Standard plan is permanently free. You get access to Core Mathematics practice questions, mock exams, and Gemini AI assistance with no expiry date and no credit card required.</div>
+    </div>
 
-           <div class="faq-item glass rounded-2xl border-white/5 overflow-hidden">
-              <button onclick="toggleFaq(this)" class="w-full p-6 text-left flex justify-between items-center group">
-                 <span class="font-bold">Can I cancel my Pro subscription?</span>
-                 <svg class="faq-chevron transition-transform text-gray-500 group-hover:text-white" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M19 9l-7 7-7-7"/></svg>
-              </button>
-              <div class="faq-answer hidden p-6 pt-0 text-gray-400 text-sm leading-relaxed border-t border-white/5">
-                 Absolutely. Vision Pro is a monthly subscription. You can cancel at any time from your account settings with one click.
-              </div>
-           </div>
+    <div class="pr-faq-item" onclick="toggleFaq(this)">
+      <div class="pr-faq-q">
+        What is the difference between GPT-4o and Gemini 2.5?
+        <svg class="pr-faq-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="pr-faq-a">The free plan uses Gemini 2.5 for AI assistance. Vision Pro unlocks Azure GPT-4o — our Copilot engine — which provides more granular Section B marking, step-by-step feedback and Chief Examiner-style commentary on your theory answers.</div>
+    </div>
 
-        </div>
-      </section>
+    <div class="pr-faq-item" onclick="toggleFaq(this)">
+      <div class="pr-faq-q">
+        How does Enterprise pricing work?
+        <svg class="pr-faq-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="pr-faq-a">Enterprise is priced annually based on student seat count. Email us at mensuohyaw@gmail.com with your school name and estimated number of students and we will send a tailored quote within 24 hours.</div>
+    </div>
 
-    </main>
+    <div class="pr-faq-item" onclick="toggleFaq(this)">
+      <div class="pr-faq-q">
+        Can I upgrade or cancel at any time?
+        <svg class="pr-faq-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="pr-faq-a">Yes. Pro is a monthly subscription — you can cancel from your account settings at any time before the next billing date. Your access continues until the end of the paid period.</div>
+    </div>
+  </section>
 
-    <!-- Footer (Unified) -->
-    <footer class="relative z-10 border-t border-white/5 py-24 bg-navy-light/50 text-center">
-       <div class="max-w-7xl mx-auto px-6">
-          <a href="/" class="flex items-center justify-center gap-3 mb-8">
-             <div class="w-10 h-10 bg-gradient-to-br from-emerald-500 to-indigo-600 rounded-xl flex items-center justify-center text-white font-bold text-lg shadow-lg">V</div>
-             <span class="font-bold text-xl tracking-tight text-white uppercase italic">Vision Education</span>
-          </a>
-          <p class="text-gray-500 text-sm max-w-md mx-auto mb-12 italic">
-            "Empowering students through technology."
-          </p>
-          <div class="flex justify-center gap-12 text-xs font-bold text-gray-500 uppercase tracking-[0.2em] mb-12">
-             <a href="/privacy.html" class="hover:text-white transition-colors">Privacy</a>
-             <a href="/terms.html" class="hover:text-white transition-colors">Terms</a>
-             <a href="mailto:mensuohyaw@gmail.com" class="hover:text-white transition-colors">Support</a>
-          </div>
-          <p class="text-[10px] font-black text-gray-700 uppercase tracking-[0.4em]">© 2026 Vision Education Initiative</p>
-       </div>
-    </footer>
+  <!-- Footer -->
+  <footer class="pr-footer" role="contentinfo">
+    <p>
+      &copy; 2026 Vision Education &nbsp;&middot;&nbsp;
+      <a href="/privacy">Privacy Policy</a> &nbsp;&middot;&nbsp;
+      <a href="/terms">Terms of Service</a> &nbsp;&middot;&nbsp;
+      <a href="mailto:mensuohyaw@gmail.com">Contact</a>
+    </p>
+    <p style="margin-top:6px;">Empowering Ghanaian Excellence through Technology.</p>
+  </footer>
 
-    <script src="auth.js"></script>
-    <script src="payment.js"></script>
-    <script>
-      const hpNav = document.getElementById('hpNav');
-      window.addEventListener('scroll', () => {
-        hpNav.classList.toggle('scrolled', window.scrollY > 40);
-      }, { passive: true });
-
-      function toggleFaq(btn) {
-         const item = btn.parentElement;
-         const isOpen = item.classList.contains('open');
-         document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
-         if (!isOpen) item.classList.add('open');
-      }
-
-      async function handlePricingUpgrade() {
-        if (typeof initiatePayment === 'function') {
-          await initiatePayment('vision_pro_access', 30.00, 'Vision Pro Access');
-        } else {
-          alert('Initializing secure payment engine... Please wait.');
+  <script src="auth.js"></script>
+  <script src="payment.js"></script>
+  <script>
+    // Check if already Pro
+    window.addEventListener('DOMContentLoaded', () => {
+      const session = typeof getSession === 'function' ? getSession() : null;
+      if (session && session.role === 'pro') {
+        const btn = document.getElementById('proLink');
+        if (btn) {
+          btn.textContent = 'Current Active Plan';
+          btn.style.background = 'linear-gradient(135deg, #22c55e, #16a34a)';
+          btn.style.boxShadow = '0 4px 18px rgba(34,197,94,0.3)';
+          btn.style.pointerEvents = 'none';
+          btn.style.cursor = 'default';
         }
       }
-    </script>
-  </body>
+    });
+
+    async function handlePricingUpgrade() {
+      if (typeof initiatePayment === 'function') {
+        await initiatePayment('vision_pro_access', 30.00, 'Vision Pro Access');
+      } else {
+        alert('Payment system loading... please try again.');
+      }
+    }
+
+    function toggleFaq(el) {
+      const isOpen = el.classList.contains('open');
+      document.querySelectorAll('.pr-faq-item').forEach(i => i.classList.remove('open'));
+      if (!isOpen) el.classList.add('open');
+    }
+  </script>
+</body>
 </html>
