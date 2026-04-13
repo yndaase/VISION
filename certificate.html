@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Certificate of Achievement | Vision Education</title>
+  <meta name="description" content="Download your Vision Education certificate of achievement for completing WASSCE mock examinations." />
+  <meta name="theme-color" content="#fbbf24" />
+  <link rel="apple-touch-icon" href="assets/logo.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="certificate.css" />
+</head>
+<body class="cert-page">
+
+  <!-- Background -->
+  <div class="cert-bg">
+    <span class="bg-orb orb-1"></span>
+    <span class="bg-orb orb-2"></span>
+  </div>
+
+  <!-- Action Buttons -->
+  <div class="cert-actions">
+    <button class="cert-action-btn cert-action-primary" onclick="downloadCertificate()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      Download PDF
+    </button>
+    <button class="cert-action-btn cert-action-secondary" onclick="shareCertificate()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+      Share
+    </button>
+    <a href="/dashboard" class="cert-action-btn cert-action-secondary">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+      Dashboard
+    </a>
+  </div>
+
+  <!-- Certificate -->
+  <div class="cert-frame" id="certFrame">
+    <div class="cert-corner-tr"></div>
+    <div class="cert-corner-bl"></div>
+    <div class="cert-inner-border"></div>
+
+    <img src="assets/logo.png" alt="Vision Education" class="cert-logo" />
+    <div class="cert-org">Vision Education</div>
+    <h1 class="cert-title">Certificate of Achievement</h1>
+    <p class="cert-subtitle">2026 WASSCE Examination Preparation</p>
+
+    <div class="cert-divider"></div>
+
+    <div class="cert-presented">This is to certify that</div>
+    <div class="cert-recipient" id="certName">Student Name</div>
+
+    <p class="cert-description" id="certDescription">
+      Has successfully completed the Core Mathematics mock examination on Vision Education, demonstrating proficiency in WASSCE-level problem solving and analytical skills.
+    </p>
+
+    <div class="cert-score-badge">
+      <span class="cert-score-label">Score</span>
+      <span class="cert-score-val" id="certScore">0%</span>
+    </div>
+
+    <div class="cert-footer-row">
+      <div class="cert-footer-col">
+        <div class="cert-footer-val" id="certDate">April 13, 2026</div>
+        <div class="cert-footer-label">Date Issued</div>
+      </div>
+      <div class="cert-footer-col">
+        <div class="cert-footer-val" id="certSubject">Core Mathematics</div>
+        <div class="cert-footer-label">Subject</div>
+      </div>
+      <div class="cert-footer-col">
+        <div class="cert-footer-val">Yaw N. Mensuoh</div>
+        <div class="cert-footer-label">Platform Creator</div>
+      </div>
+    </div>
+
+    <div class="cert-id" id="certId">CERT-XXXXXXXX</div>
+  </div>
+
+  <script>
+    // ─── Certificate Engine ───
+    
+    function generateCertId() {
+      const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+      let id = 'VE-';
+      for (let i = 0; i < 8; i++) {
+        id += chars.charAt(Math.floor(Math.random() * chars.length));
+      }
+      return id;
+    }
+
+    function loadCertificateData() {
+      // Get data from URL params or localStorage
+      const params = new URLSearchParams(window.location.search);
+      
+      // Try URL params first
+      let name = params.get('name');
+      let subject = params.get('subject');
+      let score = params.get('score');
+      let date = params.get('date');
+      let certId = params.get('id');
+
+      // Fallback to session data
+      if (!name) {
+        try {
+          const SESSION_KEY = 'waec_session';
+          const sessionStr = sessionStorage.getItem(SESSION_KEY) || localStorage.getItem(SESSION_KEY);
+          if (sessionStr) {
+            const session = JSON.parse(sessionStr);
+            name = session.name || 'Student';
+          }
+        } catch(e) {}
+      }
+
+      // Fallback to latest mock result
+      if (!score) {
+        try {
+          const mockResult = JSON.parse(localStorage.getItem('vision_last_mock_result'));
+          if (mockResult) {
+            score = mockResult.score || mockResult.accuracy;
+            subject = mockResult.subject || subject;
+          }
+        } catch(e) {}
+      }
+
+      // Defaults
+      name = name || 'Student';
+      subject = subject || 'Core Mathematics';
+      score = score || '—';
+      date = date || new Date().toLocaleDateString('en-GB', { year: 'numeric', month: 'long', day: 'numeric' });
+      certId = certId || generateCertId();
+
+      // Render
+      document.getElementById('certName').textContent = name;
+      document.getElementById('certScore').textContent = score.toString().includes('%') ? score : score + '%';
+      document.getElementById('certDate').textContent = date;
+      document.getElementById('certSubject').textContent = formatSubject(subject);
+      document.getElementById('certId').textContent = certId;
+
+      // Update description
+      document.getElementById('certDescription').textContent = 
+        `Has successfully completed the ${formatSubject(subject)} mock examination on Vision Education, demonstrating proficiency in WASSCE-level problem solving and analytical skills.`;
+
+      // Update page title
+      document.title = `Certificate - ${name} | Vision Education`;
+    }
+
+    function formatSubject(sub) {
+      const map = {
+        'maths': 'Core Mathematics',
+        'english': 'English Language',
+        'science': 'Integrated Science',
+        'social': 'Social Studies',
+        'physics': 'Physics',
+        'chemistry': 'Chemistry',
+        'biology': 'Biology',
+        'economics': 'Economics',
+        'compsci': 'Computer Science'
+      };
+      return map[sub] || sub || 'Core Mathematics';
+    }
+
+    function downloadCertificate() {
+      window.print();
+    }
+
+    function shareCertificate() {
+      const name = document.getElementById('certName').textContent;
+      const subject = document.getElementById('certSubject').textContent;
+      const score = document.getElementById('certScore').textContent;
+      const certId = document.getElementById('certId').textContent;
+
+      const shareUrl = `${window.location.origin}/certificate?name=${encodeURIComponent(name)}&subject=${encodeURIComponent(subject)}&score=${encodeURIComponent(score)}&id=${encodeURIComponent(certId)}`;
+      const shareText = `I just earned a Vision Education certificate in ${subject} with a score of ${score}! 🎓🇬🇭 #WASSCE2026 #VisionEducation`;
+
+      if (navigator.share) {
+        navigator.share({
+          title: 'Vision Education Certificate',
+          text: shareText,
+          url: shareUrl
+        }).catch(() => {});
+      } else {
+        // Fallback: Copy to clipboard
+        navigator.clipboard.writeText(shareUrl).then(() => {
+          const btn = document.querySelector('.cert-action-secondary');
+          const origText = btn.innerHTML;
+          btn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg> Link Copied!';
+          setTimeout(() => { btn.innerHTML = origText; }, 2000);
+        });
+      }
+    }
+
+    // Init
+    document.addEventListener('DOMContentLoaded', loadCertificateData);
+  </script>
+</body>
+</html>

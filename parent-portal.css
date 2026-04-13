@@ -1,0 +1,290 @@
+/* =====================================================
+   PARENT PORTAL — Vision Education
+   Clean, accessible styles for guardians
+   ===================================================== */
+
+.parent-page {
+  min-height: 100vh;
+  background: #05080f;
+  color: #f1f5f9;
+  font-family: 'Outfit', system-ui, sans-serif;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1rem;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Background */
+.parent-bg {
+  position: fixed; inset: 0;
+  z-index: 0; pointer-events: none;
+}
+.parent-bg .bg-orb {
+  position: absolute; border-radius: 50%;
+  filter: blur(100px); opacity: 0.15;
+}
+.parent-bg .bg-orb-1 {
+  width: 500px; height: 500px;
+  background: radial-gradient(circle, #10b981, transparent 65%);
+  top: -100px; left: -80px;
+}
+.parent-bg .bg-orb-2 {
+  width: 400px; height: 400px;
+  background: radial-gradient(circle, #6366f1, transparent 65%);
+  bottom: -100px; right: -100px;
+}
+
+/* Main Card */
+.parent-card {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 520px;
+  background: #0d1117;
+  border: 1px solid rgba(255,255,255,0.07);
+  border-radius: 20px;
+  padding: 2.5rem 2.25rem;
+  box-shadow: 0 24px 60px rgba(0,0,0,0.5);
+  animation: fadeUp 0.6s cubic-bezier(0.22,1,0.36,1) both;
+}
+.parent-card::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, #10b981, #34d399 50%, #6366f1);
+  border-radius: 20px 20px 0 0;
+}
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Header */
+.parent-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+.parent-logo {
+  width: 56px;
+  height: 56px;
+  margin: 0 auto 1rem;
+  border-radius: 50%;
+  display: block;
+  filter: drop-shadow(0 0 24px rgba(16,185,129,0.3));
+}
+.parent-header h1 {
+  font-size: 1.6rem;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  margin-bottom: 6px;
+  color: #f1f5f9;
+}
+.parent-header p {
+  font-size: 0.88rem;
+  color: #64748b;
+  line-height: 1.6;
+}
+
+/* Access Code Form */
+.parent-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+.parent-label {
+  font-size: 0.72rem;
+  font-weight: 800;
+  color: #475569;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 4px;
+  display: block;
+}
+.parent-code-input {
+  width: 100%;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.09);
+  border-radius: 10px;
+  padding: 14px;
+  color: #f1f5f9;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 1.4rem;
+  font-weight: 700;
+  text-align: center;
+  letter-spacing: 8px;
+  outline: none;
+  transition: all 0.2s;
+}
+.parent-code-input::placeholder {
+  color: #1e293b;
+  font-size: 1rem;
+  letter-spacing: 4px;
+}
+.parent-code-input:focus {
+  border-color: rgba(16,185,129,0.5);
+  background: rgba(16,185,129,0.04);
+  box-shadow: 0 0 0 3px rgba(16,185,129,0.1);
+}
+.parent-error {
+  font-size: 0.8rem;
+  color: #f87171;
+  text-align: center;
+  display: none;
+}
+.parent-submit-btn {
+  width: 100%;
+  padding: 14px;
+  background: linear-gradient(135deg, #10b981, #34d399);
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.92rem;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: 0 6px 24px rgba(16,185,129,0.35);
+  transition: all 0.2s;
+}
+.parent-submit-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 32px rgba(16,185,129,0.45);
+}
+
+/* ─── Dashboard View (shown after authentication) ─── */
+.parent-dashboard {
+  display: none;
+}
+.parent-dashboard.active {
+  display: block;
+}
+
+.parent-child-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 1.25rem;
+  background: rgba(16,185,129,0.06);
+  border: 1px solid rgba(16,185,129,0.15);
+  border-radius: 14px;
+  margin-bottom: 1.5rem;
+}
+.parent-child-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #10b981, #34d399);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  font-weight: 800;
+}
+.parent-child-name {
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: #f1f5f9;
+}
+.parent-child-school {
+  font-size: 0.8rem;
+  color: #64748b;
+}
+
+/* Stats Grid */
+.parent-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  margin-bottom: 1.5rem;
+}
+.parent-stat-card {
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.07);
+  border-radius: 12px;
+  padding: 16px;
+  text-align: center;
+  transition: all 0.2s;
+}
+.parent-stat-card:hover {
+  border-color: rgba(16,185,129,0.25);
+  transform: translateY(-2px);
+}
+.parent-stat-val {
+  font-size: 1.8rem;
+  font-weight: 900;
+  color: #10b981;
+  line-height: 1;
+  margin-bottom: 4px;
+}
+.parent-stat-label {
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: #475569;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+/* Activity Timeline */
+.parent-activity {
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.07);
+  border-radius: 14px;
+  padding: 1.25rem;
+}
+.parent-activity-title {
+  font-size: 0.72rem;
+  font-weight: 800;
+  color: #475569;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 1rem;
+}
+.parent-activity-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+}
+.parent-activity-item:last-child {
+  border-bottom: none;
+}
+.parent-activity-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #10b981;
+  flex-shrink: 0;
+}
+.parent-activity-text {
+  font-size: 0.85rem;
+  color: #94a3b8;
+}
+.parent-activity-date {
+  margin-left: auto;
+  font-size: 0.72rem;
+  color: #334155;
+  font-weight: 600;
+}
+
+/* Trust Footer */
+.parent-footer {
+  text-align: center;
+  margin-top: 1.5rem;
+  font-size: 0.72rem;
+  color: #1e293b;
+  line-height: 1.6;
+}
+.parent-footer a {
+  color: #10b981;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+  .parent-card { padding: 1.75rem 1.25rem; border-radius: 18px; }
+  .parent-stats-grid { grid-template-columns: 1fr; }
+}
