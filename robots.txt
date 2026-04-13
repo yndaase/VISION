@@ -15,4 +15,4 @@ Disallow: /mock-hall
 Disallow: /api/
 
 Sitemap: https://visionedu.online/sitemap.xml
-Sitemap: https://visionedu.site/sitemap.xml
+Sitemap: https://visionedu.site/sitemap-site.xml
