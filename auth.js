@@ -1173,3 +1173,9 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 });
+
+// Bootstrap Firebase Sync Engine
+try {
+  import('./firebase.js').catch(err => console.warn('[Firebase Sync] Module blocked or missing:', err));
+} catch(e) {}
+
