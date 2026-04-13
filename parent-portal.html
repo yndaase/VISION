@@ -399,7 +399,7 @@
     }
 
     // ─── Dashboard Bootstrapping ───
-    function checkSessionState() {
+    async function checkSessionState() {
       const session = getParentSession();
       if (!session) {
         switchView('parentAuthView');
@@ -411,38 +411,70 @@
         return;
       }
 
+      // Pre-load Firebase if not loaded
+      if (!window.pullStateFromCloud) {
+        try { await import('./firebase.js'); } catch(e){}
+      }
+
       // Load Dashboard
-      loadDashboard(session.linkedStudent);
+      await loadDashboard(session.linkedStudent);
       switchView('parentDashView');
     }
 
-    function loadDashboard(linkedStudent) {
+    async function loadDashboard(linkedStudent) {
       document.getElementById('childAvatar').textContent = (linkedStudent.name || 'S').charAt(0).toUpperCase();
       document.getElementById('childName').textContent = linkedStudent.name || 'Student';
       document.getElementById('childSchool').textContent = linkedStudent.school || 'Ghana SHS';
 
-      // Pull stats from localStorage (if available on this device)
-      const statsKey = 'waec_stats_' + linkedStudent.email;
       let stats = { answered: 0, correct: 0 };
-      try { stats = JSON.parse(localStorage.getItem(statsKey)) || stats; } catch(e) {}
+      let streak = { currentStreak: 0 };
+      let lastMock = null;
+
+      // 1. Try Firebase Cloud Sync
+      let cloudData = null;
+      if (window.pullStateFromCloud) {
+        document.getElementById('aiInsightsText').innerHTML = "Fetching live cloud data...";
+        cloudData = await window.pullStateFromCloud(linkedStudent.email);
+      }
+
+      if (cloudData) {
+        stats = cloudData.stats || stats;
+        streak = cloudData.streak || streak;
+        lastMock = cloudData.lastMock || null;
+      } else {
+        // 2. Fallback to LocalStorage (if on same device)
+        const statsKey = 'waec_stats_' + linkedStudent.email;
+        const streakKey = 'vision_streak_' + linkedStudent.email;
+        try { stats = JSON.parse(localStorage.getItem(statsKey)) || stats; } catch(e) {}
+        try { streak = JSON.parse(localStorage.getItem(streakKey)) || streak; } catch(e) {}
+      }
       
       const accuracy = stats.answered > 0 ? Math.round((stats.correct / stats.answered) * 100) : 0;
       document.getElementById('childAccuracy').textContent = accuracy + '%';
       document.getElementById('childQuestions').textContent = stats.answered || 0;
-
-      // Streak data
-      const streakKey = 'vision_streak_' + linkedStudent.email;
-      let streak = { currentStreak: 0 };
-      try { streak = JSON.parse(localStorage.getItem(streakKey)) || streak; } catch(e) {}
       document.getElementById('childStreak').textContent = streak.currentStreak || 0;
-
-      // Subjects (estimate)
       document.getElementById('childSubjects').textContent = stats.answered > 0 ? Math.min(8, Math.ceil(stats.answered / 15)) : 0;
 
       // Populate new features
       populateAIInsights(linkedStudent.name, accuracy, stats.answered, streak.currentStreak);
       populateMastery(stats.answered);
-      populateMocks();
+      if (lastMock) {
+        // use cloud mock
+        const subMap = { maths: 'Core Mathematics', english: 'English Language', science: 'Int. Science', social: 'Social Studies' };
+        const subName = subMap[lastMock.subject] || lastMock.subject || 'Core Mathematics';
+        const scorePct = lastMock.score || lastMock.accuracy || 0;
+        document.getElementById('recentMocksList').innerHTML = `
+          <div class="parent-mock-item">
+            <div class="parent-mock-left">
+              <div class="parent-mock-name">WASSCE Mock: ${subName}</div>
+              <div class="parent-mock-date">Synced from cloud</div>
+            </div>
+            <div class="parent-mock-score">${scorePct}%</div>
+          </div>
+        `;
+      } else {
+        populateMocks(); // fallback
+      }
       loadParentGoal(stats.answered);
 
       // Activity
