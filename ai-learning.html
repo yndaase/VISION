@@ -405,7 +405,7 @@
     // Auto-show selector for Pro
     window.addEventListener('DOMContentLoaded', () => {
       const session = typeof getSession === 'function' ? getSession() : null;
-      const isAdmin = session?.email?.toLowerCase() === 'gisgreat308@gmail.com';
+      const isAdmin = session?.role === 'admin';
       if ((session?.role === 'pro') || isAdmin) {
         const selector = document.getElementById('aiModeSelector');
         if (selector) selector.style.display = 'flex';
@@ -429,7 +429,7 @@
         const userEmail = session?.email || '';
 
         // ABSOLUTE ADMIN OVERRIDE (For AI Hub)
-        if (userEmail.toLowerCase() === 'gisgreat308@gmail.com') {
+        if (session?.role === 'admin') {
           userRole = 'pro';
         }
 

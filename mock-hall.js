@@ -96,7 +96,7 @@ async function initSingleSubjectAIMock(mockId) {
   }
 
   const session = typeof getSession === 'function' ? getSession() : JSON.parse(sessionStorage.getItem("waec_session") || "{}");
-  const isAdmin = (session.email || "").toLowerCase() === 'gisgreat308@gmail.com';
+  const isAdmin = session.role === 'admin';
   const isPro = session.role === 'pro' || isAdmin;
   const engineName = isPro ? "Azure GPT-4o" : "Gemini AI";
 
@@ -198,7 +198,7 @@ async function initSingleSubjectAIMock(mockId) {
 
 async function initAIMock() {
   const session = typeof getSession === 'function' ? getSession() : JSON.parse(sessionStorage.getItem("waec_session") || "{}");
-  const isAdmin = (session.email || "").toLowerCase() === 'gisgreat308@gmail.com';
+  const isAdmin = session.role === 'admin';
   const isPro = session.role === 'pro' || isAdmin;
 
   const qCard = document.getElementById("qDisplayCard");
