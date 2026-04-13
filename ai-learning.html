@@ -89,12 +89,16 @@
        </a>
     </nav>
 
-    <div class="p-8 border-t border-white/5">
-       <a href="dashboard.html" class="w-full flex items-center gap-4 px-4 py-3.5 rounded-2xl font-bold text-sm text-gray-400 hover:bg-white/5 transition-all">
-          <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M15 19l-7-7 7-7"/></svg>
-          Return to Hub
-       </a>
-    </div>
+     <div class="p-8 border-t border-white/5 space-y-4">
+        <a href="pricing.html" class="w-full flex items-center gap-4 px-4 py-3.5 rounded-2xl font-bold text-sm text-gray-400 hover:bg-white/5 hover:text-white transition-all">
+           <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.407 2.63 1m-2.63-1V7m0 11v2m0-2a2.63 2.63 0 01-2.63-1M12 11V9m0 2s-1.343 0-3 0m3 0c1.11 0 2.08.407 2.63 1"/></svg>
+           Pricing & Plans
+        </a>
+        <button onclick="handleLogout()" class="w-full flex items-center gap-4 px-4 py-3.5 rounded-2xl font-bold text-sm text-red-400 hover:bg-red-500/10 transition-all outline-none text-left">
+           <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+           Logout
+        </button>
+     </div>
   </aside>
 
   <!-- Main Wrapper -->

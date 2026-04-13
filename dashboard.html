@@ -107,6 +107,10 @@
           <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
           Learner Materials
        </button>
+       <a href="pricing.html" class="sidebar-item w-full flex items-center gap-4 px-4 py-3.5 rounded-2xl font-bold text-sm tracking-tight text-gray-400 hover:text-white group outline-none">
+          <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.407 2.63 1m-2.63-1V7m0 11v2m0-2a2.63 2.63 0 01-2.63-1M12 11V9m0 2s-1.343 0-3 0m3 0c1.11 0 2.08.407 2.63 1"/></svg>
+          Pricing & Plans
+       </a>
        <a href="ai-learning.html" class="sidebar-item w-full flex items-center gap-4 px-4 py-3.5 rounded-2xl font-bold text-sm tracking-tight text-gray-400 hover:text-white group outline-none">
           <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
           AI Learning Hub
@@ -114,9 +118,13 @@
     </nav>
 
     <div class="p-8 border-t border-white/5 space-y-4">
-       <button onclick="openSettings()" class="w-full flex items-center gap-4 px-4 py-3.5 rounded-2xl font-bold text-sm text-gray-400 hover:bg-white/5 hover:text-white transition-all outline-none">
+       <button onclick="openSettings()" class="w-full flex items-center gap-4 px-4 py-3.5 rounded-2xl font-bold text-sm text-gray-400 hover:bg-white/5 hover:text-white transition-all outline-none text-left">
           <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
           Dashboard Settings
+       </button>
+       <button onclick="handleLogout()" class="w-full flex items-center gap-4 px-4 py-3.5 rounded-2xl font-bold text-sm text-red-400 hover:bg-red-500/10 transition-all outline-none text-left">
+          <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+          Logout
        </button>
     </div>
   </aside>
@@ -176,7 +184,7 @@
                        <p class="text-[10px] font-black text-white uppercase tracking-widest leading-none">Vision <span class="text-indigo-400">Pro</span> Access</p>
                        <p class="text-[8px] text-gray-500 uppercase tracking-[0.2em] font-bold mt-1">Unrestricted Mastery Packs</p>
                     </div>
-                    <button onclick="initiatePayment('vision_pro_access', 30, 'Vision Pro Monthly Access')" class="px-6 py-2.5 bg-indigo-500 hover:bg-indigo-600 text-white font-black text-[9px] uppercase tracking-widest rounded-xl shadow-xl shadow-indigo-500/20 transition-all hover:scale-105">Upgrade Packet</button>
+                    <button onclick="initiatePayment('vision_pro_access', 30, 'Vision Pro Monthly Access')" class="px-6 py-2.5 bg-indigo-500 hover:bg-indigo-600 text-white font-black text-[9px] uppercase tracking-widest rounded-xl shadow-xl shadow-indigo-500/20 transition-all hover:scale-105">Upgrade</button>
                  </div>
              </div>
           </div>
