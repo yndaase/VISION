@@ -23,31 +23,107 @@
 
   <!-- Main Card -->
   <div class="parent-card" id="parentCard">
-    <!-- Login View -->
-    <div id="parentLoginView">
+    
+    <!-- 1. AUTHENTICATION VIEW -->
+    <div id="parentAuthView" class="parent-view active">
       <div class="parent-header">
         <img src="assets/logo.png" alt="Vision Education" class="parent-logo" />
         <h1>Parent / Guardian Portal</h1>
-        <p>Enter the 6-digit access code provided by your child to view their study progress.</p>
+        <p>Log in or create an account to monitor your child's WASSCE preparation.</p>
       </div>
 
-      <form class="parent-form" onsubmit="handleParentLogin(event)">
+      <div class="parent-tabs">
+        <button class="parent-tab active" id="tabLogin" onclick="switchAuthTab('login')">Sign In</button>
+        <button class="parent-tab" id="tabSignup" onclick="switchAuthTab('signup')">Create Account</button>
+      </div>
+
+      <!-- Google Button Wrapper (Clickjacking transparent override) -->
+      <div style="position: relative; margin-bottom: 1.5rem;">
+        <button type="button" class="parent-google-btn">
+          <svg style="width: 18px; height: 18px;" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+          Continue with Google
+        </button>
+        <!-- The actual Google iframe, made practically invisible -->
+        <div id="g_id_onload"
+             data-client_id="842407548981-t52758v1r51st80b6p00ed64s7qio3k9.apps.googleusercontent.com"
+             data-context="use"
+             data-ux_mode="popup"
+             data-callback="handleParentGoogleLogin"
+             data-auto_prompt="false"></div>
+        <div class="g_id_signin"
+             data-type="standard"
+             data-shape="rectangular"
+             data-theme="outline"
+             data-text="signin_with"
+             data-size="large"
+             data-logo_alignment="left"
+             style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0.02; cursor: pointer; display: flex; align-items: center; justify-content: center; overflow: hidden;"></div>
+      </div>
+
+      <div class="parent-divider">or use email</div>
+
+      <!-- Login Form -->
+      <form id="parentLoginForm" class="parent-form" style="display: block;" onsubmit="handleParentSubmit(event, 'login')">
         <div>
-          <label class="parent-label">Access Code</label>
-          <input type="text" class="parent-code-input" id="parentCodeInput" placeholder="000000" maxlength="6" inputmode="numeric" autocomplete="off" required />
+          <label class="parent-label">Email Address</label>
+          <input type="email" class="parent-input" id="loginEmail" placeholder="parent@example.com" required />
         </div>
-        <p class="parent-error" id="parentError">Invalid or expired access code. Please check with your child.</p>
-        <button type="submit" class="parent-submit-btn">View Progress</button>
+        <div>
+          <label class="parent-label">Password</label>
+          <input type="password" class="parent-input" id="loginPass" placeholder="••••••••" required />
+        </div>
+        <p class="parent-error" id="loginError"></p>
+        <button type="submit" class="parent-submit-btn">Sign In</button>
+      </form>
+
+      <!-- Signup Form -->
+      <form id="parentSignupForm" class="parent-form" style="display: none;" onsubmit="handleParentSubmit(event, 'signup')">
+        <div>
+          <label class="parent-label">Full Name</label>
+          <input type="text" class="parent-input" id="signupName" placeholder="Kwame Mensah" required />
+        </div>
+        <div>
+          <label class="parent-label">Email Address</label>
+          <input type="email" class="parent-input" id="signupEmail" placeholder="parent@example.com" required />
+        </div>
+        <div>
+          <label class="parent-label">Password</label>
+          <input type="password" class="parent-input" id="signupPass" placeholder="••••••••" required minlength="6" />
+        </div>
+        <p class="parent-error" id="signupError"></p>
+        <button type="submit" class="parent-submit-btn">Create Account</button>
       </form>
 
       <div class="parent-footer">
-        <p>Your child can generate an access code from their <strong>Settings</strong> page on Vision Education.</p>
-        <p style="margin-top:8px;"><a href="/">Back to Vision Education</a></p>
+        <p><a href="/">Back to Vision Education Student Portal</a></p>
       </div>
     </div>
 
-    <!-- Dashboard View -->
-    <div id="parentDashView" class="parent-dashboard">
+    <!-- 2. LINK STUDENT VIEW -->
+    <div id="parentLinkView" class="parent-view">
+      <div class="parent-header">
+        <img src="assets/logo.png" alt="Vision Education" class="parent-logo" />
+        <h1>Link Your Child</h1>
+        <p>Enter the 6-digit access code provided by your child to link their account to yours.</p>
+      </div>
+
+      <form class="parent-form" onsubmit="handleLinkStudent(event)">
+        <div>
+          <label class="parent-label">6-Digit Access Code</label>
+          <input type="text" class="parent-code-input" id="parentCodeInput" placeholder="000000" maxlength="6" inputmode="numeric" autocomplete="off" required />
+        </div>
+        <p class="parent-error" id="linkError"></p>
+        <button type="submit" class="parent-submit-btn">Verify and Link</button>
+      </form>
+
+      <div class="parent-footer">
+        <p>Your child can generate an access code from their <strong>Settings</strong> page on the student dashboard.</p>
+        <p style="margin-top:8px;"><a href="#" onclick="parentLogout(); return false;" style="color:#f87171;">Sign Out</a></p>
+      </div>
+    </div>
+
+    <!-- 3. DASHBOARD VIEW -->
+    <div id="parentDashView" class="parent-view parent-dashboard">
       <div class="parent-child-header">
         <div class="parent-child-avatar" id="childAvatar">S</div>
         <div>
@@ -86,20 +162,151 @@
       </div>
 
       <div class="parent-footer" style="margin-top:1.5rem;">
-        <p>This data is a real-time snapshot of your child's activity on Vision Education.</p>
-        <p style="margin-top:8px;"><a href="/" style="color:#10b981;">Back to Vision Education</a> · <a href="#" onclick="parentLogout(); return false;" style="color:#f87171;">Exit Portal</a></p>
+        <p>This data is a real-time snapshot of your linked child's activity on Vision Education.</p>
+        <p style="margin-top:8px;">
+          <a href="#" onclick="showLinkView(); return false;" style="color:#64748b; margin-right:10px;">Link Another Child</a>
+          <a href="#" onclick="parentLogout(); return false;" style="color:#f87171;">Sign Out</a>
+        </p>
       </div>
     </div>
   </div>
 
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
   <script>
-    // ─── Parent Portal Access Logic ───
+    // ─── Local Parent Database ───
+    const PARENT_USERS_KEY = 'vision_parent_users';
+    const PARENT_SESSION_KEY = 'vision_parent_session';
     const PARENT_CODE_KEY = 'vision_parent_codes';
 
-    function handleParentLogin(e) {
+    function getParentUsers() {
+      try { return JSON.parse(localStorage.getItem(PARENT_USERS_KEY)) || []; } catch(e) { return []; }
+    }
+    function saveParentUser(user) {
+      const users = getParentUsers();
+      const idx = users.findIndex(u => u.email === user.email);
+      if (idx > -1) users[idx] = user;
+      else users.push(user);
+      localStorage.setItem(PARENT_USERS_KEY, JSON.stringify(users));
+    }
+    function getParentSession() {
+      try { return JSON.parse(localStorage.getItem(PARENT_SESSION_KEY)); } catch(e) { return null; }
+    }
+    function setParentSession(user) {
+      localStorage.setItem(PARENT_SESSION_KEY, JSON.stringify(user));
+    }
+
+    // ─── Routing & Views ───
+    function switchView(viewId) {
+      document.querySelectorAll('.parent-view').forEach(v => v.classList.remove('active'));
+      document.getElementById(viewId).classList.add('active');
+    }
+
+    function switchAuthTab(type) {
+      const tabLogin = document.getElementById('tabLogin');
+      const tabSignup = document.getElementById('tabSignup');
+      const formLogin = document.getElementById('parentLoginForm');
+      const formSignup = document.getElementById('parentSignupForm');
+      const errLogin = document.getElementById('loginError');
+      const errSignup = document.getElementById('signupError');
+
+      errLogin.style.display = 'none';
+      errSignup.style.display = 'none';
+
+      if (type === 'login') {
+        tabLogin.classList.add('active');
+        tabSignup.classList.remove('active');
+        formLogin.style.display = 'block';
+        formSignup.style.display = 'none';
+      } else {
+        tabSignup.classList.add('active');
+        tabLogin.classList.remove('active');
+        formSignup.style.display = 'block';
+        formLogin.style.display = 'none';
+      }
+    }
+
+    // ─── Authentication Logic ───
+    function handleParentSubmit(e, type) {
+      e.preventDefault();
+      const users = getParentUsers();
+
+      if (type === 'signup') {
+        const name = document.getElementById('signupName').value.trim();
+        const email = document.getElementById('signupEmail').value.trim();
+        const pass = document.getElementById('signupPass').value;
+        const errEl = document.getElementById('signupError');
+
+        if (users.find(u => u.email === email)) {
+          errEl.textContent = 'Account already exists for this email. Please sign in.';
+          errEl.style.display = 'block';
+          return;
+        }
+
+        const newUser = { email, name, password: pass, linkedStudent: null };
+        saveParentUser(newUser);
+        setParentSession(newUser);
+        checkSessionState();
+
+      } else {
+        const email = document.getElementById('loginEmail').value.trim();
+        const pass = document.getElementById('loginPass').value;
+        const errEl = document.getElementById('loginError');
+
+        const user = users.find(u => u.email === email && u.password === pass);
+        if (!user) {
+          errEl.textContent = 'Incorrect email or password.';
+          errEl.style.display = 'block';
+          shakeCard();
+          return;
+        }
+
+        setParentSession(user);
+        checkSessionState();
+      }
+    }
+
+    function handleParentGoogleLogin(response) {
+      // Decode JWT token payload
+      const base64Url = response.credential.split('.')[1];
+      const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+      const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+          return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+      }).join(''));
+      
+      const gUser = JSON.parse(jsonPayload);
+      const email = gUser.email;
+      const name = gUser.name || 'Parent';
+
+      const users = getParentUsers();
+      let parentUser = users.find(u => u.email === email);
+
+      if (!parentUser) {
+        // Create new account
+        parentUser = { email, name, password: null, linkedStudent: null };
+        saveParentUser(parentUser);
+      }
+
+      setParentSession(parentUser);
+      checkSessionState();
+    }
+
+    function parentLogout() {
+      localStorage.removeItem(PARENT_SESSION_KEY);
+      document.getElementById('loginEmail').value = '';
+      document.getElementById('loginPass').value = '';
+      document.getElementById('parentCodeInput').value = '';
+      switchView('parentAuthView');
+    }
+
+    // ─── Linking Logic ───
+    function showLinkView() {
+      switchView('parentLinkView');
+    }
+
+    function handleLinkStudent(e) {
       e.preventDefault();
       const code = document.getElementById('parentCodeInput').value.trim();
-      const errorEl = document.getElementById('parentError');
+      const errorEl = document.getElementById('linkError');
 
       if (code.length !== 6) {
         errorEl.style.display = 'block';
@@ -107,34 +314,60 @@
         return;
       }
 
-      // Check if code matches any stored parent code
-      const codes = getParentCodes();
-      const match = codes.find(c => c.code === code && c.expiresAt > Date.now());
+      // Check codes
+      let activeCodes = [];
+      try { activeCodes = JSON.parse(localStorage.getItem(PARENT_CODE_KEY)) || []; } catch(e){}
+      
+      const match = activeCodes.find(c => c.code === code && c.expiresAt > Date.now());
 
       if (!match) {
         errorEl.style.display = 'block';
-        errorEl.textContent = 'Invalid or expired access code. Please check with your child.';
+        errorEl.textContent = 'Invalid or expired access code.';
         shakeCard();
         return;
       }
 
-      errorEl.style.display = 'none';
-      showParentDashboard(match);
+      // Link to session user
+      const session = getParentSession();
+      if (!session) return;
+
+      session.linkedStudent = {
+        email: match.childEmail,
+        name: match.childName,
+        school: match.childSchool
+      };
+      
+      saveParentUser(session);
+      setParentSession(session);
+      document.getElementById('parentCodeInput').value = '';
+      checkSessionState();
     }
 
-    function showParentDashboard(matchData) {
-      document.getElementById('parentLoginView').style.display = 'none';
-      const dash = document.getElementById('parentDashView');
-      dash.className = 'parent-dashboard active';
+    // ─── Dashboard Bootstrapping ───
+    function checkSessionState() {
+      const session = getParentSession();
+      if (!session) {
+        switchView('parentAuthView');
+        return;
+      }
 
-      // Populate with child's data
-      const name = matchData.childName || 'Student';
-      document.getElementById('childAvatar').textContent = name.charAt(0).toUpperCase();
-      document.getElementById('childName').textContent = name;
-      document.getElementById('childSchool').textContent = matchData.childSchool || 'Ghana SHS';
+      if (!session.linkedStudent) {
+        switchView('parentLinkView');
+        return;
+      }
+
+      // Load Dashboard
+      loadDashboard(session.linkedStudent);
+      switchView('parentDashView');
+    }
+
+    function loadDashboard(linkedStudent) {
+      document.getElementById('childAvatar').textContent = (linkedStudent.name || 'S').charAt(0).toUpperCase();
+      document.getElementById('childName').textContent = linkedStudent.name || 'Student';
+      document.getElementById('childSchool').textContent = linkedStudent.school || 'Ghana SHS';
 
       // Pull stats from localStorage (if available on this device)
-      const statsKey = 'waec_stats_' + matchData.childEmail;
+      const statsKey = 'waec_stats_' + linkedStudent.email;
       let stats = { answered: 0, correct: 0 };
       try { stats = JSON.parse(localStorage.getItem(statsKey)) || stats; } catch(e) {}
       
@@ -143,7 +376,7 @@
       document.getElementById('childQuestions').textContent = stats.answered || 0;
 
       // Streak data
-      const streakKey = 'vision_streak_' + matchData.childEmail;
+      const streakKey = 'vision_streak_' + linkedStudent.email;
       let streak = { currentStreak: 0 };
       try { streak = JSON.parse(localStorage.getItem(streakKey)) || streak; } catch(e) {}
       document.getElementById('childStreak').textContent = streak.currentStreak || 0;
@@ -171,19 +404,13 @@
             <span class="parent-activity-date">All-time</span>
           </div>
         `;
+      } else {
+        actList.innerHTML = `
+          <div class="parent-activity-item">
+            <span class="parent-activity-dot"></span>
+            <span class="parent-activity-text">No recent activity found yet.</span>
+          </div>`;
       }
-    }
-
-    function parentLogout() {
-      document.getElementById('parentLoginView').style.display = 'block';
-      document.getElementById('parentDashView').className = 'parent-dashboard';
-      document.getElementById('parentCodeInput').value = '';
-    }
-
-    function getParentCodes() {
-      try {
-        return JSON.parse(localStorage.getItem(PARENT_CODE_KEY)) || [];
-      } catch(e) { return []; }
     }
 
     function shakeCard() {
@@ -193,16 +420,10 @@
       card.style.animation = 'shake 0.45s ease';
     }
 
-    // Add shake keyframe
-    const style = document.createElement('style');
-    style.textContent = `
-      @keyframes shake {
-        0%,100% { transform: translateX(0); }
-        20%,60% { transform: translateX(-5px); }
-        40%,80% { transform: translateX(5px); }
-      }
-    `;
-    document.head.appendChild(style);
+    // Init
+    document.addEventListener('DOMContentLoaded', () => {
+      checkSessionState();
+    });
   </script>
 </body>
 </html>
