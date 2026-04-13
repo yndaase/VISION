@@ -94,6 +94,12 @@
       border-radius: 10px; display: flex; align-items: center; justify-content: center;
       font-weight: 800; font-size: 1rem; color: #000; box-shadow: 0 4px 12px rgba(251, 191, 36, 0.3);
     }
+
+    @keyframes pulse {
+      0% { opacity: 0.5; }
+      50% { opacity: 1; }
+      100% { opacity: 0.5; }
+    }
   </style>
 </head>
 
@@ -214,6 +220,10 @@
         <div class="dash-nav-right">
           <span class="nav-badge">2026 WASSCE</span>
           <span class="ent-badge">ENTERPRISE</span>
+          <div id="syncIndicator" style="display: flex; align-items: center; gap: 6px; padding: 4px 10px; background: rgba(16, 185, 129, 0.1); border-radius: 100px; margin-right: 0.5rem;" title="Live Cloud Sync Active">
+            <span style="width: 6px; height: 6px; background: #10b981; border-radius: 50%; animation: pulse 2s infinite;"></span>
+            <span style="font-size: 0.6rem; font-weight: 800; color: #10b981; text-transform: uppercase;">Sync</span>
+          </div>
           <button class="theme-toggle-btn" onclick="toggleTheme()" title="Toggle Theme"></button>
           <div class="nav-user-chip" id="navUserChip" onclick="toggleUserDropdown()">
             <div class="nav-avatar" id="navAvatar">S</div>
@@ -703,10 +713,11 @@
   <!-- /main-wrapper -->
 
   <script src="https://js.paystack.co/v2/inline.js"></script>
-  <script src="auth.js"></script>
-  <script src="payment.js"></script>
-  <script src="dashboard.js"></script>
-  <script src="materials.js"></script>
+  <script type="module" src="firebase.js"></script>
+  <script defer src="auth.js"></script>
+  <script defer src="payment.js"></script>
+  <script defer src="dashboard.js"></script>
+  <script defer src="materials.js"></script>
   <script>
     // === ENTERPRISE STUDENT DASHBOARD INIT ===
     (function initEnterpriseDash() {
@@ -755,10 +766,10 @@
         if (schoolLogoEl) schoolLogoEl.textContent = (session.institutionName || "V").charAt(0);
       }
 
-      // Stats from localStorage
-      const stats = JSON.parse(localStorage.getItem("waec_stats") || "{}");
-      const answered = stats.totalAnswered || 0;
-      const correct = stats.totalCorrect || 0;
+      // Stats alignment (REDO: Using global getStats helper)
+      const stats = (typeof getStats === 'function') ? getStats() : {};
+      const answered = stats.answered || 0;
+      const correct = stats.correct || 0;
       const pct = answered > 0 ? Math.round((correct / answered) * 100) + "%" : "—";
 
       const statAnswered = document.getElementById("statAnswered");
@@ -768,6 +779,11 @@
       if (statAnswered) statAnswered.textContent = answered;
       if (statCorrect) statCorrect.textContent = correct;
       if (statPct) statPct.textContent = pct;
+
+      // Cloud Sync Trigger
+      if (session && session.email && typeof window.syncStateToCloud === 'function') {
+        window.syncStateToCloud(session.email);
+      }
     })();
 
     // User dropdown

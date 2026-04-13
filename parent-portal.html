@@ -163,18 +163,18 @@
       const errLogin = document.getElementById('loginError');
       const errSignup = document.getElementById('signupError');
 
-      errLogin.style.display = 'none';
-      errSignup.style.display = 'none';
+      if (errLogin) errLogin.style.display = 'none';
+      if (errSignup) errSignup.style.display = 'none';
 
       if (type === 'login') {
         tabLogin.classList.add('active');
         tabSignup.classList.remove('active');
         formLogin.style.display = 'block';
-        formSignup.style.display = 'none';
+        if (formSignup) formSignup.style.display = 'none';
       } else {
         tabSignup.classList.add('active');
         tabLogin.classList.remove('active');
-        formSignup.style.display = 'block';
+        if (formSignup) formSignup.style.display = 'block';
         formLogin.style.display = 'none';
       }
     }
@@ -245,8 +245,21 @@
     }
 
     function parentLogout() {
+      // Clear specific session
       localStorage.removeItem(PARENT_SESSION_KEY);
-      location.reload();
+      
+      // Intensive wipe of all parent-related metadata to prevent session bleeding
+      const keysToClear = [];
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key && key.startsWith('vision_parent_')) {
+          keysToClear.push(key);
+        }
+      }
+      keysToClear.forEach(k => localStorage.removeItem(k));
+      
+      // Force return to portal root
+      window.location.href = "parent-portal.html";
     }
 
     // ─── Linking Logic ───

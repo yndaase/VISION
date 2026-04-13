@@ -489,9 +489,26 @@ function submitExam() {
   document.getElementById("examNavigator").style.display = "none";
 
   // Trigger Cloud Sync for Parent Dashboard
+  triggerCloudSync();
+}
+
+/**
+ * REDO: Robust Cloud Sync Trigger
+ * Ensures that if firebase.js (module) is still loading, it retries.
+ */
+function triggerCloudSync() {
   const session = typeof getSession === 'function' ? getSession() : null;
-  if (session && session.email && typeof window.syncStateToCloud === 'function') {
-    window.syncStateToCloud(session.email);
+  if (session && session.email) {
+    if (typeof window.syncStateToCloud === 'function') {
+      window.syncStateToCloud(session.email);
+    } else {
+      console.log("[Sync] Engine loading... will retry in 1s");
+      setTimeout(() => {
+        if (typeof window.syncStateToCloud === 'function') {
+          window.syncStateToCloud(session.email);
+        }
+      }, 1000);
+    }
   }
 }
 
@@ -576,10 +593,7 @@ function updateGlobalStats(isCorrect) {
   saveStats(stats);
 
   // Trigger Cloud Sync for Parent Dashboard
-  const session = typeof getSession === 'function' ? getSession() : null;
-  if (session && session.email && typeof window.syncStateToCloud === 'function') {
-    window.syncStateToCloud(session.email);
-  }
+  triggerCloudSync();
 }
 
 function updateProgress() {
