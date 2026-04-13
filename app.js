@@ -487,6 +487,12 @@ function submitExam() {
   // Reset UI
   document.getElementById("mockExamHeader").style.display = "none";
   document.getElementById("examNavigator").style.display = "none";
+
+  // Trigger Cloud Sync for Parent Dashboard
+  const session = typeof getSession === 'function' ? getSession() : null;
+  if (session && session.email && typeof window.syncStateToCloud === 'function') {
+    window.syncStateToCloud(session.email);
+  }
 }
 
 function autoReplenish(oldId) {
@@ -558,7 +564,22 @@ function updateGlobalStats(isCorrect) {
   const stats = getStats();
   stats.answered = (stats.answered || 0) + 1;
   if (isCorrect) stats.correct = (stats.correct || 0) + 1;
+
+  // Track Subject-Specific Stats
+  if (!stats.bySubject) stats.bySubject = {};
+  if (!stats.bySubject[currentSubjectStr]) {
+    stats.bySubject[currentSubjectStr] = { answered: 0, correct: 0 };
+  }
+  stats.bySubject[currentSubjectStr].answered++;
+  if (isCorrect) stats.bySubject[currentSubjectStr].correct++;
+
   saveStats(stats);
+
+  // Trigger Cloud Sync for Parent Dashboard
+  const session = typeof getSession === 'function' ? getSession() : null;
+  if (session && session.email && typeof window.syncStateToCloud === 'function') {
+    window.syncStateToCloud(session.email);
+  }
 }
 
 function updateProgress() {

@@ -278,6 +278,12 @@
       font-size: 0.7rem;
       color: #64748b;
     }
+
+    @keyframes pulse {
+      0% { opacity: 0.5; }
+      50% { opacity: 1; }
+      100% { opacity: 0.5; }
+    }
   </style>
 </head>
 
@@ -333,6 +339,10 @@
         </div>
 
         <div class="dash-nav-right">
+          <div id="syncStatus" style="display: flex; align-items: center; gap: 6px; padding: 4px 12px; background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.2); border-radius: 100px; margin-right: 1rem;">
+            <span style="width: 6px; height: 6px; background: #10b981; border-radius: 50%; box-shadow: 0 0 8px #10b981; animation: pulse 2s infinite;"></span>
+            <span style="font-size: 0.65rem; font-weight: 800; color: #10b981; text-transform: uppercase; letter-spacing: 0.05em;">Live Sync</span>
+          </div>
           <div class="nav-user-chip">
             <div class="nav-avatar" style="background:#10b981; color:#fff; display:flex; align-items:center; justify-content:center; font-weight:800; font-size:0.8rem;" id="childAvatarHeader">S</div>
             <span class="nav-username" id="childNameHeader">Monitoring: Loading...</span>
@@ -539,7 +549,7 @@
       document.getElementById('childStudyTime').textContent = hours > 0 ? `${hours}h ${mins}m` : `${mins}m`;
 
       populateAIInsights(linkedStudent.name, accuracy, stats.answered, streak.currentStreak);
-      populateMastery(stats.answered);
+      populateMastery(stats);
       populateFocusAreas(accuracy);
       populateMocks(lastMock);
       populateActivity(stats, streak, accuracy);
@@ -565,31 +575,39 @@
       text.innerHTML = msg;
     }
 
-    function populateMastery(totalQs) {
+    function populateMastery(stats) {
       const list = document.getElementById('subjectMasteryList');
-      if (totalQs === 0) {
+      if (!stats || stats.answered === 0) {
         list.innerHTML = '<p style="color:#64748b; font-size:0.9rem;">No subject data available yet.</p>';
         return;
       }
 
-      const masteries = [
-        { subject: 'Integrated Science', pct: 82, color: '#10b981' },
-        { subject: 'Core Mathematics', pct: 65, color: '#8b5cf6' },
-        { subject: 'English Language', pct: 74, color: '#3b82f6' },
-        { subject: 'Social Studies', pct: 88, color: '#f59e0b' }
+      // Default subjects to show
+      const subjects = [
+        { id: 'maths', name: 'Core Mathematics', color: '#8b5cf6' },
+        { id: 'science', name: 'Integrated Science', color: '#10b981' },
+        { id: 'english', name: 'English Language', color: '#3b82f6' },
+        { id: 'social', name: 'Social Studies', color: '#f59e0b' }
       ];
 
-      list.innerHTML = masteries.map(m => `
-        <div class="parent-mastery-item" style="margin-bottom:1.2rem;">
-          <div class="parent-mastery-top" style="display:flex; justify-content:space-between; margin-bottom:8px; font-size:0.85rem; font-weight:700;">
-            <span>${m.subject}</span>
-            <span style="color:${m.color}">${m.pct}%</span>
+      const bySubject = stats.bySubject || {};
+
+      list.innerHTML = subjects.map(s => {
+        const data = bySubject[s.id] || { answered: 0, correct: 0 };
+        const pct = data.answered > 0 ? Math.round((data.correct / data.answered) * 100) : 0;
+        
+        return `
+          <div class="parent-mastery-item" style="margin-bottom:1.2rem;">
+            <div class="parent-mastery-top" style="display:flex; justify-content:space-between; margin-bottom:8px; font-size:0.85rem; font-weight:700;">
+              <span>${s.name}</span>
+              <span style="color:${s.color}">${pct}%</span>
+            </div>
+            <div class="parent-mastery-track" style="height:8px; background:rgba(255,255,255,0.05); border-radius:10px; overflow:hidden;">
+              <div class="parent-mastery-fill" style="width: ${pct}%; height:100%; background: ${s.color}"></div>
+            </div>
           </div>
-          <div class="parent-mastery-track" style="height:8px; background:rgba(255,255,255,0.05); border-radius:10px; overflow:hidden;">
-            <div class="parent-mastery-fill" style="width: ${m.pct}%; height:100%; background: ${m.color}"></div>
-          </div>
-        </div>
-      `).join('');
+        `;
+      }).join('');
     }
 
     function populateFocusAreas(accuracy) {
@@ -746,6 +764,21 @@
 
     // Initialize
     checkAuth();
+
+    // Set interactive polling (every 30 seconds)
+    setInterval(() => {
+        const session = getParentSession();
+        if (session && session.linkedStudent) {
+            console.log("[Sync] Refreshing live data...");
+            // Show a brief ripple on the sync status badge
+            const status = document.getElementById('syncStatus');
+            if (status) {
+                status.style.borderColor = "#10b981";
+                setTimeout(() => status.style.borderColor = "rgba(16, 185, 129, 0.2)", 1000);
+            }
+            loadDashboard(session.linkedStudent);
+        }
+    }, 30000);
   </script>
 </body>
 </html>

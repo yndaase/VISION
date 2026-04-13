@@ -33,8 +33,8 @@
       </div>
 
       <div class="parent-tabs">
-        <button class="parent-tab active" id="tabLogin" onclick="switchAuthTab('login')">Sign In</button>
-        <button class="parent-tab" id="tabSignup" onclick="switchAuthTab('signup')">Create Account</button>
+        <button type="button" class="parent-tab active" id="tabLogin" onclick="switchAuthTab('login')">Sign In</button>
+        <button type="button" class="parent-tab" id="tabSignup" onclick="switchAuthTab('signup')">Create Account</button>
       </div>
 
       <!-- Google Button Wrapper (Clickjacking transparent override) -->
@@ -246,10 +246,7 @@
 
     function parentLogout() {
       localStorage.removeItem(PARENT_SESSION_KEY);
-      document.getElementById('loginEmail').value = '';
-      document.getElementById('loginPass').value = '';
-      document.getElementById('parentCodeInput').value = '';
-      switchView('parentAuthView');
+      location.reload();
     }
 
     // ─── Linking Logic ───
