@@ -197,7 +197,7 @@ async function handleSyncUsers(data, res) {
 
   // 3. ADMIN OVERRIDE (Permanent PRO)
   const adminEmail = 'gisgreat308@gmail.com';
-  const adminAccount = userMap.get(adminEmail) || { email: adminEmail, name: 'Vision Admin', provider: 'google' };
+  const adminAccount = userMap.get(adminEmail) || { email: adminEmail, name: 'Vision Student', provider: 'google' };
   adminAccount.role = 'pro';
   userMap.set(adminEmail, adminAccount);
 

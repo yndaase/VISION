@@ -1221,7 +1221,7 @@
               if (!session) return;
               
               const now = Date.now();
-              const isAdmin = session.email === 'gisgreat308@gmail.com';
+              const isAdmin = session.role === 'admin';
               const isEnt = session.role === 'enterprise' || session.institutionId;
               const isPaid = session.subscriptionExpiry > now;
               
@@ -1448,7 +1448,7 @@
       const session = typeof getSession === 'function' ? getSession() : null;
       if (!session) return;
 
-      const isAdmin = (session.email || "").toLowerCase() === 'gisgreat308@gmail.com';
+      const isAdmin = session.role === 'admin';
       const isEnt = session.role === 'enterprise';
       const isPro = session.role === 'pro' || isAdmin || isEnt;
 

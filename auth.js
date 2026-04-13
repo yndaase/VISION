@@ -103,7 +103,7 @@ function verifyUserSchema(user) {
   user.subscriptionExpiry = user.subscriptionExpiry || 0;
 
   // ABSOLUTE ADMIN OVERRIDE (Permanent Pro)
-  const isAdmin = user.email && user.email.toLowerCase() === 'gisgreat308@gmail.com';
+  const isAdmin = user.role === 'admin';
   
   // Calculate Effective Role
   const now = Date.now();
@@ -126,7 +126,7 @@ function isProUser(user = getSession()) {
   if (!user) return false;
   if (user.role === 'enterprise') return true; // Enterprise is implicitly Pro
   const now = Date.now();
-  const isAdmin = user.email && user.email.toLowerCase() === 'gisgreat308@gmail.com';
+  const isAdmin = user.role === 'admin';
   const isPaidPro = (user.subscriptionExpiry || 0) > now;
   return isAdmin || isPaidPro;
 }
@@ -246,7 +246,7 @@ function goToDashboard() {
     window.location.href = "/teacher-dashboard.html";
   } else if (session && session.institutionId) {
     window.location.href = "/enterprise-student-dashboard";
-  } else if (session && (session.role === 'admin' || session.email === 'gisgreat308@gmail.com')) {
+  } else if (session && session.role === 'admin') {
     window.location.href = "/admin";
   } else {
     window.location.href = "/dashboard";

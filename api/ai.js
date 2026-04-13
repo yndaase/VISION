@@ -239,9 +239,7 @@ async function handleHelp(data, role, res) {
 async function handlePlanner(data, role, res) {
   const { subject, accuracy, name, email = "" } = data;
   
-  // ABSOLUTE ADMIN OVERRIDE (Hardcoded Pro)
-  const isHardcodedAdmin = email.toLowerCase() === 'gisgreat308@gmail.com';
-  const effectiveRole = isHardcodedAdmin ? 'pro' : role;
+  const effectiveRole = role;
 
   const prompt = `Student: ${name}. Performance: ${accuracy}% in ${subject}.
   Generate a Strategic 7-Day Study Timetable in JSON:
@@ -264,9 +262,7 @@ async function handleVision(data, role, res) {
   const parts = [{ text: `Vision Education AI Learning Specialist. Material: ${subject}. Request: "${userMessage || 'Explain this material.'}"` }];
   if (imageBase64) parts.push({ inlineData: { data: imageBase64, mimeType: mimeType || "image/jpeg" } });
   
-  // ABSOLUTE ADMIN OVERRIDE (Hardcoded Pro)
-  const isHardcodedAdmin = email.toLowerCase() === 'gisgreat308@gmail.com';
-  const effectiveRole = isHardcodedAdmin ? 'pro' : role;
+  const effectiveRole = role;
   
   const contents = [{ role: "user", parts }];
   const response = await safeGenerateContent(contents, effectiveRole);
@@ -276,9 +272,7 @@ async function handleVision(data, role, res) {
 async function handleGenerateQuestions(data, role, res) {
   const { subject, dateSeed, mcqCount = 5, theoryCount = 2, email = "" } = data;
   
-  // ABSOLUTE ADMIN OVERRIDE (Hardcoded Pro)
-  const isHardcodedAdmin = email.toLowerCase() === 'gisgreat308@gmail.com';
-  const effectiveRole = isHardcodedAdmin ? 'pro' : role;
+  const effectiveRole = role;
   
   const isPro = effectiveRole === 'pro';
   
