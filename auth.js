@@ -262,6 +262,8 @@ function handleLogout() {
   const isRobotics = window.location.pathname.includes("robotics");
   window.location.href = isRobotics ? "/robotics-login" : "/login";
 }
+// REDO: Guarantee global availability for all HTML event handlers
+window.handleLogout = handleLogout;
 
 //  2FA State Helpers
 function is2FAEnabled(email) {
