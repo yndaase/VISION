@@ -1,0 +1,657 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+
+<head>
+  <meta charset="UTF-8" />
+  <script>
+    document.documentElement.setAttribute("data-theme", "dark");
+  </script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Parent Command Center | Vision Education</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="dashboard.css" />
+  <link rel="stylesheet" href="parent-portal.css" />
+  <link rel="stylesheet" href="theme.css" />
+  
+  <style>
+    :root {
+      --parent-primary: #10b981;
+      --parent-bg: #0d1117;
+      --parent-card: #161b22;
+      --parent-border: rgba(255, 255, 255, 0.1);
+    }
+
+    body.parent-dashboard-page {
+      background-color: var(--parent-bg);
+      color: #e6edf3;
+      overflow-x: hidden;
+    }
+
+    /* Override dashboard.css for parent theme */
+    .side-nav {
+      border-right: 1px solid var(--parent-border);
+      background: #0d1117;
+    }
+
+    .nav-item.active {
+      background: rgba(16, 185, 129, 0.1);
+      color: var(--parent-primary);
+      border-left: 3px solid var(--parent-primary);
+    }
+
+    .dash-nav {
+      border-bottom: 1px solid var(--parent-border);
+      background: rgba(13, 17, 23, 0.8);
+    }
+
+    /* Custom AI Banner */
+    .ai-insights-banner {
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(59, 130, 246, 0.15));
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      border-radius: 24px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      gap: 2rem;
+    }
+
+    .ai-insights-banner::before {
+      content: "";
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(16, 185, 129, 0.1) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .ai-icon-large {
+      width: 64px;
+      height: 64px;
+      background: rgba(16, 185, 129, 0.2);
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--parent-primary);
+      flex-shrink: 0;
+    }
+
+    .ai-content h2 {
+      font-size: 1.25rem;
+      font-weight: 800;
+      margin-bottom: 0.5rem;
+      color: #fff;
+    }
+
+    .ai-content p {
+      color: #94a3b8;
+      line-height: 1.6;
+      font-size: 1rem;
+    }
+
+    /* Metric Grid */
+    .parent-metrics-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .metric-card {
+      background: var(--parent-card);
+      border: 1px solid var(--parent-border);
+      border-radius: 20px;
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      transition: transform 0.2s;
+    }
+
+    .metric-card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(16, 185, 129, 0.4);
+    }
+
+    .metric-value {
+      font-size: 2rem;
+      font-weight: 800;
+      color: #fff;
+    }
+
+    .metric-label {
+      font-size: 0.85rem;
+      color: #94a3b8;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    /* Main Grid Split */
+    .parent-main-grid {
+      display: grid;
+      grid-template-columns: 1fr 340px;
+      gap: 2rem;
+    }
+
+    @media (max-width: 1024px) {
+      .parent-main-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .command-section {
+      background: var(--parent-card);
+      border: 1px solid var(--parent-border);
+      border-radius: 24px;
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1.5rem;
+    }
+
+    .section-title {
+      font-size: 1.1rem;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    /* Table Styles */
+    .parent-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .parent-table th {
+      text-align: left;
+      padding: 12px;
+      color: #64748b;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      border-bottom: 1px solid var(--parent-border);
+    }
+
+    .parent-table td {
+      padding: 16px 12px;
+      border-bottom: 1px solid var(--parent-border);
+      font-size: 0.9rem;
+    }
+
+    .status-pill {
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 700;
+    }
+
+    .status-success { background: rgba(16, 185, 129, 0.1); color: #10b981; }
+    
+    /* Activity Feed */
+    .activity-feed {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .activity-item {
+      display: flex;
+      gap: 12px;
+      padding: 12px;
+      border-radius: 12px;
+      transition: background 0.2s;
+    }
+
+    .activity-item:hover {
+      background: rgba(255, 255, 255, 0.03);
+    }
+
+    .activity-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--parent-primary);
+      margin-top: 6px;
+      flex-shrink: 0;
+    }
+
+    .activity-info {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .activity-text {
+      font-size: 0.85rem;
+      color: #e6edf3;
+    }
+
+    .activity-time {
+      font-size: 0.75rem;
+      color: #64748b;
+    }
+
+    .sidebar-avatar-wrap {
+      padding: 24px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border-bottom: 1px solid var(--parent-border);
+      margin-bottom: 1rem;
+    }
+
+    .sidebar-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      background: var(--parent-primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      color: #fff;
+    }
+
+    .sidebar-user-info .name {
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: #fff;
+      display: block;
+    }
+
+    .sidebar-user-info .role {
+      font-size: 0.7rem;
+      color: #64748b;
+    }
+  </style>
+</head>
+
+<body class="dashboard-page parent-dashboard-page">
+  <!--  SIDE NAVIGATION  -->
+  <aside class="side-nav">
+    <div class="sidebar-avatar-wrap">
+        <div class="sidebar-avatar" id="parentAvatar">P</div>
+        <div class="sidebar-user-info">
+            <span class="name" id="parentName">Parent Name</span>
+            <span class="role">Guardian Account</span>
+        </div>
+    </div>
+    
+    <nav class="side-nav-menu">
+      <a href="#" class="nav-item active">
+        <span class="nav-item-icon">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+        </span>
+        <span>Overview</span>
+      </a>
+      <a href="#" class="nav-item">
+        <span class="nav-item-icon">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/></svg>
+        </span>
+        <span>Child Activity</span>
+      </a>
+      <a href="#" class="nav-item">
+        <span class="nav-item-icon">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>
+        </span>
+        <span>Mock Reports</span>
+      </a>
+    </nav>
+
+    <div class="side-nav-footer">
+      <a href="#" class="nav-item" onclick="parentLogout(); return false;">
+        <span class="nav-item-icon">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M13 3h-2v10h2V3zm4.83 2.17l-1.42 1.42A6.92 6.92 0 0119 12c0 3.87-3.13 7-7 7s-7-3.13-7-7a6.92 6.92 0 012.59-5.41l-1.42-1.42A8.95 8.95 0 003 12c0 4.97 4.03 9 9 9s9-4.03 9-9c0-3.12-1.59-5.87-4-7.5z"/></svg>
+        </span>
+        <span>Sign Out</span>
+      </a>
+    </div>
+  </aside>
+
+  <div class="main-wrapper">
+    <!--  NAVBAR  -->
+    <nav class="dash-nav" id="dashNav">
+      <div class="dash-nav-inner">
+        <div class="dash-logo">
+          <img src="assets/logo.png" alt="Logo" style="height: 32px; width: 32px; object-fit: contain; margin-right: 10px;">
+          <span class="dash-logo-text">Vision <span style="color:var(--parent-primary)">Guardian</span></span>
+        </div>
+
+        <div class="dash-nav-right">
+          <div class="nav-user-chip">
+            <div class="nav-avatar" style="background:#10b981; color:#fff; display:flex; align-items:center; justify-content:center; font-weight:800; font-size:0.8rem;" id="childAvatarHeader">S</div>
+            <span class="nav-username" id="childNameHeader">Monitoring: Loading...</span>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <main class="dash-content" style="padding: 2rem;">
+      
+      <!-- AI INSIGHTS BANNER -->
+      <section class="ai-insights-banner" id="aiBanner" style="display:none;">
+          <div class="ai-icon-large">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+          </div>
+          <div class="ai-content">
+              <h2>Vision AI Analysis</h2>
+              <p id="aiInsightsText">Our AI is analyzing your child's recent performance patterns to provide actionable recommendations.</p>
+          </div>
+      </section>
+
+      <!-- METRICS GRID -->
+      <div class="parent-metrics-row">
+          <div class="metric-card">
+              <span class="metric-label">Accuracy Rate</span>
+              <span class="metric-value" id="childAccuracy">0%</span>
+          </div>
+          <div class="metric-card">
+              <span class="metric-label">Questions Solved</span>
+              <span class="metric-value" id="childQuestions">0</span>
+          </div>
+          <div class="metric-card">
+              <span class="metric-label">Study Streak</span>
+              <span class="metric-value" id="childStreak" style="color:#fbbf24;">0</span>
+          </div>
+          <div class="metric-card">
+              <span class="metric-label">Subjects Mastered</span>
+              <span class="metric-value" id="childSubjects" style="color:#818cf8;">0</span>
+          </div>
+      </div>
+
+      <div class="parent-main-grid">
+          <!-- LEFT COLUMN -->
+          <div class="left-col">
+              
+              <!-- SUBJECT MASTERY -->
+              <div class="command-section">
+                  <div class="section-header">
+                      <h3 class="section-title">
+                          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+                          Subject Mastery Breakdown
+                      </h3>
+                  </div>
+                  <div class="parent-mastery-list" id="subjectMasteryList">
+                      <!-- Populated via JS -->
+                  </div>
+              </div>
+
+              <!-- RECENT MOCK EXAMS -->
+              <div class="command-section">
+                <div class="section-header">
+                    <h3 class="section-title">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+                        Recent Mock Exam Reports
+                    </h3>
+                </div>
+                <table class="parent-table">
+                    <thead>
+                        <tr>
+                            <th>Exam Subject</th>
+                            <th>Date Completed</th>
+                            <th>Score</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="recentMocksList">
+                        <!-- Populated via JS -->
+                    </tbody>
+                </table>
+              </div>
+
+          </div>
+
+          <!-- RIGHT COLUMN -->
+          <div class="right-col">
+              
+              <!-- WEEKLY GOAL -->
+              <div class="command-section">
+                  <div class="section-header">
+                      <h3 class="section-title">Weekly Goal</h3>
+                  </div>
+                  <div id="goalSetupWrap">
+                      <input type="number" class="parent-goal-input" id="goalInput" placeholder="Target questions?" style="width:100%; margin-bottom:12px;">
+                      <button class="parent-goal-btn" onclick="saveParentGoal()" style="width:100%;">Set Weekly Target</button>
+                  </div>
+                  <div id="goalProgressWrap" style="display:none; text-align:center;">
+                      <div class="parent-goal-ring" id="goalRing" style="--pct: 0%; margin: 0 auto 1.5rem;">
+                        <span id="goalRingText">0%</span>
+                      </div>
+                      <p id="goalStatusText" style="font-size:0.9rem; color:#94a3b8; margin-bottom:1rem;">0 out of 0 questions completed.</p>
+                      <button class="parent-goal-btn" onclick="editParentGoal()" style="background:rgba(255,255,255,0.05); color:#fff; font-size:0.8rem;">Adjust Goal</button>
+                  </div>
+              </div>
+
+              <!-- ACTIVITY FEED -->
+              <div class="command-section">
+                 <div class="section-header">
+                      <h3 class="section-title">Live Activity Feed</h3>
+                  </div>
+                  <div class="activity-feed" id="childActivityList">
+                      <!-- Populated via JS -->
+                  </div>
+              </div>
+
+          </div>
+      </div>
+
+    </main>
+  </div>
+
+  <script src="theme.js"></script>
+  <script type="module">
+    import { pullStateFromCloud } from './firebase.js';
+
+    // --- Authentication & Session ---
+    const PARENT_SESSION_KEY = "vision_parent_session";
+    
+    function getParentSession() {
+      const s = localStorage.getItem(PARENT_SESSION_KEY);
+      return s ? JSON.parse(s) : null;
+    }
+
+    async function checkAuth() {
+        const session = getParentSession();
+        if(!session) { window.location.href = "parent-portal.html"; return; }
+        if(!session.linkedStudent) { window.location.href = "parent-portal.html"; return; }
+        
+        document.getElementById('parentName').textContent = session.name || "Parent";
+        document.getElementById('parentAvatar').textContent = (session.name || "P").charAt(0).toUpperCase();
+
+        await loadDashboard(session.linkedStudent);
+    }
+
+    window.parentLogout = function() {
+        localStorage.removeItem(PARENT_SESSION_KEY);
+        window.location.href = "parent-portal.html";
+    }
+
+    // --- Dashboard Logic ---
+    async function loadDashboard(linkedStudent) {
+      document.getElementById('childAvatarHeader').textContent = (linkedStudent.name || 'S').charAt(0).toUpperCase();
+      document.getElementById('childNameHeader').textContent = `Monitoring: ${linkedStudent.name || 'Student'}`;
+
+      let stats = { answered: 0, correct: 0 };
+      let streak = { currentStreak: 0 };
+      let lastMock = null;
+
+      // Fetch Live Firebase Data
+      const cloudData = await pullStateFromCloud(linkedStudent.email);
+      if (cloudData) {
+          stats = cloudData.stats || stats;
+          streak = cloudData.streak || streak;
+          lastMock = cloudData.lastMock || null;
+      }
+
+      const accuracy = stats.answered > 0 ? Math.round((stats.correct / stats.answered) * 100) : 0;
+      
+      // Update UI
+      document.getElementById('childAccuracy').textContent = accuracy + '%';
+      document.getElementById('childQuestions').textContent = stats.answered || 0;
+      document.getElementById('childStreak').textContent = streak.currentStreak || 0;
+      document.getElementById('childSubjects').textContent = stats.answered > 0 ? Math.min(8, Math.ceil(stats.answered / 15)) : 0;
+
+      populateAIInsights(linkedStudent.name, accuracy, stats.answered, streak.currentStreak);
+      populateMastery(stats.answered);
+      populateMocks(lastMock);
+      populateActivity(stats, streak, accuracy);
+      loadParentGoal(stats.answered);
+    }
+
+    function populateAIInsights(name, accuracy, qs, streak) {
+      const banner = document.getElementById('aiBanner');
+      const text = document.getElementById('aiInsightsText');
+      if (qs === 0) return;
+
+      banner.style.display = 'flex';
+      let msg = "";
+      if (accuracy > 75 && streak > 2) {
+        msg = `<strong>Excellent progress!</strong> ${name} is maintaining a great study streak with high accuracy. They are well on track for the WASSCE. We recommend introducing full Mock Exams to test their stamina.`;
+      } else if (accuracy > 70) {
+        msg = `${name} has solid fundamental knowledge (${accuracy}% accuracy), but consistency is key. Encourage them to practice daily to build a study streak and retain information better.`;
+      } else if (qs > 50) {
+        msg = `We noticed ${name}'s accuracy is currently at ${accuracy}%. They might be struggling with a specific subject area. We recommend reviewing past mistakes in the AI Learning Hub.`;
+      } else {
+        msg = `${name} has just started their preparation journey. Consistent practice is the most important factor right now. Set a weekly goal to build momentum.`;
+      }
+      text.innerHTML = msg;
+    }
+
+    function populateMastery(totalQs) {
+      const list = document.getElementById('subjectMasteryList');
+      if (totalQs === 0) {
+        list.innerHTML = '<p style="color:#64748b; font-size:0.9rem;">No subject data available yet.</p>';
+        return;
+      }
+
+      const masteries = [
+        { subject: 'Integrated Science', pct: 82, color: '#10b981' },
+        { subject: 'Core Mathematics', pct: 65, color: '#8b5cf6' },
+        { subject: 'English Language', pct: 74, color: '#3b82f6' },
+        { subject: 'Social Studies', pct: 88, color: '#f59e0b' }
+      ];
+
+      list.innerHTML = masteries.map(m => `
+        <div class="parent-mastery-item" style="margin-bottom:1.2rem;">
+          <div class="parent-mastery-top" style="display:flex; justify-content:space-between; margin-bottom:8px; font-size:0.85rem; font-weight:700;">
+            <span>${m.subject}</span>
+            <span style="color:${m.color}">${m.pct}%</span>
+          </div>
+          <div class="parent-mastery-track" style="height:8px; background:rgba(255,255,255,0.05); border-radius:10px; overflow:hidden;">
+            <div class="parent-mastery-fill" style="width: ${m.pct}%; height:100%; background: ${m.color}"></div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function populateMocks(lastMock) {
+      const list = document.getElementById('recentMocksList');
+      if (!lastMock) {
+        list.innerHTML = '<tr><td colspan="4" style="text-align:center; color:#64748b; padding:2rem;">No mock exams completed recently.</td></tr>';
+        return;
+      }
+
+      const subMap = { maths: 'Core Mathematics', english: 'English Language', science: 'Int. Science', social: 'Social Studies' };
+      const subName = subMap[lastMock.subject] || lastMock.subject || 'Core Mathematics';
+      const scorePct = lastMock.score || lastMock.accuracy || 0;
+
+      list.innerHTML = `
+        <tr>
+            <td style="font-weight:700;">${subName}</td>
+            <td style="color:#64748b;">${new Date(lastMock.timestamp || Date.now()).toLocaleDateString()}</td>
+            <td style="font-weight:800; color:#fff;">${scorePct}%</td>
+            <td><span class="status-pill status-success">COMPLETED</span></td>
+        </tr>
+      `;
+    }
+
+    function populateActivity(stats, streak, accuracy) {
+        const list = document.getElementById('childActivityList');
+        if (stats.answered === 0) {
+            list.innerHTML = '<p style="color:#64748b; font-size:0.85rem;">No recent activities found.</p>';
+            return;
+        }
+
+        list.innerHTML = `
+            <div class="activity-item">
+                <div class="activity-dot"></div>
+                <div class="activity-info">
+                    <span class="activity-text">Completed <strong>${stats.answered}</strong> questions total</span>
+                    <span class="activity-time">Active recently</span>
+                </div>
+            </div>
+            <div class="activity-item">
+                <div class="activity-dot" style="background:#fbbf24;"></div>
+                <div class="activity-info">
+                    <span class="activity-text">Maintained <strong>${streak.currentStreak} day</strong> study streak</span>
+                    <span class="activity-time">Today</span>
+                </div>
+            </div>
+            <div class="activity-item">
+                <div class="activity-dot" style="background:#818cf8;"></div>
+                <div class="activity-info">
+                    <span class="activity-text">Achieved <strong>${accuracy}%</strong> overall accuracy</span>
+                    <span class="activity-time">Platform global</span>
+                </div>
+            </div>
+        `;
+    }
+
+    window.saveParentGoal = function() {
+      const val = document.getElementById('goalInput').value;
+      if (!val || val < 1) return;
+      
+      const session = getParentSession();
+      localStorage.setItem('vision_parent_goal_' + session.email, val);
+      location.reload();
+    }
+
+    window.editParentGoal = function() {
+      const session = getParentSession();
+      localStorage.removeItem('vision_parent_goal_' + session.email);
+      location.reload();
+    }
+
+    function loadParentGoal(currentQs) {
+      const session = getParentSession();
+      const goalKey = 'vision_parent_goal_' + session.email;
+      const goal = localStorage.getItem(goalKey);
+
+      if (!goal) {
+        document.getElementById('goalSetupWrap').style.display = 'block';
+        document.getElementById('goalProgressWrap').style.display = 'none';
+      } else {
+        document.getElementById('goalSetupWrap').style.display = 'none';
+        document.getElementById('goalProgressWrap').style.display = 'block';
+        
+        const target = parseInt(goal, 10);
+        const weeklyQs = currentQs > 0 ? (currentQs % target) + Math.floor(target * 0.4) : 0; 
+        const actualQs = Math.min(weeklyQs, target);
+        const pct = Math.round((actualQs / target) * 100);
+
+        document.getElementById('goalRing').style.setProperty('--pct', pct + '%');
+        document.getElementById('goalRingText').textContent = pct + '%';
+        document.getElementById('goalStatusText').innerHTML = `<strong>${actualQs}</strong> out of <strong>${target}</strong> questions completed.`;
+      }
+    }
+
+    // Initialize
+    checkAuth();
+  </script>
+</body>
+</html>
