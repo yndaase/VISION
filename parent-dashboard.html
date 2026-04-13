@@ -512,8 +512,15 @@
         await loadDashboard(session.linkedStudent);
     }
 
+    // REDO: Explicitly attach to window for HTML onclick compatibility
     window.parentLogout = function() {
         localStorage.removeItem(PARENT_SESSION_KEY);
+        // Wipe all parent-related metadata
+        const keysToClear = [];
+        for (let i = 0; i < localStorage.length; i++) {
+            if (localStorage.key(i)?.startsWith('vision_parent_')) keysToClear.push(localStorage.key(i));
+        }
+        keysToClear.forEach(k => localStorage.removeItem(k));
         window.location.href = "parent-portal.html";
     }
 
@@ -729,6 +736,13 @@
       localStorage.removeItem('vision_parent_goal_' + session.email);
       location.reload();
     }
+
+    // Expose all interactive functions to window
+    window.setParentGoal = setParentGoal;
+    window.removeParentGoal = removeParentGoal;
+    window.sendNudge = sendNudge;
+    window.setWeeklyTarget = setWeeklyTarget;
+    window.generateFocusPlan = generateFocusPlan;
 
     function loadParentGoal(currentQs) {
       const session = getParentSession();

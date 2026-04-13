@@ -234,9 +234,9 @@
                 <div class="dh-name" id="dropdownName">Student</div>
                 <div class="dh-email" id="dropdownEmail">student@visionedu.online</div>
               </div>
-              <button class="dropdown-item" onclick="openSettings(); closeUserDropdown();">Settings</button>
+              <button class="dropdown-item" onclick="window.openSettings && window.openSettings(); window.closeUserDropdown && window.closeUserDropdown();">Settings</button>
               <a class="dropdown-item" href="/analytics">My Performance</a>
-              <button class="dropdown-item danger" onclick="handleLogout()">Log Out</button>
+              <button class="dropdown-item danger" onclick="window.handleLogout && window.handleLogout()">Log Out</button>
             </div>
           </div>
         </div>
@@ -714,10 +714,10 @@
 
   <script src="https://js.paystack.co/v2/inline.js"></script>
   <script type="module" src="firebase.js"></script>
-  <script defer src="auth.js"></script>
-  <script defer src="payment.js"></script>
-  <script defer src="dashboard.js"></script>
-  <script defer src="materials.js"></script>
+  <script src="auth.js"></script>
+  <script src="payment.js"></script>
+  <script src="dashboard.js"></script>
+  <script src="materials.js"></script>
   <script>
     // === ENTERPRISE STUDENT DASHBOARD INIT ===
     (function initEnterpriseDash() {
@@ -786,11 +786,11 @@
       }
     })();
 
-    // User dropdown
-    function toggleUserDropdown() {
+    // User dropdown (EXPOSED TO WINDOW FOR HTML ONCLICK)
+    window.toggleUserDropdown = function() {
       document.getElementById("navUserChip").classList.toggle("open");
     }
-    function closeUserDropdown() {
+    window.closeUserDropdown = function() {
       document.getElementById("navUserChip").classList.remove("open");
     }
     document.addEventListener("click", (e) => {
