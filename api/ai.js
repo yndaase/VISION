@@ -22,8 +22,8 @@ if (azureKey && azureEndpoint) {
   });
 }
 
-const MODEL_STANDARD = "gemini-2.5-flash";
-const MODEL_FALLBACK = "gemini-1.5-flash-8b";
+const MODEL_STANDARD = "gemini-1.5-flash";
+const MODEL_FALLBACK = "gemini-1.5-flash";
 
 /**
  * AI Content Generation with Multi-Provider Routing
