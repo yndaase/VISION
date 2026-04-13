@@ -1,4 +1,4 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -8,131 +8,190 @@
   <link rel="canonical" href="https://www.visionedu.online/parent-portal" />
   <meta name="theme-color" content="#10b981" />
   <link rel="apple-touch-icon" href="assets/logo.png" />
+  
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="parent-portal.css" />
-</head>
-<body class="parent-page">
+  
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Outfit', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          },
+          colors: {
+            navy: {
+              DEFAULT: '#05080f',
+              light: '#0a101f',
+              accent: '#1e293b'
+            },
+            emerald: {
+              DEFAULT: '#10b981',
+              light: '#34d399',
+              dark: '#059669'
+            },
+            indigo: {
+              DEFAULT: '#6366f1',
+              light: '#818cf8',
+              dark: '#4f46e5'
+            }
+          },
+        }
+      }
+    }
+  </script>
+  <style>
+    .glass { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.1); }
+    .glass-card { background: rgba(255, 255, 255, 0.02); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.08); }
+    
+    .bg-orb { position: absolute; border-radius: 50%; filter: blur(100px); opacity: 0.1; z-index: 0; pointer-events: none; }
+    .bg-orb-1 { width: 500px; height: 500px; background: #10b981; top: -100px; right: -100px; }
+    .bg-orb-2 { width: 400px; height: 400px; background: #6366f1; bottom: -100px; left: -100px; }
 
-  <!-- Background -->
-  <div class="parent-bg">
-    <span class="bg-orb bg-orb-1"></span>
-    <span class="bg-orb bg-orb-2"></span>
+    .parent-view { display: none; }
+    .parent-view.active { display: block; animation: fadeIn 0.5s ease forwards; }
+    
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-8px); } 75% { transform: translateX(8px); } }
+    .shake { animation: shake 0.4s ease-in-out; }
+
+    .parent-input { background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; padding: 0.85rem 1rem; color: #fff; width: 100%; transition: all 0.2s; }
+    .parent-input:focus { border-color: #10b981; background: rgba(255, 255, 255, 0.05); outline: none; box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1); }
+
+    .parent-tab { position: relative; padding: 1rem 0; font-size: 0.85rem; font-weight: 700; color: #64748b; letter-spacing: 0.1em; text-transform: uppercase; transition: all 0.3s; }
+    .parent-tab.active { color: #fff; }
+    .parent-tab.active::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 2px; background: #10b981; border-radius: 2px; }
+
+    .btn-emerald { background: linear-gradient(135deg, #10b981, #059669); color: #fff; font-weight: 700; border-radius: 12px; transition: all 0.3s; box-shadow: 0 8px 20px rgba(16, 185, 129, 0.2); }
+    .btn-emerald:hover { transform: translateY(-1px); box-shadow: 0 12px 25px rgba(16, 185, 129, 0.3); }
+
+    .google-btn { background: #fff; color: #1e293b; font-weight: 700; display: flex; items-center justify-center gap-3 border-radius: 12px; padding: 0.85rem 1rem; width: 100%; transition: all 0.2s; }
+    .google-btn:hover { background: #f8fafc; }
+  </style>
+</head>
+<body class="bg-navy text-white font-sans min-h-screen flex items-center justify-center p-6 relative overflow-hidden">
+  
+  <!-- Background Decor -->
+  <div class="fixed inset-0 z-0 pointer-events-none">
+    <div class="bg-orb bg-orb-1"></div>
+    <div class="bg-orb bg-orb-2"></div>
   </div>
 
-  <!-- Main Card -->
-  <div class="parent-card" id="parentCard">
+  <div class="max-w-md w-full relative z-10" id="parentCard">
     
-    <!-- 1. AUTHENTICATION VIEW -->
-    <div id="parentAuthView" class="parent-view active">
-      <div class="parent-header">
-        <div style="display:flex; justify-content:center; margin-bottom: 2rem;">
-            <a href="/" class="flex items-center gap-2 px-3 py-1.5 rounded-xl glass hover:bg-white/10 border-white/5 transition-all group text-[10px] font-bold text-gray-400 hover:text-white uppercase tracking-widest no-underline" style="display: flex; align-items: center; text-decoration: none;">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" class="group-hover:-translate-x-1 transition-transform" style="margin-right: 6px;"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
-                Back to Home
+    <div class="glass-card rounded-[3rem] p-10 border-white/5 shadow-2xl">
+      
+      <!-- 1. AUTHENTICATION VIEW -->
+      <div id="parentAuthView" class="parent-view active">
+        <div class="text-center mb-10">
+          <div class="flex justify-center mb-8">
+            <a href="/" class="flex items-center gap-2 px-3 py-1.5 rounded-xl glass hover:bg-white/10 border-white/5 transition-all group text-[10px] font-bold text-gray-400 hover:text-white uppercase tracking-widest no-underline">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" class="group-hover:-translate-x-1 transition-transform"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+              Back to Home
             </a>
+          </div>
+          <div class="w-16 h-16 bg-emerald-500/10 rounded-2xl flex items-center justify-center text-emerald-400 font-bold text-2xl mx-auto mb-6 border border-emerald-500/20">
+            P
+          </div>
+          <h1 class="text-3xl font-black mb-2 text-white">Vision Guardian</h1>
+          <p class="text-gray-400 text-sm leading-relaxed">Log in to monitor your child's WASSCE preparation progress and performance.</p>
         </div>
-        <img src="assets/logo.png" alt="Vision Education" class="parent-logo" />
-        <h1>Parent / Guardian Portal</h1>
-        <p>Log in or create an account to monitor your child's WASSCE preparation.</p>
+
+        <div class="flex gap-8 border-b border-white/5 mb-8">
+          <button type="button" class="parent-tab active flex-1" id="tabLogin" onclick="switchAuthTab('login')">Sign In</button>
+          <button type="button" class="parent-tab flex-1" id="tabSignup" onclick="switchAuthTab('signup')">Create Account</button>
+        </div>
+
+        <!-- Google Login -->
+        <div class="relative mb-6">
+          <button type="button" class="google-btn">
+            <svg class="w-5 h-5" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+            Continue with Google
+          </button>
+          <div id="g_id_onload"
+               data-client_id="378999569796-v8bj9miq61sggvpea5sbslc24dr9t71s.apps.googleusercontent.com"
+               data-context="use"
+               data-ux_mode="popup"
+               data-callback="handleParentGoogleLogin"
+               data-auto_prompt="false"></div>
+          <div class="g_id_signin" data-type="standard" data-shape="rectangular" data-theme="outline" data-text="signin_with" data-size="large" data-logo_alignment="left"
+               style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0.02; cursor: pointer;"></div>
+        </div>
+
+        <div class="flex items-center gap-4 mb-8">
+          <div class="flex-1 h-px bg-white/5"></div>
+          <span class="text-[10px] font-bold text-gray-500 uppercase tracking-widest">or use email</span>
+          <div class="flex-1 h-px bg-white/5"></div>
+        </div>
+
+        <!-- Forms -->
+        <form id="parentLoginForm" onsubmit="handleParentSubmit(event, 'login')" class="space-y-6">
+          <div>
+            <label class="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-3 ml-1">Email Address</label>
+            <input type="email" class="parent-input" id="loginEmail" placeholder="parent@example.com" required />
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-3 ml-1">Password</label>
+            <input type="password" class="parent-input" id="loginPass" placeholder="••••••••" required />
+          </div>
+          <p id="loginError" class="text-xs text-red-400 font-bold ml-1 hidden"></p>
+          <button type="submit" class="btn-emerald w-full py-4 text-sm tracking-widest uppercase">Sign In</button>
+        </form>
+
+        <form id="parentSignupForm" onsubmit="handleParentSubmit(event, 'signup')" class="space-y-6 hidden">
+          <div>
+            <label class="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-3 ml-1">Full Name</label>
+            <input type="text" class="parent-input" id="signupName" placeholder="Kwame Mensah" required />
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-3 ml-1">Email Address</label>
+            <input type="email" class="parent-input" id="signupEmail" placeholder="parent@example.com" required />
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-3 ml-1">Password</label>
+            <input type="password" class="parent-input" id="signupPass" placeholder="••••••••" required minlength="6" />
+          </div>
+          <p id="signupError" class="text-xs text-red-300 font-bold ml-1 hidden"></p>
+          <button type="submit" class="btn-emerald w-full py-4 text-sm tracking-widest uppercase">Create Guardian Account</button>
+        </form>
       </div>
 
-      <div class="parent-tabs">
-        <button type="button" class="parent-tab active" id="tabLogin" onclick="switchAuthTab('login')">Sign In</button>
-        <button type="button" class="parent-tab" id="tabSignup" onclick="switchAuthTab('signup')">Create Account</button>
+      <!-- 2. LINK STUDENT VIEW -->
+      <div id="parentLinkView" class="parent-view">
+        <div class="text-center mb-10">
+          <div class="w-16 h-16 bg-emerald-500/10 rounded-2xl flex items-center justify-center text-emerald-400 font-bold text-2xl mx-auto mb-6 border border-emerald-500/20">
+            L
+          </div>
+          <h1 class="text-3xl font-black mb-2 text-white">Link Account</h1>
+          <p class="text-gray-400 text-sm leading-relaxed">Enter the 6-digit access code provided by your child to link their academic progress.</p>
+        </div>
+
+        <form onsubmit="handleLinkStudent(event)" class="space-y-8">
+          <div class="max-w-xs mx-auto">
+            <label class="block text-center text-[10px] font-bold text-gray-400 uppercase tracking-[0.3em] mb-6">Enter Authentication Code</label>
+            <input type="text" class="parent-input text-center text-4xl font-mono tracking-[0.2em] py-6" id="parentCodeInput" placeholder="000000" maxlength="6" inputmode="numeric" required />
+          </div>
+          <p id="linkError" class="text-xs text-center text-red-400 font-bold hidden"></p>
+          <button type="submit" class="btn-emerald w-full py-4 text-sm tracking-widest uppercase">Verify and Link</button>
+        </form>
+
+        <div class="mt-12 pt-8 border-t border-white/5 text-center">
+          <p class="text-gray-500 text-[10px] leading-relaxed mb-6 italic uppercase tracking-widest">
+            Your child can generate this code in their <strong>Dashboard Settings</strong>.
+          </p>
+          <button onclick="parentLogout()" class="text-[10px] font-black text-red-500 hover:text-red-400 transition-colors uppercase tracking-[0.2em]">Sign Out</button>
+        </div>
       </div>
 
-      <!-- Google Button Wrapper (Clickjacking transparent override) -->
-      <div style="position: relative; margin-bottom: 1.5rem;">
-        <button type="button" class="parent-google-btn">
-          <svg style="width: 18px; height: 18px;" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
-          Continue with Google
-        </button>
-        <!-- The actual Google iframe, made practically invisible -->
-        <div id="g_id_onload"
-             data-client_id="378999569796-v8bj9miq61sggvpea5sbslc24dr9t71s.apps.googleusercontent.com"
-             data-context="use"
-             data-ux_mode="popup"
-             data-callback="handleParentGoogleLogin"
-             data-auto_prompt="false"></div>
-        <div class="g_id_signin"
-             data-type="standard"
-             data-shape="rectangular"
-             data-theme="outline"
-             data-text="signin_with"
-             data-size="large"
-             data-logo_alignment="left"
-             style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0.02; cursor: pointer; display: flex; align-items: center; justify-content: center; overflow: hidden;"></div>
-      </div>
-
-      <div class="parent-divider">or use email</div>
-
-      <!-- Login Form -->
-      <form id="parentLoginForm" class="parent-form" style="display: block;" onsubmit="handleParentSubmit(event, 'login')">
-        <div>
-          <label class="parent-label">Email Address</label>
-          <input type="email" class="parent-input" id="loginEmail" placeholder="parent@example.com" required />
-        </div>
-        <div>
-          <label class="parent-label">Password</label>
-          <input type="password" class="parent-input" id="loginPass" placeholder="••••••••" required />
-        </div>
-        <p class="parent-error" id="loginError"></p>
-        <button type="submit" class="parent-submit-btn">Sign In</button>
-      </form>
-
-      <!-- Signup Form -->
-      <form id="parentSignupForm" class="parent-form" style="display: none;" onsubmit="handleParentSubmit(event, 'signup')">
-        <div>
-          <label class="parent-label">Full Name</label>
-          <input type="text" class="parent-input" id="signupName" placeholder="Kwame Mensah" required />
-        </div>
-        <div>
-          <label class="parent-label">Email Address</label>
-          <input type="email" class="parent-input" id="signupEmail" placeholder="parent@example.com" required />
-        </div>
-        <div>
-          <label class="parent-label">Password</label>
-          <input type="password" class="parent-input" id="signupPass" placeholder="••••••••" required minlength="6" />
-        </div>
-        <p class="parent-error" id="signupError"></p>
-        <button type="submit" class="parent-submit-btn">Create Account</button>
-      </form>
-
-      <div class="parent-footer">
-      </div>
     </div>
-
-    <!-- 2. LINK STUDENT VIEW -->
-    <div id="parentLinkView" class="parent-view">
-      <div class="parent-header">
-        <img src="assets/logo.png" alt="Vision Education" class="parent-logo" />
-        <h1>Link Your Child</h1>
-        <p>Enter the 6-digit access code provided by your child to link their account to yours.</p>
-      </div>
-
-      <form class="parent-form" onsubmit="handleLinkStudent(event)">
-        <div>
-          <label class="parent-label">6-Digit Access Code</label>
-          <input type="text" class="parent-code-input" id="parentCodeInput" placeholder="000000" maxlength="6" inputmode="numeric" autocomplete="off" required />
-        </div>
-        <p class="parent-error" id="linkError"></p>
-        <button type="submit" class="parent-submit-btn">Verify and Link</button>
-      </form>
-
-      <div class="parent-footer">
-        <p>Your child can generate an access code from their <strong>Settings</strong> page on the student dashboard.</p>
-        <p style="margin-top:8px;"><a href="#" onclick="parentLogout(); return false;" style="color:#f87171;">Sign Out</a></p>
-      </div>
-    </div>
-
-
   </div>
 
   <script src="https://accounts.google.com/gsi/client" async defer></script>
   <script>
-    // ─── Local Parent Database ───
+    // ─── Local Parent Database (Unchanged Logic) ───
     const PARENT_USERS_KEY = 'vision_parent_users';
     const PARENT_SESSION_KEY = 'vision_parent_session';
     const PARENT_CODE_KEY = 'vision_parent_codes';
@@ -154,10 +213,10 @@
       localStorage.setItem(PARENT_SESSION_KEY, JSON.stringify(user));
     }
 
-    // ─── Routing & Views ───
     function switchView(viewId) {
       document.querySelectorAll('.parent-view').forEach(v => v.classList.remove('active'));
-      document.getElementById(viewId).classList.add('active');
+      const nextView = document.getElementById(viewId);
+      if (nextView) nextView.classList.add('active');
     }
 
     function switchAuthTab(type) {
@@ -165,26 +224,20 @@
       const tabSignup = document.getElementById('tabSignup');
       const formLogin = document.getElementById('parentLoginForm');
       const formSignup = document.getElementById('parentSignupForm');
-      const errLogin = document.getElementById('loginError');
-      const errSignup = document.getElementById('signupError');
-
-      if (errLogin) errLogin.style.display = 'none';
-      if (errSignup) errSignup.style.display = 'none';
 
       if (type === 'login') {
         tabLogin.classList.add('active');
         tabSignup.classList.remove('active');
-        formLogin.style.display = 'block';
-        if (formSignup) formSignup.style.display = 'none';
+        formLogin.classList.remove('hidden');
+        formSignup.classList.add('hidden');
       } else {
         tabSignup.classList.add('active');
         tabLogin.classList.remove('active');
-        if (formSignup) formSignup.style.display = 'block';
-        formLogin.style.display = 'none';
+        formSignup.classList.remove('hidden');
+        formLogin.classList.add('hidden');
       }
     }
 
-    // ─── Authentication Logic ───
     function handleParentSubmit(e, type) {
       e.preventDefault();
       const users = getParentUsers();
@@ -196,8 +249,8 @@
         const errEl = document.getElementById('signupError');
 
         if (users.find(u => u.email === email)) {
-          errEl.textContent = 'Account already exists for this email. Please sign in.';
-          errEl.style.display = 'block';
+          errEl.textContent = 'Account already exists. Please sign in.';
+          errEl.classList.remove('hidden');
           return;
         }
 
@@ -205,7 +258,6 @@
         saveParentUser(newUser);
         setParentSession(newUser);
         checkSessionState();
-
       } else {
         const email = document.getElementById('loginEmail').value.trim();
         const pass = document.getElementById('loginPass').value;
@@ -213,8 +265,8 @@
 
         const user = users.find(u => u.email === email && u.password === pass);
         if (!user) {
-          errEl.textContent = 'Incorrect email or password.';
-          errEl.style.display = 'block';
+          errEl.textContent = 'Incorrect credentials.';
+          errEl.classList.remove('hidden');
           shakeCard();
           return;
         }
@@ -225,7 +277,6 @@
     }
 
     function handleParentGoogleLogin(response) {
-      // Decode JWT token payload
       const base64Url = response.credential.split('.')[1];
       const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
       const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
@@ -240,7 +291,6 @@
       let parentUser = users.find(u => u.email === email);
 
       if (!parentUser) {
-        // Create new account
         parentUser = { email, name, password: null, linkedStudent: null };
         saveParentUser(parentUser);
       }
@@ -250,26 +300,8 @@
     }
 
     function parentLogout() {
-      // Clear specific session
       localStorage.removeItem(PARENT_SESSION_KEY);
-      
-      // Intensive wipe of all parent-related metadata to prevent session bleeding
-      const keysToClear = [];
-      for (let i = 0; i < localStorage.length; i++) {
-        const key = localStorage.key(i);
-        if (key && key.startsWith('vision_parent_')) {
-          keysToClear.push(key);
-        }
-      }
-      keysToClear.forEach(k => localStorage.removeItem(k));
-      
-      // Force return to portal root
-      window.location.href = "parent-portal.html";
-    }
-
-    // ─── Linking Logic ───
-    function showLinkView() {
-      switchView('parentLinkView');
+      window.location.reload();
     }
 
     function handleLinkStudent(e) {
@@ -278,67 +310,51 @@
       const errorEl = document.getElementById('linkError');
 
       if (code.length !== 6) {
-        errorEl.style.display = 'block';
-        errorEl.textContent = 'Please enter a 6-digit code.';
+        errorEl.classList.remove('hidden');
+        errorEl.textContent = 'Enter a valid 6-digit code.';
         return;
       }
 
-      // Check codes
       let activeCodes = [];
       try { activeCodes = JSON.parse(localStorage.getItem(PARENT_CODE_KEY)) || []; } catch(e){}
-      
       const match = activeCodes.find(c => c.code === code && c.expiresAt > Date.now());
 
       if (!match) {
-        errorEl.style.display = 'block';
-        errorEl.textContent = 'Invalid or expired access code.';
+        errorEl.classList.remove('hidden');
+        errorEl.textContent = 'Invalid or expired code.';
         shakeCard();
         return;
       }
 
-      // Link to session user
       const session = getParentSession();
       if (!session) return;
 
-      session.linkedStudent = {
-        email: match.childEmail,
-        name: match.childName,
-        school: match.childSchool
-      };
-      
+      session.linkedStudent = { email: match.childEmail, name: match.childName, school: match.childSchool };
       saveParentUser(session);
       setParentSession(session);
-      document.getElementById('parentCodeInput').value = '';
       checkSessionState();
     }
 
-    // ─── Dashboard Bootstrapping ───
     async function checkSessionState() {
       const session = getParentSession();
       if (!session) {
         switchView('parentAuthView');
         return;
       }
-
       if (!session.linkedStudent) {
         switchView('parentLinkView');
         return;
       }
-
-      // Redirect to the new premium dashboard
       window.location.href = "parent-dashboard.html";
     }
 
-
-
     function shakeCard() {
       const card = document.getElementById('parentCard');
-      card.style.animation = 'none';
-      card.offsetHeight; // trigger reflow
-      card.style.animation = 'shake 0.45s ease';
+      card.classList.remove('shake');
+      void card.offsetWidth;
+      card.classList.add('shake');
     }
 
-    // Init
     document.addEventListener('DOMContentLoaded', () => {
       checkSessionState();
     });

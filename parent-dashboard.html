@@ -1,495 +1,272 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en" data-theme="dark">
-
 <head>
   <meta charset="UTF-8" />
   <script>
     document.documentElement.setAttribute("data-theme", "dark");
   </script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Parent Command Center | Vision Education</title>
+  <title>Guardian Dashboard | Vision Education</title>
+  
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="style.css" />
-  <link rel="stylesheet" href="dashboard.css" />
-  <link rel="stylesheet" href="parent-portal.css" />
-  <link rel="stylesheet" href="theme.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
   
-  <style>
-    :root {
-      --parent-primary: #10b981;
-      --parent-bg: #0d1117;
-      --parent-card: #161b22;
-      --parent-border: rgba(255, 255, 255, 0.1);
-    }
-
-    body.parent-dashboard-page {
-      background-color: var(--parent-bg);
-      color: #e6edf3;
-      overflow-x: hidden;
-    }
-
-    /* Override dashboard.css for parent theme */
-    .side-nav {
-      border-right: 1px solid var(--parent-border);
-      background: #0d1117;
-    }
-
-    .nav-item.active {
-      background: rgba(16, 185, 129, 0.1);
-      color: var(--parent-primary);
-      border-left: 3px solid var(--parent-primary);
-    }
-
-    .dash-nav {
-      border-bottom: 1px solid var(--parent-border);
-      background: rgba(13, 17, 23, 0.8);
-    }
-
-    /* Custom AI Banner */
-    .ai-insights-banner {
-      background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(59, 130, 246, 0.15));
-      border: 1px solid rgba(16, 185, 129, 0.3);
-      border-radius: 24px;
-      padding: 2rem;
-      margin-bottom: 2rem;
-      position: relative;
-      overflow: hidden;
-      display: flex;
-      align-items: center;
-      gap: 2rem;
-    }
-
-    .ai-insights-banner::before {
-      content: "";
-      position: absolute;
-      top: -50%;
-      left: -50%;
-      width: 200%;
-      height: 200%;
-      background: radial-gradient(circle, rgba(16, 185, 129, 0.1) 0%, transparent 70%);
-      pointer-events: none;
-    }
-
-    .ai-icon-large {
-      width: 64px;
-      height: 64px;
-      background: rgba(16, 185, 129, 0.2);
-      border-radius: 16px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: var(--parent-primary);
-      flex-shrink: 0;
-    }
-
-    .ai-content h2 {
-      font-size: 1.25rem;
-      font-weight: 800;
-      margin-bottom: 0.5rem;
-      color: #fff;
-    }
-
-    .ai-content p {
-      color: #94a3b8;
-      line-height: 1.6;
-      font-size: 1rem;
-    }
-
-    /* Metric Grid */
-    .parent-metrics-row {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-      gap: 1.5rem;
-      margin-bottom: 2rem;
-    }
-
-    .metric-card {
-      background: var(--parent-card);
-      border: 1px solid var(--parent-border);
-      border-radius: 20px;
-      padding: 1.5rem;
-      display: flex;
-      flex-direction: column;
-      gap: 0.5rem;
-      transition: transform 0.2s;
-    }
-
-    .metric-card:hover {
-      transform: translateY(-4px);
-      border-color: rgba(16, 185, 129, 0.4);
-    }
-
-    .metric-value {
-      font-size: 2rem;
-      font-weight: 800;
-      color: #fff;
-    }
-
-    .metric-label {
-      font-size: 0.85rem;
-      color: #94a3b8;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-    }
-
-    /* Main Grid Split */
-    .parent-main-grid {
-      display: grid;
-      grid-template-columns: 1fr 340px;
-      gap: 2rem;
-    }
-
-    @media (max-width: 1024px) {
-      .parent-main-grid {
-        grid-template-columns: 1fr;
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Outfit', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          },
+          colors: {
+            navy: {
+              DEFAULT: '#05080f',
+              light: '#0a101f',
+              accent: '#1e293b'
+            },
+            emerald: {
+              DEFAULT: '#10b981',
+              light: '#34d399',
+              dark: '#059669'
+            },
+            indigo: {
+              DEFAULT: '#6366f1',
+              light: '#818cf8',
+              dark: '#4f46e5'
+            }
+          },
+        }
       }
     }
-
-    .command-section {
-      background: var(--parent-card);
-      border: 1px solid var(--parent-border);
-      border-radius: 24px;
-      padding: 1.5rem;
-      margin-bottom: 2rem;
-    }
-
-    .section-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 1.5rem;
-    }
-
-    .section-title {
-      font-size: 1.1rem;
-      font-weight: 800;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    /* Table Styles */
-    .parent-table {
-      width: 100%;
-      border-collapse: collapse;
-    }
-
-    .parent-table th {
-      text-align: left;
-      padding: 12px;
-      color: #64748b;
-      font-size: 0.75rem;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      border-bottom: 1px solid var(--parent-border);
-    }
-
-    .parent-table td {
-      padding: 16px 12px;
-      border-bottom: 1px solid var(--parent-border);
-      font-size: 0.9rem;
-    }
-
-    .status-pill {
-      padding: 4px 10px;
-      border-radius: 20px;
-      font-size: 0.75rem;
-      font-weight: 700;
-    }
-
-    .status-success { background: rgba(16, 185, 129, 0.1); color: #10b981; }
+  </script>
+  <style>
+    .glass { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.1); }
+    .glass-card { background: rgba(255, 255, 255, 0.02); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.08); transition: all 0.3s ease; }
+    .glass-card:hover { border-color: rgba(16, 185, 129, 0.3); transform: translateY(-2px); background: rgba(255, 255, 255, 0.04); }
     
-    /* Activity Feed */
-    .activity-feed {
-      display: flex;
-      flex-direction: column;
-      gap: 1rem;
-    }
+    .bg-orb { position: absolute; border-radius: 50%; filter: blur(100px); opacity: 0.1; z-index: 0; pointer-events: none; }
+    .bg-orb-1 { width: 500px; height: 500px; background: #10b981; top: -100px; right: -100px; }
+    .bg-orb-2 { width: 400px; height: 400px; background: #6366f1; bottom: -100px; left: -100px; }
 
-    .activity-item {
-      display: flex;
-      gap: 12px;
-      padding: 12px;
-      border-radius: 12px;
-      transition: background 0.2s;
-    }
+    .nav-item { transition: all 0.2s; }
+    .nav-item.active { background: rgba(16, 185, 129, 0.1); color: #10b981; border-right: 3px solid #10b981; }
+    
+    @keyframes pulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.5; transform: scale(0.95); } }
+    .animate-pulse-sync { animation: pulse 2s infinite; }
 
-    .activity-item:hover {
-      background: rgba(255, 255, 255, 0.03);
-    }
+    .goal-ring { position: relative; width: 120px; height: 120px; border-radius: 50%; background: conic-gradient(#10b981 var(--pct), rgba(255,255,255,0.05) 0); display: flex; align-items: center; justify-content: center; transition: all 1s ease-in-out; }
+    .goal-ring::before { content: ''; position: absolute; width: 96px; height: 96px; border-radius: 50%; background: #05080f; }
 
-    .activity-dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: var(--parent-primary);
-      margin-top: 6px;
-      flex-shrink: 0;
-    }
-
-    .activity-info {
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-    }
-
-    .activity-text {
-      font-size: 0.85rem;
-      color: #e6edf3;
-    }
-
-    .activity-time {
-      font-size: 0.75rem;
-      color: #64748b;
-    }
-
-    .sidebar-avatar-wrap {
-      padding: 24px;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      border-bottom: 1px solid var(--parent-border);
-      margin-bottom: 1rem;
-    }
-
-    .sidebar-avatar {
-      width: 40px;
-      height: 40px;
-      border-radius: 12px;
-      background: var(--parent-primary);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 800;
-      color: #fff;
-    }
-
-    .sidebar-user-info .name {
-      font-size: 0.9rem;
-      font-weight: 700;
-      color: #fff;
-      display: block;
-    }
-
-    .sidebar-user-info .role {
-      font-size: 0.7rem;
-      color: #64748b;
-    }
-
-    @keyframes pulse {
-      0% { opacity: 0.5; }
-      50% { opacity: 1; }
-      100% { opacity: 0.5; }
-    }
+    /* Hide standard scrollbar */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: rgba(5, 8, 15, 0.1); }
+    ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); border-radius: 10px; }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.2); }
   </style>
 </head>
+<body class="bg-navy text-white font-sans min-h-screen flex selection:bg-emerald-500/30">
+  
+  <!-- Background Decor -->
+  <div class="fixed inset-0 z-0 pointer-events-none">
+    <div class="bg-orb bg-orb-1"></div>
+    <div class="bg-orb bg-orb-2"></div>
+  </div>
 
-<body class="dashboard-page parent-dashboard-page">
-  <!--  SIDE NAVIGATION  -->
-  <aside class="side-nav">
-    <div class="sidebar-avatar-wrap">
-        <div class="sidebar-avatar" id="parentAvatar">P</div>
-        <div class="sidebar-user-info">
-            <span class="name" id="parentName">Parent Name</span>
-            <span class="role">Guardian Account</span>
-        </div>
+  <!-- Sidebar -->
+  <aside class="w-72 border-r border-white/5 bg-navy-light/50 backdrop-blur-3xl sticky top-0 h-screen flex flex-col z-20">
+    <div class="p-8 border-b border-white/5 flex items-center gap-4">
+       <div class="w-10 h-10 bg-emerald-500/20 rounded-xl flex items-center justify-center text-emerald-400 font-black text-xl border border-emerald-500/30 shadow-[0_0_20px_rgba(16,185,129,0.1)]" id="parentAvatar">P</div>
+       <div class="overflow-hidden">
+          <p class="font-black text-sm text-white truncate" id="parentName">Parent Name</p>
+          <p class="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Guardian</p>
+       </div>
     </div>
-    
-    <nav class="side-nav-menu">
-      <a href="#overview" class="nav-item active">
-        <span class="nav-item-icon">
-          <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
-        </span>
-        <span>Overview</span>
-      </a>
-      <a href="#activity" class="nav-item">
-        <span class="nav-item-icon">
-          <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/></svg>
-        </span>
-        <span>Child Activity</span>
-      </a>
-      <a href="#reports" class="nav-item">
-        <span class="nav-item-icon">
-          <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>
-        </span>
-        <span>Mock Reports</span>
-      </a>
+
+    <nav class="flex-1 p-6 space-y-2 overflow-y-auto">
+       <a href="#overview" class="nav-item active flex items-center gap-4 px-4 py-3 rounded-xl font-bold text-sm tracking-tight text-gray-400 hover:text-white group">
+          <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
+          Overview
+       </a>
+       <a href="#activity" class="nav-item flex items-center gap-4 px-4 py-3 rounded-xl font-bold text-sm tracking-tight text-gray-400 hover:text-white group">
+          <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+          Live Activity
+       </a>
+       <a href="#reports" class="nav-item flex items-center gap-4 px-4 py-3 rounded-xl font-bold text-sm tracking-tight text-gray-400 hover:text-white group">
+          <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+          Mock Reports
+       </a>
     </nav>
 
-    <div class="side-nav-footer">
-      <a href="#" class="nav-item" onclick="parentLogout(); return false;">
-        <span class="nav-item-icon">
-          <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M13 3h-2v10h2V3zm4.83 2.17l-1.42 1.42A6.92 6.92 0 0119 12c0 3.87-3.13 7-7 7s-7-3.13-7-7a6.92 6.92 0 012.59-5.41l-1.42-1.42A8.95 8.95 0 003 12c0 4.97 4.03 9 9 9s9-4.03 9-9c0-3.12-1.59-5.87-4-7.5z"/></svg>
-        </span>
-        <span>Sign Out</span>
-      </a>
+    <div class="p-6 border-t border-white/5">
+       <button onclick="parentLogout()" class="w-full flex items-center gap-4 px-4 py-3 rounded-xl font-bold text-sm text-red-400 hover:bg-red-400/10 transition-all">
+          <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+          Sign Out
+       </button>
     </div>
   </aside>
 
-  <div class="main-wrapper">
-    <!--  NAVBAR  -->
-    <nav class="dash-nav" id="dashNav">
-      <div class="dash-nav-inner">
-        <div class="dash-logo" style="display: flex; align-items: center;">
-          <a href="/" class="flex items-center gap-2 mr-4 px-2 py-1 rounded-lg hover:bg-white/5 transition-colors group" title="Back to Homepage" style="display: flex; align-items: center; text-decoration: none;">
-             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" class="text-gray-500 group-hover:text-white group-hover:-translate-x-1 transition-all" style="color: #64748b;"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+  <!-- Main Wrapper -->
+  <div class="flex-1 flex flex-col z-10">
+    
+    <!-- Topbar -->
+    <header class="h-20 border-b border-white/5 sticky top-0 bg-navy/80 backdrop-blur-xl z-30 flex items-center justify-between px-10">
+      <div class="flex items-center gap-6">
+          <a href="/" class="flex items-center gap-2 px-3 py-1.5 rounded-xl glass hover:bg-white/10 border-white/5 transition-all group text-[10px] font-bold text-gray-400 hover:text-white uppercase tracking-widest no-underline">
+             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" class="group-hover:-translate-x-1 transition-transform"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+             Exit Dashboard
           </a>
-          <img src="assets/logo.png" alt="Logo" style="height: 32px; width: 32px; object-fit: contain; margin-right: 10px;">
-          <span class="dash-logo-text">Vision <span style="color:var(--parent-primary)">Guardian</span></span>
-        </div>
-
-        <div class="dash-nav-right">
-          <div id="syncStatus" style="display: flex; align-items: center; gap: 6px; padding: 4px 12px; background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.2); border-radius: 100px; margin-right: 1rem;">
-            <span style="width: 6px; height: 6px; background: #10b981; border-radius: 50%; box-shadow: 0 0 8px #10b981; animation: pulse 2s infinite;"></span>
-            <span style="font-size: 0.65rem; font-weight: 800; color: #10b981; text-transform: uppercase; letter-spacing: 0.05em;">Live Sync</span>
-          </div>
-          <div class="nav-user-chip">
-            <div class="nav-avatar" style="background:#10b981; color:#fff; display:flex; align-items:center; justify-content:center; font-weight:800; font-size:0.8rem;" id="childAvatarHeader">S</div>
-            <span class="nav-username" id="childNameHeader">Monitoring: Loading...</span>
-          </div>
-        </div>
-      </div>
-    </nav>
-
-    <main class="dash-content" style="padding: 2rem;">
-      
-      <!-- AI INSIGHTS BANNER -->
-      <section class="ai-insights-banner" id="aiBanner" style="display:none;">
-          <div class="ai-icon-large">
-              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
-          </div>
-          <div class="ai-content">
-              <h2>Vision AI Analysis</h2>
-              <p id="aiInsightsText">Our AI is analyzing your child's recent performance patterns to provide actionable recommendations.</p>
-          </div>
-      </section>
-
-      <!-- METRICS GRID -->
-      <div class="parent-metrics-row" id="overview">
-          <div class="metric-card">
-              <span class="metric-label">Accuracy Rate</span>
-              <span class="metric-value" id="childAccuracy">0%</span>
-          </div>
-          <div class="metric-card">
-              <span class="metric-label">Questions Solved</span>
-              <span class="metric-value" id="childQuestions">0</span>
-          </div>
-          <div class="metric-card">
-              <span class="metric-label">Study Streak</span>
-              <span class="metric-value" id="childStreak" style="color:#fbbf24;">0</span>
-          </div>
-          <div class="metric-card">
-              <span class="metric-label">Subjects Mastered</span>
-              <span class="metric-value" id="childSubjects" style="color:#818cf8;">0</span>
-          </div>
-          <div class="metric-card">
-              <span class="metric-label">Est. Study Time</span>
-              <span class="metric-value" id="childStudyTime" style="color:#0ea5e9;">0h</span>
+          <span class="w-px h-6 bg-white/10"></span>
+          <div class="flex items-center gap-4">
+             <div class="w-8 h-8 rounded-lg bg-emerald-500/20 flex items-center justify-center text-emerald-400 font-black text-xs border border-emerald-500/30" id="childAvatarHeader">S</div>
+             <div>
+                <p class="text-[10px] font-black text-gray-500 uppercase tracking-widest leading-none mb-1">Monitoring Status</p>
+                <p class="text-xs font-bold text-white leading-none" id="childNameHeader">Loading Student...</p>
+             </div>
           </div>
       </div>
 
-      <div class="parent-main-grid">
-          <!-- LEFT COLUMN -->
-          <div class="left-col">
-              
-              <!-- SUBJECT MASTERY -->
-              <div class="command-section">
-                  <div class="section-header">
-                      <h3 class="section-title">
-                          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
-                          Subject Mastery Breakdown
-                      </h3>
-                  </div>
-                  <div class="parent-mastery-list" id="subjectMasteryList">
-                      <!-- Populated via JS -->
-                  </div>
-              </div>
+      <div class="flex items-center gap-4">
+          <div id="syncStatus" class="flex items-center gap-2 px-4 py-2 bg-emerald-500/10 border border-emerald-500/20 rounded-full">
+             <div class="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-pulse-sync shadow-[0_0_10px_#10b981]"></div>
+             <span class="text-[10px] font-black text-emerald-400 uppercase tracking-widest">Live Sync Alpha</span>
+          </div>
+      </div>
+    </header>
 
-              <!-- FOCUS AREAS -->
-              <div class="command-section">
-                  <div class="section-header">
-                      <h3 class="section-title">
-                          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4"/><path d="M12 16h.01"/></svg>
-                          Recommended Focus Areas
-                      </h3>
-                      <button class="parent-goal-btn" onclick="generateFocusPlan()" style="padding:4px 10px; font-size:0.75rem;">Generate Plan</button>
-                  </div>
-                  <div id="focusAreaList" style="display:flex; flex-direction:column; gap:10px;">
-                      <!-- Populated via JS -->
-                  </div>
-              </div>
+    <!-- Content -->
+    <main class="p-10 max-w-7xl mx-auto w-full space-y-10">
+       
+       <!-- AI INSIGHTS -->
+       <section class="glass-card rounded-[3rem] p-10 md:p-14 border-emerald-500/20 bg-gradient-to-br from-emerald-500/5 to-transparent flex flex-col md:flex-row items-center gap-12 group" id="aiBanner" style="display:none;">
+          <div class="w-20 h-20 bg-emerald-500/10 rounded-[2rem] flex items-center justify-center text-emerald-400 shrink-0 border border-emerald-500/20 shadow-[0_0_30px_rgba(16,185,129,0.1)] group-hover:scale-110 transition-transform">
+             <svg width="40" height="40" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M12 4V2m7.07 3.07l1.41-1.41M22 12h-2m-3.07 7.07l1.41 1.41M12 22v-2m-7.07-3.07l-1.41 1.41M2 12h2m3.07-7.07L5.64 3.64"/></svg>
+          </div>
+          <div>
+             <h2 class="text-3xl font-black mb-4 flex items-center gap-4 text-white">
+                Vision AI Analysis
+                <span class="text-[10px] bg-emerald-500 text-navy font-black px-2 py-0.5 rounded tracking-tighter italic">BETA</span>
+             </h2>
+             <p class="text-gray-400 text-lg leading-relaxed max-w-3xl font-medium" id="aiInsightsText">Our AI is generating actionable recommendations based on your child's recent activity.</p>
+          </div>
+       </section>
 
-              <!-- RECENT MOCK EXAMS -->
-              <div class="command-section" id="reports">
-                <div class="section-header">
-                    <h3 class="section-title">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
-                        Recent Mock Exam Reports
-                    </h3>
+       <!-- METRICS -->
+       <section class="grid grid-cols-2 lg:grid-cols-5 gap-6" id="overview">
+          <div class="glass-card p-8 rounded-[2rem] border-white/5">
+             <p class="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-4">Accuracy Rate</p>
+             <h3 class="text-4xl font-black text-white" id="childAccuracy">0%</h3>
+          </div>
+          <div class="glass-card p-8 rounded-[2rem] border-white/5">
+             <p class="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-4">Questions Solved</p>
+             <h3 class="text-4xl font-black text-white" id="childQuestions">0</h3>
+          </div>
+          <div class="glass-card p-8 rounded-[2rem] border-white/5">
+             <p class="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-4">Study Streak</p>
+             <h3 class="text-4xl font-black text-emerald-400" id="childStreak">0</h3>
+          </div>
+          <div class="glass-card p-8 rounded-[2rem] border-white/5">
+             <p class="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-4">Subjects Active</p>
+             <h3 class="text-4xl font-black text-indigo-400" id="childSubjects">0</h3>
+          </div>
+          <div class="glass-card p-8 rounded-[2rem] border-white/5 bg-navy-accent/20">
+             <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-4">Total Time</p>
+             <h3 class="text-2xl font-black text-white" id="childStudyTime">0h</h3>
+          </div>
+       </section>
+
+       <!-- MAIN GRID -->
+       <section class="grid lg:grid-cols-3 gap-10">
+          
+          <!-- LEFT: SUBJECT MASTERY -->
+          <div class="lg:col-span-2 space-y-10">
+             <div class="glass-card rounded-[3rem] p-10 border-white/5">
+                <div class="flex items-center justify-between mb-10">
+                   <h3 class="text-2xl font-black flex items-center gap-4 text-white">
+                      Subject Mastery
+                      <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                   </h3>
                 </div>
-                <table class="parent-table">
-                    <thead>
-                        <tr>
-                            <th>Exam Subject</th>
-                            <th>Date Completed</th>
-                            <th>Score</th>
-                            <th>Status</th>
-                        </tr>
-                    </thead>
-                    <tbody id="recentMocksList">
-                        <!-- Populated via JS -->
-                    </tbody>
-                </table>
-              </div>
+                <div class="space-y-8" id="subjectMasteryList">
+                   <!-- Populated via JS -->
+                </div>
+             </div>
+
+             <div class="glass-card rounded-[3rem] p-10 border-white/5" id="reports">
+                <h3 class="text-2xl font-black mb-10 text-white">Recent Mock Reports</h3>
+                <div class="overflow-x-auto">
+                   <table class="w-full text-left">
+                      <thead>
+                         <tr class="text-[10px] font-bold text-gray-500 uppercase tracking-[0.2em] border-b border-white/5">
+                            <th class="pb-6 px-4">Subject</th>
+                            <th class="pb-6 px-4 text-center">Date</th>
+                            <th class="pb-6 px-4 text-center">Score</th>
+                            <th class="pb-6 px-4 text-right">Review</th>
+                         </tr>
+                      </thead>
+                      <tbody id="recentMocksList" class="text-sm">
+                         <!-- Populated via JS -->
+                      </tbody>
+                   </table>
+                </div>
+             </div>
+          </div>
+
+          <!-- RIGHT: GOALS & ACTIVITY -->
+          <div class="space-y-10">
+             
+             <!-- WEEKLY GOAL -->
+             <div class="glass-card rounded-[3rem] p-10 border-emerald-500/20 bg-emerald-500/5 relative overflow-hidden">
+                <h3 class="text-2xl font-black mb-8 text-white">Weekly Target</h3>
+                
+                <div id="goalSetupWrap" class="space-y-4">
+                   <input type="number" id="goalInput" class="w-full bg-navy/40 border border-white/10 rounded-2xl p-4 text-white font-bold text-center focus:border-emerald-500 outline-none transition-all placeholder:text-gray-600" placeholder="Questions count?">
+                   <input type="text" id="rewardInput" class="w-full bg-navy/40 border border-white/10 rounded-2xl p-4 text-white font-bold text-center focus:border-emerald-500 outline-none transition-all placeholder:text-gray-600" placeholder="Set Reward (Optional)">
+                   <button onclick="saveParentGoal()" class="w-full py-4 bg-emerald-500 text-navy font-black text-sm uppercase tracking-widest rounded-2xl hover:bg-emerald-400 transition-all shadow-xl shadow-emerald-500/10">Lock Target</button>
+                </div>
+
+                <div id="goalProgressWrap" style="display:none;" class="flex flex-col items-center">
+                   <div class="goal-ring mb-8" id="goalRing" style="--pct: 0%;">
+                      <span class="relative z-10 text-2xl font-black tracking-tight text-white" id="goalRingText">0%</span>
+                   </div>
+                   <p class="text-center text-gray-400 px-6 italic text-sm leading-relaxed mb-6" id="goalStatusText">You haven't set a goal yet.</p>
+                   
+                   <div id="goalRewardDisplay" class="w-full p-4 rounded-2xl border border-emerald-500/30 bg-emerald-500/10 text-center mb-8 hidden">
+                       <p class="text-[10px] font-black text-emerald-400 uppercase tracking-[0.2em] mb-1">Set Reward</p>
+                       <p class="text-lg font-black text-white" id="goalRewardText">None</p>
+                   </div>
+
+                   <button onclick="editParentGoal()" class="text-xs font-black text-gray-500 uppercase tracking-widest hover:text-white transition-colors">Adjust Goal</button>
+                </div>
+             </div>
+
+             <!-- ACTIVITY FEED -->
+             <div class="glass-card rounded-[3rem] p-10 border-white/5" id="activity">
+                <h3 class="text-2xl font-black mb-10 text-white">Live Activity</h3>
+                <div class="space-y-8" id="childActivityList">
+                   <!-- Populated via JS -->
+                </div>
+                <div class="mt-12 pt-10 border-t border-white/5">
+                   <button onclick="sendMotivation()" class="w-full py-5 glass border-emerald-500/30 rounded-2xl text-emerald-400 font-black text-sm uppercase tracking-widest hover:bg-emerald-500/20 transition-all shadow-2xl flex items-center justify-center gap-3">
+                      <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/></svg>
+                      Send Motivation
+                   </button>
+                </div>
+             </div>
 
           </div>
 
-          <!-- RIGHT COLUMN -->
-          <div class="right-col">
-              
-              <!-- WEEKLY GOAL -->
-              <div class="command-section">
-                  <div class="section-header">
-                      <h3 class="section-title">Weekly Goal</h3>
-                  </div>
-                  <div id="goalSetupWrap">
-                      <input type="number" class="parent-goal-input" id="goalInput" placeholder="Target questions?" style="width:100%; margin-bottom:12px;">
-                      <input type="text" class="parent-goal-input" id="rewardInput" placeholder="Reward (Optional, e.g. Pizza)" style="width:100%; margin-bottom:12px;">
-                      <button class="parent-goal-btn" onclick="saveParentGoal()" style="width:100%;">Set Weekly Target</button>
-                  </div>
-                  <div id="goalProgressWrap" style="display:none; text-align:center;">
-                      <div class="parent-goal-ring" id="goalRing" style="--pct: 0%; margin: 0 auto 1.5rem;">
-                        <span id="goalRingText">0%</span>
-                      </div>
-                      <p id="goalStatusText" style="font-size:0.9rem; color:#94a3b8; margin-bottom:0.5rem;">0 out of 0 questions completed.</p>
-                      <div id="goalRewardDisplay" style="background:rgba(16, 185, 129, 0.1); border:1px dashed rgba(16, 185, 129, 0.4); padding:10px; border-radius:12px; margin-bottom:1rem; color:#10b981; font-size:0.85rem; font-weight:700; display:none;">
-                          Reward: <span id="goalRewardText">None</span>
-                      </div>
-                      <button class="parent-goal-btn" onclick="editParentGoal()" style="background:rgba(255,255,255,0.05); color:#fff; font-size:0.8rem;">Adjust Goal</button>
-                  </div>
-              </div>
-
-              <!-- ACTIVITY FEED -->
-              <div class="command-section" id="activity">
-                 <div class="section-header">
-                      <h3 class="section-title">Live Activity Feed</h3>
-                  </div>
-                  <div class="activity-feed" id="childActivityList" style="margin-bottom:1.5rem;">
-                      <!-- Populated via JS -->
-                  </div>
-                  <button class="parent-goal-btn" onclick="sendMotivation()" style="width:100%; background:var(--parent-primary); color:#000; border:none; display:flex; align-items:center; justify-content:center; gap:8px;">
-                      <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
-                      Send Motivation Nudge
-                  </button>
-              </div>
-
-          </div>
-      </div>
+       </section>
 
     </main>
+
+    <!-- Footer -->
+    <footer class="mt-auto py-12 text-center">
+       <p class="text-[10px] font-black text-gray-700 uppercase tracking-[0.4em]">© 2026 Guardian Authority Console · Vision Education</p>
+    </footer>
+
   </div>
 
   <script src="theme.js"></script>
@@ -509,16 +286,14 @@
         if(!session) { window.location.href = "parent-portal.html"; return; }
         if(!session.linkedStudent) { window.location.href = "parent-portal.html"; return; }
         
-        document.getElementById('parentName').textContent = session.name || "Parent";
+        document.getElementById('parentName').textContent = session.name || "Global Parent";
         document.getElementById('parentAvatar').textContent = (session.name || "P").charAt(0).toUpperCase();
 
         await loadDashboard(session.linkedStudent);
     }
 
-    // REDO: Explicitly attach to window for HTML onclick compatibility
     window.parentLogout = function() {
         localStorage.removeItem(PARENT_SESSION_KEY);
-        // Wipe all parent-related metadata
         const keysToClear = [];
         for (let i = 0; i < localStorage.length; i++) {
             if (localStorage.key(i)?.startsWith('vision_parent_')) keysToClear.push(localStorage.key(i));
@@ -529,30 +304,31 @@
 
     // --- Dashboard Logic ---
     async function loadDashboard(linkedStudent) {
-      document.getElementById('childAvatarHeader').textContent = (linkedStudent.name || 'S').charAt(0).toUpperCase();
-      document.getElementById('childNameHeader').textContent = `Monitoring: ${linkedStudent.name || 'Student'}`;
+      const headerNameEl = document.getElementById('childNameHeader');
+      const headerAvatarEl = document.getElementById('childAvatarHeader');
+      if(headerAvatarEl) headerAvatarEl.textContent = (linkedStudent.name || 'S').charAt(0).toUpperCase();
+      if(headerNameEl) headerNameEl.textContent = `${linkedStudent.name || 'Student'}`;
 
       let stats = { answered: 0, correct: 0 };
       let streak = { currentStreak: 0 };
       let lastMock = null;
 
-      // Fetch Live Firebase Data
-      const cloudData = await pullStateFromCloud(linkedStudent.email);
-      if (cloudData) {
-          stats = cloudData.stats || stats;
-          streak = cloudData.streak || streak;
-          lastMock = cloudData.lastMock || null;
-      }
+      try {
+        const cloudData = await pullStateFromCloud(linkedStudent.email);
+        if (cloudData) {
+            stats = cloudData.stats || stats;
+            streak = cloudData.streak || streak;
+            lastMock = cloudData.lastMock || null;
+        }
+      } catch(e) { console.error("[ParentSync] Fail:", e); }
 
       const accuracy = stats.answered > 0 ? Math.round((stats.correct / stats.answered) * 100) : 0;
       
-      // Update UI
       document.getElementById('childAccuracy').textContent = accuracy + '%';
       document.getElementById('childQuestions').textContent = stats.answered || 0;
       document.getElementById('childStreak').textContent = streak.currentStreak || 0;
       document.getElementById('childSubjects').textContent = stats.answered > 0 ? Math.min(8, Math.ceil(stats.answered / 15)) : 0;
 
-      // ~2 mins per question estimate
       const studyMinutes = (stats.answered || 0) * 2;
       const hours = Math.floor(studyMinutes / 60);
       const mins = studyMinutes % 60;
@@ -560,7 +336,6 @@
 
       populateAIInsights(linkedStudent.name, accuracy, stats.answered, streak.currentStreak);
       populateMastery(stats);
-      populateFocusAreas(accuracy);
       populateMocks(lastMock);
       populateActivity(stats, streak, accuracy);
       loadParentGoal(stats.answered);
@@ -574,13 +349,13 @@
       banner.style.display = 'flex';
       let msg = "";
       if (accuracy > 75 && streak > 2) {
-        msg = `<strong>Excellent progress!</strong> ${name} is maintaining a great study streak with high accuracy. They are well on track for the WASSCE. We recommend introducing full Mock Exams to test their stamina.`;
+        msg = `<strong>Excellent trajectory.</strong> ${name} is consistently outperforming the platform average. Their streak confirms disciplined prep. Recommendation: High-difficulty Mock Simulation.`;
       } else if (accuracy > 70) {
-        msg = `${name} has solid fundamental knowledge (${accuracy}% accuracy), but consistency is key. Encourage them to practice daily to build a study streak and retain information better.`;
-      } else if (qs > 50) {
-        msg = `We noticed ${name}'s accuracy is currently at ${accuracy}%. They might be struggling with a specific subject area. We recommend reviewing past mistakes in the AI Learning Hub.`;
+        msg = `<strong>Stable performance.</strong> Accuracy is healthy at ${accuracy}%, though consistency could be improved. Encourage a minimum 15-minute daily session to lock in knowledge.`;
+      } else if (qs > 30) {
+        msg = `<strong>Knowledge Gap Detected.</strong> Current accuracy (${accuracy}%) suggests struggle with specific Section B logic. Recommend focusing on Algebra and Theory drilling.`;
       } else {
-        msg = `${name} has just started their preparation journey. Consistent practice is the most important factor right now. Set a weekly goal to build momentum.`;
+        msg = `<strong>Onboarding Phase.</strong> ${name} has just begun. Focus on building momentum — suggest setting a low initial Weekly Task (e.g., 20 questions) to ensure early wins.`;
       }
       text.innerHTML = msg;
     }
@@ -588,16 +363,15 @@
     function populateMastery(stats) {
       const list = document.getElementById('subjectMasteryList');
       if (!stats || stats.answered === 0) {
-        list.innerHTML = '<p style="color:#64748b; font-size:0.9rem;">No subject data available yet.</p>';
+        list.innerHTML = '<p class="text-gray-500 italic text-sm">No subject data mapped yet.</p>';
         return;
       }
 
-      // Default subjects to show
       const subjects = [
-        { id: 'maths', name: 'Core Mathematics', color: '#8b5cf6' },
+        { id: 'maths', name: 'Core Mathematics', color: '#6366f1' },
         { id: 'science', name: 'Integrated Science', color: '#10b981' },
-        { id: 'english', name: 'English Language', color: '#3b82f6' },
-        { id: 'social', name: 'Social Studies', color: '#f59e0b' }
+        { id: 'english', name: 'English Language', color: '#f59e0b' },
+        { id: 'social', name: 'Social Studies', color: '#ef4444' }
       ];
 
       const bySubject = stats.bySubject || {};
@@ -607,60 +381,37 @@
         const pct = data.answered > 0 ? Math.round((data.correct / data.answered) * 100) : 0;
         
         return `
-          <div class="parent-mastery-item" style="margin-bottom:1.2rem;">
-            <div class="parent-mastery-top" style="display:flex; justify-content:space-between; margin-bottom:8px; font-size:0.85rem; font-weight:700;">
-              <span>${s.name}</span>
+          <div class="space-y-3">
+            <div class="flex justify-between text-xs font-black uppercase tracking-widest">
+              <span class="text-white">${s.name}</span>
               <span style="color:${s.color}">${pct}%</span>
             </div>
-            <div class="parent-mastery-track" style="height:8px; background:rgba(255,255,255,0.05); border-radius:10px; overflow:hidden;">
-              <div class="parent-mastery-fill" style="width: ${pct}%; height:100%; background: ${s.color}"></div>
+            <div class="w-full h-2 bg-white/5 rounded-full overflow-hidden">
+               <div class="h-full rounded-full transition-all duration-1000" style="width: ${pct}%; background: ${s.color}"></div>
             </div>
           </div>
         `;
       }).join('');
     }
 
-    function populateFocusAreas(accuracy) {
-      const list = document.getElementById('focusAreaList');
-      if (accuracy === 0) {
-        list.innerHTML = '<p style="color:#64748b; font-size:0.85rem;">Not enough data to recommend focus areas.</p>';
-        return;
-      }
-      
-      const areas = [
-        { topic: 'Algebraic Expressions', subject: 'Core Mathematics', priority: 'High Priority', color: '#ef4444' },
-        { topic: 'Subject-Verb Agreement', subject: 'English Language', priority: 'Medium Priority', color: '#f59e0b' },
-        { topic: 'Basic Electronics', subject: 'Integrated Science', priority: 'Review Recommended', color: '#3b82f6' }
-      ];
-
-      list.innerHTML = areas.map(a => `
-        <div style="background:var(--parent-bg); border:1px solid var(--parent-border); padding:12px; border-radius:12px; display:flex; justify-content:space-between; align-items:center;">
-          <div>
-            <div style="font-weight:700; font-size:0.9rem; color:#fff;">${a.topic}</div>
-            <div style="font-size:0.75rem; color:#64748b; margin-top:4px;">${a.subject}</div>
-          </div>
-          <span style="font-size:0.65rem; font-weight:800; text-transform:uppercase; color:${a.color}; background:${a.color}20; padding:4px 8px; border-radius:6px; text-align:center;">${a.priority}</span>
-        </div>
-      `).join('');
-    }
-
     function populateMocks(lastMock) {
       const list = document.getElementById('recentMocksList');
       if (!lastMock) {
-        list.innerHTML = '<tr><td colspan="4" style="text-align:center; color:#64748b; padding:2rem;">No mock exams completed recently.</td></tr>';
+        list.innerHTML = '<tr><td colspan="4" class="text-center text-gray-600 py-10 italic">No mock reports generated yet.</td></tr>';
         return;
       }
 
-      const subMap = { maths: 'Core Mathematics', english: 'English Language', science: 'Int. Science', social: 'Social Studies' };
-      const subName = subMap[lastMock.subject] || lastMock.subject || 'Core Mathematics';
+      const subName = (lastMock.subject || 'Core Maths').toUpperCase();
       const scorePct = lastMock.score || lastMock.accuracy || 0;
 
       list.innerHTML = `
-        <tr>
-            <td style="font-weight:700;">${subName}</td>
-            <td style="color:#64748b;">${new Date(lastMock.timestamp || Date.now()).toLocaleDateString()}</td>
-            <td style="font-weight:800; color:#fff;">${scorePct}%</td>
-            <td><span class="status-pill status-success">COMPLETED</span></td>
+        <tr class="group hover:bg-white/5 transition-colors">
+            <td class="py-5 px-4 font-black text-white">${subName}</td>
+            <td class="py-5 px-4 text-center text-gray-500 font-mono">${new Date(lastMock.timestamp || Date.now()).toLocaleDateString()}</td>
+            <td class="py-5 px-4 text-center font-black text-emerald-400">${scorePct}%</td>
+            <td class="py-5 px-4 text-right">
+               <span class="px-3 py-1 bg-emerald-500/10 text-emerald-400 rounded-lg text-[8px] font-black border border-emerald-500/20 uppercase">View Detail</span>
+            </td>
         </tr>
       `;
     }
@@ -668,37 +419,25 @@
     function populateActivity(stats, streak, accuracy) {
         const list = document.getElementById('childActivityList');
         if (stats.answered === 0) {
-            list.innerHTML = '<p style="color:#64748b; font-size:0.85rem;">No recent activities found.</p>';
+            list.innerHTML = '<p class="text-gray-600 italic text-sm">Waiting for incoming activity packets...</p>';
             return;
         }
 
-        list.innerHTML = `
-            <div class="activity-item">
-                <div class="activity-dot"></div>
-                <div class="activity-info">
-                    <span class="activity-text">Completed <strong>${stats.answered}</strong> questions total</span>
-                    <span class="activity-time">Active recently</span>
-                </div>
-            </div>
-            <div class="activity-item">
-                <div class="activity-dot" style="background:#fbbf24;"></div>
-                <div class="activity-info">
-                    <span class="activity-text">Maintained <strong>${streak.currentStreak} day</strong> study streak</span>
-                    <span class="activity-time">Today</span>
-                </div>
-            </div>
-            <div class="activity-item">
-                <div class="activity-dot" style="background:#818cf8;"></div>
-                <div class="activity-info">
-                    <span class="activity-text">Achieved <strong>${accuracy}%</strong> overall accuracy</span>
-                    <span class="activity-time">Platform global</span>
-                </div>
-            </div>
-        `;
-    }
+        const items = [
+           { text: `Academic Milestone: <strong>${stats.answered}</strong> questions logged.`, time: 'Ongoing Session', color: '#10b981' },
+           { text: `Strength Verified: <strong>${accuracy}%</strong> precision across active subjects.`, time: 'Daily Insight', color: '#6366f1' },
+           { text: `Discipline: <strong>${streak.currentStreak} day</strong> preparation streak.`, time: 'Streak Monitor', color: '#fbbf24' }
+        ];
 
-    window.generateFocusPlan = function() {
-        alert("AI Focus Plan successfully pushed to your child's Study Planner!");
+        list.innerHTML = items.map(i => `
+            <div class="flex gap-6 group">
+                <div class="w-1.5 h-1.5 rounded-full mt-1.5 shrink-0" style="background:${i.color}; box-shadow:0 0 10px ${i.color}"></div>
+                <div>
+                   <p class="text-sm text-gray-300 leading-relaxed">${i.text}</p>
+                   <p class="text-[10px] font-black text-gray-600 uppercase tracking-widest mt-1">${i.time}</p>
+                </div>
+            </div>
+        `).join('');
     }
 
     window.sendMotivation = function() {
@@ -706,31 +445,20 @@
         if (session && session.linkedStudent && session.linkedStudent.email) {
             localStorage.setItem('vision_nudge_' + session.linkedStudent.email, 'true');
         }
-
-        // Find existing nudge container or create one to show a success message
         const btn = document.querySelector('button[onclick="sendMotivation()"]');
-        const originalText = btn.innerHTML;
-        btn.innerHTML = `<svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" style="color:#000;"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg> Nudge Sent!`;
-        btn.style.background = '#34d399';
-        
-        setTimeout(() => {
-            btn.innerHTML = originalText;
-            btn.style.background = 'var(--parent-primary)';
-        }, 3000);
+        const original = btn.innerHTML;
+        btn.innerHTML = `<svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24" class="text-navy"><path d="M5 13l4 4L19 7"/></svg> MESSAGE PINNED`;
+        btn.classList.add('bg-emerald-400');
+        setTimeout(() => { btn.innerHTML = original; btn.classList.remove('bg-emerald-400'); }, 3000);
     }
 
     window.saveParentGoal = function() {
       const val = document.getElementById('goalInput').value;
       const reward = document.getElementById('rewardInput').value;
-      if (!val || val < 1) return;
-      
+      if (!val || val < 1) { alert("Enter a valid target count."); return; }
       const session = getParentSession();
       localStorage.setItem('vision_parent_goal_' + session.email, val);
-      if (reward) {
-          localStorage.setItem('vision_parent_reward_' + session.email, reward);
-      } else {
-          localStorage.removeItem('vision_parent_reward_' + session.email);
-      }
+      if (reward) localStorage.setItem('vision_parent_reward_' + session.email, reward);
       location.reload();
     }
 
@@ -740,30 +468,20 @@
       location.reload();
     }
 
-    // Expose all interactive functions to window
-    window.setParentGoal = setParentGoal;
-    window.removeParentGoal = removeParentGoal;
-    window.sendNudge = sendNudge;
-    window.setWeeklyTarget = setWeeklyTarget;
-    window.generateFocusPlan = generateFocusPlan;
-
     function loadParentGoal(currentQs) {
       const session = getParentSession();
-      const goalKey = 'vision_parent_goal_' + session.email;
-      const rewardKey = 'vision_parent_reward_' + session.email;
-      const goal = localStorage.getItem(goalKey);
-      const reward = localStorage.getItem(rewardKey);
+      const goal = localStorage.getItem('vision_parent_goal_' + session.email);
+      const reward = localStorage.getItem('vision_parent_reward_' + session.email);
 
       if (!goal) {
         document.getElementById('goalSetupWrap').style.display = 'block';
         document.getElementById('goalProgressWrap').style.display = 'none';
       } else {
         document.getElementById('goalSetupWrap').style.display = 'none';
-        document.getElementById('goalProgressWrap').style.display = 'block';
+        document.getElementById('goalProgressWrap').style.display = 'flex';
         
         const target = parseInt(goal, 10);
-        const weeklyQs = currentQs > 0 ? (currentQs % target) + Math.floor(target * 0.4) : 0; 
-        const actualQs = Math.min(weeklyQs, target);
+        const actualQs = Math.min(currentQs, target);
         const pct = Math.round((actualQs / target) * 100);
 
         document.getElementById('goalRing').style.setProperty('--pct', pct + '%');
@@ -771,30 +489,16 @@
         document.getElementById('goalStatusText').innerHTML = `<strong>${actualQs}</strong> out of <strong>${target}</strong> questions completed.`;
 
         if (reward) {
-            document.getElementById('goalRewardDisplay').style.display = 'block';
+            document.getElementById('goalRewardDisplay').classList.remove('hidden');
             document.getElementById('goalRewardText').textContent = reward;
-        } else {
-            document.getElementById('goalRewardDisplay').style.display = 'none';
         }
       }
     }
 
-    // Initialize
     checkAuth();
-
-    // Set interactive polling (every 30 seconds)
     setInterval(() => {
         const session = getParentSession();
-        if (session && session.linkedStudent) {
-            console.log("[Sync] Refreshing live data...");
-            // Show a brief ripple on the sync status badge
-            const status = document.getElementById('syncStatus');
-            if (status) {
-                status.style.borderColor = "#10b981";
-                setTimeout(() => status.style.borderColor = "rgba(16, 185, 129, 0.2)", 1000);
-            }
-            loadDashboard(session.linkedStudent);
-        }
+        if (session && session.linkedStudent) loadDashboard(session.linkedStudent);
     }, 30000);
   </script>
 </body>
