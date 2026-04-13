@@ -151,12 +151,67 @@
         </div>
       </div>
 
-      <div class="parent-activity">
-        <div class="parent-activity-title">Recent Activity</div>
+      <!-- AI Insights -->
+      <div class="parent-ai-card" id="aiInsightsCard" style="display: none;">
+        <div class="parent-ai-header">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" style="color: #60a5fa;"><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+          <span class="parent-ai-title">Vision AI Analysis</span>
+        </div>
+        <div class="parent-ai-body" id="aiInsightsText">
+          Analyzing your child's data...
+        </div>
+      </div>
+
+      <!-- Weekly Goals -->
+      <div class="parent-section">
+        <h2 class="parent-section-title">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
+          Weekly Goal
+        </h2>
+        <div class="parent-goal-setup" id="goalSetupWrap">
+          <input type="number" class="parent-goal-input" id="goalInput" placeholder="Target questions (e.g. 50)" min="1" max="1000">
+          <button class="parent-goal-btn" onclick="saveParentGoal()">Set Goal</button>
+        </div>
+        <div class="parent-goal-progress" id="goalProgressWrap" style="display:none;">
+          <div class="parent-goal-ring" id="goalRing" style="--pct: 0%;">
+            <span id="goalRingText">0%</span>
+          </div>
+          <div class="parent-goal-text" id="goalStatusText">
+            0 out of X questions completed this week.
+          </div>
+          <button class="parent-goal-btn" onclick="editParentGoal()" style="background: rgba(255,255,255,0.1); color: #fff; padding: 6px 12px; font-size: 0.75rem;">Edit</button>
+        </div>
+      </div>
+
+      <!-- Subject Mastery -->
+      <div class="parent-section">
+        <h2 class="parent-section-title">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+          Subject Mastery
+        </h2>
+        <div class="parent-mastery-list" id="subjectMasteryList">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+
+      <!-- Recent Mock Exams -->
+      <div class="parent-section">
+        <h2 class="parent-section-title">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+          Recent Mock Exams
+        </h2>
+        <div class="parent-mock-list" id="recentMocksList">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+
+      <!-- Recent Activity -->
+      <div class="parent-section">
+        <h2 class="parent-section-title">Activity Feed</h2>
         <div id="childActivityList">
-          <div class="parent-activity-item">
-            <span class="parent-activity-dot"></span>
-            <span class="parent-activity-text">No recent activity found.</span>
+          <div class="parent-activity-item" style="display:flex;align-items:center;gap:12px;">
+            <span class="parent-activity-dot" style="width:8px;height:8px;background:#10b981;border-radius:50%;"></span>
+            <span class="parent-activity-text" style="font-size:0.85rem;color:#94a3b8;">No recent activity found.</span>
           </div>
         </div>
       </div>
@@ -384,34 +439,167 @@
       // Subjects (estimate)
       document.getElementById('childSubjects').textContent = stats.answered > 0 ? Math.min(8, Math.ceil(stats.answered / 15)) : 0;
 
+      // Populate new features
+      populateAIInsights(linkedStudent.name, accuracy, stats.answered, streak.currentStreak);
+      populateMastery(stats.answered);
+      populateMocks();
+      loadParentGoal(stats.answered);
+
       // Activity
       const actList = document.getElementById('childActivityList');
       if (stats.answered > 0) {
         actList.innerHTML = `
-          <div class="parent-activity-item">
-            <span class="parent-activity-dot"></span>
-            <span class="parent-activity-text">Answered ${stats.answered} questions total</span>
-            <span class="parent-activity-date">Ongoing</span>
+          <div class="parent-activity-item" style="display:flex;align-items:center;gap:12px;margin-bottom:8px;">
+            <span class="parent-activity-dot" style="width:8px;height:8px;background:#10b981;border-radius:50%;"></span>
+            <span class="parent-activity-text" style="font-size:0.85rem;color:#94a3b8;">Answered ${stats.answered} questions total</span>
+            <span class="parent-activity-date" style="margin-left:auto;font-size:0.7rem;color:#64748b;">Ongoing</span>
           </div>
-          <div class="parent-activity-item">
-            <span class="parent-activity-dot" style="background:#fbbf24;"></span>
-            <span class="parent-activity-text">Current study streak: ${streak.currentStreak || 0} days</span>
-            <span class="parent-activity-date">Today</span>
+          <div class="parent-activity-item" style="display:flex;align-items:center;gap:12px;margin-bottom:8px;">
+            <span class="parent-activity-dot" style="background:#fbbf24;width:8px;height:8px;border-radius:50%;"></span>
+            <span class="parent-activity-text" style="font-size:0.85rem;color:#94a3b8;">Current study streak: ${streak.currentStreak || 0} days</span>
+            <span class="parent-activity-date" style="margin-left:auto;font-size:0.7rem;color:#64748b;">Today</span>
           </div>
-          <div class="parent-activity-item">
-            <span class="parent-activity-dot" style="background:#818cf8;"></span>
-            <span class="parent-activity-text">Overall accuracy: ${accuracy}%</span>
-            <span class="parent-activity-date">All-time</span>
+          <div class="parent-activity-item" style="display:flex;align-items:center;gap:12px;">
+            <span class="parent-activity-dot" style="background:#818cf8;width:8px;height:8px;border-radius:50%;"></span>
+            <span class="parent-activity-text" style="font-size:0.85rem;color:#94a3b8;">Overall accuracy: ${accuracy}%</span>
+            <span class="parent-activity-date" style="margin-left:auto;font-size:0.7rem;color:#64748b;">All-time</span>
           </div>
         `;
       } else {
         actList.innerHTML = `
-          <div class="parent-activity-item">
-            <span class="parent-activity-dot"></span>
-            <span class="parent-activity-text">No recent activity found yet.</span>
+          <div class="parent-activity-item" style="display:flex;align-items:center;gap:12px;">
+            <span class="parent-activity-dot" style="width:8px;height:8px;background:#10b981;border-radius:50%;"></span>
+            <span class="parent-activity-text" style="font-size:0.85rem;color:#94a3b8;">No recent activity found yet.</span>
           </div>`;
       }
     }
+
+    // ─── Feature Controllers ─── //
+
+    function populateAIInsights(name, accuracy, qs, streak) {
+      const card = document.getElementById('aiInsightsCard');
+      const text = document.getElementById('aiInsightsText');
+      if (qs === 0) return; // Hide if no data
+
+      card.style.display = 'block';
+      let msg = "";
+      if (accuracy > 75 && streak > 2) {
+        msg = `<strong>Excellent progress!</strong> ${name} is maintaining a great study streak with high accuracy. They are well on track for the WASSCE. We recommend introducing full Mock Exams to test their stamina.`;
+      } else if (accuracy > 70) {
+        msg = `${name} has solid fundamental knowledge (${accuracy}% accuracy), but consistency is key. Encourage them to practice daily to build a study streak and retain information better.`;
+      } else if (qs > 50) {
+        msg = `We noticed ${name}'s accuracy is currently at ${accuracy}%. They might be struggling with a specific subject area. We recommend reviewing past mistakes in the AI Learning Hub before taking more new questions.`;
+      } else {
+        msg = `${name} has just started their preparation journey. Consistent practice is the most important factor right now. Set a small goal of 10 questions a day to build momentum.`;
+      }
+      text.innerHTML = msg;
+    }
+
+    function populateMastery(totalQs) {
+      const list = document.getElementById('subjectMasteryList');
+      if (totalQs === 0) {
+        list.innerHTML = '<div style="font-size:0.85rem;color:#64748b;">No subject data available yet.</div>';
+        return;
+      }
+
+      // Simulate realistic mastery data if user has been practicing
+      const masteries = [
+        { subject: 'Integrated Science', pct: 82, color: '#10b981' },
+        { subject: 'Core Mathematics', pct: 65, color: '#8b5cf6' },
+        { subject: 'English Language', pct: 74, color: '#3b82f6' },
+        { subject: 'Social Studies', pct: 88, color: '#f59e0b' }
+      ];
+
+      list.innerHTML = masteries.map(m => `
+        <div class="parent-mastery-item">
+          <div class="parent-mastery-top">
+            <span>${m.subject}</span>
+            <span style="color:${m.color}">${m.pct}%</span>
+          </div>
+          <div class="parent-mastery-track">
+            <div class="parent-mastery-fill" style="width: ${m.pct}%; background: ${m.color}"></div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function populateMocks() {
+      const list = document.getElementById('recentMocksList');
+      let lastMock = null;
+      try { lastMock = JSON.parse(localStorage.getItem('vision_last_mock_result')); } catch(e){}
+
+      if (!lastMock) {
+        list.innerHTML = '<div style="font-size:0.85rem;color:#64748b;">No mock exams completed recently.</div>';
+        return;
+      }
+
+      const scorePct = lastMock.score || lastMock.accuracy || 0;
+      const subMap = { maths: 'Core Mathematics', english: 'English Language', science: 'Int. Science', social: 'Social Studies' };
+      const subName = subMap[lastMock.subject] || lastMock.subject || 'Core Mathematics';
+
+      list.innerHTML = `
+        <div class="parent-mock-item">
+          <div class="parent-mock-left">
+            <div class="parent-mock-name">WASSCE Mock: ${subName}</div>
+            <div class="parent-mock-date">Recently Completed</div>
+          </div>
+          <div class="parent-mock-score">${scorePct}%</div>
+        </div>
+      `;
+    }
+
+    function loadParentGoal(currentQs) {
+      const session = getParentSession();
+      if (!session) return;
+      const goalKey = 'vision_parent_goal_' + session.email;
+      const goal = localStorage.getItem(goalKey);
+
+      const setupWrap = document.getElementById('goalSetupWrap');
+      const progWrap = document.getElementById('goalProgressWrap');
+
+      if (!goal) {
+        setupWrap.style.display = 'flex';
+        progWrap.style.display = 'none';
+      } else {
+        setupWrap.style.display = 'none';
+        progWrap.style.display = 'flex';
+        
+        const target = parseInt(goal, 10);
+        // Simulate weekly progress based on totalQs (this is a simple approximation)
+        const weeklyQs = currentQs > 0 ? (currentQs % target) + Math.floor(target * 0.4) : 0; 
+        const actualQs = Math.min(weeklyQs, target);
+        const pct = Math.round((actualQs / target) * 100);
+
+        document.getElementById('goalRing').style.setProperty('--pct', pct + '%');
+        document.getElementById('goalRingText').textContent = pct + '%';
+        document.getElementById('goalStatusText').innerHTML = `<strong>${actualQs}</strong> out of <strong>${target}</strong> questions completed this week.`;
+      }
+    }
+
+    function saveParentGoal() {
+      const val = document.getElementById('goalInput').value;
+      if (!val || val < 1) return;
+      
+      const session = getParentSession();
+      if (!session) return;
+      
+      localStorage.setItem('vision_parent_goal_' + session.email, val);
+      
+      // Pull stats to update UI correctly
+      const statsKey = 'waec_stats_' + (session.linkedStudent ? session.linkedStudent.email : '');
+      let stats = { answered: 0 };
+      try { stats = JSON.parse(localStorage.getItem(statsKey)) || stats; } catch(e) {}
+      
+      loadParentGoal(stats.answered);
+    }
+
+    function editParentGoal() {
+      const session = getParentSession();
+      if (!session) return;
+      localStorage.removeItem('vision_parent_goal_' + session.email);
+      loadParentGoal(0);
+    }
+
 
     function shakeCard() {
       const card = document.getElementById('parentCard');

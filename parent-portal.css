@@ -369,6 +369,171 @@
 .parent-view { display: none; }
 .parent-view.active { display: block; }
 
+/* ─── NEW FEATURES ─── */
+/* AI Insights */
+.parent-ai-card {
+  background: linear-gradient(135deg, rgba(99,102,241,0.1), rgba(16,185,129,0.05));
+  border: 1px solid rgba(99,102,241,0.3);
+  border-radius: 14px;
+  padding: 1.25rem;
+  margin-bottom: 1.5rem;
+  position: relative;
+  overflow: hidden;
+}
+.parent-ai-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+.parent-ai-title {
+  font-size: 0.8rem;
+  font-weight: 800;
+  background: linear-gradient(90deg, #818cf8, #34d399);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+.parent-ai-body {
+  font-size: 0.9rem;
+  color: #e2e8f0;
+  line-height: 1.6;
+}
+
+/* Section Wrapper */
+.parent-section {
+  background: rgba(255,255,255,0.02);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 14px;
+  padding: 1.25rem;
+  margin-bottom: 1.5rem;
+}
+.parent-section-title {
+  font-size: 0.85rem;
+  font-weight: 800;
+  color: #cbd5e1;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Subject Mastery Progress */
+.parent-mastery-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.parent-mastery-item {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.parent-mastery-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #f1f5f9;
+}
+.parent-mastery-track {
+  width: 100%;
+  height: 8px;
+  background: rgba(255,255,255,0.1);
+  border-radius: 100px;
+  overflow: hidden;
+}
+.parent-mastery-fill {
+  height: 100%;
+  background: #10b981;
+  border-radius: 100px;
+  transition: width 1s ease-out;
+}
+
+/* Goal Setter */
+.parent-goal-setup {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 1rem;
+}
+.parent-goal-input {
+  flex: 1;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 8px;
+  padding: 8px 12px;
+  color: #fff;
+  font-family: 'Outfit';
+  font-size: 0.85rem;
+  outline: none;
+}
+.parent-goal-btn {
+  background: #10b981;
+  color: #000;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 16px;
+  font-family: 'Outfit';
+  font-size: 0.8rem;
+  font-weight: 800;
+  cursor: pointer;
+}
+.parent-goal-progress {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+.parent-goal-ring {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: conic-gradient(#10b981 var(--pct), rgba(255,255,255,0.1) 0);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8rem;
+  font-weight: 800;
+  color: #fff;
+  position: relative;
+}
+.parent-goal-ring::after {
+  content: '';
+  position: absolute;
+  inset: 5px;
+  background: #0d1117;
+  border-radius: 50%;
+}
+.parent-goal-ring span { position: relative; z-index: 1; }
+.parent-goal-text { flex: 1; font-size: 0.85rem; color: #94a3b8; line-height: 1.5; }
+
+/* Mock Exams */
+.parent-mock-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.parent-mock-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  background: rgba(255,255,255,0.03);
+  border-radius: 8px;
+  border: 1px solid rgba(255,255,255,0.05);
+}
+.parent-mock-left { display: flex; flex-direction: column; gap: 2px; }
+.parent-mock-name { font-size: 0.85rem; font-weight: 700; color: #f1f5f9; }
+.parent-mock-date { font-size: 0.7rem; color: #64748b; }
+.parent-mock-score {
+  font-size: 1rem;
+  font-weight: 900;
+  font-family: 'JetBrains Mono';
+  color: #fbbf24;
+}
+
 /* Responsive */
 @media (max-width: 480px) {
   .parent-card { padding: 1.75rem 1.25rem; border-radius: 18px; }
