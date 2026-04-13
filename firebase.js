@@ -70,6 +70,45 @@ window.pullStateFromCloud = async function(email) {
   }
 };
 
+/**
+ * Generates a 6-digit secure linking code for a student
+ */
+window.generateLinkingCode = async function(email) {
+  if (!email) return null;
+  try {
+    const code = Math.floor(100000 + Math.random() * 900000).toString();
+    const payload = {
+      linkingCode: code,
+      codeExpires: Date.now() + 15 * 60 * 1000, // 15 mins
+      email: email.toLowerCase()
+    };
+    await setDoc(doc(db, "student_links", code), payload);
+    return code;
+  } catch(error) {
+    console.error("[Firebase] Failed to generate code:", error);
+    return null;
+  }
+};
+
+/**
+ * Verifies a 6-digit secure linking code and returns the linked student email
+ */
+window.verifyLinkingCode = async function(code) {
+  if (!code) return null;
+  try {
+    const docSnap = await getDoc(doc(db, "student_links", code));
+    if (docSnap.exists()) {
+      const data = docSnap.data();
+      if (Date.now() > data.codeExpires) return null; // Expired
+      return data.email;
+    }
+    return null;
+  } catch(error) {
+    console.error("[Firebase] Failed to verify code:", error);
+    return null;
+  }
+};
+
 // Auto-sync when imported on student pages
 if (typeof window !== 'undefined' && window.location.pathname !== '/parent-portal') {
   setTimeout(() => {

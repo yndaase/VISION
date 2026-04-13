@@ -1,195 +1,233 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Features | Vision Education</title>
-    <meta name="theme-color" content="#6366f1" />
-    <link rel="icon" href="assets/logo.png" />
+    <title>Platform Features | Vision Education 2026</title>
+    <meta name="description" content="Explore the elite toolset of Vision Education: AI Theory Marking, Timed Mock Exams, Adaptive Difficulty, and comprehensive WASSCE 2026 prep tools." />
     
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
     
-    <link rel="stylesheet" href="theme.css" />
-    <link rel="stylesheet" href="style.css" />
-    <link rel="stylesheet" href="homepage.css" />
-  </head>
-  <body>
-
-    <!-- ═══════════════════════════════════════════
-         TOP NAVIGATION BAR
-    ═══════════════════════════════════════════ -->
-    <nav class="hp-nav" id="hpNav" role="navigation" aria-label="Main navigation">
-      <a class="hp-nav-brand" href="/" aria-label="Vision Education Home">
-        <img src="assets/logo.png" alt="Vision Education Logo" width="34" height="34" loading="eager" />
-        <span class="hp-nav-brand-text">Vision <span>Education</span></span>
-      </a>
-
-      <div class="hp-nav-links" role="menubar">
-        <a href="/mocks" class="hp-nav-link" role="menuitem">Subjects</a>
-        <a href="/features.html" class="hp-nav-link" role="menuitem">Features</a>
-        <a href="/about.html" class="hp-nav-link" role="menuitem">About</a>
-      </div>
-
-      <div class="hp-nav-cta">
-        <a href="/about.html" class="hp-btn-outline" id="navAboutBtn">About</a>
-        <a href="/login" class="hp-btn-outline" id="navLoginBtn">Log In</a>
-        <a href="/dashboard" class="hp-btn-primary" id="navStartBtn">Start Free
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-        </a>
-      </div>
-
-      <button class="hp-nav-hamburger" id="hpHamburger" aria-label="Open menu">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
-          <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
-        </svg>
-      </button>
-    </nav>
-
-    <!-- ═══════════════════════════════════════════
-         HEADER
-    ═══════════════════════════════════════════ -->
-    <header class="hp-slider-wrap" style="min-height: 40vh; display: flex; align-items: center; border-bottom: 0;">
-      <div class="hp-hero-orbs" aria-hidden="true">
-        <div class="hp-orb hp-orb-1"></div>
-        <div class="hp-orb hp-orb-2"></div>
-        <div class="hp-orb hp-orb-3"></div>
-      </div>
-      <div class="hp-hero-inner" style="margin-top: 40px;">
-        <div class="hp-section-label">Capabilities</div>
-        <h1 class="hp-hero-h1">Platform <span class="hp-gradient-text">Features</span></h1>
-        <p class="hp-hero-sub">Explore the powerful toolset driving thousands of top WASSCE grades.</p>
-      </div>
-    </header>
-
-    <!-- ═══════════════════════════════════════════
-         GATEWAY GRID (Remaining content)
-    ═══════════════════════════════════════════ -->
-    <section class="hp-gateway-section" aria-label="Quick Links & Features" style="padding-top: 0;">
-      <div class="hp-gateway-grid">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ['Outfit', 'sans-serif'],
+              mono: ['JetBrains Mono', 'monospace'],
+            },
+            colors: {
+              navy: {
+                DEFAULT: '#05080f',
+                light: '#0a101f',
+                accent: '#1e293b'
+              },
+              emerald: {
+                DEFAULT: '#10b981',
+                light: '#34d399',
+                dark: '#059669'
+              },
+              indigo: {
+                DEFAULT: '#6366f1',
+                light: '#818cf8',
+                dark: '#4f46e5'
+              }
+            },
+          }
+        }
+      }
+    </script>
+    <style>
+      .glass { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.1); }
+      .glass-card { background: rgba(255, 255, 255, 0.02); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.08); transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1); }
+      .glass-card:hover { border-color: rgba(16, 185, 129, 0.3); transform: translateY(-4px); background: rgba(255, 255, 255, 0.05); }
       
-        <!-- AI Engine -->
-        <div class="hp-bento-item glow-indigo">
-          <div class="hp-bento-label">AI Engine</div>
-          <div class="hp-bento-title">Specialist AI marks your theory workings</div>
-          <p class="hp-bento-desc">Our Specialist AI will mark your logic, steps, and final accuracy on Section B subjective questions — just like a real WAEC examiner. Get instant, granular feedback on where marks were awarded or lost.</p>
-          <div class="hp-ai-pill"><span class="hp-ai-dot"></span>GPT-4.0 &amp; Gemini 2.5 · Live Feedback</div>
-        </div>
+      .bg-orb { position: absolute; border-radius: 50%; filter: blur(120px); opacity: 0.15; z-index: 0; pointer-events: none; }
+      .bg-orb-1 { width: 600px; height: 600px; background: #10b981; top: -100px; right: -100px; }
+      .bg-orb-2 { width: 500px; height: 500px; background: #6366f1; bottom: -100px; left: -100px; }
 
-        <!-- Mock Exams -->
-        <div class="hp-bento-item">
-          <div class="hp-bento-label">Mock Exams</div>
-          <div class="hp-bento-title">Full timed mock examinations</div>
-          <p class="hp-bento-desc">Simulate real WASSCE exam conditions. Timed sessions, randomised question sets, and full breakdown reports at the end of every mock.</p>
-          <a href="/mocks" class="hp-plan-btn primary" style="margin-top:auto;max-width:200px">Take a Mock →</a>
-        </div>
+      .hp-nav { transition: all 0.4s; }
+      .hp-nav.scrolled { background: rgba(5, 8, 15, 0.8); backdrop-filter: blur(20px); border-bottom: 1px solid rgba(255, 255, 255, 0.05); padding: 0.75rem 0.5rem; }
 
-        <!-- Difficulty System & Topic Filter -->
-        <div class="hp-bento-item">
-          <div class="hp-bento-label">Difficulty System</div>
-          <div class="hp-bento-title">3-tier adaptive difficulty</div>
-          <p class="hp-bento-desc">Questions progress from foundational to exam-standard.</p>
-          <div class="hp-diff-row" style="margin-bottom:1.5rem">
-            <span class="hp-diff-badge easy">Level 1 (Easy)</span><span class="hp-diff-badge medium">Level 2 (Medium)</span><span class="hp-diff-badge hard">Level 3 (Hard)</span>
-          </div>
-          <div class="hp-bento-label">Topic Filter</div>
-          <div class="hp-bento-title">Filter by topic or difficulty</div>
-          <p class="hp-bento-desc">Pinpoint weak areas and drill them with targeted practice sets.</p>
-        </div>
+      .hp-btn-glass { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); color: #fff; border-radius: 12px; transition: all 0.3s; }
+      .hp-btn-glass:hover { background: rgba(255, 255, 255, 0.1); border-color: rgba(255, 255, 255, 0.2); }
+      
+      .hp-btn-primary { background: linear-gradient(135deg, #10b981, #6366f1); color: #fff; border-radius: 12px; box-shadow: 0 10px 20px rgba(99, 102, 241, 0.3); transition: all 0.3s; }
+      .hp-btn-primary:hover { transform: translateY(-2px); box-shadow: 0 15px 30px rgba(99, 102, 241, 0.4); }
 
-        <!-- Progress Tracking & Past Questions -->
-        <div class="hp-bento-item glow-gold">
-          <div class="hp-bento-label">Past Questions</div>
-          <div class="hp-bento-title">Real WAEC past questions</div>
-          <p class="hp-bento-desc" style="margin-bottom:1.5rem">Questions align with the WAEC Chief Examiner's 2025 Report — not made up examples.</p>
-          
-          <div class="hp-bento-label">Progress Tracking</div>
-          <div class="hp-bento-title">Know exactly where you stand</div>
-          <p class="hp-bento-desc">Real-time score tracking across every session and subject.</p>
-          <div class="hp-progress-demo" aria-label="Sample progress indicators">
-            <div class="hp-prog-row"><span class="hp-prog-label">Algebra</span><div class="hp-prog-track"><div class="hp-prog-fill" style="background:#22c55e;width:82%"></div></div><span class="hp-prog-pct">82%</span></div>
-            <div class="hp-prog-row"><span class="hp-prog-label">Statistics</span><div class="hp-prog-track"><div class="hp-prog-fill" style="background:#fbbf24;width:67%"></div></div><span class="hp-prog-pct">67%</span></div>
-            <div class="hp-prog-row"><span class="hp-prog-label">Geometry</span><div class="hp-prog-track"><div class="hp-prog-fill" style="background:#6366f1;width:54%"></div></div><span class="hp-prog-pct">54%</span></div>
-          </div>
-        </div>
-
-        <!-- Access Plans -->
-        <div class="hp-bento-item">
-          <div class="hp-bento-label">Built different. Built for WASSCE.</div>
-          <div class="hp-bento-title">Every feature is purpose-built around the 2026 WASSCE curriculum and Ghana SHS student needs.</div>
-          <div class="hp-plan-strip">
-            <div class="hp-plan-card">
-              <span class="hp-plan-tag free">Free</span>
-              <div class="hp-plan-name">Student Access</div>
-              <p class="hp-plan-desc" style="font-size:0.8rem;color:#94a3b8">Full access to practice questions, AI feedback, and mock exams.</p>
-              <ul class="hp-plan-feats"><li>All practice questions</li><li>AI theory marking</li><li>Progress tracking</li><li>Mock exam mode</li></ul>
-              <a href="/login" class="hp-plan-btn primary">Get Started Free →</a>
-            </div>
-            <div class="hp-plan-card">
-              <span class="hp-plan-tag premium">Premium</span>
-              <div class="hp-plan-name">Institutional Access</div>
-              <p class="hp-plan-desc" style="font-size:0.8rem;color:#94a3b8">Enterprise-grade access for schools. School-level subscriptions with teacher dashboards, class analytics and student management.</p>
-              <ul class="hp-plan-feats"><li>Everything in Free</li><li>Teacher dashboard</li><li>Class analytics</li><li>Student management</li></ul>
-              <a href="/pricing" class="hp-plan-btn ghost">View Enterprise Plans →</a>
-            </div>
-          </div>
-        </div>
-
-        <!-- The Creator -->
-        <div class="hp-bento-item">
-          <div class="hp-bento-label">The Creator</div>
-          <div class="hp-bento-title">Built by a student, for students.</div>
-          <p class="hp-bento-desc">This platform was created to help Ghanaian Senior High School students excel in their WASSCE Core Mathematics examinations. By focusing on real-world STEM applications — from Fintech setups to everyday utility calculations — the project redefines how students approach modern exam questions, directly aligning with WAEC's latest curriculum guidelines.</p>
-          <div class="hp-creator-wrap">
-            <div class="hp-creator-avatar">YN</div>
-            <div class="hp-creator-info">
-              <h4>Yaw Ndaase Mensuoh</h4>
-              <p>Computer Science Student<br>St. Augustine's College (Cape Coast)</p>
-            </div>
-          </div>
-          <div class="hp-social-links">
-             <a href="https://www.instagram.com/officialmryaw/" target="_blank" class="hp-social-btn">Connect on Instagram</a>
-             <a href="https://x.com/yndaase" target="_blank" class="hp-social-btn">Follow on X</a>
-          </div>
-        </div>
-
-      </div>
-    </section>
-
-    <!-- ═══════════════════════════════════════════
-         WAEC ACADEMIC NOTE BAND
-    ═══════════════════════════════════════════ -->
-    <div class="hp-note-band" role="note" aria-label="Academic disclaimer">
-      <p>Built for Ghana SHS Students · 2026 WASSCE Core Mathematics · Questions align with the WAEC Chief Examiner's 2025 Report</p>
-      <p style="margin-top:6px">Practice tool only. Consult official syllabuses at <strong><a href="https://waecgh.org" target="_blank" rel="noopener noreferrer">waecgh.org</a></strong>.</p>
+      .hero-gradient { background: radial-gradient(circle at top right, rgba(16, 185, 129, 0.1), transparent), radial-gradient(circle at bottom left, rgba(99, 102, 241, 0.1), transparent); }
+    </style>
+  </head>
+  <body class="bg-navy text-white font-sans selection:bg-indigo-500/30">
+    <!-- Background Decor -->
+    <div class="fixed inset-0 z-0 hero-gradient pointer-events-none">
+      <div class="bg-orb bg-orb-1 opacity-10"></div>
+      <div class="bg-orb bg-orb-2 opacity-10"></div>
     </div>
 
-    <!-- ═══════════════════════════════════════════
-         FOOTER
-    ═══════════════════════════════════════════ -->
-    <footer class="hp-footer" role="contentinfo">
-      <div class="hp-footer-inner">
-        <a class="hp-footer-brand" href="/" aria-label="Vision Education">
-          <img src="assets/logo.png" alt="Vision Education Footer Logo" width="34" height="34" loading="lazy" />
-          <span class="hp-footer-brand-name">Vision <span>Education</span></span>
+    <!-- Navigation (Unified) -->
+    <nav class="fixed top-0 left-0 right-0 z-50 px-6 py-6 hp-nav" id="hpNav">
+      <div class="max-w-7xl mx-auto flex justify-between items-center">
+        <a href="/" class="flex items-center gap-3 group">
+          <div class="w-10 h-10 bg-gradient-to-br from-emerald-500 to-indigo-600 rounded-xl flex items-center justify-center text-white font-bold text-lg shadow-lg group-hover:scale-110 transition-transform">
+            V
+          </div>
+          <span class="font-bold text-xl tracking-tight text-white group-hover:text-emerald-400 transition-colors hidden sm:block">Vision Education</span>
         </a>
-        <p class="hp-footer-meta">
-          Built for Ghana SHS Students · 2026 WASSCE Core Mathematics ·
-          <strong>AI Transparency:</strong> This application integrates <strong>GPT-4.0</strong> and <strong>Gemini 2.5</strong>
-          to provide intelligent feedback, marking, and educational assistance. We are committed to transparency in AI usage.
+
+        <div class="hidden md:flex items-center gap-14 text-sm font-bold text-gray-400 uppercase tracking-widest">
+          <a href="/features.html" class="text-white">Features</a>
+          <a href="/parent-portal.html" class="hover:text-emerald-400 transition-colors">Parent Portal</a>
+          <a href="/about.html" class="hover:text-white transition-colors">About</a>
+        </div>
+
+        <div class="flex items-center gap-6">
+          <a href="/login.html" class="hp-btn-glass px-6 py-3 text-sm font-bold">Log In</a>
+          <a href="/dashboard.html" class="hp-btn-primary px-6 py-3 text-sm font-bold">Start Free</a>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="relative z-10 pt-48 pb-24">
+      
+      <!-- HERO -->
+      <section class="max-w-7xl mx-auto px-6 mb-24 text-center">
+        <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full glass text-emerald-400 font-bold text-[10px] tracking-widest uppercase mb-8 border-emerald-500/20">
+          Advanced Capabilities
+        </div>
+        <h1 class="text-6xl md:text-8xl font-black text-white leading-[1.05] tracking-tight mb-8">
+          The Future of <br/>
+          <span class="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 via-indigo-400 to-indigo-600">Preparation.</span>
+        </h1>
+        <p class="text-xl text-gray-400 leading-relaxed max-w-2xl mx-auto">
+          Every tool we build is engineered specifically for the 2026 WASSCE syllabus, validated by Chief Examiners, and powered by elite AI.
         </p>
-        <div class="hp-footer-divider" role="separator"></div>
-        <p class="hp-footer-bottom">© 2026 Vision Education · Made with ♥ in Ghana</p>
+      </section>
+
+      <!-- FEATURES GRID -->
+      <section class="max-w-7xl mx-auto px-6 mb-32">
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+          
+          <!-- AI THEORY CARD -->
+          <div class="lg:col-span-2 glass-card rounded-[3rem] p-10 border-white/5 relative overflow-hidden group">
+            <div class="absolute top-0 right-0 w-64 h-64 bg-emerald-500/10 blur-[80px] -mr-32 -mt-32 group-hover:bg-emerald-500/20 transition-all"></div>
+            <div class="relative z-10 h-full flex flex-col">
+              <div class="w-14 h-14 rounded-2xl bg-emerald-500/10 flex items-center justify-center text-emerald-400 mb-8 border border-emerald-500/20">
+                <svg width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+              </div>
+              <h3 class="text-3xl font-black mb-4">Specialist AI Theory Marking</h3>
+              <p class="text-gray-400 leading-relaxed mb-8 flex-1">
+                Our proprietary AI engine marks your Section B workings with examiner-level precision. It identifies logical gaps, algebraic errors, and awards partial marks exactly like a real WAEC marking scheme.
+              </p>
+              <div class="flex items-center gap-3">
+                 <span class="px-3 py-1 glass rounded-lg text-[10px] font-black text-emerald-400 tracking-widest uppercase">GPT-4.0 Logic</span>
+                 <span class="px-3 py-1 glass rounded-lg text-[10px] font-black text-indigo-400 tracking-widest uppercase">Gemini 1.5 Pro</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- MOCK EXAMS -->
+          <div class="glass-card rounded-[3rem] p-10 border-white/5 group">
+             <div class="w-14 h-14 rounded-2xl bg-indigo-500/10 flex items-center justify-center text-indigo-400 mb-8 border border-indigo-500/20 group-hover:bg-indigo-500 group-hover:text-white transition-all">
+                <svg width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+             </div>
+             <h3 class="text-2xl font-black mb-4">Timed Mock 2026</h3>
+             <p class="text-gray-400 text-sm leading-relaxed mb-8">
+               Simulate true exam pressure with timed sessions that auto-grade upon completion.
+             </p>
+             <a href="/mocks.html" class="inline-flex items-center gap-2 text-xs font-bold text-indigo-400 group-hover:text-white transition-colors">START SESSION →</a>
+          </div>
+
+          <!-- ADAPTIVE DIFFICULTY -->
+          <div class="glass-card rounded-[3rem] p-10 border-white/5 group">
+             <div class="w-14 h-14 rounded-2xl bg-white/5 flex items-center justify-center text-white mb-8 border border-white/10">
+                <svg width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+             </div>
+             <h3 class="text-2xl font-black mb-4">Adaptive Difficulty</h3>
+             <p class="text-gray-400 text-sm leading-relaxed mb-8">
+               Questions evolve from foundational to high-difficulty based on your real-time performance.
+             </p>
+             <div class="flex gap-2">
+                <div class="w-full h-1 bg-emerald-500 rounded-full"></div>
+                <div class="w-full h-1 bg-indigo-500 rounded-full"></div>
+                <div class="w-full h-1 bg-white/20 rounded-full"></div>
+             </div>
+          </div>
+
+          <!-- TOPIC FILTER -->
+          <div class="lg:col-span-2 glass-card rounded-[3rem] p-10 border-white/5 flex flex-col md:flex-row gap-10 items-center">
+             <div class="flex-1">
+                <h3 class="text-3xl font-black mb-4">Laser-Focused Drilling</h3>
+                <p class="text-gray-400 leading-relaxed mb-6">
+                  Don't waste time on topics you've already mastered. Use our advanced topic filtering to drill into specific weak areas in Algebra, Statistics, or Core Science.
+                </p>
+                <div class="flex flex-wrap gap-2">
+                   <span class="px-4 py-2 glass rounded-xl text-xs font-bold">Surds</span>
+                   <span class="px-4 py-2 glass rounded-xl text-xs font-bold">Logarithms</span>
+                   <span class="px-4 py-2 glass rounded-xl text-xs font-bold">Trigonometry</span>
+                   <span class="px-4 py-2 glass rounded-xl text-xs font-bold">+12 More</span>
+                </div>
+             </div>
+             <div class="flex-1 w-full flex justify-center">
+                <div class="p-6 glass rounded-3xl border-indigo-500/20 w-full max-w-xs rotate-2">
+                   <div class="text-[10px] font-black uppercase text-gray-500 mb-4 tracking-widest">Active Filter</div>
+                   <div class="text-lg font-bold mb-1">Set Theory</div>
+                   <div class="text-[10px] text-emerald-400 font-bold mb-4">92% SYLLABUS MATCH</div>
+                   <div class="h-2 w-full bg-white/5 rounded-full overflow-hidden">
+                      <div class="h-full w-2/3 bg-indigo-500"></div>
+                   </div>
+                </div>
+             </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- INSTITUTIONAL ACCESS -->
+      <section class="max-w-7xl mx-auto px-6 mb-32">
+         <div class="glass-card rounded-[3rem] p-12 border-white/10 bg-gradient-to-br from-navy-light to-navy relative overflow-hidden text-center">
+            <h2 class="text-4xl font-black mb-8">Institutional & School Licensing</h2>
+            <p class="text-gray-400 text-lg mb-12 max-w-2xl mx-auto">
+              Bring Vision Education to your entire school with enterprise-grade analytics, teacher dashboards, and discounted seat pricing.
+            </p>
+            <div class="flex flex-col sm:flex-row justify-center gap-6">
+               <a href="/pricing.html" class="hp-btn-primary px-10 py-5 font-bold">View School Plans</a>
+               <a href="mailto:mensuohyaw@gmail.com" class="hp-btn-glass px-10 py-5 font-bold">Contact Representative</a>
+            </div>
+         </div>
+      </section>
+
+    </main>
+
+    <!-- Footer (Unified) -->
+    <footer class="relative z-10 border-t border-white/5 py-24 bg-navy-light/50">
+      <div class="max-w-7xl mx-auto px-6 text-center">
+        <a href="/" class="flex items-center justify-center gap-3 mb-8">
+          <div class="w-10 h-10 bg-gradient-to-br from-emerald-500 to-indigo-600 rounded-xl flex items-center justify-center text-white font-bold text-lg shadow-lg">V</div>
+          <span class="font-bold text-xl tracking-tight text-white uppercase italic">Vision Education</span>
+        </a>
+        <p class="text-gray-500 text-sm max-w-md mx-auto mb-12">
+          Empowering SHS students with AI-first academic tools. Built specifically for the 2026 Ghanaian WASSCE marking scheme standards.
+        </p>
+        <div class="pt-12 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-6">
+           <p class="text-xs font-bold text-gray-600 uppercase tracking-[0.3em]">© 2026 Vision Education · Accra & Cape Coast</p>
+           <div class="flex gap-8 text-xs font-bold text-gray-500 uppercase tracking-widest">
+              <a href="/privacy.html" class="hover:text-white transition-colors">Privacy</a>
+              <a href="/terms.html" class="hover:text-white transition-colors">Terms</a>
+           </div>
+        </div>
       </div>
     </footer>
 
     <script>
-      // Sticky nav scroll effect
       const hpNav = document.getElementById('hpNav');
       window.addEventListener('scroll', () => {
-        hpNav.classList.toggle('scrolled', window.scrollY > 60);
+        hpNav.classList.toggle('scrolled', window.scrollY > 40);
       }, { passive: true });
     </script>
   </body>

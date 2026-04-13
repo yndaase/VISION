@@ -1,754 +1,404 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en" data-theme="dark">
-
 <head>
   <meta charset="UTF-8" />
   <script>
     document.documentElement.setAttribute("data-theme", "dark");
   </script>
   <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests" />
-  <script defer src="/_vercel/insights/script.js"></script>
-  <script>
-    window.si =
-      window.si ||
-      function () {
-        (window.siq = window.siq || []).push(arguments);
-      };
-  </script>
-  <script defer src="/_vercel/speed-insights/script.js"></script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Institutional Dashboard | Vision Enterprise · 2026 WASSCE</title>
-  <meta name="description"
-    content="Enterprise student dashboard for institutional WASSCE preparation. Access subjects, mock exams, AI learning, and performance analytics." />
-  <meta name="robots" content="noindex, nofollow" />
-
-  <link rel="manifest" href="manifest.json" />
-  <meta name="theme-color" content="#0ea5e9" />
-  <link rel="apple-touch-icon" href="assets/logo.png" />
-
+  
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link
-    href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap"
-    rel="stylesheet" />
-  <link rel="stylesheet" href="style.css" />
-  <link rel="stylesheet" href="dashboard.css" />
-  <link rel="stylesheet" href="theme.css" />
-
-  <script src="theme.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  
+  <script src="https://cdn.tailwindcss.com"></script>
   <script>
-    // Auth Guard — Enterprise students only
-    (function () {
-      const SESSION_KEY = "waec_session";
-      const sessionStr = sessionStorage.getItem(SESSION_KEY) || localStorage.getItem(SESSION_KEY);
-      if (!sessionStr) { window.location.href = "/login"; return; }
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Outfit', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          },
+          colors: {
+            navy: {
+              DEFAULT: '#05080f',
+              light: '#0a101f',
+              accent: '#1e293b'
+            },
+            emerald: {
+              DEFAULT: '#10b981',
+              light: '#34d399',
+              dark: '#059669'
+            },
+            indigo: {
+              DEFAULT: '#6366f1',
+              light: '#818cf8',
+              dark: '#4f46e5'
+            },
+            gold: {
+              DEFAULT: '#fbbf24',
+              light: '#fcd34d',
+              dark: '#f59e0b'
+            }
+          },
+        }
+      }
+    }
+  </script>
+  
+  <style>
+    .glass { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.1); }
+    .glass-card { background: rgba(255, 255, 255, 0.02); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.08); transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1); }
+    .glass-card:hover { border-color: rgba(251, 191, 36, 0.3); transform: translateY(-4px); background: rgba(255, 255, 255, 0.04); }
+    
+    .bg-orb { position: absolute; border-radius: 50%; filter: blur(120px); opacity: 0.1; z-index: 0; pointer-events: none; }
+    .bg-orb-1 { width: 500px; height: 500px; background: #fbbf24; top: -100px; right: -100px; }
+    .bg-orb-2 { width: 400px; height: 400px; background: #6366f1; bottom: -100px; left: -100px; }
+
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: rgba(5, 8, 15, 0.1); }
+    ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); border-radius: 10px; }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(251, 191, 36, 0.3); }
+
+    .nav-item { transition: all 0.3s; }
+    .nav-item.active { background: rgba(251, 191, 36, 0.1); color: #fbbf24; border-right: 3px solid #fbbf24; }
+
+    .settings-modal { display: none; opacity: 0; transition: opacity 0.3s ease; }
+    .settings-modal.active { display: flex; opacity: 1; }
+
+    .dropdown { display: none; }
+    .dropdown.active { display: block; animation: fadeDown 0.2s ease; }
+    @keyframes fadeDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+
+    /* Animated Gold Border */
+    .ent-border { position: relative; }
+    .ent-border::after { content: ''; position: absolute; inset: -1px; background: linear-gradient(135deg, #fbbf24, #6366f1, #fbbf24); border-radius: inherit; z-index: -1; opacity: 0.5; }
+  </style>
+  <script>
+    const SESSION_KEY = "waec_session";
+    const sessionStr = sessionStorage.getItem(SESSION_KEY) || localStorage.getItem(SESSION_KEY);
+    if (!sessionStr) { window.location.href = "/login"; }
+    else {
       const session = JSON.parse(sessionStr);
       if (!session.institutionId && session.role !== 'enterprise') {
         window.location.href = "/dashboard";
       }
-    })();
+    }
   </script>
-  <style>
-    /* User Dropdown */
-    .nav-user-chip { position: relative; cursor: pointer; }
-    .nav-user-chip:focus-within .user-dropdown,
-    .nav-user-chip.open .user-dropdown { display: block; }
-    .user-dropdown {
-      display: none; position: absolute; top: calc(100% + 10px); right: 0;
-      min-width: 200px; background: var(--bg-card); border: 1px solid var(--border);
-      border-radius: var(--radius-md); box-shadow: var(--shadow-premium);
-      z-index: 999; overflow: hidden; animation: fadeDown 0.15s ease;
-    }
-    @keyframes fadeDown { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: translateY(0); } }
-    .dropdown-header { padding: 14px 16px; border-bottom: 1px solid var(--border); }
-    .dropdown-header .dh-name { font-weight: 800; font-size: 0.9rem; color: var(--text-primary); }
-    .dropdown-header .dh-email { font-size: 0.75rem; color: var(--text-muted); margin-top: 2px; }
-    .dropdown-item {
-      display: flex; align-items: center; gap: 10px; padding: 11px 16px;
-      font-size: 0.85rem; color: var(--text-secondary); text-decoration: none;
-      cursor: pointer; background: none; border: none; width: 100%;
-      font-family: "Outfit", sans-serif; transition: background 0.15s; text-align: left;
-    }
-    .dropdown-item:hover { background: var(--primary-dim); color: var(--text-primary); }
-    .dropdown-item.danger { color: var(--error); }
-    .dropdown-item.danger:hover { background: rgba(248, 113, 113, 0.1); }
-
-    /* Enterprise Badge */
-    .ent-badge {
-      font-size: 0.62rem; font-weight: 900;
-      background: linear-gradient(135deg, #fbbf24, #f59e0b); color: #000;
-      padding: 2px 8px; border-radius: 4px; text-transform: uppercase;
-      letter-spacing: 0.04em; box-shadow: 0 4px 10px rgba(251, 191, 36, 0.25);
-      display: inline-flex; align-items: center; line-height: 1; height: 16px;
-    }
-
-    /* Institutional branding row */
-    .inst-brand-row {
-      display: flex; align-items: center; gap: 14px; margin-bottom: 0.8rem;
-      padding: 12px 24px; background: rgba(251, 191, 36, 0.06);
-      border: 1px solid rgba(251, 191, 36, 0.15); border-radius: 20px;
-      width: fit-content; backdrop-filter: blur(10px); animation: fadeInUp 0.5s ease both;
-    }
-    .inst-logo {
-      width: 36px; height: 36px; background: linear-gradient(135deg, #fbbf24, #f59e0b);
-      border-radius: 10px; display: flex; align-items: center; justify-content: center;
-      font-weight: 800; font-size: 1rem; color: #000; box-shadow: 0 4px 12px rgba(251, 191, 36, 0.3);
-    }
-
-    @keyframes pulse {
-      0% { opacity: 0.5; }
-      50% { opacity: 1; }
-      100% { opacity: 0.5; }
-    }
-  </style>
 </head>
+<body class="bg-navy text-white font-sans min-h-screen flex selection:bg-gold-500/30 overflow-hidden relative">
 
-<body class="dashboard-page">
-  <!-- SIDE NAVIGATION -->
-  <aside class="side-nav">
-    <a class="side-nav-logo" href="enterprise-student-dashboard.html">
-      <img src="assets/logo.png" alt="Logo" style="height: 48px; width: 48px; object-fit: contain;">
-      <span>Vision Enterprise</span>
-    </a>
-    <nav class="side-nav-menu">
-      <a href="enterprise-student-dashboard.html" class="nav-item active">
-        <span class="nav-item-icon">
-          <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
-        </span>
-        <span>Dashboard</span>
-      </a>
-      <a href="enterprise-mocks.html" class="nav-item">
-        <span class="nav-item-icon">
-          <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>
-        </span>
-        <span>Mock Exams</span>
-      </a>
-      <a href="analytics.html" class="nav-item">
-        <span class="nav-item-icon">
-          <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/></svg>
-        </span>
-        <span>Performance</span>
-      </a>
-      <a href="enterprise-ai-mission.html" class="nav-item">
-        <span class="nav-item-icon">
-          <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M19 13l-1.26-2.74L15 9l2.74-1.26L19 5l1.26 2.74L23 9l-2.74 1.26L19 13zM9 13l-2.26-4.74L2 6l4.74-2.26L9 1.5l2.26 4.74L16 8.26l-4.74 2.26L9 13zm10 9.5l-1.26-2.74L15 18.5l2.74-1.26L19 14.5l1.26 2.74L23 18.5l-2.74 1.26L19 22.5z"/></svg>
-        </span>
-        <span>AI Learning Hub</span>
-      </a>
-      <a href="enterprise-planner.html" class="nav-item">
-        <span class="nav-item-icon">
-          <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM7 10h5v5H7z"/></svg>
-        </span>
-        <span>Study Planner</span>
-      </a>
+  <!-- Background Decor -->
+  <div class="fixed inset-0 z-0 pointer-events-none">
+    <div class="bg-orb bg-orb-1"></div>
+    <div class="bg-orb bg-orb-2"></div>
+  </div>
+
+  <!-- Sidebar Nav -->
+  <aside class="w-72 border-r border-white/5 bg-navy-light/50 backdrop-blur-3xl flex flex-col z-20">
+    <div class="p-8 border-b border-white/5 flex items-center gap-4">
+       <a href="/enterprise-student-dashboard" class="flex items-center gap-3 group px-2">
+         <div class="w-10 h-10 bg-gradient-to-br from-gold-500 to-indigo-600 rounded-xl flex items-center justify-center text-navy font-black text-xl shadow-[0_0_20px_rgba(251,191,36,0.3)]">V</div>
+         <div class="font-black text-lg tracking-tight leading-none group-hover:text-gold-400 transition-colors">Vision <br><span class="text-gold-400 italic font-bold text-xs uppercase tracking-widest">Enterprise</span></div>
+       </a>
+    </div>
+
+    <nav class="flex-1 p-6 space-y-2 overflow-y-auto">
+       <a href="/enterprise-student-dashboard" class="nav-item active flex items-center gap-4 px-4 py-3 rounded-xl font-bold text-sm tracking-tight text-gray-400 hover:text-white group">
+          <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
+          Instituional Home
+       </a>
+       <a href="/enterprise-mocks" class="nav-item flex items-center gap-4 px-4 py-3 rounded-xl font-bold text-sm tracking-tight text-gray-400 hover:text-white group">
+          <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/></svg>
+          Assigned Mocks
+       </a>
+       <a href="/analytics" class="nav-item flex items-center gap-4 px-4 py-3 rounded-xl font-bold text-sm tracking-tight text-gray-400 hover:text-white group">
+          <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          Analytics Core
+       </a>
+       <a href="/enterprise-ai-mission" class="nav-item flex items-center gap-4 px-4 py-3 rounded-xl font-bold text-sm tracking-tight text-gray-400 hover:text-white group">
+          <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/></svg>
+          AI Learning Hub
+       </a>
+       <a href="/enterprise-planner" class="nav-item flex items-center gap-4 px-4 py-3 rounded-xl font-bold text-sm tracking-tight text-gray-400 hover:text-white group">
+          <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+          Study Timeline
+       </a>
     </nav>
-    <div class="side-nav-footer">
-      <a href="#" class="nav-item" onclick="openSettings(); return false;">
-        <span class="nav-item-icon">
-          <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58a.49.49 0 00.12-.61l-1.92-3.32a.49.49 0 00-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54a.484.484 0 00-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96a.49.49 0 00-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.07.62-.07.94s.02.64.07.94l-2.03 1.58a.49.49 0 00-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6A3.6 3.6 0 1115.6 12 3.611 3.611 0 0112 15.6z"/></svg>
-        </span>
-        <span>Settings</span>
-      </a>
-      <a href="https://www.youtube.com/channel/UCo4k-_8Q92hXOcUdbAtwabg" target="_blank" rel="noopener" class="nav-item social-youtube" title="Vision YouTube">
-        <span class="nav-item-icon" style="display:flex; align-items:center; justify-content:center;">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
-        </span>
-        <span>YouTube</span>
-      </a>
+    <div class="p-6 border-t border-white/5 space-y-2">
+       <button onclick="toggleSettings()" class="w-full flex items-center gap-4 px-4 py-3 rounded-xl font-bold text-sm text-gray-400 hover:text-white hover:bg-white/5 transition-all">
+          <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+          Account Settings
+       </button>
     </div>
   </aside>
 
-  <!-- BOTTOM NAVIGATION (Mobile) -->
-  <nav class="bottom-nav">
-    <a href="enterprise-student-dashboard.html" class="bottom-nav-item active">
-      <span class="bottom-icon">
-        <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
-      </span>
-      <span>Home</span>
-    </a>
-    <a href="enterprise-mocks.html" class="bottom-nav-item">
-      <span class="bottom-icon">
-        <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>
-      </span>
-      <span>Mocks</span>
-    </a>
-    <a href="enterprise-planner.html" class="bottom-nav-item">
-      <span class="bottom-icon">
-        <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM7 10h5v5H7z"/></svg>
-      </span>
-      <span>Plan</span>
-    </a>
-    <a href="enterprise-ai-mission.html" class="bottom-nav-item" style="color: #818cf8;">
-      <span class="bottom-icon">
-        <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor"><path d="M19 13l-1.26-2.74L15 9l2.74-1.26L19 5l1.26 2.74L23 9l-2.74 1.26L19 13zM9 13l-2.26-4.74L2 6l4.74-2.26L9 1.5l2.26 4.74L16 8.26l-4.74 2.26L9 13zm10 9.5l-1.26-2.74L15 18.5l2.74-1.26L19 14.5l1.26 2.74L23 18.5l-2.74 1.26L19 22.5z"/></svg>
-      </span>
-      <span style="font-weight: 800;">AI Hub</span>
-    </a>
-    <a href="analytics.html" class="bottom-nav-item">
-      <span class="bottom-icon">
-        <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/></svg>
-      </span>
-      <span>Stats</span>
-    </a>
-    <a href="#" class="bottom-nav-item" onclick="openSettings(); return false;">
-      <span class="bottom-icon">
-        <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58a.49.49 0 00.12-.61l-1.92-3.32a.49.49 0 00-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54a.484.484 0 00-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96a.49.49 0 00-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.07.62-.07.94s.02.64.07.94l-2.03 1.58a.49.49 0 00-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6A3.6 3.6 0 1115.6 12 3.611 3.611 0 0112 15.6z"/></svg>
-      </span>
-      <span>Settings</span>
-    </a>
-  </nav>
+  <!-- Main Content Area -->
+  <div class="flex-1 flex flex-col relative z-10 h-screen overflow-hidden">
+     
+    <!-- Top Nav -->
+    <header class="h-24 bg-navy/80 backdrop-blur-xl border-b border-white/5 flex items-center justify-between px-10 shrink-0 z-30">
+       <div class="relative w-96">
+          <svg class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+          <input type="text" placeholder="Search institutional materials..." class="w-full bg-white/5 border border-white/10 rounded-xl py-3 pl-12 pr-4 text-sm font-medium text-white placeholder-gray-500 focus:outline-none focus:border-gold-500 transition-colors">
+       </div>
 
-  <div class="main-wrapper">
-    <!-- NAVBAR -->
-    <nav class="dash-nav" id="dashNav">
-      <div class="dash-nav-inner">
-        <a class="dash-logo" href="enterprise-student-dashboard.html">
-          <img src="assets/logo.png" alt="Logo" style="height: 32px; width: 32px; object-fit: contain; margin-right: 10px;">
-          <span class="dash-logo-text">Vision <span class="brand-accent">Enterprise</span></span>
-        </a>
-
-        <!-- Global Search -->
-        <div class="nav-search-wrap">
-          <div class="nav-search-input-group">
-            <span class="search-icon"></span>
-            <input type="search" id="globalSearch" placeholder="Search subjects, topics, or materials..." autocomplete="off" />
-            <kbd class="search-kbd">/</kbd>
-          </div>
-          <div class="search-results-overlay" id="searchResults"></div>
-        </div>
-
-        <div class="dash-nav-right">
-          <span class="nav-badge">2026 WASSCE</span>
-          <span class="ent-badge">ENTERPRISE</span>
-          <div id="syncIndicator" style="display: flex; align-items: center; gap: 6px; padding: 4px 10px; background: rgba(16, 185, 129, 0.1); border-radius: 100px; margin-right: 0.5rem;" title="Live Cloud Sync Active">
-            <span style="width: 6px; height: 6px; background: #10b981; border-radius: 50%; animation: pulse 2s infinite;"></span>
-            <span style="font-size: 0.6rem; font-weight: 800; color: #10b981; text-transform: uppercase;">Sync</span>
-          </div>
-          <button class="theme-toggle-btn" onclick="toggleTheme()" title="Toggle Theme"></button>
-          <div class="nav-user-chip" id="navUserChip" onclick="toggleUserDropdown()">
-            <div class="nav-avatar" id="navAvatar">S</div>
-            <span class="nav-username" id="navUsername">Student</span>
-            <span style="font-size: 0.7rem; color: var(--text-muted); margin-left: 2px;">▾</span>
-            <div class="user-dropdown" id="userDropdown">
-              <div class="dropdown-header">
-                <div class="dh-name" id="dropdownName">Student</div>
-                <div class="dh-email" id="dropdownEmail">student@visionedu.online</div>
-              </div>
-              <button class="dropdown-item" onclick="window.openSettings && window.openSettings(); window.closeUserDropdown && window.closeUserDropdown();">Settings</button>
-              <a class="dropdown-item" href="/analytics">My Performance</a>
-              <button class="dropdown-item danger" onclick="window.handleLogout && window.handleLogout()">Log Out</button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </nav>
-
-    <!-- HERO / WELCOME -->
-    <section class="dash-hero">
-      <div class="dash-hero-content">
-        <!-- Institutional Branding -->
-        <div class="inst-brand-row" id="schoolBrandingRow">
-          <div class="inst-logo" id="schoolLogo">V</div>
-          <div style="font-size: 0.95rem; font-weight: 800; color: var(--text-primary); letter-spacing: -0.01em;">
-            <span style="color: #fbbf24; opacity: 0.7; font-weight: 600;">Vision for</span> <span id="schoolName">Institution</span>
-          </div>
-        </div>
-
-        <div class="welcome-badge" id="welcomeBadge">
-          <span class="badge-dot"></span>
-          Institutional License &middot; 2026 WASSCE
-        </div>
-        <h1 class="welcome-heading">
-          Strategic Excellence,<br />
-          <span class="welcome-name gradient-text" id="welcomeName">Student</span>
-        </h1>
-        <p class="welcome-sub">
-          Authorized 2026 Curriculum &middot; Specialised Section B Analysis.
-        </p>
-
-        <!-- Action Buttons -->
-        <div class="hero-actions">
-          <a href="enterprise-mocks.html" class="hero-btn hero-btn-primary">
-            <span class="hero-btn-icon"></span>
-            <span>Start Mock Exam</span>
-            <span class="hero-btn-arrow">→</span>
-          </a>
-          <a href="enterprise-ai-mission.html" class="hero-btn hero-btn-secondary" style="border-color: var(--primary); color: var(--primary); background: var(--primary-dim);">
-            <span class="hero-btn-icon"></span>
-            <span>AI Learning Hub</span>
-          </a>
-          <a href="/analytics" class="hero-btn hero-btn-secondary">
-            <span class="hero-btn-icon"></span>
-            <span>View Analytics</span>
-          </a>
-        </div>
-
-        <!-- Stats row -->
-        <div class="dash-stats" id="dashStats">
-          <div class="dash-stat-chip">
-            <span class="dash-stat-num" id="statAnswered">0</span>
-            <span class="dash-stat-lbl">Questions Done</span>
-          </div>
-          <div class="dash-stat-chip">
-            <span class="dash-stat-num" id="statCorrect">0</span>
-            <span class="dash-stat-lbl">Correct</span>
-          </div>
-          <div class="dash-stat-chip">
-            <span class="dash-stat-num" id="statPct"></span>
-            <span class="dash-stat-lbl">Accuracy</span>
-          </div>
-          <div class="dash-stat-chip">
-            <span class="dash-stat-num">8</span>
-            <span class="dash-stat-lbl">Subjects</span>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- TRUSTED SCHOOLS -->
-    <section class="trusted-schools">
-      <p class="trusted-label">Trusted by Top Institutions in Ghana</p>
-      <div class="trusted-pills">
-        <div class="institution-pill">
-          <div class="institution-avatar">🏫</div>
-          <span>St. Augustine's College</span>
-        </div>
-        <div class="institution-pill">
-          <div class="institution-avatar">🎓</div>
-          <span>Ghana Education Service</span>
-        </div>
-      </div>
-    </section>
-
-    <!-- ACTIVE ASSIGNMENTS -->
-    <section class="subjects-section" id="assignmentsSection" style="display: none; margin-bottom: 2rem;">
-      <div class="subjects-inner">
-        <div class="section-header">
-          <h2 class="section-title">Institutional Homework</h2>
-          <p class="section-sub">
-            Assigned by your teachers
-          </p>
-        </div>
-        <div id="studentAssignmentsList" style="display: flex; flex-direction: column; gap: 1rem;">
-           <!-- populated via JS -->
-        </div>
-      </div>
-    </section>
-
-    <!-- SUBJECTS GRID -->
-    <section class="subjects-section">
-      <div class="subjects-inner">
-        <div class="section-header">
-          <h2 class="section-title">Choose a Subject</h2>
-          <p class="section-sub">
-            WAEC 2026 syllabus · Crafted by Senior Curriculum Specialists
-          </p>
-        </div>
-
-        <div class="subjects-grid" id="subjectsGrid">
-          <!-- Core Mathematics -->
-          <a class="subject-card available" href="/?sub=maths" id="card-maths">
-            <div class="subject-card-inner">
-              <div class="subject-top">
-                <div class="subject-icon-wrap" style="--subj-color: var(--primary)">
-                  <span class="subject-icon">📐</span>
-                </div>
-                <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 4px;">
-                  <span class="subject-status available-tag">Available</span>
-                  <span style="font-size: 0.6rem; font-weight: 800; color: var(--primary); background: var(--primary-dim); padding: 2px 8px; border-radius: 4px; letter-spacing: 0.05em; border: 1px solid var(--border-accent);">WAEC VERIFIED</span>
-                </div>
-              </div>
-              <h3 class="subject-name">Core Mathematics</h3>
-              <p class="subject-desc">Algebra, Number Theory, Statistics, Geometry &amp; real-world word problems.</p>
-              <div class="subject-meta">
-                <span class="meta-chip">15 Questions</span>
-                <span class="meta-chip">3 Difficulty Levels</span>
-                <span class="meta-chip difficulty-hard">High-Difficulty</span>
-              </div>
-              <div class="subject-cta">Start Practice <span class="cta-arrow">→</span></div>
-            </div>
-          </a>
-
-          <!-- English Language -->
-          <a class="subject-card available" href="/?sub=english" id="card-english">
-            <div class="subject-card-inner">
-              <div class="subject-top">
-                <div class="subject-icon-wrap" style="--subj-color: #60a5fa">
-                  <span class="subject-icon">📖</span>
-                </div>
-                <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 4px;">
-                  <span class="subject-status available-tag">Available</span>
-                  <span style="font-size: 0.6rem; font-weight: 800; color: var(--primary); background: var(--primary-dim); padding: 2px 8px; border-radius: 4px; letter-spacing: 0.05em; border: 1px solid var(--border-accent);">2026 ALIGNED</span>
-                </div>
-              </div>
-              <h3 class="subject-name">English Language</h3>
-              <p class="subject-desc">Comprehension, essay writing, oral English &amp; language structure.</p>
-              <div class="subject-meta">
-                <span class="meta-chip">40+ Questions</span>
-                <span class="meta-chip">Essay + MCQ</span>
-              </div>
-              <div class="subject-cta">Start Practice <span class="cta-arrow">→</span></div>
-            </div>
-            <div class="subject-card-glow" style="--glow: #60a5fa"></div>
-          </a>
-
-          <!-- Integrated Science -->
-          <a class="subject-card available" href="/?sub=science" id="card-science">
-            <div class="subject-card-inner">
-              <div class="subject-top">
-                <div class="subject-icon-wrap" style="--subj-color: #34d399">
-                  <span class="subject-icon">🔬</span>
-                </div>
-                <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 4px;">
-                  <span class="subject-status available-tag">Available</span>
-                  <span style="font-size: 0.6rem; font-weight: 800; color: var(--primary); background: var(--primary-dim); padding: 2px 8px; border-radius: 4px; letter-spacing: 0.05em; border: 1px solid var(--border-accent);">EXPERT CURATED</span>
-                </div>
-              </div>
-              <h3 class="subject-name">Integrated Science</h3>
-              <p class="subject-desc">Biology, Chemistry &amp; Physics concepts in one integrated WAEC paper.</p>
-              <div class="subject-meta">
-                <span class="meta-chip">40+ Questions</span>
-                <span class="meta-chip">MCQ + Structured</span>
-              </div>
-              <div class="subject-cta">Start Practice <span class="cta-arrow">→</span></div>
-            </div>
-          </a>
-
-          <!-- Social Studies -->
-          <a class="subject-card available" href="/?sub=social" id="card-social">
-            <div class="subject-card-inner">
-              <div class="subject-top">
-                <div class="subject-icon-wrap" style="--subj-color: #a78bfa">
-                  <span class="subject-icon">🌍</span>
-                </div>
-                <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 4px;">
-                  <span class="subject-status available-tag">Available</span>
-                  <span style="font-size: 0.6rem; font-weight: 800; color: var(--primary); background: var(--primary-dim); padding: 2px 8px; border-radius: 4px; letter-spacing: 0.05em; border: 1px solid var(--border-accent);">2026 ALIGNED</span>
-                </div>
-              </div>
-              <h3 class="subject-name">Social Studies</h3>
-              <p class="subject-desc">Ghana's history, government, culture, citizenship &amp; global issues.</p>
-              <div class="subject-meta">
-                <span class="meta-chip">40+ Questions</span>
-                <span class="meta-chip">Essay + MCQ</span>
-              </div>
-              <div class="subject-cta">Start Practice <span class="cta-arrow">→</span></div>
-            </div>
-            <div class="subject-card-glow" style="--glow: #a78bfa"></div>
-          </a>
-
-          <!-- Physics -->
-          <a class="subject-card available" href="/?sub=physics" id="card-physics">
-            <div class="subject-card-inner">
-              <div class="subject-top">
-                <div class="subject-icon-wrap" style="--subj-color: #f87171">
-                  <span class="subject-icon">⚡</span>
-                </div>
-                <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 4px;">
-                  <span class="subject-status available-tag">Available</span>
-                  <span style="font-size: 0.6rem; font-weight: 800; color: var(--primary); background: var(--primary-dim); padding: 2px 8px; border-radius: 4px; letter-spacing: 0.05em; border: 1px solid var(--border-accent);">INSTITUTIONAL</span>
-                </div>
-              </div>
-              <h3 class="subject-name">Physics</h3>
-              <p class="subject-desc">Mechanics, waves, electricity, magnetism &amp; modern physics.</p>
-              <div class="subject-meta">
-                <span class="meta-chip">40+ Questions</span>
-                <span class="meta-chip difficulty-hard">High Difficulty</span>
-              </div>
-              <div class="subject-cta">Start Practice <span class="cta-arrow">→</span></div>
-            </div>
-            <div class="subject-card-glow" style="--glow: #f87171"></div>
-          </a>
-
-          <!-- Chemistry -->
-          <a class="subject-card available" href="/?sub=chemistry" id="card-chemistry">
-            <div class="subject-card-inner">
-              <div class="subject-top">
-                <div class="subject-icon-wrap" style="--subj-color: #fb923c">
-                  <span class="subject-icon">🧪</span>
-                </div>
-                <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 4px;">
-                  <span class="subject-status available-tag">Available</span>
-                  <span style="font-size: 0.6rem; font-weight: 800; color: var(--primary); background: var(--primary-dim); padding: 2px 8px; border-radius: 4px; letter-spacing: 0.05em; border: 1px solid var(--border-accent);">2026 ALIGNED</span>
-                </div>
-              </div>
-              <h3 class="subject-name">Chemistry</h3>
-              <p class="subject-desc">Atomic structure, bonding, organic chemistry &amp; stoichiometry.</p>
-              <div class="subject-meta">
-                <span class="meta-chip">40+ Questions</span>
-                <span class="meta-chip">MCQ + Theory</span>
-              </div>
-              <div class="subject-cta">Start Practice <span class="cta-arrow">→</span></div>
-            </div>
-            <div class="subject-card-glow" style="--glow: #fb923c"></div>
-          </a>
-
-          <!-- Biology -->
-          <a class="subject-card available" href="/?sub=biology" id="card-biology">
-            <div class="subject-card-inner">
-              <div class="subject-top">
-                <div class="subject-icon-wrap" style="--subj-color: #4ade80">
-                  <span class="subject-icon">🧬</span>
-                </div>
-                <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 4px;">
-                  <span class="subject-status available-tag">Available</span>
-                  <span style="font-size: 0.6rem; font-weight: 800; color: var(--primary); background: var(--primary-dim); padding: 2px 8px; border-radius: 4px; letter-spacing: 0.05em; border: 1px solid var(--border-accent);">EXPERT CURATED</span>
-                </div>
-              </div>
-              <h3 class="subject-name">Biology</h3>
-              <p class="subject-desc">Cell biology, genetics, ecology, reproduction &amp; human physiology.</p>
-              <div class="subject-meta">
-                <span class="meta-chip">40+ Questions</span>
-                <span class="meta-chip">MCQ + Essay</span>
-              </div>
-              <div class="subject-cta">Start Practice <span class="cta-arrow">→</span></div>
-            </div>
-            <div class="subject-card-glow" style="--glow: #4ade80"></div>
-          </a>
-
-          <!-- Economics -->
-          <a class="subject-card available" href="/?sub=economics" id="card-economics">
-            <div class="subject-card-inner">
-              <div class="subject-top">
-                <div class="subject-icon-wrap" style="--subj-color: #38bdf8">
-                  <span class="subject-icon">💰</span>
-                </div>
-                <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 4px;">
-                  <span class="subject-status available-tag">Available</span>
-                  <span style="font-size: 0.6rem; font-weight: 800; color: var(--primary); background: var(--primary-dim); padding: 2px 8px; border-radius: 4px; letter-spacing: 0.05em; border: 1px solid var(--border-accent);">2026 ALIGNED</span>
-                </div>
-              </div>
-              <h3 class="subject-name">Economics</h3>
-              <p class="subject-desc">Demand &amp; supply, national income, trade, banking &amp; development economics.</p>
-              <div class="subject-meta">
-                <span class="meta-chip">40+ Questions</span>
-                <span class="meta-chip">MCQ + Essay</span>
-              </div>
-              <div class="subject-cta">Start Practice <span class="cta-arrow">→</span></div>
-            </div>
-            <div class="subject-card-glow" style="--glow: #38bdf8"></div>
-          </a>
-
-          <!-- Computer Science -->
-          <a class="subject-card available" href="/?sub=cs" id="card-cs">
-            <div class="subject-card-inner">
-              <div class="subject-top">
-                <div class="subject-icon-wrap" style="--subj-color: #14b8a6">
-                  <span class="subject-icon">💻</span>
-                </div>
-                <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 4px;">
-                  <span class="subject-status available-tag">Available</span>
-                  <span style="font-size: 0.6rem; font-weight: 800; color: var(--primary); background: var(--primary-dim); padding: 2px 8px; border-radius: 4px; letter-spacing: 0.05em; border: 1px solid var(--border-accent);">INSTITUTIONAL</span>
-                </div>
-              </div>
-              <h3 class="subject-name">Computer Science</h3>
-              <p class="subject-desc">Programming, Algorithms, Data Structures, Hardware &amp; Networking.</p>
-              <div class="subject-meta">
-                <span class="meta-chip">15 Questions</span>
-                <span class="meta-chip difficulty-hard">High Difficulty</span>
-              </div>
-              <div class="subject-cta">Start Practice <span class="cta-arrow">→</span></div>
-            </div>
-            <div class="subject-card-glow" style="--glow: #14b8a6"></div>
-          </a>
-        </div>
-      </div>
-    </section>
-
-    <!-- LEARNER MATERIALS -->
-    <section class="main-section" id="materialsSection" style="padding: 3rem 2rem">
-      <section class="about-hero">
-        <img src="assets/logo.png" alt="Vision Education"
-          style="height: 140px; width: 140px; object-fit: contain; margin-bottom: 2rem; filter: drop-shadow(0 0 30px rgba(14, 165, 233, 0.5));">
-        <h1>Pioneering Education <br /><span class="gradient-text">Technological Mastery</span></h1>
-        <p class="hero-subtext">Vision Education is Ghana's premier AI-integrated platform, built to empower every
-          WASSCE candidate with expert-reviewed transformation logic and real-world STEM contexts.</p>
-      </section>
-      <div class="section-header">
-        <div>
-          <h2 class="section-title">Learner Materials</h2>
-          <p class="section-sub">
-            Download official study packs, past questions, and revision guides for each subject.
-          </p>
-        </div>
-      </div>
-      <div id="materialsContainer" style="margin-top: 1.5rem"></div>
-    </section>
-
-    <!-- ANNOUNCEMENTS -->
-    <div id="announceBanner" style="display: none; padding: 0 2rem 1.5rem"></div>
-
-    <!-- FOOTER -->
-    <footer class="site-footer">
-      <p>
-        Built for Ghana SHS Students · 2026 WASSCE · Questions align with the WAEC Chief Examiner's 2025 Report
-      </p>
-      <p class="footer-note">
-        Practice tool only. Consult official syllabuses at <strong>waecgh.org</strong>.
-      </p>
-      <div style="margin-top: 1.5rem; display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; padding: 0 20px;">
-        <a href="/privacy" style="background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); color: #f1f5f9; font-size: 0.8rem; font-weight: 600; text-decoration: none; padding: 10px 20px; border-radius: 8px; transition: all 0.2s; display: inline-flex; align-items: center; gap: 8px;">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-          Privacy Policy
-        </a>
-        <a href="/terms" style="background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.1); color: #94a3b8; font-size: 0.8rem; font-weight: 600; text-decoration: none; padding: 10px 20px; border-radius: 8px; transition: all 0.2s; display: inline-flex; align-items: center; gap: 8px;">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-          Terms of Service
-        </a>
-        <a href="enterprise-dashboard.html" style="background: rgba(251, 191, 36, 0.05); border: 1px solid rgba(251, 191, 36, 0.15); color: #fbbf24; font-size: 0.75rem; text-decoration: none; padding: 10px 15px; border-radius: 8px; display: inline-flex; align-items: center; gap: 6px; font-weight: 700;">
-          Admin Console
-        </a>
-      </div>
-    </footer>
-
-    <!-- IMMERSIVE SETTINGS -->
-    <div class="settings-immersive-view" id="settingsModal">
-      <aside class="settings-sidebar">
-        <div style="margin-bottom: 2rem;">
-          <img src="assets/logo.png" style="height: 32px; filter: grayscale(1) invert(1) brightness(2);">
-        </div>
-        <div class="settings-nav-group">
-          <div class="settings-nav-item active" onclick="switchSettingsTab('profile', this)">
-            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-            Account Profile
-          </div>
-          <div class="settings-nav-item" onclick="switchSettingsTab('security', this)">
-            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-            Security &amp; Auth
-          </div>
-          <div class="settings-nav-item" onclick="switchSettingsTab('subscription', this)">
-            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-            Vision Pro Status
-          </div>
-        </div>
-        <div style="margin-top: auto;">
-          <button class="settings-nav-item" onclick="closeSettings()" style="border: none; background: none; width: 100%;">
-            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
-            Back to Dash
-          </button>
-        </div>
-      </aside>
-
-      <main class="settings-main">
-        <!-- Profile Pane -->
-        <div id="pane-profile" class="settings-pane active">
-          <h1 class="settings-h1">Account Profile</h1>
-          <div class="settings-section-card">
-            <div style="display: flex; align-items: center; gap: 24px; margin-bottom: 2rem;">
-              <div id="settingsAvatar" style="width: 80px; height: 80px; background: var(--primary); border-radius: 20px; display: flex; align-items: center; justify-content: center; font-size: 2rem; font-weight: 800; color: #fff;">S</div>
-              <div>
-                <h2 id="settingsName" style="margin: 0 0 4px 0; font-size: 1.5rem;">Student Name</h2>
-                <p id="settingsEmail" style="margin: 0; color: var(--text-muted);">student@visionedu.online</p>
-              </div>
-            </div>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
-              <div style="padding: 1rem; background: rgba(255,255,255,0.03); border-radius: 12px; border: 1px solid rgba(255,255,255,0.05);">
-                <div style="font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; font-weight: 800; margin-bottom: 4px;">User Role</div>
-                <div style="font-weight: 600; color: #fbbf24;">Enterprise Student</div>
-              </div>
-              <div style="padding: 1rem; background: rgba(255,255,255,0.03); border-radius: 12px; border: 1px solid rgba(255,255,255,0.05);">
-                <div style="font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; font-weight: 800; margin-bottom: 4px;">Sync Status</div>
-                <div style="color: #4ade80; display: flex; align-items: center; gap: 6px; font-weight: 600;">
-                  <span style="width: 8px; height: 8px; background: #4ade80; border-radius: 50%;"></span> Cloud Active
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Security Pane -->
-        <div id="pane-security" class="settings-pane">
-          <h1 class="settings-h1">Security Hub</h1>
-          <div class="settings-section-card">
-            <h2 class="settings-h2">Multi-Factor Authentication</h2>
-            <div style="display: flex; justify-content: space-between; align-items: center;">
-              <div>
-                <p style="margin: 0; font-weight: 600;">Two-Factor Protocol</p>
-                <p style="margin: 4px 0 0 0; font-size: 0.85rem; color: var(--text-muted); max-width: 400px;">Verification code required for every login attempt.</p>
-              </div>
-              <div class="toggle-switch" id="tfaToggle" onclick="handle2FAToggle()"></div>
-            </div>
-            <div id="securityStatus" style="margin-top: 1.5rem; padding: 12px; border-radius: 10px; background: rgba(255,255,255,0.03); font-size: 0.85rem;">
-              <span class="status-warn">Level 1 Protection Active</span>
-            </div>
+       <div class="flex items-center gap-6">
+          <div class="px-3 py-1.5 bg-gold-500/10 border border-gold-500/30 rounded-full flex items-center gap-2">
+             <div class="w-1.5 h-1.5 bg-gold-400 rounded-full animate-pulse"></div>
+             <span class="text-[9px] font-black text-gold-400 uppercase tracking-widest">Live Sync Alpha</span>
           </div>
 
-          <div class="settings-section-card">
-            <h2 class="settings-h2">Credential Rotation</h2>
-            <div style="display: flex; flex-direction: column; gap: 12px;">
-              <input class="setting-input" type="password" id="setCurrentPass" placeholder="Current Security Password" style="background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.1); padding: 12px; border-radius: 10px; color: #fff;">
-              <input class="setting-input" type="password" id="setNewPass" placeholder="New Password (Min 6)" style="background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.1); padding: 12px; border-radius: 10px; color: #fff;">
-              <input class="setting-input" type="password" id="setConfirmPass" placeholder="Confirm New Password" style="background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.1); padding: 12px; border-radius: 10px; color: #fff;">
-              <div id="passChangeMsg" class="pass-change-msg" style="display: none; padding: 10px; border-radius: 8px;"></div>
-              <button class="hero-btn-primary" onclick="unifiedChangePassword()" style="margin-top: 8px; width: fit-content; padding: 12px 24px; height: auto;">Rotate Credentials</button>
-            </div>
+          <div class="relative user-menu-container">
+             <button onclick="toggleTopMenu()" class="flex items-center gap-3 px-2 py-1 rounded-xl hover:bg-white/5 transition-colors group">
+                <div class="w-10 h-10 bg-indigo-500/20 rounded-xl border border-indigo-500/30 flex items-center justify-center text-indigo-400 font-bold" id="navAvatar">S</div>
+                <div class="text-left hidden md:block">
+                   <div class="text-xs font-bold text-white group-hover:text-gold-400 mb-0.5" id="navUsername">Loading...</div>
+                   <div class="text-[9px] font-black text-gray-500 uppercase tracking-widest">Enterprise Class</div>
+                </div>
+             </button>
+             <div class="dropdown absolute right-0 top-full mt-2 w-56 bg-navy border border-white/10 rounded-2xl shadow-2xl p-2" id="topDropdown">
+                <div class="px-4 py-3 border-b border-white/5 mb-2">
+                   <div class="text-xs font-bold text-white" id="dropName">Name</div>
+                   <div class="text-[10px] text-gray-500" id="dropEmail">email@example.com</div>
+                </div>
+                <button onclick="toggleSettings()" class="w-full flex items-center gap-3 px-4 py-2 text-xs font-bold text-gray-400 hover:text-white hover:bg-white/5 rounded-xl transition-colors">Settings</button>
+                <button onclick="handleLogout()" class="w-full flex items-center gap-3 px-4 py-2 text-xs font-bold text-red-400 hover:bg-red-400/10 rounded-xl transition-colors">Sign Out</button>
+             </div>
           </div>
+       </div>
+    </header>
 
-          <div style="margin-top: auto; padding-top: 2rem;">
-            <button onclick="handleLogout()" style="background: rgba(239, 68, 68, 0.1); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.2); padding: 12px 24px; border-radius: 10px; cursor: pointer; font-weight: 700;">Terminate Session</button>
-          </div>
-        </div>
+    <!-- Main Scrollable Area -->
+    <main class="flex-1 overflow-y-auto p-10 pb-24">
+       <div class="max-w-6xl mx-auto space-y-12">
+          
+          <!-- Banner Section -->
+          <section class="glass-card rounded-[3rem] p-12 border-gold-500/20 bg-gradient-to-br from-gold-500/5 to-transparent relative overflow-hidden flex flex-col md:flex-row items-center justify-between gap-10">
+             <div class="absolute -right-20 -top-20 w-64 h-64 bg-gold-500/10 blur-[80px] rounded-full"></div>
+             
+             <div>
+                <div class="flex items-center gap-3 mb-6" id="schoolBrandingRow" style="display:none;">
+                   <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-gold-500 to-yellow-600 flex items-center justify-center text-navy font-black shadow-lg" id="schoolLogo">V</div>
+                   <div class="text-[10px] font-black uppercase tracking-widest text-gold-400" id="schoolName">Institution Name</div>
+                </div>
+                
+                <h1 class="text-5xl font-black mb-4">Strategic <span class="text-transparent bg-clip-text bg-gradient-to-r from-gold-400 to-yellow-600">Excellence,</span> <br><span id="welcomeName">Student</span></h1>
+                <p class="text-gray-400 font-medium">Authorized 2026 Curriculum · Specialised Section B Analysis Active.</p>
+             </div>
 
-        <!-- Subscription Pane -->
-        <div id="pane-subscription" class="settings-pane">
-          <h1 class="settings-h1">Membership</h1>
-          <div class="settings-section-card" id="subscriptionCard" style="background: linear-gradient(135deg, rgba(251, 191, 36, 0.05), rgba(0, 0, 0, 0.2)); border: 1px solid #fbbf24;">
-            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 2rem;">
-              <div>
-                <div style="font-size: 0.75rem; font-weight: 800; color: #fbbf24; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 8px;">Tier Status</div>
-                <h2 id="subTierName" style="font-size: 2rem; margin: 0; font-weight: 900;">Vision <span style="color: #fbbf24;">ENTERPRISE</span></h2>
-              </div>
-              <div id="subStatusBadge" style="background: #fbbf24; color: #000; padding: 6px 14px; border-radius: 100px; font-size: 0.75rem; font-weight: 700;">Institutional</div>
-            </div>
-            <div style="padding: 1.5rem; background: rgba(0,0,0,0.2); border-radius: 12px; border: 1px solid rgba(255,255,255,0.05); margin-bottom: 1.5rem;">
-              <div style="font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; font-weight: 800; margin-bottom: 4px;">Renewal / Expiry Date</div>
-              <div id="subExpiryDate" style="font-size: 1.1rem; font-weight: 700; color: var(--text-primary);">Managed by Institution</div>
-            </div>
-            <p id="subDescription" style="color: var(--text-secondary); line-height: 1.6; font-size: 0.9rem;">You are currently covered by an official institutional license. Full access to the 2026 Strategic Suite is active.</p>
-          </div>
-        </div>
-      </main>
-    </div>
+             <div class="flex flex-col gap-4 shrink-0 w-full md:w-auto">
+                <a href="/enterprise-mocks" class="px-8 py-4 bg-gradient-to-r from-gold-500 to-yellow-600 text-navy font-black text-sm uppercase tracking-widest flex items-center justify-center gap-3 rounded-2xl shadow-[0_0_30px_rgba(251,191,36,0.3)] hover:scale-105 transition-transform">
+                   Start Practice Mission
+                   <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                </a>
+                <a href="/analytics" class="px-8 py-4 glass border-white/10 text-white font-black text-sm uppercase tracking-widest flex items-center justify-center gap-3 rounded-2xl hover:bg-white/5 transition-colors">
+                   View Analytics
+                </a>
+             </div>
+          </section>
+
+          <!-- Quick Stats -->
+          <section class="grid grid-cols-2 lg:grid-cols-4 gap-6">
+             <div class="glass-card p-8 rounded-3xl border-white/5">
+                <p class="text-[10px] font-black text-gray-500 uppercase tracking-widest mb-4">Total Assignments</p>
+                <div class="text-4xl font-black text-white" id="statAnswered">0</div>
+             </div>
+             <div class="glass-card p-8 rounded-3xl border-white/5">
+                <p class="text-[10px] font-black text-gray-500 uppercase tracking-widest mb-4">Precision Score</p>
+                <div class="text-4xl font-black text-emerald-400" id="statCorrect">0</div>
+             </div>
+             <div class="glass-card p-8 rounded-3xl border-white/5">
+                <p class="text-[10px] font-black text-gray-500 uppercase tracking-widest mb-4">Overall Accuracy</p>
+                <div class="text-4xl font-black text-gold-400" id="statPct">—</div>
+             </div>
+             <div class="glass-card p-8 rounded-3xl border-white/5">
+                <p class="text-[10px] font-black text-gray-500 uppercase tracking-widest mb-4">Active Curriculum</p>
+                <div class="text-4xl font-black text-indigo-400">8</div>
+             </div>
+          </section>
+
+          <!-- Assigned Modules -->
+          <section id="assignmentsSection" style="display:none;" class="space-y-6">
+             <h2 class="text-2xl font-black">Institutional Modules</h2>
+             <div class="grid md:grid-cols-2 gap-6" id="studentAssignmentsList">
+                <!-- Dynamically populated -->
+             </div>
+          </section>
+
+          <!-- Subjects Hub -->
+          <section class="space-y-8">
+             <div class="flex justify-between items-end">
+                <div>
+                   <h2 class="text-3xl font-black mb-2">Subject Terminal</h2>
+                   <p class="text-sm font-medium text-gray-500">WAEC 2026 syllabus · Crafted by Institutional Partners</p>
+                </div>
+             </div>
+
+             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" id="subjectsGrid">
+                
+                <!-- Maths -->
+                <a href="/?sub=maths" class="glass-card rounded-[2.5rem] p-8 border-white/5 flex flex-col group hover:border-indigo-500/30 transition-all">
+                   <div class="flex justify-between items-start mb-10">
+                      <div class="w-14 h-14 rounded-2xl bg-indigo-500/10 flex items-center justify-center text-indigo-400 border border-indigo-500/20 group-hover:bg-indigo-500 group-hover:text-white transition-colors">
+                         <span class="text-2xl">📐</span>
+                      </div>
+                      <span class="px-3 py-1 bg-white/5 text-gray-400 text-[9px] font-black uppercase tracking-widest rounded-lg">Verified</span>
+                   </div>
+                   <h3 class="text-2xl font-black mb-3">Core Mathematics</h3>
+                   <p class="text-gray-400 text-xs leading-relaxed mb-8 flex-1">Algebra, Number Theory, Statistics, Geometry & real-world problems.</p>
+                   <div class="pt-6 border-t border-white/5 flex justify-between items-center mt-auto">
+                      <span class="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Core</span>
+                      <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24" class="text-gray-600 group-hover:text-indigo-400 transition-colors"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                   </div>
+                </a>
+
+                <!-- Science -->
+                <a href="/?sub=science" class="glass-card rounded-[2.5rem] p-8 border-white/5 flex flex-col group hover:border-emerald-500/30 transition-all">
+                   <div class="flex justify-between items-start mb-10">
+                      <div class="w-14 h-14 rounded-2xl bg-emerald-500/10 flex items-center justify-center text-emerald-400 border border-emerald-500/20 group-hover:bg-emerald-500 group-hover:text-white transition-colors">
+                         <span class="text-2xl">🔬</span>
+                      </div>
+                      <span class="px-3 py-1 bg-white/5 text-gray-400 text-[9px] font-black uppercase tracking-widest rounded-lg">Verified</span>
+                   </div>
+                   <h3 class="text-2xl font-black mb-3">Integrated Science</h3>
+                   <p class="text-gray-400 text-xs leading-relaxed mb-8 flex-1">Biology, Chemistry & Physics concepts in one integrated environment.</p>
+                   <div class="pt-6 border-t border-white/5 flex justify-between items-center mt-auto">
+                      <span class="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Core</span>
+                      <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24" class="text-gray-600 group-hover:text-emerald-400 transition-colors"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                   </div>
+                </a>
+
+                <!-- English -->
+                <a href="/?sub=english" class="glass-card rounded-[2.5rem] p-8 border-white/5 flex flex-col group hover:border-blue-500/30 transition-all">
+                   <div class="flex justify-between items-start mb-10">
+                      <div class="w-14 h-14 rounded-2xl bg-blue-500/10 flex items-center justify-center text-blue-400 border border-blue-500/20 group-hover:bg-blue-500 group-hover:text-white transition-colors">
+                         <span class="text-2xl">📖</span>
+                      </div>
+                      <span class="px-3 py-1 bg-white/5 text-gray-400 text-[9px] font-black uppercase tracking-widest rounded-lg">Verified</span>
+                   </div>
+                   <h3 class="text-2xl font-black mb-3">English Language</h3>
+                   <p class="text-gray-400 text-xs leading-relaxed mb-8 flex-1">Comprehension, essay formatting, and structural language logic.</p>
+                   <div class="pt-6 border-t border-white/5 flex justify-between items-center mt-auto">
+                      <span class="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Core</span>
+                      <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24" class="text-gray-600 group-hover:text-blue-400 transition-colors"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                   </div>
+                </a>
+                
+                <!-- Computer Science -->
+                <a href="/?sub=cs" class="glass-card rounded-[2.5rem] p-8 border-gold-500/20 bg-gold-500/5 flex flex-col group hover:border-gold-500/60 transition-all relative overflow-hidden ent-border">
+                   <div class="flex justify-between items-start mb-10">
+                      <div class="w-14 h-14 rounded-2xl bg-gold-500 flex items-center justify-center text-navy font-black shadow-lg">
+                         <span class="text-2xl">💻</span>
+                      </div>
+                      <span class="px-3 py-1 bg-gold-500 text-navy text-[9px] font-black uppercase tracking-widest rounded-lg shadow-md">Priority</span>
+                   </div>
+                   <h3 class="text-2xl font-black mb-3 text-white">Computer Science</h3>
+                   <p class="text-gray-300 text-xs leading-relaxed mb-8 flex-1">Programming, Algorithms, Data Structures & Hardware.</p>
+                   <div class="pt-6 border-t border-gold-500/20 flex justify-between items-center mt-auto">
+                      <span class="text-[10px] font-black text-gold-400 uppercase tracking-widest">Elective</span>
+                      <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24" class="text-gold-400 group-hover:translate-x-1 transition-transform"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                   </div>
+                </a>
+
+             </div>
+          </section>
+
+       </div>
+    </main>
   </div>
-  <!-- /main-wrapper -->
 
-  <script src="https://js.paystack.co/v2/inline.js"></script>
+  <!-- Modern Settings Modal -->
+  <div class="settings-modal fixed inset-0 z-[100] bg-navy/95 backdrop-blur-3xl" id="settingsModal">
+     <div class="flex w-full h-full max-w-6xl mx-auto p-10 gap-10">
+        
+        <aside class="w-72 flex flex-col pt-10">
+           <h2 class="text-2xl font-black italic tracking-tighter mb-10 text-white">Mission Control</h2>
+           <div class="space-y-4">
+              <button onclick="switchSettingsPane('profile')" class="w-full text-left px-5 py-4 rounded-xl font-bold text-sm bg-white/5 text-white flex gap-4 items-center" id="btn-pane-profile">
+                 <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> Profile
+              </button>
+              <button onclick="switchSettingsPane('auth')" class="w-full text-left px-5 py-4 rounded-xl font-bold text-sm text-gray-500 hover:text-white hover:bg-white/5 flex gap-4 items-center" id="btn-pane-auth">
+                 <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg> Security
+              </button>
+           </div>
+           <div class="mt-auto">
+              <button onclick="closeSettings()" class="w-full py-4 glass border-white/10 rounded-xl font-bold text-sm text-gray-400 hover:text-white transition-all">Close Control Panel</button>
+           </div>
+        </aside>
+
+        <main class="flex-1 glass-card rounded-[3rem] p-16 border-white/5 overflow-y-auto">
+           <!-- Profile -->
+           <div id="pane-profile" class="space-y-10">
+              <h3 class="text-3xl font-black">Account Origin</h3>
+              <div class="flex gap-8 items-center border-b border-white/5 pb-10">
+                 <div class="w-24 h-24 bg-indigo-500 rounded-[2rem] flex items-center justify-center font-black text-4xl text-white shadow-xl" id="setAvatar">S</div>
+                 <div>
+                    <h4 class="text-2xl font-black text-white" id="setName">Student</h4>
+                    <p class="text-sm font-medium text-gray-500" id="setEmail">student@visionedu.online</p>
+                 </div>
+              </div>
+              <div class="grid grid-cols-2 gap-6">
+                 <div class="p-6 glass rounded-2xl border-gold-500/20 bg-gold-500/5">
+                    <p class="text-[10px] uppercase font-black text-gold-400 tracking-widest mb-2">Clearance Level</p>
+                    <p class="font-bold text-white">Enterprise Authorized</p>
+                 </div>
+                 <div class="p-6 glass rounded-2xl border-white/5">
+                    <p class="text-[10px] uppercase font-black text-gray-500 tracking-widest mb-2">Cloud Sync</p>
+                    <p class="font-bold text-emerald-400 flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-emerald-500"></span> Live Status</p>
+                 </div>
+              </div>
+           </div>
+
+           <!-- Auth -->
+           <div id="pane-auth" class="space-y-10 hidden">
+              <h3 class="text-3xl font-black border-b border-white/5 pb-6">Security Perimeter</h3>
+              <div>
+                 <p class="text-sm font-bold mb-4">Credential Rotation</p>
+                 <div class="space-y-4 max-w-sm">
+                    <input type="password" id="setCurrentPass" placeholder="Current Password" class="w-full bg-navy/50 border border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-indigo-500">
+                    <input type="password" id="setNewPass" placeholder="New Password" class="w-full bg-navy/50 border border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-indigo-500">
+                    <button class="w-full py-3 bg-white text-navy font-bold rounded-xl text-sm hover:bg-gray-200 transition-colors">Update Integrity</button>
+                 </div>
+              </div>
+           </div>
+        </main>
+
+     </div>
+  </div>
+
   <script type="module" src="firebase.js"></script>
   <script src="auth.js"></script>
-  <script src="payment.js"></script>
   <script src="dashboard.js"></script>
-  <script src="materials.js"></script>
   <script>
-    // === ENTERPRISE STUDENT DASHBOARD INIT ===
+    // Init User Data
     (function initEnterpriseDash() {
-      const session = typeof getSession === 'function' ? getSession() : null;
-      if (!session) return;
+      const sessionStr = sessionStorage.getItem("waec_session") || localStorage.getItem("waec_session");
+      if (!sessionStr) return;
+      const session = JSON.parse(sessionStr);
 
-      // Populate user info
-      const firstName = session.name ? session.name.split(" ")[0] : "Student";
-      const welcomeEl = document.getElementById("welcomeName");
-      if (welcomeEl) welcomeEl.textContent = firstName;
-
-      // Nav user chip
       const navUsername = document.getElementById("navUsername");
       const navAvatar = document.getElementById("navAvatar");
-      const dropdownName = document.getElementById("dropdownName");
-      const dropdownEmail = document.getElementById("dropdownEmail");
+      const dropName = document.getElementById("dropName");
+      const dropEmail = document.getElementById("dropEmail");
+      const welcomeName = document.getElementById("welcomeName");
+      const setName = document.getElementById("setName");
+      const setEmail = document.getElementById("setEmail");
+      const setAvatar = document.getElementById("setAvatar");
 
       if (navUsername) navUsername.textContent = session.name || "Student";
       if (navAvatar) navAvatar.textContent = (session.name || "S").charAt(0).toUpperCase();
-      if (dropdownName) dropdownName.textContent = session.name || "Student";
-      if (dropdownEmail) dropdownEmail.textContent = session.email || "";
+      if (dropName) dropName.textContent = session.name || "Student";
+      if (dropEmail) dropEmail.textContent = session.email || "";
+      if (welcomeName) welcomeName.textContent = session.name ? session.name.split(' ')[0] : "Student";
+      if (setName) setName.textContent = session.name || "Student";
+      if (setEmail) setEmail.textContent = session.email || "";
+      if (setAvatar) setAvatar.textContent = (session.name || "S").charAt(0).toUpperCase();
 
-      // Settings info
-      const settingsName = document.getElementById("settingsName");
-      const settingsEmail = document.getElementById("settingsEmail");
-      const settingsAvatar = document.getElementById("settingsAvatar");
-      if (settingsName) settingsName.textContent = session.name || "Student";
-      if (settingsEmail) settingsEmail.textContent = session.email || "";
-      if (settingsAvatar) settingsAvatar.textContent = (session.name || "S").charAt(0).toUpperCase();
-
-      // Institutional branding
+      // Branding
       const brandingRow = document.getElementById("schoolBrandingRow");
       const schoolNameEl = document.getElementById("schoolName");
       const schoolLogoEl = document.getElementById("schoolLogo");
@@ -756,150 +406,58 @@
       if (session.institutionId) {
         const instData = JSON.parse(localStorage.getItem("vision_ext_" + session.institutionId) || "{}");
         if (instData.schoolName && brandingRow) {
-          brandingRow.style.display = 'flex';
-          if (schoolNameEl) schoolNameEl.textContent = instData.schoolName;
-          if (schoolLogoEl) schoolLogoEl.textContent = instData.schoolLogo || instData.schoolName.charAt(0);
+           brandingRow.style.display = 'flex';
+           schoolNameEl.textContent = instData.schoolName;
+           schoolLogoEl.textContent = instData.schoolLogo || instData.schoolName.charAt(0);
         }
       } else if (session.institutionName) {
         if (brandingRow) brandingRow.style.display = 'flex';
-        if (schoolNameEl) schoolNameEl.textContent = session.institutionName;
-        if (schoolLogoEl) schoolLogoEl.textContent = (session.institutionName || "V").charAt(0);
+        schoolNameEl.textContent = session.institutionName;
+        schoolLogoEl.textContent = (session.institutionName || "V").charAt(0);
       }
 
-      // Stats alignment (REDO: Using global getStats helper)
-      const stats = (typeof getStats === 'function') ? getStats() : {};
-      const answered = stats.answered || 0;
-      const correct = stats.correct || 0;
-      const pct = answered > 0 ? Math.round((correct / answered) * 100) + "%" : "—";
-
-      const statAnswered = document.getElementById("statAnswered");
-      const statCorrect = document.getElementById("statCorrect");
-      const statPct = document.getElementById("statPct");
-
-      if (statAnswered) statAnswered.textContent = answered;
-      if (statCorrect) statCorrect.textContent = correct;
-      if (statPct) statPct.textContent = pct;
-
-      // Cloud Sync Trigger
+      // Sync Trigger
       if (session && session.email && typeof window.syncStateToCloud === 'function') {
         window.syncStateToCloud(session.email);
       }
+      
+      // Load quick stats logic from existing dashboard patterns
+      const statsKey = 'waec_stats_' + session.email;
+      const localStats = JSON.parse(localStorage.getItem(statsKey)) || { answered: 0, correct: 0 };
+      document.getElementById('statAnswered').textContent = localStats.answered;
+      document.getElementById('statCorrect').textContent = localStats.correct;
+      document.getElementById('statPct').textContent = localStats.answered > 0 ? Math.round((localStats.correct / localStats.answered) * 100) + '%' : '—';
     })();
 
-    // User dropdown (EXPOSED TO WINDOW FOR HTML ONCLICK)
-    window.toggleUserDropdown = function() {
-      document.getElementById("navUserChip").classList.toggle("open");
-    }
-    window.closeUserDropdown = function() {
-      document.getElementById("navUserChip").classList.remove("open");
+    // UI Toggles
+    function toggleTopMenu() {
+       document.getElementById('topDropdown').classList.toggle('active');
     }
     document.addEventListener("click", (e) => {
-      const chip = document.getElementById("navUserChip");
-      if (chip && !chip.contains(e.target)) closeUserDropdown();
+      const chip = document.querySelector(".user-menu-container");
+      if (chip && !chip.contains(e.target)) document.getElementById('topDropdown').classList.remove('active');
     });
 
-    // Render Materials
-    (function renderDashMaterials() {
-      const container = document.getElementById("materialsContainer");
-      if (!container || typeof getMaterials !== 'function') return;
-
-      const all = getMaterials();
-      if (!all.length) {
-        container.innerHTML = '<p style="color:var(--text-muted);text-align:center;padding:2rem;">No materials uploaded yet. Check back soon!</p>';
-        return;
-      }
-
-      const bySubject = {};
-      if (typeof SUBJECTS_META !== 'undefined') {
-        SUBJECTS_META.forEach((s) => { bySubject[s.id] = []; });
-      }
-      all.forEach((m) => { if (bySubject[m.subject]) bySubject[m.subject].push(m); });
-
-      const activeSubjects = (typeof SUBJECTS_META !== 'undefined' ? SUBJECTS_META : []).filter(
-        (s) => (bySubject[s.id] || []).length > 0
-      );
-
-      container.innerHTML = activeSubjects.map((subj) => {
-        const mats = bySubject[subj.id] || [];
-        return `<div style="margin-bottom:1.75rem;">
-          <div style="display:flex;align-items:center;gap:8px;margin-bottom:0.75rem;">
-            <span style="font-size:1.2rem">${subj.icon}</span>
-            <h3 style="font-size:0.95rem;font-weight:800;color:var(--text-primary);">${subj.name}</h3>
-            <span style="font-size:0.68rem;font-weight:700;background:var(--primary-dim);color:var(--primary);padding:2px 8px;border-radius:100px;border:1px solid var(--border-accent);">${mats.length} file${mats.length !== 1 ? "s" : ""}</span>
-          </div>
-          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:10px;">
-            ${mats.map((m) => {
-              const typeColor = { PDF: "#f87171", VIDEO: "#fb923c", DOC: "#60a5fa", SLIDE: "#a78bfa", LINK: "#4ade80" }[m.type?.toUpperCase()] || "#94a3b8";
-              const noLink = !m.url || m.url === "#";
-              return `<div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-md);padding:1rem 1.25rem;display:flex;align-items:center;gap:12px;transition:border-color 0.2s;">
-                <span style="font-size:1.4rem;flex-shrink:0;">📄</span>
-                <div style="flex:1;min-width:0;">
-                  <div style="font-size:0.85rem;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${esc(m.title)}</div>
-                  <div style="display:flex;align-items:center;gap:6px;margin-top:4px;">
-                    <span style="padding:1px 7px;border-radius:4px;font-size:0.65rem;font-weight:800;background:${typeColor}22;color:${typeColor};">${m.type || "PDF"}</span>
-                    ${m.size ? `<span style="font-size:0.72rem;color:var(--text-muted);">${m.size}</span>` : ""}
-                  </div>
-                </div>
-                ${noLink
-                  ? `<span style="font-size:0.72rem;color:var(--text-muted);background:var(--bg-input);padding:6px 12px;border-radius:var(--radius-sm);border:1px dashed var(--border);flex-shrink:0;">Coming Soon</span>`
-                  : `<a href="${m.url}" target="_blank" rel="noopener" download style="display:inline-flex;align-items:center;gap:6px;padding:8px 14px;background:linear-gradient(135deg,var(--primary),#8b5cf6);color:#fff;text-decoration:none;border-radius:var(--radius-sm);font-size:0.78rem;font-weight:800;flex-shrink:0;">Download</a>`
-                }
-              </div>`;
-            }).join("")}
-          </div>
-        </div>`;
-      }).join("");
-    })();
-
-    function esc(s) {
-      return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+    function toggleSettings() {
+       const modal = document.getElementById('settingsModal');
+       if(modal.classList.contains('active')) { modal.classList.remove('active'); }
+       else { modal.classList.add('active'); }
     }
+    function closeSettings() { document.getElementById('settingsModal').classList.remove('active'); }
 
-    // Announcements
-    (function showAnnouncements() {
-      const anns = JSON.parse(localStorage.getItem("vision_announcements") || "[]");
-      const banner = document.getElementById("announceBanner");
-      if (anns.length && banner) {
-        banner.style.display = "block";
-        banner.innerHTML = anns.slice(0, 2).map((a) => `
-          <div style="background:var(--primary-dim);border:1px solid var(--border-accent);border-radius:var(--radius-md);padding:0.875rem 1.25rem;margin-bottom:8px;display:flex;gap:10px;align-items:flex-start;">
-            <span style="font-size:1rem;">📢</span>
-            <div>
-              <div style="font-weight:700;font-size:0.88rem;">${esc(a.title)}</div>
-              <div style="font-size:0.8rem;color:var(--text-secondary);margin-top:2px;">${esc(a.body)}</div>
-            </div>
-          </div>`).join("");
-      }
-    })();
+    function switchSettingsPane(pane) {
+       document.getElementById('pane-profile').classList.add('hidden');
+       document.getElementById('pane-auth').classList.add('hidden');
+       document.getElementById('pane-' + pane).classList.remove('hidden');
 
-    // Homework Assignments
-    (function showAssignments() {
-      const allAssignments = JSON.parse(localStorage.getItem('vision_assignments') || '[]');
-      const MyAssignments = allAssignments.filter(a => a.institutionId === session.institutionId);
-      
-      if (MyAssignments.length > 0) {
-        document.getElementById('assignmentsSection').style.display = 'block';
-        const listEl = document.getElementById('studentAssignmentsList');
-        
-        MyAssignments.sort((a, b) => b.createdAt - a.createdAt);
-        listEl.innerHTML = MyAssignments.map(a => `
-          <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-md);padding:1.5rem;box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
-              <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px;">
-                  <div>
-                    <span style="font-size: 0.7rem; font-weight: 800; padding: 4px 10px; border-radius: 6px; background: rgba(129,140,248,0.15); color: #818cf8; text-transform: uppercase;">${a.subject.toUpperCase()}</span>
-                    <h4 style="margin: 10px 0 4px 0; font-size: 1.25rem; color: var(--text-primary); font-weight: 800;">${esc(a.title)}</h4>
-                  </div>
-                  <span style="font-size: 0.8rem; font-weight: 800; color: #f87171; background: rgba(239, 68, 68, 0.1); padding: 4px 10px; border-radius: 6px;">Due: ${new Date(a.dueDate).toLocaleDateString()}</span>
-              </div>
-              <p style="margin: 0 0 16px 0; font-size: 0.95rem; color: var(--text-secondary); line-height: 1.6; white-space: pre-wrap;">${esc(a.body)}</p>
-              <div style="font-size: 0.8rem; font-weight: 600; color: var(--text-muted); display: flex; align-items: center; gap: 6px;">
-                 <span style="display: flex; align-items: center; justify-content: center; width: 20px; height: 20px; border-radius: 4px; background: rgba(251, 191, 36, 0.2); color: #fbbf24; font-size: 0.6rem;">${a.teacherName.charAt(0).toUpperCase()}</span>
-                 Assigned by ${esc(a.teacherName)}
-              </div>
-          </div>
-        `).join("");
-      }
-    })();
+       document.getElementById('btn-pane-profile').classList.remove('bg-white/5', 'text-white');
+       document.getElementById('btn-pane-profile').classList.add('text-gray-500');
+       document.getElementById('btn-pane-auth').classList.remove('bg-white/5', 'text-white');
+       document.getElementById('btn-pane-auth').classList.add('text-gray-500');
+
+       document.getElementById('btn-pane-' + pane).classList.remove('text-gray-500');
+       document.getElementById('btn-pane-' + pane).classList.add('bg-white/5', 'text-white');
+    }
   </script>
 </body>
 </html>

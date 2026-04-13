@@ -1,333 +1,199 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en" data-theme="dark">
-
 <head>
   <meta charset="UTF-8" />
   <script>
     document.documentElement.setAttribute("data-theme", "dark");
   </script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>AI Learning Hub | Vision Education</title>
+  <title>AI Learning Hub | Vision Education 2026</title>
+  
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="style.css" />
-  <link rel="stylesheet" href="dashboard.css" />
-  <link rel="stylesheet" href="theme.css" />
-  <!-- KaTeX for Math -->
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Outfit', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          },
+          colors: {
+            navy: {
+              DEFAULT: '#05080f',
+              light: '#0a101f',
+              accent: '#1e293b'
+            },
+            emerald: {
+              DEFAULT: '#10b981',
+              light: '#34d399',
+              dark: '#059669'
+            },
+            indigo: {
+              DEFAULT: '#6366f1',
+              light: '#818cf8',
+              dark: '#4f46e5'
+            }
+          },
+        }
+      }
+    }
+  </script>
+  
+  <!-- KaTeX & Marked -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
   <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
-  <!-- Marked for Markdown -->
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  
   <style>
-    .learning-hub-layout {
-      display: flex;
-      height: 100vh;
-      background: var(--bg);
-    }
+    .glass { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.1); }
+    .glass-card { background: rgba(255, 255, 255, 0.02); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.08); transition: all 0.3s ease; }
+    
+    .sidebar-item { transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); }
+    .sidebar-item.active { background: rgba(99, 102, 241, 0.15); color: #fff; border-right: 3px solid #6366f1; }
+    
+    .subject-pill { transition: all 0.2s; cursor: pointer; }
+    .subject-pill.active { background: #6366f1; color: white; border-color: #6366f1; box-shadow: 0 0 20px rgba(99, 102, 241, 0.3); }
+    
+    .chat-messages::-webkit-scrollbar { width: 4px; }
+    .chat-messages::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); border-radius: 10px; }
 
-    .learning-main {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      margin-left: 250px;
-    }
-
-    .learning-workspace {
-      flex: 1;
-      padding: 2rem;
-      overflow-y: auto;
-      max-width: 1000px;
-      margin: 0 auto;
-      width: 100%;
-    }
-
-    .ai-vision-card {
-      background: var(--bg-card);
-      border: 1px solid var(--border-accent);
-      border-radius: var(--radius-lg);
-      padding: 2.5rem;
-      text-align: center;
-      margin-bottom: 2rem;
-      box-shadow: var(--shadow-premium);
-      position: relative;
-      overflow: hidden;
-    }
-
-    .upload-area {
-      border: 2px dashed var(--border-bright);
-      border-radius: var(--radius-md);
-      padding: 3rem 2rem;
-      cursor: pointer;
-      transition: all 0.2s;
-      background: rgba(255, 255, 255, 0.02);
-      margin-top: 1.5rem;
-    }
-
-    .upload-area:hover {
-      border-color: var(--primary);
-      background: var(--primary-dim);
-    }
-
-    .chat-container {
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-md);
-      min-height: 400px;
-      display: flex;
-      flex-direction: column;
-      margin-top: 2rem;
-    }
-
-    .chat-messages {
-      flex: 1;
-      padding: 1.5rem;
-      display: flex;
-      flex-direction: column;
-      gap: 1rem;
-    }
-
-    .chat-bubble {
-      max-width: 80%;
-      padding: 12px 18px;
-      border-radius: var(--radius-md);
-      font-size: 0.95rem;
-      line-height: 1.6;
-    }
-
-    .bubble-ai {
-      background: var(--primary-dim);
-      border: 1px solid var(--border-accent);
-      align-self: flex-start;
-      color: var(--text-primary);
-    }
-
-    .bubble-user {
-      background: var(--bg-input);
-      border: 1px solid var(--border);
-      align-self: flex-end;
-      color: var(--text-secondary);
-    }
-
-    .chat-input-area {
-      padding: 1rem;
-      border-top: 1px solid var(--border);
-      display: flex;
-      gap: 12px;
-    }
-
-    .learning-input {
-      flex: 1;
-      background: var(--bg-input);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-sm);
-      padding: 12px 16px;
-      color: var(--text-primary);
-      font-family: inherit;
-    }
-
-    .preview-img {
-      max-width: 100%;
-      max-height: 300px;
-      border-radius: var(--radius-sm);
-      margin-bottom: 1rem;
-      display: none;
-    }
-
-    .subject-selector {
-      display: flex;
-      gap: 10px;
-      margin-bottom: 2rem;
-      justify-content: center;
-      flex-wrap: wrap;
-    }
-
-    .subject-pill {
-      padding: 8px 16px;
-      border-radius: 20px;
-      background: var(--bg-input);
-      border: 1px solid var(--border);
-      color: var(--text-secondary);
-      font-size: 0.85rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-
-    .subject-pill.active {
-      background: var(--primary);
-      color: white;
-      border-color: var(--primary);
-      box-shadow: 0 0 15px var(--primary-dim);
-    }
-
-    .subject-pill[data-subject="physics"].active { --primary: #3b82f6; }
-    .subject-pill[data-subject="chemistry"].active { --primary: #10b981; }
-    .subject-pill[data-subject="biology"].active { --primary: #8b5cf6; }
-    .subject-pill[data-subject="maths"].active { --primary: #f59e0b; }
-    .subject-pill[data-subject="english"].active { --primary: #ef4444; }
-
-    .voice-btn {
-      background: var(--bg-input);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-sm);
-      width: 44px;
-      height: 44px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      transition: all 0.2s;
-      font-size: 1.2rem;
-    }
-    .voice-btn:hover {
-      border-color: var(--primary);
-      background: var(--primary-dim);
-    }
-    .voice-btn.listening {
-      background: var(--primary);
-      border-color: var(--primary);
-      color: white;
-      animation: pulse-indigo 1.5s infinite;
-    }
-    @keyframes pulse-indigo {
-      0% { box-shadow: 0 0 0 0 rgba(99, 102, 241, 0.5); }
-      70% { box-shadow: 0 0 0 12px rgba(99, 102, 241, 0); }
-      100% { box-shadow: 0 0 0 0 rgba(99, 102, 241, 0); }
-    }
-    .voice-options {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      margin-top: 10px;
-      font-size: 0.75rem;
-      color: var(--text-muted);
-      padding: 0 1rem;
-    }
-    .mode-selector {
-      display: none; /* Hidden by default, shown for Pro */
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      padding: 4px;
-      margin-bottom: 20px;
-      gap: 4px;
-      width: fit-content;
-    }
-    .mode-btn {
-      padding: 6px 16px;
-      border-radius: 16px;
-      font-size: 0.75rem;
-      font-weight: 700;
-      cursor: pointer;
-      border: none;
-      background: transparent;
-      color: var(--text-muted);
-      transition: all 0.2s;
-    }
-    .mode-btn.active {
-      background: var(--primary);
-      color: white;
-    }
-    @media (max-width: 900px) {
-      .learning-main { margin-left: 0; padding-bottom: 70px; }
-    }
+    @keyframes pulse-indigo { 0% { box-shadow: 0 0 0 0 rgba(99, 102, 241, 0.4); } 70% { box-shadow: 0 0 0 10px rgba(99, 102, 241, 0); } 100% { box-shadow: 0 0 0 0 rgba(99, 102, 241, 0); } }
+    .voice-btn.listening { background: #6366f1; color: white; animation: pulse-indigo 1.5s infinite; }
   </style>
 </head>
+<body class="bg-navy text-white font-sans min-h-screen flex selection:bg-indigo-500/30 overflow-x-hidden">
 
-<body class="dashboard-page">
-  <aside class="side-nav">
-    <a class="side-nav-logo" href="dashboard.html">
-      <img src="assets/logo.png" alt="Logo" style="height: 48px; width: 48px; object-fit: contain;">
-      <span>Vision Edu</span>
-    </a>
-    <nav class="side-nav-menu">
-      <a href="dashboard.html" class="nav-item">
-        <span class="nav-item-icon" style="display:flex; align-items:center; justify-content:center;">
-          <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
-        </span>
-        <span>Dashboard</span>
-      </a>
-      <a href="mocks.html" class="nav-item">
-        <span class="nav-item-icon" style="display:flex; align-items:center; justify-content:center;">
-          <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>
-        </span>
-        <span>Mock Exams</span>
-      </a>
-      <a href="ai-learning.html" class="nav-item active">
-        <span class="nav-item-icon" style="display:flex; align-items:center; justify-content:center;">
-          <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M19 13l-1.26-2.74L15 9l2.74-1.26L19 5l1.26 2.74L23 9l-2.74 1.26L19 13zM9 13l-2.26-4.74L2 6l4.74-2.26L9 1.5l2.26 4.74L16 8.26l-4.74 2.26L9 13zm10 9.5l-1.26-2.74L15 18.5l2.74-1.26L19 14.5l1.26 2.74L23 18.5l-2.74 1.26L19 22.5z"/></svg>
-        </span>
-        <span>AI Learning Hub</span>
-      </a>
-      <a href="planner.html" class="nav-item">
-        <span class="nav-item-icon" style="display:flex; align-items:center; justify-content:center; filter: hue-rotate(120deg);">
-          <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM7 10h5v5H7z"/></svg>
-        </span>
-        <span>Study Planner</span>
-      </a>
+  <!-- Sidebar Component -->
+  <aside class="w-80 border-r border-white/5 bg-navy-light/40 backdrop-blur-3xl sticky top-0 h-screen flex flex-col z-30 shrink-0">
+    <div class="p-8 border-b border-white/5 flex items-center justify-between">
+       <a href="/" class="flex items-center gap-3 group">
+          <div class="w-10 h-10 bg-indigo-600 rounded-xl flex items-center justify-center text-white font-black text-xl shadow-[0_0_20px_rgba(99,102,241,0.3)]">V</div>
+          <span class="font-black text-lg tracking-tight uppercase italic group-hover:text-indigo-400 transition-colors">Vision</span>
+       </a>
+    </div>
+
+    <nav class="flex-1 p-6 space-y-2 overflow-y-auto">
+       <a href="/dashboard" class="sidebar-item w-full flex items-center gap-4 px-4 py-3.5 rounded-2xl font-bold text-sm tracking-tight text-gray-400 hover:text-white group outline-none">
+          <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
+          Overview
+       </a>
+       <a href="/mocks" class="sidebar-item w-full flex items-center gap-4 px-4 py-3.5 rounded-2xl font-bold text-sm tracking-tight text-gray-400 hover:text-white group outline-none">
+          <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          Mock Exams
+       </a>
+       <a href="/ai-learning.html" class="sidebar-item active w-full flex items-center gap-4 px-4 py-3.5 rounded-2xl font-bold text-sm tracking-tight text-gray-400 hover:text-white group outline-none">
+          <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+          AI Learning Hub
+       </a>
     </nav>
+
+    <div class="p-8 border-t border-white/5">
+       <a href="/dashboard" class="w-full flex items-center gap-4 px-4 py-3.5 rounded-2xl font-bold text-sm text-gray-400 hover:bg-white/5 transition-all">
+          <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M15 19l-7-7 7-7"/></svg>
+          Back to Hub
+       </a>
+    </div>
   </aside>
 
-  <div class="learning-main">
-    <section class="learning-workspace">
-      <!-- Premium Mode Selector -->
-      <div id="aiModeSelector" class="mode-selector">
-        <button class="mode-btn active" onclick="setAiMode('examiner')" id="btnExaminer">WAEC Mode</button>
-        <button class="mode-btn" onclick="setAiMode('normal')" id="btnNormal">Normal Chat</button>
-      </div>
-
-      <div class="ai-vision-card">
-        <h1 class="welcome-heading" style="font-size: 2.5rem;">AI <span class="brand-accent">Learning Hub</span></h1>
-        <p class="welcome-sub" id="welcomeText">Select a subject to begin your specialized WASSCE tutoring session.</p>
-        
-        <div class="subject-selector" id="subjectSelector">
-          <div class="subject-pill active" data-subject="maths">Core Maths</div>
-          <div class="subject-pill" data-subject="english">English</div>
-          <div class="subject-pill" data-subject="physics">Physics</div>
-          <div class="subject-pill" data-subject="chemistry">Chemistry</div>
-          <div class="subject-pill" data-subject="biology">Biology</div>
-        </div>
-
-        <img id="imagePreview" class="preview-img" alt="Preview">
-        
-        <div class="upload-area" id="dropArea" onclick="document.getElementById('fileInput').click()">
-          <p id="uploadText">Drag & drop or click to <strong>Import Picture</strong></p>
-          <input type="file" id="fileInput" hidden accept="image/*">
-        </div>
-      </div>
-
-      <div class="chat-container">
-        <div class="chat-messages" id="chatMessages">
-          <div class="chat-bubble bubble-ai">
-            Hello! I am your AI Learning Specialist. Import a picture of a math diagram or type a question below to get started.
+  <!-- Main Wrapper -->
+  <div class="flex-1 flex flex-col z-20 overflow-y-auto h-screen relative">
+    
+    <!-- Top Nav -->
+    <header class="h-24 sticky top-0 bg-navy/80 backdrop-blur-2xl z-40 border-b border-white/5 px-10 flex items-center justify-between">
+       <div class="flex items-center gap-6">
+          <h2 class="text-xl font-black tracking-tighter uppercase italic text-indigo-400">Hub <span class="text-white">Workspace</span></h2>
+          <span class="w-px h-6 bg-white/10"></span>
+          <div id="aiModeSelector" class="hidden items-center p-1 bg-white/5 rounded-2xl border border-white/10">
+             <button onclick="setAiMode('examiner')" id="btnExaminer" class="px-4 py-1.5 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all bg-indigo-500 text-white">WAEC Mode</button>
+             <button onclick="setAiMode('normal')" id="btnNormal" class="px-4 py-1.5 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all text-gray-500 hover:text-white">Normal</button>
           </div>
-        </div>
-        <div class="chat-input-area">
-          <button class="voice-btn" id="voiceMicBtn" title="Speak your question">
-            <svg id="micIcon" viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z"/><path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/></svg>
-          </button>
-          <input type="text" id="chatInput" class="learning-input" placeholder="Type or speak your question here...">
-          <button class="cta-btn" id="sendBtn" style="padding: 10px 24px; font-size: 0.8rem;">SEND</button>
-        </div>
-        <div class="voice-options">
-          <label style="display: flex; align-items: center; gap: 6px; cursor: pointer;">
-            <input type="checkbox" id="ttsToggle" checked> Read response aloud
-          </label>
-        </div>
-      </div>
-    </section>
+       </div>
+
+       <div id="syncStatus" class="flex items-center gap-2 px-4 py-2 bg-indigo-500/10 border border-indigo-500/20 rounded-full">
+          <div class="w-1.5 h-1.5 bg-indigo-400 rounded-full animate-pulse shadow-[0_0_10px_#6366f1]"></div>
+          <span class="text-[9px] font-black text-indigo-400 uppercase tracking-widest leading-none">Diagnostic Link Active</span>
+       </div>
+    </header>
+
+    <!-- Main Workspace -->
+    <main class="flex-1 w-full max-w-5xl mx-auto p-10 flex flex-col gap-10">
+       
+       <section class="glass-card rounded-[3rem] p-10 md:p-14 border-white/5 flex flex-col items-center text-center space-y-10 relative overflow-hidden">
+          <div class="absolute top-0 right-0 p-12 opacity-5 italic font-black text-8xl pointer-events-none">ACADEMIC</div>
+          
+          <div class="space-y-4">
+             <h1 class="text-5xl font-black tracking-tighter">AI <span class="text-indigo-400 italic">Vision.</span></h1>
+             <p class="text-gray-400 text-lg font-medium max-w-xl mx-auto" id="welcomeText">Select a subject to begin your specialized WASSCE tutoring session.</p>
+          </div>
+
+          <div class="flex flex-wrap justify-center gap-3" id="subjectSelector">
+             <div class="subject-pill px-6 py-2.5 rounded-2xl glass border-white/10 text-[10px] font-black uppercase tracking-widest active" data-subject="maths">Core Maths</div>
+             <div class="subject-pill px-6 py-2.5 rounded-2xl glass border-white/10 text-[10px] font-black uppercase tracking-widest" data-subject="english">English</div>
+             <div class="subject-pill px-6 py-2.5 rounded-2xl glass border-white/10 text-[10px] font-black uppercase tracking-widest" data-subject="physics">Physics</div>
+             <div class="subject-pill px-6 py-2.5 rounded-2xl glass border-white/10 text-[10px] font-black uppercase tracking-widest" data-subject="chemistry">Chemistry</div>
+             <div class="subject-pill px-6 py-2.5 rounded-2xl glass border-white/10 text-[10px] font-black uppercase tracking-widest" data-subject="biology">Biology</div>
+          </div>
+
+          <div class="w-full max-w-2xl group">
+             <div class="border-2 border-dashed border-white/10 rounded-[2.5rem] p-12 hover:border-indigo-500/50 hover:bg-white/2 transition-all cursor-pointer relative" id="dropArea" onclick="document.getElementById('fileInput').click()">
+                <img id="imagePreview" class="w-full h-auto max-h-[300px] object-contain rounded-2xl mb-6 hidden" alt="Preview">
+                <div class="space-y-2">
+                   <p id="uploadText" class="text-sm font-black text-white uppercase tracking-widest">Import Academic Packet</p>
+                   <p class="text-[10px] font-bold text-gray-500 uppercase">Drag & Drop or Click to Upload High-Fidelity Capture</p>
+                </div>
+                <input type="file" id="fileInput" hidden accept="image/*">
+             </div>
+          </div>
+       </section>
+
+       <!-- CHAT INTERFACE -->
+       <section class="glass-card rounded-[3.5rem] border-white/5 flex flex-col h-[600px] overflow-hidden">
+          <div class="flex-1 p-10 overflow-y-auto chat-messages scroll-smooth space-y-6" id="chatMessages">
+             <div class="flex gap-4 max-w-[85%] self-start">
+                <div class="w-8 h-8 rounded-lg bg-indigo-500 flex items-center justify-center text-white shrink-0 shadow-lg">V</div>
+                <div class="p-6 glass rounded-2xl border-white/10 text-sm leading-relaxed font-medium">
+                   Hello! I am your AI Learning Specialist. Import a picture of a math diagram or type a question below to get started. 🚀
+                </div>
+             </div>
+          </div>
+
+          <div class="p-8 border-t border-white/5 bg-white/2">
+             <div class="flex items-center gap-4">
+                <button id="voiceMicBtn" class="w-14 h-14 glass border-white/10 rounded-2xl flex items-center justify-center text-gray-400 hover:text-white transition-all voice-btn shrink-0">
+                   <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"/></svg>
+                </button>
+                <div class="flex-1 relative">
+                   <input type="text" id="chatInput" class="w-full bg-navy border border-white/10 rounded-2xl px-6 py-4 text-white outline-none focus:border-indigo-500 transition-all font-medium" placeholder="Type your inquiry here...">
+                </div>
+                <button id="sendBtn" class="px-8 py-4 bg-indigo-500 text-navy font-black text-xs uppercase tracking-widest rounded-2xl shadow-xl shadow-indigo-500/20 hover:scale-105 transition-transform shrink-0">Authorize</button>
+             </div>
+             <div class="mt-4 flex items-center gap-6 px-2">
+                <label class="flex items-center gap-2 cursor-pointer group">
+                   <input type="checkbox" id="ttsToggle" checked class="w-4 h-4 rounded border-white/10 bg-navy text-indigo-500 focus:ring-0">
+                   <span class="text-[9px] font-black text-gray-500 uppercase tracking-widest group-hover:text-gray-300">Speech Synthesis Logic</span>
+                </label>
+             </div>
+          </div>
+       </section>
+
+    </main>
+
+    <footer class="py-12 text-center">
+       <p class="text-[9px] font-black text-gray-700 uppercase tracking-[0.4em]">Vision AI Collective · 2026 Strategy Engine</p>
+    </footer>
+
   </div>
 
   <script src="auth.js"></script>
   <script>
-    //  Auth guard - Strict Lockdown
+    // Logic - Must exactly match original functional behavior
     const session = checkAuth();
-    if (!session) {
-      // checkAuth handles the redirect, but we stop execution here
-      throw new Error("Authentication required"); 
-    }
+    if (!session) throw new Error("Authentication required");
 
     const fileInput = document.getElementById('fileInput');
     const imagePreview = document.getElementById('imagePreview');
@@ -377,61 +243,53 @@
         currentBase64 = reader.result.split(',')[1];
         imagePreview.src = reader.result;
         imagePreview.style.display = 'block';
-        uploadText.innerHTML = `<strong>File Loaded:</strong> ${file.name}`;
+        uploadText.innerHTML = `<span class="text-indigo-400">Packet Loaded:</span> ${file.name}`;
       };
       reader.readAsDataURL(file);
     }
 
     let currentAiMode = 'examiner';
-
     function setAiMode(mode) {
       currentAiMode = mode;
-      document.getElementById('btnExaminer').classList.toggle('active', mode === 'examiner');
-      document.getElementById('btnNormal').classList.toggle('active', mode === 'normal');
+      document.getElementById('btnExaminer').classList.toggle('bg-indigo-500', mode === 'examiner');
+      document.getElementById('btnExaminer').classList.toggle('text-white', mode === 'examiner');
+      document.getElementById('btnExaminer').classList.toggle('text-gray-500', mode !== 'examiner');
       
-      const subjectSelector = document.getElementById('subjectSelector');
-      if (subjectSelector) {
-        subjectSelector.style.display = mode === 'normal' ? 'none' : 'flex';
-      }
+      document.getElementById('btnNormal').classList.toggle('bg-indigo-500', mode === 'normal');
+      document.getElementById('btnNormal').classList.toggle('text-white', mode === 'normal');
+      document.getElementById('btnNormal').classList.toggle('text-gray-500', mode !== 'normal');
+      
+      const subSelector = document.getElementById('subjectSelector');
+      if (subSelector) subSelector.style.display = mode === 'normal' ? 'none' : 'flex';
 
-      const welcome = document.querySelector('.bubble-ai');
-      if (welcome) {
-          welcome.textContent = mode === 'normal' 
-            ? "Normal Chat Mode Active. I'm ready for any academic topic or general question!" 
-            : "WASSCE Chief Examiner Mode Active. I'm ready to mark your Part B and guide your exam prep.";
-      }
+      appendMessage('ai', mode === 'normal' 
+        ? "Normal Chat Mode Active. Ready for any academic query." 
+        : "WASSCE Chief Examiner Mode Active. Standing by for diagnostic marking.");
     }
 
-    // Auto-show selector for Pro
     window.addEventListener('DOMContentLoaded', () => {
-      const session = typeof getSession === 'function' ? getSession() : null;
-      const isAdmin = session?.email?.toLowerCase() === 'gisgreat308@gmail.com';
-      if ((session?.role === 'pro') || isAdmin) {
-        const selector = document.getElementById('aiModeSelector');
-        if (selector) selector.style.display = 'flex';
+      const s = typeof getSession === 'function' ? getSession() : null;
+      if (s?.role === 'pro' || s?.email?.toLowerCase() === 'gisgreat308@gmail.com') {
+        document.getElementById('aiModeSelector').classList.replace('hidden', 'flex');
       }
     });
 
     sendBtn.onclick = async () => {
-      const message = chatInput.value.trim();
-      if (!message && !currentBase64) return;
-
-      const previousBtnText = sendBtn.innerText;
-      sendBtn.innerText = "SENDING...";
+      const msg = chatInput.value.trim();
+      if (!msg && !currentBase64) return;
+      
+      const originalText = sendBtn.innerText;
+      sendBtn.innerText = "Processing...";
       sendBtn.disabled = true;
 
-      appendMessage('user', message || "Analyzing image...");
+      appendMessage('user', msg || "[Visual Packet Analysis Request]");
       chatInput.value = '';
-      
-      try {
-        const session = typeof getSession === 'function' ? getSession() : null;
-        let userRole = session?.role || 'student';
-        const userEmail = session?.email || '';
 
-        // ABSOLUTE ADMIN OVERRIDE (For AI Hub)
-        if (userEmail.toLowerCase() === 'gisgreat308@gmail.com') {
-          userRole = 'pro';
-        }
+      try {
+        const s = typeof getSession === 'function' ? getSession() : null;
+        let role = s?.role || 'student';
+        const email = s?.email || '';
+        if (email.toLowerCase() === 'gisgreat308@gmail.com') role = 'pro';
 
         const res = await fetch('/api/ai', {
           method: 'POST',
@@ -440,42 +298,47 @@
             type: 'vision',
             imageBase64: currentBase64,
             mimeType: currentMimeType,
-            userMessage: message,
+            userMessage: msg,
             subject: currentSubject,
-            role: userRole,
-            email: userEmail,
-            contents: [{ role: "user", parts: [{ text: message }], mode: currentAiMode }]
+            role: role,
+            email: email,
+            contents: [{ role: "user", parts: [{ text: msg }], mode: currentAiMode }]
           })
         });
-
         const data = await res.json();
-        appendMessage('ai', data.analysis || data.error || "I've processed your request!");
-      } catch (err) {
-        appendMessage('ai', "Error connecting to AI. Please try again.");
+        appendMessage('ai', data.analysis || data.error || "Analysis complete.");
+      } catch(err) {
+        appendMessage('ai', "Error connecting to AI Grid.");
       } finally {
-        sendBtn.innerText = previousBtnText;
+        sendBtn.innerText = originalText;
         sendBtn.disabled = false;
-        // Clear current file after send to prevent hallucination on next text msg
         currentBase64 = null;
         currentMimeType = null;
         imagePreview.style.display = 'none';
-        imagePreview.src = '';
-        uploadText.innerHTML = `Drag & drop or click to <strong>Import Picture</strong>`;
+        uploadText.innerHTML = `Import Academic Packet`;
       }
     };
 
     function appendMessage(role, text) {
-      const bubble = document.createElement('div');
-      bubble.className = `chat-bubble bubble-${role}`;
+      const wrapper = document.createElement('div');
+      wrapper.className = `flex gap-4 max-w-[85%] ${role === 'user' ? 'self-end flex-row-reverse' : 'self-start'}`;
       
-      // Render Markdown + Math
+      const avatar = document.createElement('div');
+      avatar.className = `w-8 h-8 rounded-lg flex items-center justify-center text-white shrink-0 shadow-lg ${role === 'ai' ? 'bg-indigo-500' : 'bg-white/10'}`;
+      avatar.textContent = role === 'ai' ? 'V' : (session.name || 'S').charAt(0).toUpperCase();
+
+      const bubble = document.createElement('div');
+      bubble.className = `p-6 glass rounded-2xl border-white/10 text-sm leading-relaxed font-medium ${role === 'user' ? 'bg-indigo-500/10 border-indigo-500/30' : ''}`;
+      
       if (typeof marked !== 'undefined') {
         bubble.innerHTML = marked.parse(text);
       } else {
         bubble.innerText = text;
       }
       
-      chatMessages.appendChild(bubble);
+      wrapper.appendChild(avatar);
+      wrapper.appendChild(bubble);
+      chatMessages.appendChild(wrapper);
       
       if (typeof renderMathInElement !== 'undefined') {
         renderMathInElement(bubble, {
@@ -488,14 +351,10 @@
           throwOnError: false
         });
       }
-
       chatMessages.scrollTop = chatMessages.scrollHeight;
-
-      // TTS Integration (strip markdown/math tags for voice if possible, or just read)
+      
       if (role === 'ai' && document.getElementById('ttsToggle').checked) {
-        // Strip HTML for TTS
-        const rawText = bubble.innerText;
-        speakText(rawText);
+          if(typeof speakText === 'function') speakText(bubble.innerText);
       }
     }
   </script>

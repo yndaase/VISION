@@ -1,1175 +1,284 @@
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Examination Hall | Vision Education · WASSCE 2026</title>
-    <meta
-      name="description"
-      content="Full-length WASSCE Mock Examination Hall with proctored timer and live navigation."
-    />
-    <script>
-      (function () {
-        const session =
-          sessionStorage.getItem("waec_session") ||
-          localStorage.getItem("waec_session");
-        if (!session) {
-          window.location.replace("/login");
-        }
-      })();
-    </script>
-    <link
-      href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap"
-      rel="stylesheet"
-    />
-    <script src="theme.js"></script>
-    <!-- KaTeX for Math -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
-    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
-    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
-    <!-- Marked for Markdown -->
-    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-    <style>
-      /*  CSS Variables  */
-      :root {
-        --bg: #050608;
-        --bg-card: #0d1117;
-        --bg-sidebar: #090c10;
-        --primary: #6366f1;
-        --primary-dim: rgba(99, 102, 241, 0.12);
-        --gold: #fbbf24;
-        --text-primary: #f1f5f9;
-        --text-secondary: #94a3b8;
-        --text-muted: #64748b;
-        --border: rgba(255, 255, 255, 0.07);
-        --border-accent: rgba(99, 102, 241, 0.35);
-        --success: #22c55e;
-        --error: #f87171;
-        --warning: #f59e0b;
-        --radius-sm: 8px;
-        --radius-md: 14px;
-        --radius-lg: 20px;
-        --font-mono: "JetBrains Mono", monospace;
-        --shadow-md: 0 4px 20px rgba(0, 0, 0, 0.3);
-      }
-      * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-      }
-      html,
-      body {
-        height: 100%;
-        background: var(--bg);
-        color: var(--text-primary);
-        font-family: "Outfit", sans-serif;
-      }
-
-      /*  LAYOUT: 3-column grid  */
-      .hall-layout {
-        display: grid;
-        grid-template-columns: 260px 1fr 280px;
-        grid-template-rows: 64px 1fr;
-        height: 100vh;
-        overflow: hidden;
-      }
-
-      /*  TOP BAR  */
-      .hall-topbar {
-        grid-column: 1 / -1;
-        background: var(--bg-sidebar);
-        border-bottom: 1px solid var(--border);
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding: 0 2rem;
-        gap: 1rem;
-        z-index: 10;
-      }
-      .topbar-brand {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        font-weight: 800;
-        font-size: 1.1rem;
-      }
-      .topbar-brand span.brand-accent {
-        color: var(--primary);
-      }
-      .timer-block {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        background: var(--bg-input);
-        border: 1px solid var(--border);
-        border-radius: var(--radius-sm);
-        padding: 8px 18px;
-      }
-      .timer-label {
-        font-size: 0.7rem;
-        text-transform: uppercase;
-        letter-spacing: 0.1em;
-        color: var(--text-muted);
-      }
-      #timerClock {
-        font-family: var(--font-mono);
-        font-size: 1.5rem;
-        font-weight: 700;
-        color: var(--success);
-        transition: color 0.3s;
-      }
-      #timerClock.warning {
-        color: var(--warning);
-      }
-      #timerClock.critical {
-        color: var(--error);
-        animation: pulse 1s infinite;
-      }
-      @keyframes pulse {
-        0%,
-        100% {
-          opacity: 1;
-        }
-        50% {
-          opacity: 0.5;
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <script>
+    document.documentElement.setAttribute("data-theme", "dark");
+  </script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Examination Hall | Vision Education 2026</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Outfit', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          },
+          colors: {
+            navy: {
+              DEFAULT: '#05080f',
+              light: '#0a101f',
+              accent: '#1e293b'
+            },
+            emerald: {
+              DEFAULT: '#10b981',
+              light: '#34d399',
+              dark: '#059669'
+            },
+            indigo: {
+              DEFAULT: '#6366f1',
+              light: '#818cf8',
+              dark: '#4f46e5'
+            }
+          },
         }
       }
+    }
+  </script>
+  
+  <!-- KaTeX & Marked -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 
-      .topbar-meta {
-        font-size: 0.85rem;
-        color: var(--text-secondary);
-        text-align: right;
-      }
-      .topbar-meta strong {
-        color: var(--text-primary);
-      }
+  <style>
+    .glass { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.1); }
+    .glass-card { background: rgba(255, 255, 255, 0.02); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.08); transition: all 0.3s ease; }
+    
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); border-radius: 10px; }
 
-      /*  LEFT: Info Panel  */
-      .hall-info {
-        background: var(--bg-sidebar);
-        border-right: 1px solid var(--border);
-        padding: 1.5rem;
-        display: flex;
-        flex-direction: column;
-        gap: 1.5rem;
-        overflow-y: auto;
-      }
-      .exam-title-block h2 {
-        font-size: 1.1rem;
-        font-weight: 800;
-        margin-bottom: 6px;
-      }
-      .exam-title-block p {
-        font-size: 0.8rem;
-        color: var(--text-muted);
-        line-height: 1.5;
-      }
-      .stat-row {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        font-size: 0.82rem;
-        padding: 8px 0;
-        border-bottom: 1px solid var(--border);
-      }
-      .stat-row:last-child {
-        border-bottom: none;
-      }
-      .stat-val {
-        font-weight: 700;
-        color: var(--primary);
-        font-family: var(--font-mono);
-      }
+    #timerClock.warning { color: #f59e0b; }
+    #timerClock.critical { color: #ef4444; animation: blink 1s infinite; }
+    @keyframes blink { 50% { opacity: 0.5; } }
 
-      .legend {
-        display: flex;
-        flex-direction: column;
-        gap: 8px;
-      }
-      .legend-item {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        font-size: 0.78rem;
-        color: var(--text-secondary);
-      }
-      .legend-dot {
-        width: 14px;
-        height: 14px;
-        border-radius: 4px;
-        flex-shrink: 0;
-        border: 1px solid rgba(255, 255, 255, 0.1);
-      }
-      .legend-dot.answered {
-        background: var(--primary);
-        border-color: var(--primary);
-      }
-      .legend-dot.flagged {
-        background: var(--warning);
-        border-color: var(--warning);
-      }
-      .legend-dot.active {
-        background: rgba(99, 102, 241, 0.3);
-        border-color: var(--primary);
-      }
-      .legend-dot.unvisited {
-        background: var(--bg-input);
-      }
+    .palette-num { transition: all 0.2s; cursor: pointer; }
+    .palette-num.pn-active { background: rgba(99, 102, 241, 0.2); border-color: #6366f1; color: #6366f1; }
+    .palette-num.pn-answered { background: #6366f1; color: white; border-color: #6366f1; }
+    .palette-num.pn-flagged { background: #f59e0b; color: white; border-color: #f59e0b; }
+    .palette-num.pn-answered.pn-flagged { background: linear-gradient(135deg, #6366f1, #f59e0b); }
 
-      .info-actions {
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-        margin-top: auto;
-      }
-      .submit-hall-btn {
-        background: linear-gradient(135deg, var(--primary), #8b5cf6);
-        color: #fff;
-        border: none;
-        padding: 14px 20px;
-        border-radius: var(--radius-sm);
-        font-weight: 800;
-        font-size: 0.9rem;
-        cursor: pointer;
-        transition:
-          opacity 0.2s,
-          transform 0.2s;
-      }
-      .submit-hall-btn:hover {
-        opacity: 0.9;
-        transform: translateY(-1px);
-      }
-      .back-link {
-        text-align: center;
-        font-size: 0.78rem;
-        color: var(--text-muted);
-        text-decoration: none;
-      }
-      .back-link:hover {
-        color: var(--text-secondary);
-      }
+    .option-row.selected { background: rgba(99, 102, 241, 0.1); border-color: #6366f1; }
+    .option-row.selected .option-letter-box { background: #6366f1; color: white; border-color: #6366f1; }
 
-      /*  CENTER: Question Area  */
-      .hall-question {
-        overflow-y: auto;
-        padding: 2rem 2.5rem;
-        display: flex;
-        flex-direction: column;
-        gap: 1.5rem;
-      }
-      .q-navigation {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        flex-wrap: wrap;
-        gap: 1rem;
-      }
-      .q-nav-info {
-        font-size: 0.85rem;
-        color: var(--text-muted);
-      }
-      .q-nav-info strong {
-        color: var(--text-primary);
-        font-size: 1.1rem;
-      }
-      .nav-btns {
-        display: flex;
-        gap: 10px;
-      }
-      .nav-btn {
-        background: var(--bg-input);
-        border: 1px solid var(--border);
-        color: var(--text-secondary);
-        padding: 8px 18px;
-        border-radius: var(--radius-sm);
-        cursor: pointer;
-        font-family: "Outfit", sans-serif;
-        font-weight: 600;
-        transition: all 0.2s;
-      }
-      .nav-btn:hover {
-        background: var(--primary-dim);
-        border-color: var(--border-accent);
-        color: var(--text-primary);
-      }
-      .flag-btn {
-        background: rgba(245, 158, 11, 0.1);
-        border: 1px solid rgba(245, 158, 11, 0.3);
-        color: var(--warning);
-      }
-      .flag-btn.active {
-        background: rgba(245, 158, 11, 0.25);
-        border-color: var(--warning);
-      }
+    .ai-drawer { transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1); transform: translateX(100%); }
+    .ai-drawer.open { transform: translateX(0); }
 
-      /* Question Card */
-      .q-display-card {
-        background: var(--bg-card);
-        border: 1px solid var(--border);
-        border-radius: var(--radius-lg);
-        padding: 2.5rem;
-        animation: fadeUp 0.3s ease;
-      }
-      @keyframes fadeUp {
-        from {
-          opacity: 0;
-          transform: translateY(12px);
-        }
-        to {
-          opacity: 1;
-          transform: translateY(0);
-        }
-      }
-      .q-header-row {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 1.5rem;
-        flex-wrap: wrap;
-        gap: 10px;
-      }
-      .q-num-badge {
-        background: var(--primary-dim);
-        color: var(--primary);
-        padding: 6px 14px;
-        border-radius: 6px;
-        font-size: 0.75rem;
-        font-weight: 800;
-        font-family: var(--font-mono);
-        text-transform: uppercase;
-      }
-      .q-tags {
-        display: flex;
-        gap: 8px;
-        flex-wrap: wrap;
-      }
-      .q-tag {
-        font-size: 0.72rem;
-        padding: 4px 10px;
-        border-radius: 4px;
-        background: var(--bg-input);
-        border: 1px solid var(--border);
-        color: var(--text-muted);
-      }
-      .q-tag.diff-easy {
-        color: #4ade80;
-        border-color: rgba(74, 222, 128, 0.3);
-        background: rgba(74, 222, 128, 0.08);
-      }
-      .q-tag.diff-medium {
-        color: var(--warning);
-        border-color: rgba(245, 158, 11, 0.3);
-        background: rgba(245, 158, 11, 0.08);
-      }
-      .q-tag.diff-hard {
-        color: var(--error);
-        border-color: rgba(248, 113, 113, 0.3);
-        background: rgba(248, 113, 113, 0.08);
-      }
-      .q-text {
-        font-size: 1.15rem;
-        font-weight: 500;
-        line-height: 1.8;
-        color: var(--text-primary);
-        margin-bottom: 2rem;
-      }
-      .options-stack {
-        display: flex;
-        flex-direction: column;
-        gap: 12px;
-      }
-      .option-row {
-        display: flex;
-        align-items: center;
-        gap: 14px;
-        padding: 14px 18px;
-        border: 1.5px solid var(--border);
-        border-radius: var(--radius-sm);
-        cursor: pointer;
-        transition: all 0.2s;
-        background: var(--bg-card-hover);
-      }
-      .option-row:hover:not(.locked) {
-        border-color: var(--primary);
-        background: var(--primary-dim);
-      }
-      .option-row.selected {
-        border-color: var(--primary);
-        background: var(--primary-dim);
-      }
-      .option-row.locked {
-        cursor: default;
-      }
-      .option-letter-box {
-        width: 34px;
-        height: 34px;
-        border-radius: 6px;
-        background: var(--bg-input);
-        border: 1px solid var(--border);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-weight: 800;
-        font-family: var(--font-mono);
-        font-size: 0.85rem;
-        flex-shrink: 0;
-        transition: all 0.2s;
-        color: var(--text-secondary);
-      }
-      .option-row.selected .option-letter-box {
-        background: var(--primary);
-        border-color: var(--primary);
-        color: #fff;
-      }
-      .option-text {
-        font-size: 0.95rem;
-        color: var(--text-secondary);
-        flex: 1;
-      }
-      .option-row.selected .option-text {
-        color: var(--text-primary);
-      }
+    /* For original JS hooks support */
+    #resultsModal { display: none; }
+  </style>
+</head>
+<body class="bg-navy text-white font-sans min-h-screen flex flex-col selection:bg-indigo-500/30 overflow-hidden">
 
-      /*  RIGHT: Palette  */
-      .hall-palette {
-        background: var(--bg-sidebar);
-        border-left: 1px solid var(--border);
-        padding: 1.5rem;
-        overflow-y: auto;
-      }
-      .palette-title {
-        font-size: 0.75rem;
-        text-transform: uppercase;
-        letter-spacing: 0.1em;
-        color: var(--text-muted);
-        font-weight: 700;
-        margin-bottom: 1rem;
-      }
-      .palette-grid {
-        display: grid;
-        grid-template-columns: repeat(5, 1fr);
-        gap: 6px;
-      }
-      .palette-num {
-        aspect-ratio: 1;
-        border-radius: 6px;
-        border: 1px solid var(--border);
-        background: var(--bg-input);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 0.72rem;
-        font-weight: 700;
-        font-family: var(--font-mono);
-        cursor: pointer;
-        transition: all 0.15s;
-        color: var(--text-muted);
-      }
-      .palette-num:hover {
-        border-color: var(--primary);
-        color: var(--text-primary);
-      }
-      .palette-num.pn-active {
-        background: var(--primary-dim);
-        border-color: var(--primary);
-        color: var(--primary);
-      }
-      .palette-num.pn-answered {
-        background: var(--primary);
-        border-color: var(--primary);
-        color: #fff;
-      }
-      .palette-num.pn-flagged {
-        background: rgba(245, 158, 11, 0.2);
-        border-color: var(--warning);
-        color: var(--warning);
-      }
-      .palette-num.pn-answered.pn-flagged {
-        background: linear-gradient(135deg, var(--primary), var(--warning));
-        border-color: var(--warning);
-        color: #fff;
-      }
-
-      /*  RESULTS OVERLAY  */
-      #resultsModal {
-        display: none;
-        position: fixed;
-        inset: 0;
-        background: rgba(5, 6, 8, 0.95);
-        z-index: 100;
-        overflow-y: auto;
-        padding: 3rem 2rem;
-      }
-      .results-inner {
-        max-width: 680px;
-        margin: 0 auto;
-      }
-      .results-grade-box {
-        background: var(--bg-card);
-        border: 1px solid var(--border-accent);
-        border-radius: var(--radius-lg);
-        padding: 3rem;
-        text-align: center;
-        margin-bottom: 1.5rem;
-      }
-      .grade-badge {
-        font-size: 5rem;
-        font-weight: 900;
-        font-family: var(--font-mono);
-        background: linear-gradient(135deg, var(--primary), #8b5cf6);
-        -webkit-background-clip: text;
-        background-clip: text;
-        -webkit-text-fill-color: transparent;
-        line-height: 1;
-        margin-bottom: 1rem;
-      }
-      .grade-desc {
-        font-size: 1.4rem;
-        font-weight: 700;
-        color: var(--text-primary);
-        margin-bottom: 0.5rem;
-      }
-      .grade-pct {
-        font-size: 2rem;
-        font-weight: 800;
-        color: var(--gold);
-        margin-bottom: 0.5rem;
-      }
-      .grade-breakdown {
-        font-size: 0.9rem;
-        color: var(--text-muted);
-      }
-      .results-stats-grid {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 1rem;
-        margin-bottom: 1.5rem;
-      }
-      .r-stat-card {
-        background: var(--bg-card);
-        border: 1px solid var(--border);
-        border-radius: var(--radius-md);
-        padding: 1.5rem;
-        text-align: center;
-      }
-      .r-stat-card .r-val {
-        font-size: 2rem;
-        font-weight: 800;
-        color: var(--primary);
-        font-family: var(--font-mono);
-      }
-      .r-stat-card .r-lbl {
-        font-size: 0.8rem;
-        color: var(--text-muted);
-        margin-top: 4px;
-      }
-      .results-actions {
-        display: flex;
-        gap: 1rem;
-        flex-wrap: wrap;
-      }
-      .results-actions a,
-      .results-actions button {
-        flex: 1;
-        padding: 14px 24px;
-        border-radius: var(--radius-sm);
-        font-weight: 700;
-        cursor: pointer;
-        text-decoration: none;
-        text-align: center;
-        font-family: "Outfit", sans-serif;
-        font-size: 0.9rem;
-        border: none;
-        transition: opacity 0.2s;
-      }
-      .btn-primary {
-        background: linear-gradient(135deg, var(--primary), #8b5cf6);
-        color: #fff;
-      }
-      .btn-secondary {
-        background: var(--bg-input);
-        border: 1px solid var(--border);
-        color: var(--text-primary);
-      }
-      .results-actions a:hover,
-      .results-actions button:hover {
-        opacity: 0.85;
-      }
-
-      /* Mobile: stack into 1 column + bottom nav */
-      @media (max-width: 900px) {
-        .hall-layout {
-          grid-template-columns: 1fr;
-          grid-template-rows: 64px 1fr 56px;
-          height: 100dvh;
-        }
-        .hall-info {
-          display: none;
-        }
-        .hall-palette {
-          display: none;
-        }
-        .mobile-footer {
-          display: flex !important;
-          background: var(--bg-sidebar);
-          border-top: 1px solid var(--border);
-          align-items: center;
-          justify-content: space-around;
-          padding: 0 1rem;
-        }
-        .hall-question {
-          padding: 1rem;
-        }
-      }
-      .mobile-footer {
-        display: none;
-      }
-      .mf-btn {
-        background: none;
-        border: none;
-        color: var(--text-secondary);
-        font-size: 0.72rem;
-        cursor: pointer;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 3px;
-        padding: 8px 12px;
-        font-family: "Outfit", sans-serif;
-      }
-      .mf-btn span.mf-icon {
-        font-size: 1.3rem;
-      }
-      .mf-btn.mf-submit {
-        color: var(--primary);
-        font-weight: 700;
-      }
-
-      /* --- Ask AI Floating Button --- */
-      .ask-ai-fab {
-        position: fixed;
-        bottom: 30px;
-        right: 30px;
-        background: var(--primary);
-        color: white;
-        border: none;
-        padding: 12px 24px;
-        border-radius: 50px;
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        font-weight: 600;
-        box-shadow: 0 4px 20px rgba(99, 102, 241, 0.4);
-        cursor: pointer;
-        z-index: 1000;
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        animation: pulseGlow 2.5s infinite;
-        font-family: inherit;
-      }
-      .ask-ai-fab:hover {
-        transform: translateY(-5px) scale(1.05);
-        box-shadow: 0 8px 30px rgba(99, 102, 241, 0.6);
-      }
-      @keyframes pulseGlow {
-        0% { box-shadow: 0 0 0 0 rgba(99, 102, 241, 0.7); }
-        70% { box-shadow: 0 0 0 15px rgba(99, 102, 241, 0); }
-        100% { box-shadow: 0 0 0 0 rgba(99, 102, 241, 0); }
-      }
-
-      /* --- AI Tutor Drawer --- */
-      .ai-drawer {
-        position: fixed;
-        top: 0;
-        right: -420px;
-        width: 400px;
-        height: 100vh;
-        background: var(--bg-sidebar);
-        border-left: 1px solid var(--border);
-        box-shadow: -10px 0 40px rgba(0, 0, 0, 0.4);
-        z-index: 2005;
-        transition: right 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-        display: flex;
-        flex-direction: column;
-      }
-      .ai-drawer.open {
-        right: 0;
-      }
-      .drawer-header {
-        padding: 1.5rem;
-        background: var(--primary-dim);
-        border-bottom: 1px solid var(--border);
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-      }
-      .drawer-header h3 {
-        margin: 0;
-        font-size: 1.1rem;
-        font-weight: 700;
-        color: var(--primary);
-      }
-      #closeDrawer {
-        background: none;
-        border: none;
-        color: var(--text-muted);
-        font-size: 1.8rem;
-        cursor: pointer;
-        line-height: 1;
-      }
-      #closeDrawer:hover { color: var(--text-primary); }
-
-      .drawer-content {
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        overflow: hidden;
-      }
-      .chat-history {
-        flex: 1;
-        padding: 1.5rem;
-        overflow-y: auto;
-        display: flex;
-        flex-direction: column;
-        gap: 1.5rem;
-      }
-      .ai-msg, .user-msg {
-        padding: 1rem 1.25rem;
-        border-radius: 14px;
-        max-width: 90%;
-        font-size: 0.9rem;
-        line-height: 1.6;
-      }
-      .ai-msg {
-        background: var(--primary-dim);
-        color: var(--text-primary);
-        align-self: flex-start;
-        border-bottom-left-radius: 2px;
-        border: 1px solid var(--border-accent);
-      }
-      .user-msg {
-        background: var(--bg-card);
-        color: var(--text-primary);
-        align-self: flex-end;
-        border-bottom-right-radius: 2px;
-        border: 1px solid var(--border);
-      }
-      .drawer-footer {
-        padding: 1.5rem;
-        border-top: 1px solid var(--border);
-        background: var(--bg-sidebar);
-      }
-      .ai-quick-actions {
-        display: flex;
-        gap: 10px;
-        margin-bottom: 1rem;
-      }
-      .quick-btn {
-        flex: 1;
-        padding: 8px;
-        border: 1px solid var(--border-accent);
-        background: var(--primary-dim);
-        color: var(--primary);
-        border-radius: 8px;
-        font-size: 0.75rem;
-        font-weight: 600;
-        cursor: pointer;
-        transition: 0.2s;
-      }
-      .quick-btn:hover { background: var(--primary); color: white; }
-
-      .chat-input-wrapper {
-        display: flex;
-        gap: 10px;
-      }
-      #aiInput {
-        flex: 1;
-        background: var(--bg-input);
-        border: 1px solid var(--border);
-        color: var(--text-primary);
-        padding: 12px 16px;
-        border-radius: 10px;
-        outline: none;
-        font-family: inherit;
-        font-size: 0.9rem;
-      }
-      #aiInput:focus { border-color: var(--primary); }
-      #sendToAI {
-        background: var(--primary);
-        color: white;
-        border: none;
-        padding: 0 20px;
-        border-radius: 10px;
-        font-weight: 700;
-        cursor: pointer;
-      }
-      /* --- Essay / Theory Question Styles --- */
-      .essay-container {
-        display: flex;
-        flex-direction: column;
-        gap: 1rem;
-      }
-      .essay-input {
-        width: 100%;
-        min-height: 180px;
-        background: var(--bg-input);
-        border: 1.5px solid var(--border);
-        border-radius: var(--radius-md);
-        color: var(--text-primary);
-        font-family: "Outfit", sans-serif;
-        font-size: 0.95rem;
-        line-height: 1.7;
-        padding: 1.25rem;
-        resize: vertical;
-        outline: none;
-        transition: border-color 0.2s;
-      }
-      .essay-input:focus {
-        border-color: var(--primary);
-        box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
-      }
-      .essay-input::placeholder {
-        color: var(--text-muted);
-        font-style: italic;
-      }
-      .essay-actions {
-        display: flex;
-        flex-direction: column;
-        gap: 1rem;
-      }
-      .ai-mark-btn {
-        display: inline-flex;
-        align-items: center;
-        gap: 10px;
-        background: linear-gradient(135deg, var(--primary), #8b5cf6);
-        color: white;
-        border: none;
-        padding: 12px 24px;
-        border-radius: var(--radius-sm);
-        font-family: "Outfit", sans-serif;
-        font-weight: 700;
-        font-size: 0.9rem;
-        cursor: pointer;
-        transition: all 0.2s;
-        align-self: flex-start;
-        box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
-      }
-      .ai-mark-btn:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 6px 20px rgba(99, 102, 241, 0.5);
-      }
-      .ai-mark-btn:active {
-        transform: translateY(0);
-      }
-      .sparkle-icon {
-        font-size: 1rem;
-        filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.8));
-      }
-      .theory-tag {
-        background: rgba(139, 92, 246, 0.12);
-        color: #a78bfa;
-        border: 1px solid rgba(139, 92, 246, 0.3) !important;
-      }
-      /* --- AI Marking Styles --- */
-      .ai-feedback-box {
-        margin-top: 1.5rem;
-        background: rgba(99, 102, 241, 0.05);
-        border: 1px solid var(--border-accent);
-        border-radius: var(--radius-md);
-        padding: 1.5rem;
-        animation: slideUp 0.4s ease-out;
-      }
-      .ai-score-row {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 1rem;
-      }
-      .ai-score-badge {
-        background: var(--primary);
-        color: white;
-        padding: 6px 14px;
-        border-radius: 100px;
-        font-weight: 800;
-        font-size: 0.85rem;
-        font-family: var(--font-mono);
-      }
-      .ai-verdict {
-        font-weight: 700;
-        font-size: 0.9rem;
-        color: var(--primary);
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
-      }
-      .ai-feedback-text {
-        font-size: 0.95rem;
-        line-height: 1.6;
-        color: var(--text-secondary);
-        margin-bottom: 1rem;
-      }
-      .ai-model-ans {
-        background: rgba(255, 255, 255, 0.03);
-        border-radius: 8px;
-        padding: 1rem;
-        font-size: 0.85rem;
-        color: var(--text-muted);
-        border-left: 3px solid var(--primary);
-      }
-      .ai-loader {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        color: var(--primary);
-        font-weight: 600;
-        font-size: 0.9rem;
-      }
-      .ai-loader::before {
-        content: "";
-        width: 18px;
-        height: 18px;
-        border: 2px solid var(--primary);
-        border-top-color: transparent;
-        border-radius: 50%;
-        animation: spin 0.8s linear infinite;
-      }
-      @keyframes spin { to { transform: rotate(360deg); } }
-      @keyframes slideUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-    </style>
-
-
-  </head>
-  <body>
-    <div class="hall-layout">
-      <!--  TOP BAR  -->
-      <header class="hall-topbar">
-        <div class="topbar-brand">
-          <span></span>
-          <span>Vision <span class="brand-accent">Examination Hall</span></span>
+  <!-- TOP BAR -->
+  <header class="h-24 bg-navy-light/80 backdrop-blur-3xl border-b border-white/5 flex items-center justify-between px-10 shrink-0 z-50">
+     <div class="flex items-center gap-6">
+        <div class="flex items-center gap-3">
+           <div class="w-10 h-10 bg-indigo-600 rounded-xl flex items-center justify-center text-navy font-black text-xl shadow-[0_0_20px_rgba(99,102,241,0.3)]">V</div>
+           <h2 class="text-xl font-black tracking-tighter uppercase italic text-indigo-400">Security <span class="text-white">Tier One</span></h2>
         </div>
-        <div class="timer-block">
-          <div>
-            <div class="timer-label">Time Remaining</div>
-            <div id="timerClock">02:30:00</div>
-          </div>
+        <span class="w-px h-6 bg-white/10"></span>
+        <div class="space-y-0.5">
+           <p id="topbarMockTitle" class="text-[10px] font-black uppercase tracking-widest text-indigo-400">CORE MATHEMATICS MOCK A</p>
+           <p id="topbarProgress" class="text-[9px] font-bold uppercase tracking-widest text-gray-500">0 OF 50 ANSWERED</p>
         </div>
-        <div style="display: flex; align-items: center; gap: 12px">
-          <button
-            onclick="toggleTheme()"
-            title="Toggle Theme"
-            style="
-              background: none;
-              border: 1px solid rgba(255, 255, 255, 0.1);
-              border-radius: 50%;
-              width: 36px;
-              height: 36px;
-              cursor: pointer;
-              font-size: 1rem;
-              display: flex;
-              align-items: center;
-              justify-content: center;
-            "
-            class="theme-toggle-btn"
-          ></button>
-          <div class="topbar-meta" id="topbarMeta">
-            <strong id="topbarMockTitle">Core Mathematics Mock A</strong><br />
-            <span id="topbarProgress">0 of 50 answered</span>
-          </div>
-        </div>
-      </header>
+     </div>
 
-      <!--  LEFT INFO PANEL  -->
-      <aside class="hall-info">
-        <div class="exam-title-block">
-          <h2 id="infoMockTitle">Core Mathematics Mock A</h2>
-          <p id="infoMockDesc">Full-length 50-question WASSCE simulation.</p>
-        </div>
-        <div>
-          <p
-            style="
-              font-size: 0.72rem;
-              text-transform: uppercase;
-              letter-spacing: 0.1em;
-              color: var(--text-muted);
-              font-weight: 700;
-              margin-bottom: 0.75rem;
-            "
-          >
-            Exam Stats
-          </p>
-          <div class="stat-row">
-            <span>Total Questions</span
-            ><span class="stat-val" id="statTotal">50</span>
-          </div>
-          <div class="stat-row">
-            <span>Answered</span
-            ><span class="stat-val" id="statAnswered">0</span>
-          </div>
-          <div class="stat-row">
-            <span>Flagged</span><span class="stat-val" id="statFlagged">0</span>
-          </div>
-          <div class="stat-row">
-            <span>Unanswered</span
-            ><span class="stat-val" id="statUnanswered">50</span>
-          </div>
-        </div>
-        <div>
-          <p
-            style="
-              font-size: 0.72rem;
-              text-transform: uppercase;
-              letter-spacing: 0.1em;
-              color: var(--text-muted);
-              font-weight: 700;
-              margin-bottom: 0.75rem;
-            "
-          >
-            Legend
-          </p>
-          <div class="legend">
-            <div class="legend-item">
-              <div class="legend-dot answered"></div>
-              <span>Answered</span>
-            </div>
-            <div class="legend-item">
-              <div class="legend-dot flagged"></div>
-              <span>Flagged for Review</span>
-            </div>
-            <div class="legend-item">
-              <div class="legend-dot active"></div>
-              <span>Current Question</span>
-            </div>
-            <div class="legend-item">
-              <div class="legend-dot unvisited"></div>
-              <span>Not Visited</span>
-            </div>
-          </div>
-        </div>
-        <div class="info-actions">
-          <button class="submit-hall-btn" onclick="confirmSubmit()">
-            Submit Exam Paper
-          </button>
-          <a class="back-link" href="/mocks">← Exit to Mock Portal</a>
-        </div>
-      </aside>
+     <!-- CENTRAL TIMER -->
+     <div class="absolute left-1/2 -translate-x-1/2 flex items-center gap-4 px-8 py-3 bg-white/2 border border-white/5 rounded-3xl">
+        <span class="text-[10px] font-black text-gray-600 uppercase tracking-widest">Remaining</span>
+        <span id="timerClock" class="text-3xl font-black font-mono text-emerald-400 tracking-tighter leading-none">02:30:00</span>
+     </div>
 
-      <!--  CENTER: QUESTION  -->
-      <main class="hall-question" id="questionArea">
-        <div class="q-navigation">
-          <div class="q-nav-info">
-            Question <strong id="currentQNum">1</strong> of
-            <span id="totalQNum">50</span>
-          </div>
-          <div class="nav-btns">
-            <button
-              class="nav-btn flag-btn"
-              id="flagBtn"
-              onclick="toggleFlag()"
-            >
-              Flag for Review
-            </button>
-            <button class="nav-btn" onclick="navigateQ(-1)">← Prev</button>
-            <button class="nav-btn" onclick="navigateQ(1)">Next →</button>
-          </div>
+     <div class="flex items-center gap-6">
+        <button onclick="confirmSubmit()" class="px-8 py-3 bg-indigo-500 text-navy font-black text-[10px] uppercase tracking-widest rounded-xl shadow-xl shadow-indigo-500/20 hover:scale-105 transition-transform">Finalize Exam</button>
+     </div>
+  </header>
+
+  <!-- MAIN WORKSPACE -->
+  <div class="flex-1 flex overflow-hidden">
+     
+     <!-- LEFT: TELEMETRY -->
+     <aside class="w-72 border-r border-white/5 p-8 flex flex-col gap-10 overflow-y-auto">
+        <div class="space-y-4">
+           <h3 id="infoMockTitle" class="text-lg font-black leading-tight">Simulation Engine</h3>
+           <p id="infoMockDesc" class="text-xs text-gray-500 font-medium leading-relaxed">Full-length proctored 2026 Fleet validation.</p>
         </div>
 
-        <div class="q-display-card" id="qDisplayCard">
-          <!-- Dynamically rendered -->
+        <div class="space-y-4">
+           <p class="text-[9px] font-black text-gray-700 uppercase tracking-widest">Real-time Telemetry</p>
+           <div class="space-y-3">
+              <div class="flex justify-between items-center text-[10px] font-bold">
+                 <span class="text-gray-500 uppercase tracking-widest">Total Packets</span>
+                 <span id="statTotal" class="text-white font-mono">50</span>
+              </div>
+              <div class="flex justify-between items-center text-[10px] font-bold">
+                 <span class="text-gray-500 uppercase tracking-widest">Answered</span>
+                 <span id="statAnswered" class="text-emerald-400 font-mono">0</span>
+              </div>
+              <div class="flex justify-between items-center text-[10px] font-bold">
+                 <span class="text-gray-500 uppercase tracking-widest">Flagged</span>
+                 <span id="statFlagged" class="text-indigo-400 font-mono">0</span>
+              </div>
+              <div class="flex justify-between items-center text-[10px] font-bold">
+                 <span class="text-gray-500 uppercase tracking-widest">Unparsed</span>
+                 <span id="statUnanswered" class="text-gray-700 font-mono">50</span>
+              </div>
+           </div>
         </div>
-      </main>
 
-      <!--  RIGHT: PALETTE  -->
-      <aside class="hall-palette">
-        <p class="palette-title">Question Palette</p>
-        <div class="palette-grid" id="paletteGrid">
-          <!-- Dynamically rendered -->
+        <div class="space-y-4">
+           <p class="text-[9px] font-black text-gray-700 uppercase tracking-widest">Logic Map</p>
+           <div class="space-y-3">
+              <div class="flex items-center gap-3 text-[10px] font-bold text-gray-600">
+                 <div class="w-3 h-3 rounded bg-indigo-500"></div> Transmitted
+              </div>
+              <div class="flex items-center gap-3 text-[10px] font-bold text-gray-600">
+                 <div class="w-3 h-3 rounded bg-indigo-500/20 border border-indigo-500/50"></div> Parsing
+              </div>
+              <div class="flex items-center gap-3 text-[10px] font-bold text-gray-600">
+                 <div class="w-3 h-3 rounded bg-f59e0b"></div> Marked
+              </div>
+           </div>
         </div>
-      </aside>
 
-      <!--  MOBILE FOOTER  -->
-      <nav class="mobile-footer">
-        <button class="mf-btn" onclick="navigateQ(-1)">
-          <span class="mf-icon"></span><span>Prev</span>
-        </button>
-        <button class="mf-btn" onclick="toggleFlag()">
-          <span class="mf-icon"></span><span>Flag</span>
-        </button>
-        <button class="mf-btn" onclick="navigateQ(1)">
-          <span class="mf-icon"></span><span>Next</span>
-        </button>
-        <button class="mf-btn mf-submit" onclick="confirmSubmit()">
-          <span class="mf-icon"></span><span>Submit</span>
-        </button>
-      </nav>
-    </div>
-
-    <!--  RESULTS MODAL  -->
-    <div id="resultsModal">
-      <div class="results-inner">
-        <div class="results-grade-box">
-          <div class="grade-badge" id="gradeBadge">A1</div>
-          <div class="grade-desc" id="gradeDesc">Excellent</div>
-          <div class="grade-pct" id="gradePct">82%</div>
-          <div class="grade-breakdown" id="gradeBreakdown">41 / 50 Correct</div>
+        <div class="mt-auto">
+           <a href="/mocks" class="text-[10px] font-black text-gray-600 uppercase tracking-widest hover:text-indigo-400 transition-colors flex items-center gap-2">
+              <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M15 19l-7-7 7-7"/></svg>
+              Abort Session
+           </a>
         </div>
-        <div class="results-stats-grid">
-          <div class="r-stat-card">
-            <div class="r-val" id="rCorrect">0</div>
-            <div class="r-lbl">Correct Answers</div>
-          </div>
-          <div class="r-stat-card">
-            <div class="r-val" id="rWrong">0</div>
-            <div class="r-lbl">Wrong Answers</div>
-          </div>
-          <div class="r-stat-card">
-            <div class="r-val" id="rSkipped">0</div>
-            <div class="r-lbl">Unanswered</div>
-          </div>
-          <div class="r-stat-card">
-            <div class="r-val" id="rTime"></div>
-            <div class="r-lbl">Time Used</div>
-          </div>
+     </aside>
+
+     <!-- CENTER: MISSION AREA -->
+     <main class="flex-1 overflow-y-auto p-12 relative">
+        <div class="max-w-4xl mx-auto space-y-10">
+           
+           <div class="flex justify-between items-center bg-white/2 border border-white/5 rounded-2xl p-4">
+              <div class="flex gap-2">
+                 <button id="flagBtn" onclick="toggleFlag()" class="px-6 py-2 glass border-indigo-500/20 rounded-xl text-[9px] font-black uppercase tracking-widest text-indigo-400 hover:bg-indigo-500 hover:text-navy transition-all">Flag For Analysis</button>
+              </div>
+              <div class="flex gap-2">
+                 <button onclick="navigateQ(-1)" class="w-10 h-10 glass border-white/10 rounded-xl flex items-center justify-center text-gray-500 hover:text-white transition-all">
+                    <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M15 19l-7-7 7-7"/></svg>
+                 </button>
+                 <div class="flex items-center px-4 font-black text-[10px] text-gray-500 uppercase tracking-widest">Packet <span id="currentQNum" class="text-white px-2">1</span> / <span id="totalQNum" class="text-gray-700 px-2">50</span></div>
+                 <button onclick="navigateQ(1)" class="w-10 h-10 glass border-white/10 rounded-xl flex items-center justify-center text-gray-500 hover:text-white transition-all">
+                    <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg>
+                 </button>
+              </div>
+           </div>
+
+           <div id="qDisplayCard" class="glass-card rounded-[3.5rem] p-12 md:p-16 border-white/5 space-y-12">
+              <!-- Dynamically rendered -->
+              <div class="animate-pulse space-y-8">
+                 <div class="h-6 bg-white/5 rounded w-1/4"></div>
+                 <div class="h-12 bg-white/5 rounded w-full"></div>
+                 <div class="space-y-4">
+                    <div class="h-12 bg-white/5 rounded w-full"></div>
+                    <div class="h-12 bg-white/5 rounded w-full"></div>
+                    <div class="h-12 bg-white/5 rounded w-full"></div>
+                 </div>
+              </div>
+           </div>
+
         </div>
-        <div id="resultArea"></div>
-        <div class="results-actions">
-          <a href="/analytics" class="btn-primary">
-            View Performance Analytics</a
-          >
-          <a href="/mocks" class="btn-secondary"> Return to Mock Portal</a>
+     </main>
+
+     <!-- RIGHT: SECTOR PALETTE -->
+     <aside class="w-80 border-l border-white/5 p-8 overflow-y-auto">
+        <p class="text-[10px] font-black text-gray-700 uppercase tracking-widest mb-8">Session Navigator</p>
+        <div id="paletteGrid" class="grid grid-cols-4 gap-2.5">
+           <!-- Dynamically rendered -->
         </div>
-      </div>
-    </div>
+     </aside>
 
+  </div>
 
-    <!-- Ask AI components -->
-    <button id="askAIButton" class="ask-ai-fab">
-        <span class="ai-icon">🤖</span>
-        Ask AI Tutor
-    </button>
-
-    <div id="aiTutorDrawer" class="ai-drawer">
-        <div class="drawer-header">
-            <h3>AI Study Tutor</h3>
-            <button id="closeDrawer">&times;</button>
+  <!-- RESULTS OVERLAY (Controlled by original JS) -->
+  <div id="resultsModal" class="fixed inset-0 z-[200] bg-navy/95 backdrop-blur-3xl overflow-y-auto p-10">
+     <div class="max-w-2xl mx-auto space-y-12">
+        
+        <div class="glass-card rounded-[4rem] p-16 border-indigo-500/20 text-center space-y-8 shadow-[0_0_100px_rgba(99,102,241,0.2)]">
+           <div id="gradeBadge" class="text-8xl font-black italic tracking-tighter text-indigo-400 drop-shadow-[0_0_30px_rgba(99,102,241,0.5)]">A1</div>
+           <div class="space-y-2">
+              <h2 id="gradeDesc" class="text-4xl font-black tracking-tight">Mission Success</h2>
+              <div id="gradePct" class="text-xl font-bold font-mono text-emerald-400">82%</div>
+              <p id="gradeBreakdown" class="text-[10px] font-black text-gray-500 uppercase tracking-widest">41 / 50 VALIDATED</p>
+           </div>
         </div>
-        <div class="drawer-content">
-            <div id="aiChatHistory" class="chat-history">
-                <div class="ai-msg">Hello! I'm here to help you understand this question. What's on your mind?</div>
-            </div>
-            <div class="drawer-footer">
-                <div class="ai-quick-actions">
-                    <button class="quick-btn" data-action="explain">Explain this</button>
-                    <button class="quick-btn" data-action="hint">Give a hint</button>
-                </div>
-                <div class="chat-input-wrapper">
-                    <input type="text" id="aiInput" placeholder="Type your question...">
-                    <button id="sendToAI">Send</button>
-                </div>
-            </div>
+
+        <div class="grid grid-cols-2 gap-6">
+           <div class="glass-card p-10 rounded-3xl border-white/5 text-center">
+              <p class="text-[9px] font-black text-gray-600 uppercase tracking-widest mb-4">Correct Signal</p>
+              <h3 id="rCorrect" class="text-4xl font-black font-mono text-emerald-400">0</h3>
+           </div>
+           <div class="glass-card p-10 rounded-3xl border-white/5 text-center">
+              <p class="text-[9px] font-black text-gray-600 uppercase tracking-widest mb-4">Misfired Logic</p>
+              <h3 id="rWrong" class="text-4xl font-black font-mono text-red-400">0</h3>
+           </div>
+           <div class="glass-card p-10 rounded-3xl border-white/5 text-center">
+              <p class="text-[9px] font-black text-gray-600 uppercase tracking-widest mb-4">Skipped Packets</p>
+              <h3 id="rSkipped" class="text-4xl font-black font-mono text-gray-600">0</h3>
+           </div>
+           <div class="glass-card p-10 rounded-3xl border-white/5 text-center">
+              <p class="text-[9px] font-black text-gray-600 uppercase tracking-widest mb-4">Total Uptime</p>
+              <h3 id="rTime" class="text-4xl font-black font-mono text-indigo-400">--</h3>
+           </div>
         </div>
-    </div>
 
-    <script src="questions.js"></script>
-    <script src="auth.js"></script>
-    <script src="mock-hall.js"></script>
-  </body>
+        <div class="flex gap-4">
+           <a href="/analytics" class="flex-1 py-5 bg-indigo-500 text-navy font-black text-xs uppercase tracking-widest rounded-2xl text-center shadow-xl shadow-indigo-500/20">Deep Diagnostics</a>
+           <a href="/mocks" class="flex-1 py-5 glass border-white/10 text-white font-black text-xs uppercase tracking-widest rounded-2xl text-center">Session Exit</a>
+        </div>
 
+     </div>
+  </div>
+
+  <!-- ASK AI FAB & DRAWER -->
+  <button id="askAIButton" class="fixed bottom-10 right-10 flex items-center gap-4 px-8 py-4 bg-indigo-500 text-navy font-black text-xs uppercase tracking-widest rounded-2xl shadow-[0_0_40px_rgba(99,102,241,0.4)] hover:scale-105 transition-transform z-[150] animate-pulse">
+     <span>🤖</span> Ask AI Specialist
+  </button>
+
+  <div id="aiTutorDrawer" class="fixed top-0 right-0 h-full w-[450px] bg-navy-light/95 backdrop-blur-3xl border-l border-white/10 z-[300] shadow-2xl ai-drawer flex flex-col">
+     <div class="p-8 border-b border-white/10 flex justify-between items-center bg-indigo-500/10">
+        <h3 class="text-sm font-black text-indigo-400 uppercase tracking-widest">Diagnostic Specialist</h3>
+        <button id="closeDrawer" class="text-gray-500 hover:text-white text-3xl font-light">&times;</button>
+     </div>
+     <div id="aiChatHistory" class="flex-1 overflow-y-auto p-8 space-y-6">
+        <div class="p-6 glass rounded-2xl border-white/10 text-xs font-medium leading-relaxed">
+           Diagnostic link active. Target packet #${examState.currentIndex + 1} analyzed. How should we proceed?
+        </div>
+     </div>
+     <div class="p-8 border-t border-white/10 bg-white/2 space-y-6">
+        <div class="flex gap-2">
+           <button class="quick-btn flex-1 py-2 glass border-indigo-500/30 rounded-lg text-[9px] font-black text-indigo-400 uppercase tracking-widest" data-action="explain">Explain Logic</button>
+           <button class="quick-btn flex-1 py-2 glass border-indigo-500/30 rounded-lg text-[9px] font-black text-indigo-400 uppercase tracking-widest" data-action="hint">Targeted Hint</button>
+        </div>
+        <div class="flex gap-3">
+           <input type="text" id="aiInput" class="flex-1 bg-navy border border-white/10 rounded-xl px-4 py-3 text-xs outline-none focus:border-indigo-500" placeholder="Type diagnostic inquiry...">
+           <button id="sendToAI" class="px-6 py-3 bg-indigo-500 text-navy font-black text-[10px] uppercase tracking-widest rounded-xl">SEND</button>
+        </div>
+     </div>
+  </div>
+
+  <script src="questions.js"></script>
+  <script src="auth.js"></script>
+  <script src="mock-hall.js"></script>
+  <script>
+    // Overriding some styles dynamically if needed through scripts for JS interactions
+    const originalRenderQuestion = typeof renderQuestion === 'function' ? renderQuestion : null;
+    if(originalRenderQuestion) {
+       // We can extend or hook if needed, but the redesign keeps IDs and classes stable
+    }
+  </script>
+</body>
 </html>
