@@ -28,23 +28,54 @@ export default async function handler(req, res) {
 
 async function handleSendCode(data, res) {
   const { email, code, authType, name } = data;
+  if (!email || !code) return res.status(400).json({ success: false, error: 'Missing email or code' });
+
   const apiKey = process.env.RESEND_API_KEY;
+  if (!apiKey) return res.status(500).json({ success: false, error: 'Email service not configured (missing RESEND_API_KEY)' });
+
   const fromEmail = process.env.RESEND_FROM_EMAIL || "auth@visionedu.online";
   const subject = authType === "2fa" ? "Vision Identity Verification" : "Vision Password Reset";
   
-  const response = await fetch("https://api.resend.com/emails", {
-    method: "POST",
-    headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
-    body: JSON.stringify({
-      from: `Vision Education <${fromEmail}>`,
-      to: [email],
-      subject,
-      html: `<html><body style="font-family:sans-serif; background:#0f172a; color:#f8fafc; padding:2rem;"><h2 style="color:#38bdf8;">${subject} Code</h2><p>Hi ${name || 'Explorer'},</p><div style="font-size:32px; font-weight:bold; letter-spacing:8px; background:rgba(56,189,248,0.1); padding:1rem; border-radius:8px; text-align:center; color:#38bdf8;">${code}</div><p>This code expires in 10 minutes.</p></body></html>`
-    }),
-  });
-  const resData = await response.json();
-  return res.status(200).json({ success: response.ok, id: resData.id });
+  try {
+    const response = await fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
+      body: JSON.stringify({
+        from: `Vision Education <${fromEmail}>`,
+        to: [email],
+        subject,
+        html: `<html><body style="font-family:sans-serif; background:#0f172a; color:#f8fafc; padding:2rem; max-width:520px; margin:0 auto;">
+          <div style="background:#1e293b; border-radius:16px; padding:2rem; border:1px solid #334155;">
+            <div style="display:flex;align-items:center;gap:12px;margin-bottom:1.5rem;">
+              <div style="width:40px;height:40px;background:#6366f1;border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:1.2rem;color:#fff;">V</div>
+              <span style="font-weight:800;font-size:1.1rem;color:#f8fafc;">Vision Education</span>
+            </div>
+            <h2 style="color:#6366f1;margin:0 0 0.5rem;">${authType === '2fa' ? 'Two-Factor Verification' : 'Password Reset Request'}</h2>
+            <p style="color:#94a3b8;margin:0 0 1.5rem;">Hi ${name || email.split('@')[0]},</p>
+            <p style="color:#cbd5e1;margin-bottom:1rem;">${authType === '2fa' ? 'Your verification code is:' : 'Your password reset code is:'}</p>
+            <div style="font-size:38px; font-weight:900; letter-spacing:10px; background:rgba(99,102,241,0.1); padding:1.2rem; border-radius:12px; text-align:center; color:#818cf8; border:1px solid rgba(99,102,241,0.25); margin-bottom:1.5rem;">${code}</div>
+            <p style="color:#64748b;font-size:0.85rem;margin:0;">This code expires in <strong style="color:#f8fafc;">10 minutes</strong>. If you didn't request this, you can safely ignore this email.</p>
+            <hr style="border:none;border-top:1px solid #334155;margin:1.5rem 0;">
+            <p style="color:#475569;font-size:0.75rem;margin:0;">Vision Education · 2026 WASSCE Preparation Platform · visionedu.online</p>
+          </div>
+        </body></html>`
+      }),
+    });
+
+    const resData = await response.json();
+
+    if (!response.ok) {
+      console.error('[Resend API Error]', resData);
+      return res.status(200).json({ success: false, error: resData.name || 'Email delivery failed', detail: resData.message || JSON.stringify(resData) });
+    }
+
+    return res.status(200).json({ success: true, id: resData.id });
+  } catch (err) {
+    console.error('[handleSendCode] Network error:', err);
+    return res.status(500).json({ success: false, error: 'Email service error', detail: err.message });
+  }
 }
+
 
 async function handleCheckRevocation(data, res) {
   const { sub, email } = data;
