@@ -492,42 +492,42 @@ function switchSettingsTab(tabId, btn) {
  * Generate a 6-digit parent access code for the current user.
  * Stored in localStorage with 24-hour expiry.
  */
-function generateParentCode() {
+async function generateParentCode() {
   const session = getSession();
   if (!session) return null;
 
-  const code = Math.floor(100000 + Math.random() * 900000).toString();
-  const PARENT_CODE_KEY = 'vision_parent_codes';
+  let code;
+  
+  // Try Firebase first
+  if (typeof window.generateLinkingCode === 'function') {
+    code = await window.generateLinkingCode(session.email, session.name, session.school);
+  }
 
-  let codes = [];
-  try { codes = JSON.parse(localStorage.getItem(PARENT_CODE_KEY)) || []; } catch(e) { codes = []; }
-
-  // Remove any existing codes for this user
-  codes = codes.filter(c => c.childEmail !== session.email);
-
-  // Add new code
-  codes.push({
-    code: code,
-    childEmail: session.email,
-    childName: session.name || 'Student',
-    childSchool: session.school || 'Ghana SHS',
-    expiresAt: Date.now() + (24 * 60 * 60 * 1000) // 24 hours
-  });
-
-  localStorage.setItem(PARENT_CODE_KEY, JSON.stringify(codes));
+  // Fallback to local storage if Firebase fails or is offline
+  if (!code) {
+    code = Math.floor(100000 + Math.random() * 900000).toString();
+    const PARENT_CODE_KEY = 'vision_parent_codes';
+    let codes = [];
+    try { codes = JSON.parse(localStorage.getItem(PARENT_CODE_KEY)) || []; } catch(e) { codes = []; }
+    codes = codes.filter(c => c.childEmail !== session.email);
+    codes.push({
+      code: code,
+      childEmail: session.email,
+      childName: session.name || 'Student',
+      childSchool: session.school || 'Ghana SHS',
+      expiresAt: Date.now() + (24 * 60 * 60 * 1000) // 24 hours
+    });
+    localStorage.setItem(PARENT_CODE_KEY, JSON.stringify(codes));
+  }
 
   // Update UI if the display element exists
   const codeDisplay = document.getElementById('parentCodeDisplay');
   const codeValue = document.getElementById('parentCodeValue');
-  if (codeDisplay) {
-    codeDisplay.style.display = 'block';
-  }
-  if (codeValue) {
-    codeValue.textContent = code;
-  }
+  if (codeDisplay) codeDisplay.style.display = 'block';
+  if (codeValue) codeValue.textContent = code;
   const codeMsg = document.getElementById('parentCodeMsg');
   if (codeMsg) {
-    codeMsg.textContent = 'Share this code with your parent/guardian. It expires in 24 hours.';
+    codeMsg.textContent = 'Share this code with your parent/guardian. It expires in 15 minutes.';
     codeMsg.style.display = 'block';
   }
 
