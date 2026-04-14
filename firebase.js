@@ -139,6 +139,111 @@ window.adminInitFirebase = async function(accounts) {
 };
 
 /* ─────────────────────────────────────────────────────────────
+   TOPIC MASTERY  (stored inside student_stats doc)
+   ───────────────────────────────────────────────────────────── */
+
+/**
+ * Save per-topic mastery score to Firestore.
+ * topicScores = { "Core Mathematics": { correct: 12, total: 20 }, ... }
+ */
+window.fbSaveTopicMastery = async function(email, topicScores) {
+  if (!email || !topicScores) return;
+  try {
+    await setDoc(doc(db, "student_stats", email.toLowerCase()), {
+      topicMastery: topicScores,
+      lastUpdated: new Date().toISOString()
+    }, { merge: true });
+    console.log('[Firebase] Topic mastery saved for', email);
+  } catch(err) {
+    console.warn('[Firebase] fbSaveTopicMastery failed:', err.message);
+  }
+};
+
+/**
+ * Get topic mastery for a student.
+ * Returns { "Core Mathematics": { correct: 12, total: 20, pct: 60 }, ... }
+ */
+window.fbGetTopicMastery = async function(email) {
+  if (!email) return {};
+  try {
+    const snap = await getDoc(doc(db, "student_stats", email.toLowerCase()));
+    if (snap.exists()) return snap.data().topicMastery || {};
+    return {};
+  } catch(err) {
+    console.warn('[Firebase] fbGetTopicMastery failed:', err.message);
+    return {};
+  }
+};
+
+/**
+ * Get top N students sorted by score for the leaderboard.
+ * Returns array of { name, email, score, accuracy, school }
+ */
+window.fbGetLeaderboard = async function(limit = 50) {
+  try {
+    const snapshot = await getDocs(collection(db, "student_stats"));
+    const entries = [];
+    snapshot.forEach(d => {
+      const data = d.data();
+      if (data.stats && data.stats.answered > 0) {
+        const accuracy = Math.round((data.stats.correct / data.stats.answered) * 100);
+        entries.push({
+          email: d.id,
+          name: data.name || d.id.split('@')[0],
+          school: data.school || 'Vision Academy',
+          score: (data.stats.correct * 10) + data.stats.answered,
+          accuracy,
+          correct: data.stats.correct,
+          answered: data.stats.answered,
+          streak: data.streak?.currentStreak || 0
+        });
+      }
+    });
+    return entries.sort((a, b) => b.score - a.score).slice(0, limit);
+  } catch(err) {
+    console.warn('[Firebase] fbGetLeaderboard failed:', err.message);
+    return [];
+  }
+};
+
+/* ─────────────────────────────────────────────────────────────
+   STUDY PLANNER  (Firestore collection: "student_plans")
+   ───────────────────────────────────────────────────────────── */
+
+/**
+ * Save AI-generated study plan to Firestore.
+ */
+window.fbSavePlan = async function(email, plan) {
+  if (!email || !plan) return;
+  try {
+    await setDoc(doc(db, "student_plans", email.toLowerCase()), {
+      plan,
+      timestamp: Date.now(),
+      generatedAt: new Date().toISOString()
+    });
+    console.log('[Firebase] Study plan saved for', email);
+  } catch(err) {
+    console.warn('[Firebase] fbSavePlan failed:', err.message);
+  }
+};
+
+/**
+ * Load AI-generated study plan from Firestore.
+ * Returns { plan, timestamp } or null.
+ */
+window.fbGetPlan = async function(email) {
+  if (!email) return null;
+  try {
+    const snap = await getDoc(doc(db, "student_plans", email.toLowerCase()));
+    if (snap.exists()) return snap.data();
+    return null;
+  } catch(err) {
+    console.warn('[Firebase] fbGetPlan failed:', err.message);
+    return null;
+  }
+};
+
+/* ─────────────────────────────────────────────────────────────
    STUDENT STATS  (Firestore collection: "student_stats")
    ───────────────────────────────────────────────────────────── */
 

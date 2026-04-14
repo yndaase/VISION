@@ -197,7 +197,7 @@
 
   <script src="auth.js"></script>
   <script>
-    // --- Data Engine ---
+    // Demo data shown ONLY if Firebase has no real data
     const DEMO_STUDENTS = [
       { name: 'Kwame Asante', school: "St. Augustine's College", score: 487, accuracy: 94, email: 'kwame@demo.gh' },
       { name: 'Ama Serwaa', school: 'Wesley Girls', score: 462, accuracy: 91, email: 'ama@demo.gh' },
@@ -210,21 +210,42 @@
     ];
 
     let currentFilter = 'all';
+    let _lbData = null; // cached Firebase data
 
-    function getLeaderboardData() {
+    async function getLeaderboardData() {
       const session = typeof getSession === 'function' ? getSession() : null;
+
+      // Try Firebase first
+      if (typeof window.fbGetLeaderboard === 'function') {
+        try {
+          const firebaseData = await window.fbGetLeaderboard(50);
+          if (firebaseData && firebaseData.length > 0) {
+            _lbData = firebaseData;
+            // Add 'isMe' flag for current user
+            if (session) {
+              _lbData.forEach(s => { s.isMe = s.email === session.email; });
+              // If current user not yet in Firebase, add them from local stats
+              const meInList = _lbData.find(s => s.email === session.email);
+              if (!meInList) {
+                const stats = typeof getStats === 'function' ? getStats() : { answered: 0, correct: 0 };
+                if (stats.answered > 0) {
+                  const accuracy = Math.round((stats.correct / stats.answered) * 100);
+                  _lbData.push({ name: session.name || 'You', school: session.school || 'Vision Academy', score: (stats.correct * 10) + stats.answered, accuracy, email: session.email, isMe: true });
+                  _lbData.sort((a, b) => b.score - a.score);
+                }
+              }
+            }
+            return _lbData;
+          }
+        } catch(e) { console.warn('[Leaderboard] Firebase fetch failed, using demo data'); }
+      }
+
+      // Fallback to demo data + current user
       const students = [...DEMO_STUDENTS];
       if (session) {
         const stats = typeof getStats === 'function' ? getStats() : { answered: 0, correct: 0 };
         const accuracy = stats.answered > 0 ? Math.round((stats.correct / stats.answered) * 100) : 0;
-        const userData = {
-          name: session.name || 'Candidate Node',
-          school: session.school || 'Private Station',
-          score: stats.correct * 10 + stats.answered,
-          accuracy: accuracy,
-          email: session.email,
-          isMe: true
-        };
+        const userData = { name: session.name || 'Candidate Node', school: session.school || 'Private Station', score: stats.correct * 10 + stats.answered, accuracy, email: session.email, isMe: true };
         const existing = students.findIndex(s => s.email === session.email);
         if (existing !== -1) students[existing] = userData;
         else students.push(userData);
@@ -233,10 +254,14 @@
       return students;
     }
 
-    function renderLeaderboard() {
-      const students = getLeaderboardData();
+    async function renderLeaderboard() {
       const tbody = document.getElementById('lbTableBody');
       const empty = document.getElementById('lbEmpty');
+
+      // Show loading state
+      if (tbody) tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;padding:3rem;color:#6366f1;font-weight:700;">Loading live rankings from Firebase...</td></tr>';
+
+      const students = await getLeaderboardData();
 
       if (students.length === 0) {
         tbody.innerHTML = '';
@@ -296,12 +321,14 @@
       renderLeaderboard();
     }
 
-    document.addEventListener('DOMContentLoaded', () => {
+    document.addEventListener('DOMContentLoaded', async () => {
       const s = typeof getSession === 'function' ? getSession() : null;
       if (s) {
         document.getElementById('navUsername').textContent = s.name || 'Student';
         document.getElementById('navAvatar').textContent = (s.name || 'S').charAt(0).toUpperCase();
       }
+      // Import firebase module for leaderboard
+      try { await import('./firebase.js'); } catch(e) {}
       renderLeaderboard();
     });
   </script>
