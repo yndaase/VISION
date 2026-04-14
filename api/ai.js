@@ -1,13 +1,10 @@
-import { GoogleGenAI } from "@google/genai";
 import { AzureOpenAI } from "openai";
 
-const apiKey = process.env.GEMINI_API_KEY;
 const azureKey = process.env.AZURE_OPENAI_KEY || process.env.GITHUB_TOKEN;
 const azureEndpoint = process.env.AZURE_OPENAI_ENDPOINT || "https://models.inference.ai.azure.com";
-const azureDeployment = process.env.AZURE_OPENAI_DEPLOYMENT || "gpt-4o";
+const azureDeploymentPro = process.env.AZURE_OPENAI_DEPLOYMENT || "gpt-4o";
+const azureDeploymentFree = process.env.AZURE_OPENAI_GPT3_DEPLOYMENT || "gpt-35-turbo"; // Default Azure GPT-3 deployment name
 const azureVersion = "2025-01-01-preview";
-
-const ai = new GoogleGenAI({ apiKey });
 
 /**
  * Microsoft Azure OpenAI Client Initialization
@@ -18,47 +15,25 @@ if (azureKey && azureEndpoint) {
     endpoint: azureEndpoint,
     apiKey: azureKey,
     apiVersion: azureVersion,
-    deployment: azureDeployment
-  });
-}
-
-const MODEL_STANDARD = "gemini-1.5-flash";
-const MODEL_FALLBACK = "gemini-1.5-flash";
-
 /**
  * AI Content Generation with Multi-Provider Routing
- * Standard Users: Gemini (Google)
- * Pro Users: Azure OpenAI / Microsoft Copilot-grade intelligence
+ * All Users: Azure OpenAI
+ * Standard Users: GPT-3.5-Turbo
+ * Pro Users: GPT-4o
  */
 async function safeGenerateContent(contents, role = "student") {
-  // 1. Pro Routing (Microsoft Azure AI)
-  if (role === "pro" && azureKey) {
-    try {
-      const mode = contents.find(c => c.mode)?.mode || "examiner";
-      return await generateWithAzure(contents, mode);
-    } catch (err) {
-      console.warn("[Azure Error] Falling back to Gemini:", err.message);
-    }
+  if (!azureKey) {
+    throw new Error("Azure OpenAI API key is missing. Please configure AZURE_OPENAI_KEY.");
   }
-
-  // 2. Standard Routing (Gemini)
-  const primaryModel = role === "pro" ? MODEL_FALLBACK : MODEL_STANDARD;
   
+  const mode = contents.find(c => c.mode)?.mode || "examiner";
+  const useProModel = role === "pro" || role === "admin";
+  const deploymentName = useProModel ? azureDeploymentPro : azureDeploymentFree;
+
   try {
-    return await ai.models.generateContent({
-      model: primaryModel,
-      contents
-    });
+    return await generateWithAzure(contents, mode, deploymentName);
   } catch (error) {
-    const errorMsg = error.message.toLowerCase();
-    // Emergency Fallback
-    if (errorMsg.includes("503") || errorMsg.includes("unavailable") || errorMsg.includes("429") || errorMsg.includes("quota")) {
-      console.warn(`[AI Final Fallback]: Routing to ${MODEL_FALLBACK}`);
-      return await ai.models.generateContent({
-        model: MODEL_FALLBACK,
-        contents
-      });
-    }
+    console.error(`[Azure Error ${deploymentName}]:`, error.message);
     throw error;
   }
 }
@@ -66,7 +41,7 @@ async function safeGenerateContent(contents, role = "student") {
 /**
  * Microsoft Azure OpenAI SDK Handler with Dual-Mode Support
  */
-async function generateWithAzure(contents, mode = "examiner") {
+async function generateWithAzure(contents, mode = "examiner", deploymentName = azureDeploymentFree) {
   // Convert Gemini format to OpenAI format
   const messages = contents.filter(c => !c.mode).map(msg => ({
     role: msg.role === "model" ? "assistant" : msg.role,
@@ -105,7 +80,7 @@ async function generateWithAzure(contents, mode = "examiner") {
   messages.unshift(systemMessage);
 
   const response = await azureClient.chat.completions.create({
-    model: azureDeployment,
+    model: deploymentName,
     messages: messages,
     temperature: mode === "normal" ? 0.7 : 0.4, // Examiner is more precise
     max_tokens: 4096
@@ -118,39 +93,6 @@ async function generateWithAzure(contents, mode = "examiner") {
   return { text };
 }
 
-/**
- * Groq (OpenAI-Compatible) Fetch Handler
- */
-async function generateWithGroq(contents) {
-  // Convert Gemini format to OpenAI/Groq format
-  const messages = contents.map(msg => ({
-    role: msg.role === "model" ? "assistant" : msg.role,
-    content: msg.parts.map(p => p.text).join("\n")
-  }));
-
-  const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
-    method: "POST",
-    headers: {
-      "Authorization": `Bearer ${groqKey}`,
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({
-      model: MODEL_PRO,
-      messages: messages,
-      temperature: 0.7,
-      max_tokens: 2048
-    })
-  });
-
-  const data = await response.json();
-  if (!response.ok) throw new Error(data.error?.message || "Groq API Error");
-
-  return {
-    text: data.choices[0].message.content,
-    // Add raw text for JSON extractor
-    get text() { return data.choices[0].message.content; }
-  };
-}
 
 /**
  * Robust JSON Extractor
