@@ -974,54 +974,78 @@ function clearResetCode(email) {
 async function handleForgotPassword(e) {
   e.preventDefault();
   clearErrors();
-  const email = document
-    .getElementById("forgotEmail")
-    .value.trim()
-    .toLowerCase();
+  const email = document.getElementById("forgotEmail").value.trim().toLowerCase();
+
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-    markInputError(
-      "forgotEmail",
-      "errForgotEmail",
-      "Enter a valid email address.",
-    );
+    markInputError("forgotEmail", "errForgotEmail", "Enter a valid email address.");
     return;
   }
-  // Check ALL registered users, regardless of provider
-  const users = getUsers();
-  const userIndex = users.findIndex((u) => u.email === email);
-  if (userIndex === -1) {
-    markInputError(
-      "forgotEmail",
-      "errForgotEmail",
-      "No account found with this email.",
-    );
+
+  const btnText = document.getElementById("forgotBtnText");
+  const btnArrow = document.getElementById("forgotBtnArrow");
+  const submitBtn = document.getElementById("forgotSubmit");
+  if (btnText) btnText.textContent = "Looking up account...";
+  if (btnArrow) btnArrow.style.display = "none";
+  if (submitBtn) submitBtn.disabled = true;
+
+  // ── Look up user: Firebase first, then localStorage ──
+  let user = null;
+  if (typeof window.fbGetUser === 'function') {
+    try { user = await window.fbGetUser(email); } catch(e) {}
+  }
+  if (!user) {
+    // Fall back to localStorage
+    const localUsers = getUsers();
+    user = localUsers.find(u => u.email === email) || null;
+  }
+
+  if (!user) {
+    if (btnText) btnText.textContent = "Send Recovery Code";
+    if (btnArrow) btnArrow.style.display = "inline";
+    if (submitBtn) submitBtn.disabled = false;
+    markInputError("forgotEmail", "errForgotEmail", "No account found with this email address.");
     return;
   }
-  const user = users[userIndex];
+
   if (user.provider === "google" && !user.hash) {
-    markInputError(
-      "forgotEmail",
-      "errForgotEmail",
-      "This account uses Google Sign-In  no password to reset.",
-    );
+    if (btnText) btnText.textContent = "Send Recovery Code";
+    if (btnArrow) btnArrow.style.display = "inline";
+    if (submitBtn) submitBtn.disabled = false;
+    markInputError("forgotEmail", "errForgotEmail", "This account uses Google Sign-In — no password to reset.");
     return;
   }
-  // Generate + store code in two places for reliability
+
+  // Generate a 6-digit code
   const code = Math.floor(100000 + Math.random() * 900000).toString();
+
+  // Store code in localStorage (10-min TTL)
   saveResetCode(email, code);
-  users[userIndex].resetToken = code;
-  saveUsers(users);
+
+  // Also store as resetToken in Firebase (in case user has no local record)
+  if (typeof window.fbUpdateUser === 'function') {
+    window.fbUpdateUser(email, {
+      resetToken: code,
+      resetTokenExpiry: Date.now() + 10 * 60 * 1000
+    }).catch(() => {});
+  }
+  // Also persist to local cache
+  const localUsers = getUsers();
+  const localIdx = localUsers.findIndex(u => u.email === email);
+  if (localIdx !== -1) {
+    localUsers[localIdx].resetToken = code;
+    saveUsers(localUsers);
+  }
+
+  // Populate hidden fields for next step
   const hiddenEl = document.getElementById("resetEmailHidden");
   const displayEl = document.getElementById("resetEmailDisplay");
   if (hiddenEl) hiddenEl.value = email;
   if (displayEl) displayEl.textContent = email;
-  const btnText = document.getElementById("forgotBtnText");
-  const btnArrow = document.getElementById("forgotBtnArrow");
-  const submitBtn = document.getElementById("forgotSubmit");
-  if (btnText) btnText.textContent = "Sending...";
-  if (btnArrow) btnArrow.style.display = "none";
-  if (submitBtn) submitBtn.disabled = true;
-  const result = await sendEmailCode(email, code, "reset", user.name);
+
+  if (btnText) btnText.textContent = "Sending email...";
+
+  // Send the email via Resend API
+  const result = await sendEmailCode(email, code, "reset", user.name || email.split('@')[0]);
 
   if (btnText) btnText.textContent = "Send Recovery Code";
   if (btnArrow) btnArrow.style.display = "inline";
@@ -1029,79 +1053,104 @@ async function handleForgotPassword(e) {
 
   if (result.success) {
     switchTab("reset");
-    showAuthSuccess(
-      "Reset code sent to " + email + "! Check your inbox (and spam folder).",
-    );
+    showAuthSuccess("Recovery code sent to " + email + "! Check your inbox (and spam folder).");
   } else {
-    // Email failed  show error, don't switch tab, don't reveal code
     const errEl = document.getElementById("errForgotEmail");
     if (errEl) {
-      errEl.textContent =
-        "Failed to send email. Please check your address or try again shortly.";
+      errEl.textContent = "Failed to send email. Please check your address or try again shortly.";
       errEl.style.display = "block";
     }
-    console.error("Email send failed:", result.error, result.detail);
+    console.error("[Reset] Email send failed:", result.error, result.detail);
   }
 }
 
 async function handleResetPassword(e) {
   e.preventDefault();
   clearErrors();
-  const email = (document.getElementById("resetEmailHidden").value || "")
-    .trim()
-    .toLowerCase();
-  const code = document.getElementById("resetCode").value.trim();
-  const pass = document.getElementById("resetPass").value;
+
+  const email = (document.getElementById("resetEmailHidden")?.value || "").trim().toLowerCase();
+  const code = document.getElementById("resetCode")?.value.trim();
+  const pass = document.getElementById("resetPass")?.value;
+
   let valid = true;
+  if (!email) {
+    setError("errResetCode", "Session expired. Please start over from Forgot Password.");
+    return;
+  }
   if (!/^\d{6}$/.test(code)) {
-    markInputError(
-      "resetCode",
-      "errResetCode",
-      "Enter the 6-digit numeric code.",
-    );
+    markInputError("resetCode", "errResetCode", "Enter the 6-digit numeric code.");
     valid = false;
   }
-  if (pass.length < 6) {
-    markInputError(
-      "resetPass",
-      "errResetPass",
-      "New password must be at least 6 characters.",
-    );
+  if (!pass || pass.length < 6) {
+    markInputError("resetPass", "errResetPass", "New password must be at least 6 characters.");
     valid = false;
   }
   if (!valid) return;
-  const users = getUsers();
-  const userIndex = users.findIndex((u) => u.email === email);
-  if (userIndex === -1) {
-    setError(
-      "errResetCode",
-      "Session expired. Please restart the reset process.",
-    );
-    return;
+
+  // ── Verify code: localStorage TTL store OR Firebase resetToken ──
+  const localCode = getStoredResetCode(email);
+
+  // If not in local TTL store, check Firebase resetToken
+  let cloudToken = null;
+  let cloudTokenExpiry = 0;
+  if (!localCode && typeof window.fbGetUser === 'function') {
+    try {
+      const cloudUser = await window.fbGetUser(email);
+      if (cloudUser) {
+        cloudToken = cloudUser.resetToken || null;
+        cloudTokenExpiry = cloudUser.resetTokenExpiry || 0;
+      }
+    } catch(e) {}
   }
-  const user = users[userIndex];
-  const storedCode = getStoredResetCode(email);
-  const validCode = storedCode === code || user.resetToken === code;
-  if (!validCode) {
-    markInputError(
-      "resetCode",
-      "errResetCode",
-      "Incorrect or expired code. Please try again.",
-    );
-    return;
+
+  const localCodeMatches = localCode && localCode === code;
+  const cloudCodeMatches = cloudToken && cloudToken === code && Date.now() < cloudTokenExpiry;
+
+  if (!localCodeMatches && !cloudCodeMatches) {
+    // Also check localStorage user's resetToken as last fallback
+    const localUsers = getUsers();
+    const localUser = localUsers.find(u => u.email === email);
+    if (!localUser || localUser.resetToken !== code) {
+      markInputError("resetCode", "errResetCode", "Incorrect or expired code. Please try again.");
+      return;
+    }
   }
-  // Update password in the user database
-  user.hash = await sha256(pass);
-  delete user.resetToken;
-  users[userIndex] = user;
-  saveUsers(users);
+
+  // ── Code is valid — update password ──
+  const newHash = await sha256(pass);
+
+  // 1. Update localStorage
+  const localUsers = getUsers();
+  const localIdx = localUsers.findIndex(u => u.email === email);
+  let userObj = localUsers[localIdx] || { email, provider: 'email' };
+  userObj.hash = newHash;
+  delete userObj.resetToken;
+  if (localIdx !== -1) {
+    localUsers[localIdx] = userObj;
+  } else {
+    localUsers.push(userObj);
+  }
+  saveUsers(localUsers);
+
+  // 2. Sync new hash to Firebase
+  if (typeof window.fbUpdateUser === 'function') {
+    try {
+      await window.fbUpdateUser(email, {
+        hash: newHash,
+        resetToken: null,
+        resetTokenExpiry: null
+      });
+    } catch(e) {
+      console.warn('[Reset] Firebase hash sync failed:', e);
+    }
+  }
+
+  // 3. Clean up code stores
   clearResetCode(email);
-  setSession(user);
-  showAuthSuccess(
-    "Password reset for " +
-      (user.name || email) +
-      "! Logging you in\u2026 \ud83c\udf89",
-  );
+
+  // 4. Set session and redirect
+  setSession(verifyUserSchema(userObj));
+  showAuthSuccess("Password reset for " + (userObj.name || email) + "! Logging you in… 🎉");
   setTimeout(goToDashboard, 1200);
 }
 
