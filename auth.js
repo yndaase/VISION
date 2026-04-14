@@ -15,8 +15,47 @@ function getUsers() {
 }
 function saveUsers(u) {
   localStorage.setItem(AUTH_KEY, JSON.stringify(u));
-  // Background cloud sync
+  // Background cloud sync (Vercel Blob legacy)
   syncWithCloud(u);
+}
+
+/**
+ * Firebase-backed helper: save a user to both Firestore and localStorage cache.
+ */
+async function fbSaveUserAndCache(user) {
+  // 1. Update localStorage cache
+  const users = getUsers();
+  const idx = users.findIndex(u => u.email === user.email);
+  if (idx === -1) users.push(user); else users[idx] = { ...users[idx], ...user };
+  localStorage.setItem(AUTH_KEY, JSON.stringify(users));
+  // 2. Push to Firestore
+  if (typeof window.fbSaveUser === 'function') {
+    await window.fbSaveUser(user);
+  }
+}
+
+/**
+ * Firebase-backed helper: get a user from Firestore, fall back to localStorage.
+ */
+async function fbGetUserWithFallback(email) {
+  // Try Firestore first
+  if (typeof window.fbGetUser === 'function') {
+    try {
+      const cloudUser = await window.fbGetUser(email);
+      if (cloudUser) {
+        // Refresh local cache with cloud data
+        const users = getUsers();
+        const idx = users.findIndex(u => u.email === cloudUser.email);
+        if (idx === -1) users.push(cloudUser); else users[idx] = { ...users[idx], ...cloudUser };
+        localStorage.setItem(AUTH_KEY, JSON.stringify(users));
+        return cloudUser;
+      }
+    } catch(e) {
+      console.warn('[Auth] Firestore lookup failed, using local cache.');
+    }
+  }
+  // Fall back to localStorage
+  return getUsers().find(u => u.email === email && u.provider === 'email') || null;
 }
 
 /**
@@ -277,6 +316,11 @@ function toggle2FA(email, enabled) {
     users[idx].twoFAEnabled = enabled;
     saveUsers(users);
 
+    // Sync to Firestore
+    if (typeof window.fbUpdateUser === 'function') {
+      window.fbUpdateUser(email, { twoFAEnabled: enabled }).catch(e => console.warn('[Firebase] 2FA sync failed:', e));
+    }
+
     // Update session
     const session = getSession();
     if (session && session.email === email) {
@@ -364,8 +408,14 @@ function unifiedChangePassword() {
   if (users[idx].hash !== simpleHash(curr))
     return showMsg("Current password is incorrect.", false);
 
-  users[idx].hash = simpleHash(newP);
+  const newHash = simpleHash(newP);
+  users[idx].hash = newHash;
   saveUsers(users);
+
+  // Sync new password hash to Firestore
+  if (typeof window.fbUpdateUser === 'function') {
+    window.fbUpdateUser(session.email, { hash: newHash }).catch(e => console.warn('[Firebase] Password sync failed:', e));
+  }
 
   showMsg(" Password updated successfully! Please log in again.", true);
   ["setCurrentPass", "setNewPass", "setConfirmPass"].forEach((id) => {
@@ -505,18 +555,15 @@ async function handleGoogleCredential(response) {
       sub: payload.sub,
     };
 
-    // Upsert user in local store
-    const users = getUsers();
-    const idx = users.findIndex((u) => u.email === user.email);
-    if (idx === -1) users.push(user);
-    else users[idx] = { ...users[idx], ...user };
-    saveUsers(users);
+    // Upsert user in Firestore + local cache
+    await fbSaveUserAndCache(user);
 
     setSession(user);
     showAuthSuccess("Welcome, " + user.name + "! ");
     
-    // Explicit sync on Google login to fetch Pro status
-    await syncWithCloud();
+    // Pull latest role/subscription from Firestore
+    const cloudUser = await fbGetUserWithFallback(user.email);
+    if (cloudUser) setSession(verifyUserSchema({ ...user, ...cloudUser }));
     
     setTimeout(goToDashboard, 900);
   } catch (e) {
@@ -554,22 +601,22 @@ async function handleLogin(e) {
   }
   if (!valid) return;
 
-  const users = getUsers();
-  const userIndex = users.findIndex(
-    (u) => u.email === email && u.provider === "email",
-  );
-
-  if (userIndex === -1) {
+  // 1. Fetch from Firestore first, fall back to localStorage
+  const loginBtn = document.getElementById("loginSubmit");
+  if (loginBtn) loginBtn.innerHTML = "<span>Checking credentials...</span>";
+  
+  const user = await fbGetUserWithFallback(email);
+  
+  if (!user) {
+    if (loginBtn) loginBtn.innerHTML = "<span>Sign In</span>";
     setError("errLoginGeneral", "Invalid email or password. Please try again.");
     const form = document.getElementById("loginForm");
-    if (form) {
-      form.classList.add("form-shake");
-      setTimeout(() => form.classList.remove("form-shake"), 500);
-    }
+    if (form) { form.classList.add("form-shake"); setTimeout(() => form.classList.remove("form-shake"), 500); }
     return;
   }
 
-  const user = users[userIndex];
+  if (loginBtn) loginBtn.innerHTML = "<span>Sign In</span>";
+
   const inputHash = await sha256(pass);
   const legacyHash = simpleHash(pass);
 
@@ -579,8 +626,7 @@ async function handleLogin(e) {
   } else if (user.hash === legacyHash) {
     // Soft Migration: Upgrade to SHA-256 on successful login
     user.hash = inputHash;
-    users[userIndex] = user;
-    saveUsers(users);
+    await fbSaveUserAndCache(user);
     authSuccess = true;
     console.log("[Auth] User password upgraded to SHA-256 security.");
   }
@@ -588,46 +634,30 @@ async function handleLogin(e) {
   if (!authSuccess) {
     setError("errLoginGeneral", "Invalid email or password. Please try again.");
     const form = document.getElementById("loginForm");
-    if (form) {
-      form.classList.add("form-shake");
-      setTimeout(() => form.classList.remove("form-shake"), 500);
-    }
+    if (form) { form.classList.add("form-shake"); setTimeout(() => form.classList.remove("form-shake"), 500); }
     return;
   }
 
   // DEEP 2FA INTEGRATION: Check if 2FA is enabled
   if (user.twoFAEnabled) {
-    // Generate code and store for login session
     const code = Math.floor(100000 + Math.random() * 900000).toString();
-    saveResetCode(email, code); // reuse reset code store (10-min TTL)
-
-    // Store email for verification step
+    saveResetCode(email, code);
     const hiddenEl = document.getElementById("2faEmailHidden");
     if (hiddenEl) hiddenEl.value = email;
-
-    //  NEW: Secure API-based 2FA sending
     const sendBtn = document.getElementById("loginSubmit");
     if (sendBtn) sendBtn.innerHTML = "<span>Verifying Identity...</span>";
-
     sendEmailCode(user.email, code, "2fa", user.name).then((result) => {
       if (sendBtn) sendBtn.innerHTML = "<span>Sign In</span>";
       switchTab("2fa");
       if (!result.success) {
         const fallbackBox = document.getElementById("2faCodeFallback");
-        if (fallbackBox) {
-          fallbackBox.textContent = "Identity Code: " + code;
-          fallbackBox.style.display = "block";
-        }
+        if (fallbackBox) { fallbackBox.textContent = "Identity Code: " + code; fallbackBox.style.display = "block"; }
       }
     });
     return;
   }
 
-  setSession(user);
-  
-  // Explicit sync on login to fetch Pro status
-  await syncWithCloud();
-  
+  setSession(verifyUserSchema(user));
   showAuthSuccess("Welcome back, " + user.name + "! ");
   setTimeout(goToDashboard, 900);
 }
@@ -717,13 +747,11 @@ async function handleSignup(e) {
   }
   if (!valid) return;
 
-  const users = getUsers();
-  if (users.find((u) => u.email === email)) {
-    markInputError(
-      "signupEmail",
-      "errSignupEmail",
-      "An account with this email already exists.",
-    );
+  // Check Firestore first, then local cache
+  const existingCloud = await fbGetUserWithFallback(email);
+  const existingLocal = getUsers().find(u => u.email === email);
+  if (existingCloud || existingLocal) {
+    markInputError("signupEmail", "errSignupEmail", "An account with this email already exists.");
     return;
   }
 
@@ -736,8 +764,9 @@ async function handleSignup(e) {
     role: "student",
     createdAt: Date.now(),
   };
-  users.push(user);
-  saveUsers(users);
+
+  // Save to Firestore + localStorage cache
+  await fbSaveUserAndCache(user);
   setSession(user);
 
   showAuthSuccess("Account created! Welcome, " + name + " ");
@@ -1078,47 +1107,40 @@ async function handleResetPassword(e) {
 
 // --- GLOBAL SYSTEM INITIALIZATION ---
 async function adminInit() {
-  const users = getUsers();
-  
-  // 1. System Admin
   const adminEmail = "admin@visionedu.online";
   const expectedAdminHash = await sha256("Ndaase@2009");
 
-  // 2. School Admin (Enterprise)
   const entEmail = "school@visionedu.online";
   const expectedEntHash = await sha256("Vision@2026");
 
-  // 3. Teacher Admin
   const teacherEmail = "teacher@visionedu.online";
   const expectedTeacherHash = await sha256("Vision@2026");
 
-  // 4. Student (Pro)
   const proStudentEmail = "student@visionedu.online";
   const expectedProHash = await sha256("Vision@2026");
 
-  const upsertAccount = (email, name, role, hash, extra = {}) => {
-    let u = users.find(x => (x.email || "").toLowerCase() === email.toLowerCase());
-    if (!u) {
-      u = { email, name, role, hash, createdAt: Date.now(), provider: "email", ...extra };
-      users.push(u);
-    } else {
-      // Preserve critical fields but update credentials
-      u.role = role;
-      u.hash = hash;
-      Object.assign(u, extra);
-    }
-  };
+  const systemAccounts = [
+    { email: adminEmail, name: "System Architect", role: "admin", hash: expectedAdminHash, provider: "email" },
+    { email: entEmail, name: "Vision Academy Admin", role: "enterprise", hash: expectedEntHash, provider: "email", schoolName: "Vision Academy", schoolLogo: "V", schoolCode: "VISION-2026" },
+    { email: teacherEmail, name: "Senior Faculty", role: "teacher", hash: expectedTeacherHash, provider: "email", institutionId: entEmail },
+    { email: proStudentEmail, name: "Pro Candidate", role: "pro", hash: expectedProHash, provider: "email",
+      subscriptionExpiry: Date.now() + (365 * 24 * 60 * 60 * 1000),
+      institutionId: entEmail, institutionName: "Vision Academy" }
+  ];
 
-  await upsertAccount(adminEmail, "System Architect", "admin", expectedAdminHash);
-  await upsertAccount(entEmail, "Vision Academy Admin", "enterprise", expectedEntHash, { schoolName: "Vision Academy", schoolLogo: "V", schoolCode: "VISION-2026" });
-  await upsertAccount(teacherEmail, "Senior Faculty", "teacher", expectedTeacherHash, { institutionId: entEmail });
-  await upsertAccount(proStudentEmail, "Pro Candidate", "pro", expectedProHash, { 
-    subscriptionExpiry: Date.now() + (365 * 24 * 60 * 60 * 1000),
-    institutionId: entEmail,
-    institutionName: "Vision Academy"
-  });
+  // 1. Seed localStorage cache
+  const users = getUsers();
+  for (const account of systemAccounts) {
+    const idx = users.findIndex(u => (u.email||'').toLowerCase() === account.email.toLowerCase());
+    if (idx === -1) users.push({ ...account, createdAt: Date.now() });
+    else { users[idx].role = account.role; users[idx].hash = account.hash; Object.assign(users[idx], account); }
+  }
+  localStorage.setItem(AUTH_KEY, JSON.stringify(users));
 
-  saveUsers(users);
+  // 2. Seed Firestore (async, non-blocking)
+  if (typeof window.adminInitFirebase === 'function') {
+    window.adminInitFirebase(systemAccounts).catch(e => console.warn('[Firebase] adminInitFirebase failed:', e));
+  }
 }
 
 /**
@@ -1128,36 +1150,48 @@ async function joinInstitution(code) {
   const session = getSession();
   if (!session) return { success: false, message: "Authentication required." };
 
-  const users = getUsers();
-  // Find the admin account that owns this code
-  const institutionAdmin = users.find(u => u.schoolCode === code.toUpperCase());
-  
+  // Find institution admin — check Firestore first, then local cache
+  let institutionAdmin = null;
+  if (typeof window.fbGetAllUsers === 'function') {
+    try {
+      const allUsers = await window.fbGetAllUsers();
+      institutionAdmin = allUsers.find(u => u.schoolCode === code.toUpperCase());
+    } catch(e) {}
+  }
+  if (!institutionAdmin) {
+    const localUsers = getUsers();
+    institutionAdmin = localUsers.find(u => u.schoolCode === code.toUpperCase());
+  }
+
   if (!institutionAdmin) {
     return { success: false, message: "Invalid enrollment code. Please check with your school." };
   }
 
-  // Find current student in DB
+  const updates = {
+    institutionId: institutionAdmin.email,
+    institutionName: institutionAdmin.schoolName || "Vision Academy",
+    role: 'pro',
+    subscriptionExpiry: Date.now() + (365 * 24 * 60 * 60 * 1000)
+  };
+
+  // Update localStorage cache
+  const users = getUsers();
   const idx = users.findIndex(u => u.email === session.email);
   if (idx !== -1) {
-    users[idx].institutionId = institutionAdmin.email;
-    users[idx].institutionName = institutionAdmin.schoolName || "Vision Academy";
-    users[idx].role = 'pro'; // Institutional students get Pro access
-    // Grant 1 year of access
-    users[idx].subscriptionExpiry = Date.now() + (365 * 24 * 60 * 60 * 1000);
-    
+    Object.assign(users[idx], updates);
     saveUsers(users);
-    
-    // Update active session
-    session.institutionId = users[idx].institutionId;
-    session.institutionName = users[idx].institutionName;
-    session.role = 'pro';
-    session.subscriptionExpiry = users[idx].subscriptionExpiry;
-    setSession(session);
-
-    return { success: true };
   }
-  
-  return { success: false, message: "Account profile mismatch." };
+
+  // Update Firestore
+  if (typeof window.fbUpdateUser === 'function') {
+    await window.fbUpdateUser(session.email, updates);
+  }
+
+  // Update active session
+  Object.assign(session, updates);
+  setSession(session);
+
+  return { success: true };
 }
 
 //  Init on page load
@@ -1176,8 +1210,8 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 });
 
-// Bootstrap Firebase Sync Engine
+// Bootstrap Firebase Engine (user DB + stats sync)
 try {
-  import('./firebase.js').catch(err => console.warn('[Firebase Sync] Module blocked or missing:', err));
+  import('./firebase.js').catch(err => console.warn('[Firebase] Module blocked or missing:', err));
 } catch(e) {}
 
