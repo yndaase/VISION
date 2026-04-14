@@ -18,70 +18,50 @@
     tailwind.config = {
       theme: {
         extend: {
-          fontFamily: {
-            sans: ['Outfit', 'sans-serif'],
-            mono: ['JetBrains Mono', 'monospace'],
-          },
+          fontFamily: { sans: ['Outfit', 'sans-serif'], mono: ['JetBrains Mono', 'monospace'] },
           colors: {
-            navy: {
-              DEFAULT: '#05080f',
-              light: '#0a101f',
-              accent: '#1e293b'
-            },
-            emerald: {
-              DEFAULT: '#10b981',
-              light: '#34d399',
-              dark: '#059669'
-            },
-            indigo: {
-              DEFAULT: '#6366f1',
-              light: '#818cf8',
-              dark: '#4f46e5'
-            }
-          },
+            navy: { DEFAULT: '#05080f', light: '#0a101f', accent: '#1e293b' },
+            emerald: { DEFAULT: '#10b981', light: '#34d399', dark: '#059669' },
+            indigo: { DEFAULT: '#6366f1', light: '#818cf8', dark: '#4f46e5' }
+          }
         }
       }
     }
   </script>
   <style>
-    .glass { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.1); }
-    .glass-card { background: rgba(255, 255, 255, 0.02); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.08); }
-    
+    .glass { background: rgba(255,255,255,0.03); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.1); }
+    .glass-card { background: rgba(255,255,255,0.02); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.08); }
     .bg-orb { position: absolute; border-radius: 50%; filter: blur(100px); opacity: 0.1; z-index: 0; pointer-events: none; }
     .bg-orb-1 { width: 500px; height: 500px; background: #10b981; top: -100px; right: -100px; }
     .bg-orb-2 { width: 400px; height: 400px; background: #6366f1; bottom: -100px; left: -100px; }
-
     .parent-view { display: none; }
     .parent-view.active { display: block; animation: fadeIn 0.5s ease forwards; }
-    
     @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-8px); } 75% { transform: translateX(8px); } }
     .shake { animation: shake 0.4s ease-in-out; }
-
-    .parent-input { background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; padding: 0.85rem 1rem; color: #fff; width: 100%; transition: all 0.2s; }
-    .parent-input:focus { border-color: #10b981; background: rgba(255, 255, 255, 0.05); outline: none; box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1); }
-
-    .parent-tab { position: relative; padding: 1rem 0; font-size: 0.85rem; font-weight: 700; color: #64748b; letter-spacing: 0.1em; text-transform: uppercase; transition: all 0.3s; }
+    .parent-input { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 0.85rem 1rem; color: #fff; width: 100%; transition: all 0.2s; font-family: 'Outfit', sans-serif; }
+    .parent-input:focus { border-color: #10b981; background: rgba(255,255,255,0.05); outline: none; box-shadow: 0 0 0 4px rgba(16,185,129,0.1); }
+    .parent-input.error { border-color: #ef4444; box-shadow: 0 0 0 3px rgba(239,68,68,0.15); }
+    .parent-tab { position: relative; padding: 1rem 0; font-size: 0.85rem; font-weight: 700; color: #64748b; letter-spacing: 0.1em; text-transform: uppercase; transition: all 0.3s; background: none; border: none; cursor: pointer; }
     .parent-tab.active { color: #fff; }
     .parent-tab.active::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 2px; background: #10b981; border-radius: 2px; }
-
-    .btn-emerald { background: linear-gradient(135deg, #10b981, #059669); color: #fff; font-weight: 700; border-radius: 12px; transition: all 0.3s; box-shadow: 0 8px 20px rgba(16, 185, 129, 0.2); }
-    .btn-emerald:hover { transform: translateY(-1px); box-shadow: 0 12px 25px rgba(16, 185, 129, 0.3); }
-
-    .google-btn { background: #fff; color: #1e293b; font-weight: 700; display: flex; items-center justify-center gap-3 border-radius: 12px; padding: 0.85rem 1rem; width: 100%; transition: all 0.2s; }
-    .google-btn:hover { background: #f8fafc; }
+    .btn-emerald { background: linear-gradient(135deg, #10b981, #059669); color: #fff; font-weight: 700; border-radius: 12px; transition: all 0.3s; box-shadow: 0 8px 20px rgba(16,185,129,0.2); border: none; cursor: pointer; }
+    .btn-emerald:hover { transform: translateY(-1px); box-shadow: 0 12px 25px rgba(16,185,129,0.3); }
+    .btn-emerald:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+    .loading-spinner { display: inline-block; width: 16px; height: 16px; border: 2px solid rgba(255,255,255,0.3); border-radius: 50%; border-top-color: #fff; animation: spin 0.8s linear infinite; vertical-align: middle; margin-right: 8px; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .google-btn { background: #fff; color: #1e293b; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 12px; border-radius: 12px; padding: 0.85rem 1rem; width: 100%; transition: all 0.2s; border: none; cursor: pointer; font-family: 'Outfit', sans-serif; }
+    .google-btn:hover { background: #f8fafc; transform: translateY(-1px); }
   </style>
 </head>
 <body class="bg-navy text-white font-sans min-h-screen flex items-center justify-center p-6 relative overflow-hidden">
   
-  <!-- Background Decor -->
   <div class="fixed inset-0 z-0 pointer-events-none">
     <div class="bg-orb bg-orb-1"></div>
     <div class="bg-orb bg-orb-2"></div>
   </div>
 
   <div class="max-w-md w-full relative z-10" id="parentCard">
-    
     <div class="glass-card rounded-[3rem] p-10 border-white/5 shadow-2xl">
       
       <!-- 1. AUTHENTICATION VIEW -->
@@ -93,9 +73,7 @@
               Back to Home
             </a>
           </div>
-          <div class="w-16 h-16 bg-emerald-500/10 rounded-2xl flex items-center justify-center text-emerald-400 font-bold text-2xl mx-auto mb-6 border border-emerald-500/20">
-            P
-          </div>
+          <div class="w-16 h-16 bg-emerald-500/10 rounded-2xl flex items-center justify-center text-4xl mx-auto mb-6 border border-emerald-500/20">🛡️</div>
           <h1 class="text-3xl font-black mb-2 text-white">Vision Guardian</h1>
           <p class="text-gray-400 text-sm leading-relaxed">Log in to monitor your child's WASSCE preparation progress and performance.</p>
         </div>
@@ -107,8 +85,8 @@
 
         <!-- Google Login -->
         <div class="relative mb-6">
-          <button type="button" class="google-btn">
-            <svg class="w-5 h-5" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+          <button type="button" class="google-btn" onclick="triggerGoogleSignIn()">
+            <svg class="w-5 h-5 shrink-0" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
             Continue with Google
           </button>
           <div id="g_id_onload"
@@ -127,8 +105,8 @@
           <div class="flex-1 h-px bg-white/5"></div>
         </div>
 
-        <!-- Forms -->
-        <form id="parentLoginForm" onsubmit="handleParentSubmit(event, 'login')" class="space-y-6">
+        <!-- Login Form -->
+        <form id="parentLoginForm" onsubmit="handleParentLogin(event)" class="space-y-6">
           <div>
             <label class="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-3 ml-1">Email Address</label>
             <input type="email" class="parent-input" id="loginEmail" placeholder="parent@example.com" required />
@@ -138,10 +116,13 @@
             <input type="password" class="parent-input" id="loginPass" placeholder="••••••••" required />
           </div>
           <p id="loginError" class="text-xs text-red-400 font-bold ml-1 hidden"></p>
-          <button type="submit" class="btn-emerald w-full py-4 text-sm tracking-widest uppercase">Sign In</button>
+          <button type="submit" class="btn-emerald w-full py-4 text-sm tracking-widest uppercase" id="loginBtn">
+            Sign In
+          </button>
         </form>
 
-        <form id="parentSignupForm" onsubmit="handleParentSubmit(event, 'signup')" class="space-y-6 hidden">
+        <!-- Signup Form -->
+        <form id="parentSignupForm" onsubmit="handleParentSignup(event)" class="space-y-6 hidden">
           <div>
             <label class="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-3 ml-1">Full Name</label>
             <input type="text" class="parent-input" id="signupName" placeholder="Kwame Mensah" required />
@@ -152,35 +133,38 @@
           </div>
           <div>
             <label class="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-3 ml-1">Password</label>
-            <input type="password" class="parent-input" id="signupPass" placeholder="••••••••" required minlength="6" />
+            <input type="password" class="parent-input" id="signupPass" placeholder="Min. 6 characters" required minlength="6" />
           </div>
           <p id="signupError" class="text-xs text-red-300 font-bold ml-1 hidden"></p>
-          <button type="submit" class="btn-emerald w-full py-4 text-sm tracking-widest uppercase">Create Guardian Account</button>
+          <button type="submit" class="btn-emerald w-full py-4 text-sm tracking-widest uppercase" id="signupBtn">
+            Create Guardian Account
+          </button>
         </form>
       </div>
 
       <!-- 2. LINK STUDENT VIEW -->
       <div id="parentLinkView" class="parent-view">
         <div class="text-center mb-10">
-          <div class="w-16 h-16 bg-emerald-500/10 rounded-2xl flex items-center justify-center text-emerald-400 font-bold text-2xl mx-auto mb-6 border border-emerald-500/20">
-            L
-          </div>
-          <h1 class="text-3xl font-black mb-2 text-white">Link Account</h1>
-          <p class="text-gray-400 text-sm leading-relaxed">Enter the 6-digit access code provided by your child to link their academic progress.</p>
+          <div class="w-16 h-16 bg-emerald-500/10 rounded-2xl flex items-center justify-center text-4xl mx-auto mb-6 border border-emerald-500/20">🔗</div>
+          <h1 class="text-3xl font-black mb-2 text-white">Link Student</h1>
+          <p class="text-gray-400 text-sm leading-relaxed">Enter the 6-digit code your child generated from their Dashboard → Settings.</p>
         </div>
 
         <form onsubmit="handleLinkStudent(event)" class="space-y-8">
           <div class="max-w-xs mx-auto">
-            <label class="block text-center text-[10px] font-bold text-gray-400 uppercase tracking-[0.3em] mb-6">Enter Authentication Code</label>
-            <input type="text" class="parent-input text-center text-4xl font-mono tracking-[0.2em] py-6" id="parentCodeInput" placeholder="000000" maxlength="6" inputmode="numeric" required />
+            <label class="block text-center text-[10px] font-bold text-gray-400 uppercase tracking-[0.3em] mb-6">Enter Access Code</label>
+            <input type="text" class="parent-input text-center text-4xl font-mono tracking-[0.2em] py-6" id="parentCodeInput"
+                   placeholder="000000" maxlength="6" inputmode="numeric" required />
           </div>
           <p id="linkError" class="text-xs text-center text-red-400 font-bold hidden"></p>
-          <button type="submit" class="btn-emerald w-full py-4 text-sm tracking-widest uppercase">Verify and Link</button>
+          <button type="submit" class="btn-emerald w-full py-4 text-sm tracking-widest uppercase" id="linkBtn">
+            Verify and Link Student
+          </button>
         </form>
 
         <div class="mt-12 pt-8 border-t border-white/5 text-center">
           <p class="text-gray-500 text-[10px] leading-relaxed mb-6 italic uppercase tracking-widest">
-            Your child can generate this code in their <strong>Dashboard Settings</strong>.
+            Ask your child to go to <strong>Dashboard → Settings → Generate Parent Code</strong>
           </p>
           <button onclick="parentLogout()" class="text-[10px] font-black text-red-500 hover:text-red-400 transition-colors uppercase tracking-[0.2em]">Sign Out</button>
         </div>
@@ -190,22 +174,18 @@
   </div>
 
   <script src="https://accounts.google.com/gsi/client" async defer></script>
-  <script>
-    // ─── Local Parent Database (Unchanged Logic) ───
-    const PARENT_USERS_KEY = 'vision_parent_users';
-    const PARENT_SESSION_KEY = 'vision_parent_session';
-    const PARENT_CODE_KEY = 'vision_parent_codes';
+  <script type="module">
+    import { fbGetUser, fbSaveUser, fbUpdateUser, fbGetLinkCode } from './firebase.js';
 
-    function getParentUsers() {
-      try { return JSON.parse(localStorage.getItem(PARENT_USERS_KEY)) || []; } catch(e) { return []; }
+    // ─── Constants ───
+    const PARENT_SESSION_KEY = 'vision_parent_session';
+
+    // ─── SHA-256 hash ───
+    async function sha256(msg) {
+      const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(msg));
+      return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
     }
-    function saveParentUser(user) {
-      const users = getParentUsers();
-      const idx = users.findIndex(u => u.email === user.email);
-      if (idx > -1) users[idx] = user;
-      else users.push(user);
-      localStorage.setItem(PARENT_USERS_KEY, JSON.stringify(users));
-    }
+
     function getParentSession() {
       try { return JSON.parse(localStorage.getItem(PARENT_SESSION_KEY)); } catch(e) { return null; }
     }
@@ -215,113 +195,193 @@
 
     function switchView(viewId) {
       document.querySelectorAll('.parent-view').forEach(v => v.classList.remove('active'));
-      const nextView = document.getElementById(viewId);
-      if (nextView) nextView.classList.add('active');
+      const el = document.getElementById(viewId);
+      if (el) el.classList.add('active');
     }
 
-    function switchAuthTab(type) {
-      const tabLogin = document.getElementById('tabLogin');
-      const tabSignup = document.getElementById('tabSignup');
-      const formLogin = document.getElementById('parentLoginForm');
-      const formSignup = document.getElementById('parentSignupForm');
+    window.switchAuthTab = function(type) {
+      document.getElementById('tabLogin').classList.toggle('active', type === 'login');
+      document.getElementById('tabSignup').classList.toggle('active', type === 'signup');
+      document.getElementById('parentLoginForm').classList.toggle('hidden', type !== 'login');
+      document.getElementById('parentSignupForm').classList.toggle('hidden', type !== 'signup');
+      document.getElementById('loginError').classList.add('hidden');
+      document.getElementById('signupError').classList.add('hidden');
+    };
 
-      if (type === 'login') {
-        tabLogin.classList.add('active');
-        tabSignup.classList.remove('active');
-        formLogin.classList.remove('hidden');
-        formSignup.classList.add('hidden');
-      } else {
-        tabSignup.classList.add('active');
-        tabLogin.classList.remove('active');
-        formSignup.classList.remove('hidden');
-        formLogin.classList.add('hidden');
-      }
+    function showError(elId, msg) {
+      const el = document.getElementById(elId);
+      if (el) { el.textContent = msg; el.classList.remove('hidden'); }
+    }
+    function hideError(elId) {
+      const el = document.getElementById(elId);
+      if (el) el.classList.add('hidden');
+    }
+    function shakeCard() {
+      const card = document.getElementById('parentCard');
+      card.classList.remove('shake');
+      void card.offsetWidth;
+      card.classList.add('shake');
+    }
+    function setBtn(btnId, loading, text) {
+      const btn = document.getElementById(btnId);
+      if (!btn) return;
+      btn.disabled = loading;
+      btn.innerHTML = loading ? `<span class="loading-spinner"></span>${text}` : text;
     }
 
-    function handleParentSubmit(e, type) {
+    // ─── LOGIN ───
+    window.handleParentLogin = async function(e) {
       e.preventDefault();
-      const users = getParentUsers();
+      hideError('loginError');
+      const email = document.getElementById('loginEmail').value.trim().toLowerCase();
+      const pass = document.getElementById('loginPass').value;
 
-      if (type === 'signup') {
-        const name = document.getElementById('signupName').value.trim();
-        const email = document.getElementById('signupEmail').value.trim();
-        const pass = document.getElementById('signupPass').value;
-        const errEl = document.getElementById('signupError');
+      setBtn('loginBtn', true, 'Signing in...');
 
-        if (users.find(u => u.email === email)) {
-          errEl.textContent = 'Account already exists. Please sign in.';
-          errEl.classList.remove('hidden');
-          return;
-        }
+      const hash = await sha256(pass);
 
-        const newUser = { email, name, password: pass, linkedStudent: null };
-        saveParentUser(newUser);
-        setParentSession(newUser);
-        checkSessionState();
-      } else {
-        const email = document.getElementById('loginEmail').value.trim();
-        const pass = document.getElementById('loginPass').value;
-        const errEl = document.getElementById('loginError');
+      // Check Firebase first (parents are stored in 'parent_users' collection)
+      let user = null;
+      try {
+        user = await fbGetUser(email, 'parent_users');
+      } catch(err) {}
 
-        const user = users.find(u => u.email === email && u.password === pass);
-        if (!user) {
-          errEl.textContent = 'Incorrect credentials.';
-          errEl.classList.remove('hidden');
-          shakeCard();
-          return;
-        }
-
-        setParentSession(user);
-        checkSessionState();
-      }
-    }
-
-    function handleParentGoogleLogin(response) {
-      const base64Url = response.credential.split('.')[1];
-      const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-      const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
-          return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-      }).join(''));
-      
-      const gUser = JSON.parse(jsonPayload);
-      const email = gUser.email;
-      const name = gUser.name || 'Parent';
-
-      const users = getParentUsers();
-      let parentUser = users.find(u => u.email === email);
-
-      if (!parentUser) {
-        parentUser = { email, name, password: null, linkedStudent: null };
-        saveParentUser(parentUser);
+      // Fallback: also check if they signed up via old localStorage flow
+      if (!user) {
+        try {
+          const local = JSON.parse(localStorage.getItem('vision_parent_users') || '[]');
+          const found = local.find(u => u.email === email);
+          if (found) {
+            // Migrate to Firebase
+            const migratedHash = found.password ? await sha256(found.password) : null;
+            if (migratedHash && migratedHash === hash) {
+              user = { ...found, hash: migratedHash, role: 'parent', provider: 'email' };
+              await fbSaveUser(user, 'parent_users');
+            }
+          }
+        } catch(err) {}
       }
 
-      setParentSession(parentUser);
-      checkSessionState();
-    }
+      setBtn('loginBtn', false, 'Sign In');
 
-    function parentLogout() {
-      localStorage.removeItem(PARENT_SESSION_KEY);
-      window.location.reload();
-    }
-
-    function handleLinkStudent(e) {
-      e.preventDefault();
-      const code = document.getElementById('parentCodeInput').value.trim();
-      const errorEl = document.getElementById('linkError');
-
-      if (code.length !== 6) {
-        errorEl.classList.remove('hidden');
-        errorEl.textContent = 'Enter a valid 6-digit code.';
+      if (!user) {
+        showError('loginError', 'No account found with this email.');
+        shakeCard();
+        return;
+      }
+      if (user.provider === 'google' && !user.hash) {
+        showError('loginError', 'This account uses Google Sign-In. Use the Google button above.');
+        shakeCard();
+        return;
+      }
+      if (user.hash !== hash) {
+        showError('loginError', 'Incorrect password. Please try again.');
+        shakeCard();
         return;
       }
 
-      let activeCodes = [];
-      try { activeCodes = JSON.parse(localStorage.getItem(PARENT_CODE_KEY)) || []; } catch(e){}
-      const match = activeCodes.find(c => c.code === code && c.expiresAt > Date.now());
+      setParentSession(user);
+      checkSessionState();
+    };
+
+    // ─── SIGNUP ───
+    window.handleParentSignup = async function(e) {
+      e.preventDefault();
+      hideError('signupError');
+      const name = document.getElementById('signupName').value.trim();
+      const email = document.getElementById('signupEmail').value.trim().toLowerCase();
+      const pass = document.getElementById('signupPass').value;
+
+      if (pass.length < 6) { showError('signupError', 'Password must be at least 6 characters.'); return; }
+
+      setBtn('signupBtn', true, 'Creating account...');
+
+      // Check Firebase for existing account
+      let existing = null;
+      try { existing = await fbGetUser(email, 'parent_users'); } catch(err) {}
+
+      if (existing) {
+        setBtn('signupBtn', false, 'Create Guardian Account');
+        showError('signupError', 'Account already exists. Please sign in.');
+        return;
+      }
+
+      const hash = await sha256(pass);
+      const newUser = { email, name, hash, role: 'parent', provider: 'email', linkedStudent: null, createdAt: Date.now() };
+
+      try {
+        await fbSaveUser(newUser, 'parent_users');
+      } catch(err) {
+        console.warn('[Parent] Firebase save failed, using localStorage:', err);
+      }
+
+      setBtn('signupBtn', false, 'Create Guardian Account');
+      setParentSession(newUser);
+      checkSessionState();
+    };
+
+    // ─── GOOGLE LOGIN ───
+    window.triggerGoogleSignIn = function() {
+      const btn = document.querySelector('.g_id_signin');
+      if (btn) btn.click();
+    };
+
+    window.handleParentGoogleLogin = async function(response) {
+      const base64Url = response.credential.split('.')[1];
+      const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+      const payload = JSON.parse(decodeURIComponent(atob(base64).split('').map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)).join('')));
+      const email = payload.email;
+      const name = payload.name || 'Parent';
+
+      let user = null;
+      try { user = await fbGetUser(email, 'parent_users'); } catch(e) {}
+
+      if (!user) {
+        user = { email, name, hash: null, role: 'parent', provider: 'google', linkedStudent: null, createdAt: Date.now() };
+        try { await fbSaveUser(user, 'parent_users'); } catch(e) {}
+      }
+
+      setParentSession(user);
+      checkSessionState();
+    };
+
+    // ─── LINK STUDENT ───
+    window.handleLinkStudent = async function(e) {
+      e.preventDefault();
+      const code = document.getElementById('parentCodeInput').value.trim();
+      const errorEl = document.getElementById('linkError');
+      errorEl.classList.add('hidden');
+
+      if (code.length !== 6) {
+        errorEl.textContent = 'Enter a valid 6-digit code.';
+        errorEl.classList.remove('hidden');
+        return;
+      }
+
+      setBtn('linkBtn', true, 'Verifying...');
+
+      // Try Firebase student_links collection first
+      let match = null;
+      try {
+        if (typeof fbGetLinkCode === 'function') {
+          match = await fbGetLinkCode(code);
+        }
+      } catch(e) {}
+
+      // Fallback: check localStorage codes (students who haven't synced yet)
+      if (!match) {
+        try {
+          const localCodes = JSON.parse(localStorage.getItem('vision_parent_codes') || '[]');
+          const local = localCodes.find(c => c.code === code && c.expiresAt > Date.now());
+          if (local) match = local;
+        } catch(e) {}
+      }
+
+      setBtn('linkBtn', false, 'Verify and Link Student');
 
       if (!match) {
+        errorEl.textContent = 'Invalid or expired code. Ask your child to generate a new one.';
         errorEl.classList.remove('hidden');
-        errorEl.textContent = 'Invalid or expired code.';
         shakeCard();
         return;
       }
@@ -329,30 +389,45 @@
       const session = getParentSession();
       if (!session) return;
 
-      session.linkedStudent = { email: match.childEmail, name: match.childName, school: match.childSchool };
-      saveParentUser(session);
+      session.linkedStudent = {
+        email: match.childEmail,
+        name: match.childName || 'Student',
+        school: match.childSchool || ''
+      };
+
+      // Update Firebase parent record
+      try {
+        await fbUpdateUser(session.email, { linkedStudent: session.linkedStudent }, 'parent_users');
+      } catch(e) {}
+
       setParentSession(session);
       checkSessionState();
-    }
+    };
 
+    // ─── LOGOUT ───
+    window.parentLogout = function() {
+      localStorage.removeItem(PARENT_SESSION_KEY);
+      window.location.reload();
+    };
+
+    // ─── ROUTE GUARD ───
     async function checkSessionState() {
       const session = getParentSession();
-      if (!session) {
-        switchView('parentAuthView');
-        return;
-      }
-      if (!session.linkedStudent) {
-        switchView('parentLinkView');
-        return;
-      }
-      window.location.href = "parent-dashboard.html";
-    }
 
-    function shakeCard() {
-      const card = document.getElementById('parentCard');
-      card.classList.remove('shake');
-      void card.offsetWidth;
-      card.classList.add('shake');
+      // Try to refresh session from Firebase (in case linkedStudent was updated elsewhere)
+      if (session && session.email) {
+        try {
+          const freshUser = await fbGetUser(session.email, 'parent_users');
+          if (freshUser && freshUser.linkedStudent) {
+            session.linkedStudent = freshUser.linkedStudent;
+            setParentSession(session);
+          }
+        } catch(e) {}
+      }
+
+      if (!session) { switchView('parentAuthView'); return; }
+      if (!session.linkedStudent) { switchView('parentLinkView'); return; }
+      window.location.href = 'parent-dashboard.html';
     }
 
     document.addEventListener('DOMContentLoaded', () => {
