@@ -457,6 +457,7 @@
 
       if (secId === "materials") renderMats();
       if (secId === "users") renderUsers();
+      if (secId === "overview") renderStats();
     };
 
     function logAction(action) {
@@ -475,18 +476,26 @@
       renderAudit();
     }
 
-    function renderStats() {
-      const users = getUsers();
+    async function renderStats() {
       const mats = getMaterials();
       const grid = document.getElementById("statsGrid");
       if (!grid) return;
-      const items = [
-        { label: "Authorized Learners", val: users.length },
-        { label: "Educational Assets", val: mats.length },
-        { label: "Network Reliability", val: "100.0%" },
-        { label: "System Nodes", val: "Expert" }
-      ];
-      grid.innerHTML = items.map(it => `<div class="stat-card"><span class="stat-lbl">${it.label}</span><span class="stat-val">${it.val}</span></div>`).join("");
+      // Show placeholder while loading
+      grid.innerHTML = `
+        <div class="stat-card"><span class="stat-lbl">Authorized Learners</span><span class="stat-val" id="statLearners">...</span></div>
+        <div class="stat-card"><span class="stat-lbl">Educational Assets</span><span class="stat-val">${mats.length}</span></div>
+        <div class="stat-card"><span class="stat-lbl">Database</span><span class="stat-val" style="color:var(--admin-success);font-size:1.2rem;">Firebase</span></div>
+        <div class="stat-card"><span class="stat-lbl">Auth Protocol</span><span class="stat-val" style="font-size:1.1rem;">SHA-256</span></div>
+      `;
+      // Async load real count from Firestore
+      if (typeof window.fbGetAllUsers === 'function') {
+        const allUsers = await window.fbGetAllUsers();
+        const el = document.getElementById('statLearners');
+        if (el) el.textContent = allUsers.length || getUsers().length;
+      } else {
+        const el = document.getElementById('statLearners');
+        if (el) el.textContent = getUsers().length;
+      }
     }
 
     function renderAudit() {
@@ -575,27 +584,61 @@
       if (!name || !email || !pass) return showToast("Protocol error: Missing identity parameters");
       if (pass.length < 6) return showToast("Insecure key: Min 6 character protocol required");
 
-      const users = getUsers();
-      if (users.some(u => u.email === email)) return showToast("Identity conflict: Email registry exists");
+      const btn = document.getElementById("createUserBtn");
+      if (btn) btn.textContent = "Authorizing...";
+
+      // Check Firestore + local for conflicts
+      let alreadyExists = getUsers().some(u => u.email === email);
+      if (!alreadyExists && typeof window.fbGetUser === 'function') {
+        const cloud = await window.fbGetUser(email);
+        if (cloud) alreadyExists = true;
+      }
+      if (alreadyExists) { if (btn) btn.textContent = "Authorize Account"; return showToast("Identity conflict: Email registry exists"); }
 
       const hash = await sha256(pass);
-      users.push({ name, email, hash, role, provider: "email", createdAt: Date.now(), status: "active" });
-      saveUsers(users);
+      const newUser = { name, email, hash, role, provider: "email", createdAt: Date.now(), status: "active" };
+      
+      // Save to Firestore
+      if (typeof window.fbSaveUser === 'function') await window.fbSaveUser(newUser);
+      
+      // Also update local cache
+      const users = getUsers();
+      users.push(newUser);
+      localStorage.setItem('waec_users', JSON.stringify(users));
+
+      if (btn) btn.textContent = "Authorize Account";
       logAction("IDENTITY_AUTHORIZED: " + email);
-      renderUsers(); showToast("Identity authorized & hashed");
+      renderUsers(); showToast("Identity authorized & stored in Firebase");
       ["newUserName", "newUserEmail", "newUserPass"].forEach(id => document.getElementById(id).value = "");
     };
 
-    function renderUsers() {
-      const users = getUsers();
-      const q = document.getElementById("userSearch").value.toLowerCase();
+    // Cache of Firestore users for the admin panel
+    let _cachedFirestoreUsers = null;
+
+    async function renderUsers() {
       const tbody = document.getElementById("allUsersTbody");
       if (!tbody) return;
-      const filtered = users.filter(u => u.name.toLowerCase().includes(q) || u.email.toLowerCase().includes(q));
+      tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;padding:2rem;color:var(--admin-text-muted);">Loading from Firebase...</td></tr>';
+
+      // Load from Firestore
+      let users = [];
+      if (typeof window.fbGetAllUsers === 'function') {
+        try {
+          users = await window.fbGetAllUsers();
+          _cachedFirestoreUsers = users;
+        } catch(e) {
+          users = getUsers(); // fallback
+        }
+      } else {
+        users = getUsers();
+      }
+
+      const q = (document.getElementById("userSearch")?.value || "").toLowerCase();
+      const filtered = users.filter(u => u.name && (u.name.toLowerCase().includes(q) || u.email.toLowerCase().includes(q)));
 
       tbody.innerHTML = filtered.map(u => `
         <tr>
-          <td><div style="font-weight: 700;">${u.name}</div><div style="font-size: 0.7rem; color: var(--admin-text-muted);">${new Date(u.createdAt).toLocaleDateString()}</div></td>
+          <td><div style="font-weight: 700;">${u.name}</div><div style="font-size: 0.7rem; color: var(--admin-text-muted);">${u.createdAt ? new Date(u.createdAt).toLocaleDateString() : 'N/A'}</div></td>
           <td style="font-family: 'JetBrains Mono'; font-size: 0.8rem;">${u.email}</td>
           <td><select class="input" style="padding: 6px 12px; font-size: 0.75rem; width: auto;" onchange="updateRole('${u.email}', this.value)">
             <option value="pro" ${u.role === 'pro' || u.role === 'student' ? 'selected' : ''}>Student</option>
@@ -607,23 +650,40 @@
             <option value="General Secretary" ${u.role === 'General Secretary' ? 'selected' : ''}>General Secretary</option>
             <option value="Organiser" ${u.role === 'Organiser' ? 'selected' : ''}>Organiser</option>
             <option value="PRO" ${u.role === 'PRO' ? 'selected' : ''}>PRO</option>
-            <option value="Admin" ${u.role === 'Admin' || u.role === 'admin' || u.role === 'ADMIN' ? 'selected' : ''}>Admin</option>
+            <option value="Admin" ${u.role === 'Admin' || u.role === 'admin' ? 'selected' : ''}>Admin</option>
           </select></td>
           <td style="text-align: right;"><button class="btn btn-danger" style="padding: 8px;" onclick="deleteUserAccount('${u.email}')" ${u.email === 'admin@visionedu.online' ? 'disabled' : ''}><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" /></svg></button></td>
         </tr>
-      `).join("");
+      `).join("") || '<tr><td colspan="4" style="text-align:center;padding:2rem;color:var(--admin-text-muted);">No identities found.</td></tr>';
     }
 
-    window.updateRole = (email, newRole) => {
-      const users = getUsers(); const idx = users.findIndex(u => u.email === email);
-      if (idx !== -1) { users[idx].role = newRole; saveUsers(users); logAction(`ROLE_MODIFIED: ${email} -> ${newRole}`); showToast("Protocol authorization updated"); }
+    window.updateRole = async (email, newRole) => {
+      // Update Firestore
+      if (typeof window.fbUpdateUser === 'function') {
+        await window.fbUpdateUser(email, { role: newRole });
+      }
+      // Update local cache
+      const users = getUsers();
+      const idx = users.findIndex(u => u.email === email);
+      if (idx !== -1) { users[idx].role = newRole; localStorage.setItem('waec_users', JSON.stringify(users)); }
+      logAction(`ROLE_MODIFIED: ${email} -> ${newRole}`);
+      showToast("Protocol authorization updated in Firebase");
     };
 
-    window.deleteUserAccount = (email) => {
+    window.deleteUserAccount = async (email) => {
       if (email === "admin@visionedu.online") return;
       if (!confirm("Terminate identity node: " + email + "?")) return;
+      
+      // Note: Firestore doesn't have a delete function in our current firebase.js
+      // So we mark as deleted and remove from local cache
+      if (typeof window.fbUpdateUser === 'function') {
+        await window.fbUpdateUser(email, { status: 'terminated', terminatedAt: new Date().toISOString() });
+      }
       const users = getUsers().filter(u => u.email !== email);
-      saveUsers(users); logAction("IDENTITY_TERMINATED: " + email); renderUsers(); showToast("Identity node successfully terminated");
+      localStorage.setItem('waec_users', JSON.stringify(users));
+      logAction("IDENTITY_TERMINATED: " + email);
+      renderUsers();
+      showToast("Identity node terminated");
     };
 
     function showToast(msg) {
@@ -661,10 +721,17 @@
       const email = document.getElementById("adminEmail").value.trim().toLowerCase();
       const pass = document.getElementById("adminPass").value;
       const hash = await sha256(pass);
-      const users = getUsers();
-      const user = users.find(u => u.email === email && u.hash === hash && u.role === "admin");
+      
+      // Check Firestore first, then local cache
+      let user = null;
+      if (typeof window.fbGetUser === 'function') {
+        try { user = await window.fbGetUser(email); } catch(e) {}
+      }
+      if (!user) {
+        user = getUsers().find(u => u.email === email);
+      }
 
-      if (user) {
+      if (user && user.hash === hash && (user.role === "admin" || user.role === "Admin")) {
         sessionStorage.setItem(ADMIN_SESSION_KEY, Date.now());
         logAction("AUTH_SUCCESS");
         showDash();
