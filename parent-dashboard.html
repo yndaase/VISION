@@ -271,7 +271,7 @@
 
   <script src="theme.js"></script>
   <script type="module">
-    import { pullStateFromCloud } from './firebase.js';
+    import { pullStateFromCloud, fbGetTopicMastery } from './firebase.js';
 
     // --- Authentication & Session ---
     const PARENT_SESSION_KEY = "vision_parent_session";
@@ -307,35 +307,47 @@
       const headerNameEl = document.getElementById('childNameHeader');
       const headerAvatarEl = document.getElementById('childAvatarHeader');
       if(headerAvatarEl) headerAvatarEl.textContent = (linkedStudent.name || 'S').charAt(0).toUpperCase();
-      if(headerNameEl) headerNameEl.textContent = `${linkedStudent.name || 'Student'}`;
+      if(headerNameEl) headerNameEl.textContent = linkedStudent.name || 'Student';
 
       let stats = { answered: 0, correct: 0 };
       let streak = { currentStreak: 0 };
       let lastMock = null;
+      let topicMastery = {};
 
       try {
         const cloudData = await pullStateFromCloud(linkedStudent.email);
         if (cloudData) {
-            stats = cloudData.stats || stats;
-            streak = cloudData.streak || streak;
-            lastMock = cloudData.lastMock || null;
+          stats = cloudData.stats || stats;
+          streak = cloudData.streak || streak;
+          lastMock = cloudData.lastMock || null;
         }
-      } catch(e) { console.error("[ParentSync] Fail:", e); }
+      } catch(e) { console.warn("[ParentSync] pullStateFromCloud failed:", e); }
+
+      // Load topic mastery from Firebase for real subject bars
+      try {
+        if (typeof fbGetTopicMastery === 'function') {
+          topicMastery = await fbGetTopicMastery(linkedStudent.email) || {};
+        }
+      } catch(e) { console.warn("[ParentSync] topicMastery fetch failed:", e); }
 
       const accuracy = stats.answered > 0 ? Math.round((stats.correct / stats.answered) * 100) : 0;
       
       document.getElementById('childAccuracy').textContent = accuracy + '%';
       document.getElementById('childQuestions').textContent = stats.answered || 0;
       document.getElementById('childStreak').textContent = streak.currentStreak || 0;
-      document.getElementById('childSubjects').textContent = stats.answered > 0 ? Math.min(8, Math.ceil(stats.answered / 15)) : 0;
+      document.getElementById('childSubjects').textContent = Object.keys(topicMastery).length || (stats.answered > 0 ? Math.min(8, Math.ceil(stats.answered / 15)) : 0);
 
       const studyMinutes = (stats.answered || 0) * 2;
       const hours = Math.floor(studyMinutes / 60);
       const mins = studyMinutes % 60;
       document.getElementById('childStudyTime').textContent = hours > 0 ? `${hours}h ${mins}m` : `${mins}m`;
 
+      // Update sync badge
+      const syncEl = document.getElementById('syncStatus');
+      if (syncEl) syncEl.innerHTML = `<div class="w-1.5 h-1.5 bg-emerald-400 rounded-full shadow-[0_0_10px_#10b981]"></div><span class="text-[10px] font-black text-emerald-400 uppercase tracking-widest">Firebase Live</span>`;
+
       populateAIInsights(linkedStudent.name, accuracy, stats.answered, streak.currentStreak);
-      populateMastery(stats);
+      populateMastery(stats, topicMastery);
       populateMocks(lastMock);
       populateActivity(stats, streak, accuracy);
       loadParentGoal(stats.answered);
@@ -360,26 +372,50 @@
       text.innerHTML = msg;
     }
 
-    function populateMastery(stats) {
+    function populateMastery(stats, topicMastery) {
       const list = document.getElementById('subjectMasteryList');
-      if (!stats || stats.answered === 0) {
-        list.innerHTML = '<p class="text-gray-500 italic text-sm">No subject data mapped yet.</p>';
+
+      // If we have real Firebase topic mastery, use it
+      if (topicMastery && Object.keys(topicMastery).length > 0) {
+        const COLORS = { 
+          'Core Mathematics': '#6366f1', 'Integrated Science': '#10b981', 
+          'English Language': '#f59e0b', 'Social Studies': '#ef4444',
+          'Physics': '#f87171', 'Chemistry': '#fb923c', 'Biology': '#4ade80',
+          'Economics': '#60a5fa', 'Computer Science': '#a78bfa', 'Geography': '#34d399'
+        };
+        const entries = Object.entries(topicMastery).sort((a, b) => (b[1].pct || 0) - (a[1].pct || 0));
+        list.innerHTML = entries.map(([name, data]) => {
+          const pct = data.pct || 0;
+          const color = COLORS[name] || '#6366f1';
+          return `
+            <div class="space-y-3">
+              <div class="flex justify-between text-xs font-black uppercase tracking-widest">
+                <span class="text-white">${name}</span>
+                <span style="color:${color}">${pct}%</span>
+              </div>
+              <div class="w-full h-2 bg-white/5 rounded-full overflow-hidden">
+                <div class="h-full rounded-full transition-all duration-1000" style="width:${pct}%; background:${color}"></div>
+              </div>
+            </div>`;
+        }).join('');
         return;
       }
 
+      // Fallback to aggregate stats (pre-Firebase)
+      if (!stats || stats.answered === 0) {
+        list.innerHTML = '<p class="text-gray-500 italic text-sm">No subject data mapped yet. Student needs to complete a mock exam.</p>';
+        return;
+      }
       const subjects = [
         { id: 'maths', name: 'Core Mathematics', color: '#6366f1' },
         { id: 'science', name: 'Integrated Science', color: '#10b981' },
         { id: 'english', name: 'English Language', color: '#f59e0b' },
         { id: 'social', name: 'Social Studies', color: '#ef4444' }
       ];
-
       const bySubject = stats.bySubject || {};
-
       list.innerHTML = subjects.map(s => {
         const data = bySubject[s.id] || { answered: 0, correct: 0 };
-        const pct = data.answered > 0 ? Math.round((data.correct / data.answered) * 100) : 0;
-        
+        const pct = data.answered > 0 ? Math.round((data.correct / data.answered) * 100) : Math.round((stats.correct / stats.answered) * 100);
         return `
           <div class="space-y-3">
             <div class="flex justify-between text-xs font-black uppercase tracking-widest">
@@ -387,10 +423,9 @@
               <span style="color:${s.color}">${pct}%</span>
             </div>
             <div class="w-full h-2 bg-white/5 rounded-full overflow-hidden">
-               <div class="h-full rounded-full transition-all duration-1000" style="width: ${pct}%; background: ${s.color}"></div>
+              <div class="h-full rounded-full transition-all duration-1000" style="width: ${pct}%; background: ${s.color}"></div>
             </div>
-          </div>
-        `;
+          </div>`;
       }).join('');
     }
 
@@ -496,9 +531,10 @@
     }
 
     checkAuth();
+    // Refresh every 30 seconds
     setInterval(() => {
-        const session = getParentSession();
-        if (session && session.linkedStudent) loadDashboard(session.linkedStudent);
+      const session = getParentSession();
+      if (session && session.linkedStudent) loadDashboard(session.linkedStudent);
     }, 30000);
   </script>
 </body>

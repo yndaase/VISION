@@ -30,58 +30,79 @@ const db = getFirestore(app);
 
 /**
  * Fetch a single user by email from Firestore.
+ * @param {string} email
+ * @param {string} [collectionName='users'] - Override collection (e.g. 'parent_users')
  * Returns the user object or null if not found.
  */
-window.fbGetUser = async function(email) {
+window.fbGetUser = async function(email, collectionName = 'users') {
   if (!email) return null;
   try {
-    const docSnap = await getDoc(doc(db, "users", email.toLowerCase()));
+    const docSnap = await getDoc(doc(db, collectionName, email.toLowerCase()));
     if (docSnap.exists()) return docSnap.data();
     return null;
   } catch(err) {
-    console.warn("[Firebase] fbGetUser failed:", err.message);
+    console.warn(`[Firebase] fbGetUser(${collectionName}) failed:`, err.message);
     return null;
   }
 };
+export const fbGetUser = window.fbGetUser;
 
 /**
  * Save (upsert) a user to Firestore.
- * Merges with any existing document so no data is lost.
+ * @param {object} user
+ * @param {string} [collectionName='users']
  */
-window.fbSaveUser = async function(user) {
+window.fbSaveUser = async function(user, collectionName = 'users') {
   if (!user || !user.email) return;
   try {
     const key = user.email.toLowerCase();
-    // Never store raw passwords — only hashes
     const payload = { ...user, email: key, lastUpdated: new Date().toISOString() };
-    await setDoc(doc(db, "users", key), payload, { merge: true });
-    console.log(`[Firebase] User saved: ${key}`);
+    await setDoc(doc(db, collectionName, key), payload, { merge: true });
+    console.log(`[Firebase] User saved to ${collectionName}: ${key}`);
   } catch(err) {
-    console.warn("[Firebase] fbSaveUser failed:", err.message);
+    console.warn(`[Firebase] fbSaveUser(${collectionName}) failed:`, err.message);
   }
 };
+export const fbSaveUser = window.fbSaveUser;
 
 /**
- * Update only specific fields of a user doc (e.g. role, subscriptionExpiry).
+ * Update specific fields on a user document.
+ * @param {string} email
+ * @param {object} fields
+ * @param {string} [collectionName='users']
  */
-window.fbUpdateUser = async function(email, fields) {
+window.fbUpdateUser = async function(email, fields, collectionName = 'users') {
   if (!email || !fields) return;
   try {
     const key = email.toLowerCase();
-    await updateDoc(doc(db, "users", key), {
-      ...fields,
-      lastUpdated: new Date().toISOString()
-    });
-    console.log(`[Firebase] User updated: ${key}`, fields);
-  } catch(err) {
-    // If the document doesn't exist yet, fall back to setDoc
-    try {
-      await setDoc(doc(db, "users", email.toLowerCase()), { email: email.toLowerCase(), ...fields, lastUpdated: new Date().toISOString() }, { merge: true });
-    } catch(e) {
-      console.warn("[Firebase] fbUpdateUser failed:", e.message);
+    const ref = doc(db, collectionName, key);
+    const snap = await getDoc(ref);
+    if (snap.exists()) {
+      await updateDoc(ref, { ...fields, lastUpdated: new Date().toISOString() });
+    } else {
+      await setDoc(ref, { email: key, ...fields, lastUpdated: new Date().toISOString() }, { merge: true });
     }
+  } catch(e) {
+    console.warn(`[Firebase] fbUpdateUser(${collectionName}) failed:`, e.message);
   }
 };
+export const fbUpdateUser = window.fbUpdateUser;
+
+/**
+ * Get a link code document.
+ */
+window.fbGetLinkCode = async function(code) {
+  if (!code) return null;
+  try {
+    const docSnap = await getDoc(doc(db, "link_codes", code.toUpperCase()));
+    if (docSnap.exists()) return docSnap.data();
+    return null;
+  } catch(err) {
+    console.warn("[Firebase] fbGetLinkCode failed:", err.message);
+    return null;
+  }
+};
+export const fbGetLinkCode = window.fbGetLinkCode;
 
 /**
  * Get all users from Firestore (admin only).
@@ -174,6 +195,7 @@ window.fbGetTopicMastery = async function(email) {
     return {};
   }
 };
+export const fbGetTopicMastery = window.fbGetTopicMastery;
 
 /**
  * Get top N students sorted by score for the leaderboard.
@@ -296,6 +318,7 @@ window.pullStateFromCloud = async function(email) {
     return null;
   }
 };
+export const pullStateFromCloud = window.pullStateFromCloud;
 
 /* ─────────────────────────────────────────────────────────────
    PARENT LINKING  (Firestore collection: "student_links")
@@ -304,14 +327,16 @@ window.pullStateFromCloud = async function(email) {
 /**
  * Generates a 6-digit secure linking code for a student
  */
-window.generateLinkingCode = async function(email) {
+window.generateLinkingCode = async function(email, childName, childSchool) {
   if (!email) return null;
   try {
     const code = Math.floor(100000 + Math.random() * 900000).toString();
     const payload = {
-      linkingCode: code,
       codeExpires: Date.now() + 15 * 60 * 1000, // 15 mins
-      email: email.toLowerCase()
+      email: email.toLowerCase(),
+      childEmail: email.toLowerCase(),
+      childName: childName || email.split('@')[0],
+      childSchool: childSchool || ''
     };
     await setDoc(doc(db, "student_links", code), payload);
     return code;
@@ -322,7 +347,8 @@ window.generateLinkingCode = async function(email) {
 };
 
 /**
- * Verifies a 6-digit secure linking code and returns the linked student email
+ * Verifies a 6-digit secure linking code and returns the full link payload
+ * (childEmail, childName, childSchool, expiresAt)
  */
 window.verifyLinkingCode = async function(code) {
   if (!code) return null;
@@ -339,6 +365,34 @@ window.verifyLinkingCode = async function(code) {
     return null;
   }
 };
+
+/**
+ * Get full link code payload for parent portal linking.
+ * Returns { childEmail, childName, childSchool, codeExpires } or null.
+ */
+const _fbGetLinkCode = async function(code) {
+  if (!code) return null;
+  try {
+    const docSnap = await getDoc(doc(db, "student_links", code));
+    if (docSnap.exists()) {
+      const data = docSnap.data();
+      if (Date.now() > (data.codeExpires || 0)) return null;
+      return {
+        childEmail: data.email || data.childEmail,
+        childName: data.childName || null,
+        childSchool: data.childSchool || null,
+        codeExpires: data.codeExpires
+      };
+    }
+    return null;
+  } catch(error) {
+    console.error("[Firebase] fbGetLinkCode failed:", error);
+    return null;
+  }
+};
+window.fbGetLinkCode = _fbGetLinkCode;
+export const fbGetLinkCode = _fbGetLinkCode;
+
 
 /* ─────────────────────────────────────────────────────────────
    AUTO-SYNC on import (non-parent pages)
