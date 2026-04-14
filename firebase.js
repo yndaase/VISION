@@ -88,21 +88,7 @@ window.fbUpdateUser = async function(email, fields, collectionName = 'users') {
 };
 export const fbUpdateUser = window.fbUpdateUser;
 
-/**
- * Get a link code document.
- */
-window.fbGetLinkCode = async function(code) {
-  if (!code) return null;
-  try {
-    const docSnap = await getDoc(doc(db, "link_codes", code.toUpperCase()));
-    if (docSnap.exists()) return docSnap.data();
-    return null;
-  } catch(err) {
-    console.warn("[Firebase] fbGetLinkCode failed:", err.message);
-    return null;
-  }
-};
-export const fbGetLinkCode = window.fbGetLinkCode;
+
 
 /**
  * Get all users from Firestore (admin only).
