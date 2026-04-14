@@ -804,10 +804,39 @@ function saveExamResult({
     if (stats.mockHistory.length > 10) stats.mockHistory.pop();
 
     saveStats(stats); // from auth.js
+
+    // ── Firebase: Push topic mastery & sync stats for leaderboard ──
+    const session = typeof getSession === 'function' ? getSession() : null;
+    if (session && session.email) {
+      // Compute per-topic mastery from this exam's MCQ questions
+      const topicMap = {};
+      examState.questions.filter(q => q.type === 'mcq').forEach(q => {
+        const topic = q.subject || examState.mockConfig?.title?.split(' Mock')[0]?.trim() || 'General';
+        if (!topicMap[topic]) topicMap[topic] = { correct: 0, total: 0 };
+        topicMap[topic].total++;
+        const chosen = examState.answers[q.id];
+        if (chosen && (chosen === q.correct || chosen === q.correctFixed)) topicMap[topic].correct++;
+      });
+      Object.keys(topicMap).forEach(t => {
+        topicMap[t].pct = Math.round((topicMap[t].correct / topicMap[t].total) * 100);
+      });
+      if (typeof window.fbGetTopicMastery === 'function') {
+        window.fbGetTopicMastery(session.email).then(existing => {
+          const merged = { ...existing };
+          Object.keys(topicMap).forEach(t => {
+            if (!merged[t] || topicMap[t].pct > (merged[t].pct || 0)) merged[t] = topicMap[t];
+          });
+          if (typeof window.fbSaveTopicMastery === 'function') window.fbSaveTopicMastery(session.email, merged);
+        }).catch(() => {});
+      }
+      // Sync overall stats for leaderboard
+      if (typeof window.syncStateToCloud === 'function') setTimeout(() => window.syncStateToCloud(session.email), 500);
+    }
   } catch (e) {
     console.warn("Could not save exam result to stats:", e);
   }
 }
+
 
 async function performAIGrading(stats) {
   const resultArea = document.getElementById('resultArea');
