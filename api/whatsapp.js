@@ -52,6 +52,19 @@ export default async function handler(req, res) {
                     ]
                 }
             ];
+        } else if (type === "NEW_MATERIAL") {
+            // We expect an approved template called 'new_material_alert' with 3 parameters: name, title, subject
+            payload.template.name = templateName || "new_material_alert";
+            payload.template.components = [
+                {
+                    type: "body",
+                    parameters: [
+                        { type: "text", text: name || "Student" },
+                        { type: "text", text: req.body.title || "New Resource" },
+                        { type: "text", text: req.body.subject || "Mission Prep" }
+                    ]
+                }
+            ];
         }
 
         const fbUrl = `https://graph.facebook.com/v20.0/${phoneNumberId}/messages`;

@@ -457,6 +457,11 @@
         <p id="uploadStatus" style="font-size: 0.7rem; color: var(--admin-text-muted); margin-top: 6px;"></p>
       </div>
 
+      <div class="field" style="margin-top: 1.5rem; display: flex; align-items: center; gap: 10px; padding: 12px; background: rgba(37, 211, 102, 0.05); border: 1px solid rgba(37, 211, 102, 0.1); border-radius: 12px;">
+         <input type="checkbox" id="matNotifyWA" checked style="width: 18px; height: 18px; cursor: pointer;">
+         <label for="matNotifyWA" style="font-size: 0.85rem; font-weight: 700; color: #25D366; cursor: pointer; user-select: none;">Send WhatsApp Broadcast to Students</label>
+      </div>
+
       <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 2rem;">
         <button class="btn" style="background: rgba(255,255,255,0.05); color: #fff;" id="closeMatModalBtn">Cancel</button>
         <button class="btn btn-primary" id="saveMaterialBtn">Save Material</button>
@@ -680,6 +685,13 @@
         
         upsertMaterial(entry); // Updates local + triggers firebase sync
         logAction("MATERIAL_ADDED: " + title);
+        
+        // Automated WhatsApp Blast
+        const notifyWA = document.getElementById("matNotifyWA")?.checked;
+        if (notifyWA) {
+            triggerMaterialBroadcast(title, sub);
+        }
+
         closeMatModal(); 
         renderMats(); 
         showToast("Mission assets synchronized");
@@ -700,6 +712,44 @@
       if (!confirm("Delete this material?")) return;
       deleteMaterial(id); logAction("MATERIAL_DELETED"); renderMats(); showToast("Material deleted");
     };
+
+    /**
+     * Automated WhatsApp Broadcast to all opted-in students
+     */
+    async function triggerMaterialBroadcast(title, subject) {
+        showToast("Initializing WhatsApp broadcast...");
+        try {
+            if (typeof window.fbGetAllUsers !== 'function') return;
+            const users = await window.fbGetAllUsers();
+            const recipients = users.filter(u => u.waOptIn && u.phone);
+            
+            if (recipients.length === 0) {
+                console.info("[Admin] No students have opted-in for WhatsApp notifications.");
+                return;
+            }
+
+            console.info(`[Admin] Broadcasting to ${recipients.length} students...`);
+            
+            // Limit to concurrent batches if necessary, but for now we'll do simple async triggers
+            await Promise.all(recipients.map(u => 
+                fetch("/api/whatsapp", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ 
+                        email: u.email, 
+                        phone: u.phone, 
+                        name: u.name,
+                        type: "NEW_MATERIAL",
+                        message: `Hi ${u.name}, new study material "${title}" is now available in your ${subject} module! 📚 Log in to Vision to view.`
+                    })
+                })
+            ));
+            
+            showToast(`Broadcast sent to ${recipients.length} students.`);
+        } catch(e) {
+            console.error("[Admin] Broadcast failed:", e);
+        }
+    }
 
     window.postAnn = async () => {
       const title = document.getElementById("annTitle").value.trim();

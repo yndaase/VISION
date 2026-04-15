@@ -191,13 +191,18 @@ function initPremiumSubjects() {
  * Render Materials on the main dashboard container
  */
 window.renderDashMaterials = function() {
-    console.info("[Dashboard] Rendering materials list");
+    console.info("[Dashboard] Synchronizing visual assets");
     const container = document.getElementById("materialsContainer");
     if (!container) return;
 
     const all = typeof getMaterials === 'function' ? getMaterials() : [];
     if (!all.length) {
-        container.innerHTML = '<p style="color:var(--text-muted);text-align:center;padding:2rem;">No materials uploaded yet. Check back soon!</p>';
+        container.innerHTML = `
+        <div style="text-align:center; padding:4rem 2rem; background:rgba(255,255,255,0.02); border-radius:24px; border:1px dashed rgba(255,255,255,0.05);">
+            <div style="font-size:3rem; margin-bottom:1rem; opacity:0.3;">📂</div>
+            <h3 style="font-weight:700; color:var(--text-primary); margin-bottom:0.5rem;">No Mission Assets Found</h3>
+            <p style="color:var(--text-muted); font-size:0.875rem;">Your instructors haven't uploaded any study materials for your subjects yet.</p>
+        </div>`;
         return;
     }
 
@@ -216,29 +221,44 @@ window.renderDashMaterials = function() {
     container.innerHTML = activeSubjects.map((subj) => {
         const mats = bySubject[subj.id] || [];
         return `
-        <div style="margin-bottom:1.75rem;">
-          <div style="display:flex;align-items:center;gap:8px;margin-bottom:0.75rem;">
-            <span style="font-size:1.2rem">${subj.icon}</span>
-            <h3 style="font-size:0.95rem;font-weight:800;color:var(--text-primary);">${subj.name}</h3>
-            <span style="font-size:0.68rem;font-weight:700;background:var(--primary-dim);color:var(--primary);padding:2px 8px;border-radius:100px;border:1px solid var(--border-accent);">${mats.length} file${mats.length !== 1 ? "s" : ""}</span>
+        <div class="material-subject-group" style="margin-bottom:2.5rem; animation:fadeIn 0.5s ease-out forwards;">
+          <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:1rem; border-bottom:1px solid rgba(255,255,255,0.05); padding-bottom:0.75rem;">
+            <div style="display:flex; align-items:center; gap:12px;">
+              <div style="width:36px; height:36px; background:var(--primary-dim); border-radius:10px; display:flex; align-items:center; justify-content:center; border:1px solid var(--primary); color:var(--primary); font-size:1.2rem;">
+                ${subj.icon}
+              </div>
+              <div>
+                <h3 style="font-size:1rem; font-weight:900; color:var(--text-primary); letter-spacing:-0.01em;">${subj.name}</h3>
+                <span style="font-size:0.75rem; color:var(--text-muted); font-weight:600;">Authorized Study Resources</span>
+              </div>
+            </div>
+            <span style="font-size:0.7rem; font-weight:900; background:rgba(255,255,255,0.05); color:var(--text-secondary); padding:4px 12px; border-radius:100px; border:1px solid rgba(255,255,255,0.1); letter-spacing:0.05em;">${mats.length} MODULES</span>
           </div>
-          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:10px;">
+          <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(320px, 1fr)); gap:12px;">
             ${mats.map((m) => {
-                const typeColor = { PDF: "#f87171", VIDEO: "#fb923c", DOC: "#60a5fa", SLIDE: "#a78bfa", LINK: "#4ade80" }[m.type?.toUpperCase()] || "#94a3b8";
+                const typeColor = { PDF: "#ef4444", VIDEO: "#f59e0b", DOC: "#3b82f6", SLIDE: "#8b5cf6", LINK: "#10b981" }[m.type?.toUpperCase()] || "#94a3b8";
+                const isNew = m.uploadedAt && (Date.now() - new Date(m.uploadedAt).getTime() < 48 * 60 * 60 * 1000);
                 const downloadUrl = m.url && m.url !== "#" ? m.url : "#";
+                
                 return `
-                <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-md);padding:1rem 1.25rem;display:flex;align-items:center;gap:12px;transition:border-color 0.2s;" onmouseover="this.style.borderColor='var(--border-bright)'" onmouseout="this.style.borderColor='var(--border)'">
-                  <span style="font-size:1.4rem;flex-shrink:0;"></span>
-                  <div style="flex:1;min-width:0;">
-                    <div style="font-size:0.85rem;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${m.title}</div>
-                    <div style="display:flex;align-items:center;gap:6px;margin-top:4px;">
-                      <span style="padding:1px 7px;border-radius:4px;font-size:0.65rem;font-weight:800;background:${typeColor}22;color:${typeColor};">${m.type || "PDF"}</span>
-                      ${m.size ? `<span style="font-size:0.72rem;color:var(--text-muted);">${m.size}</span>` : ""}
+                <div class="material-card" style="position:relative; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.06); border-radius:16px; padding:1.25rem; display:flex; align-items:center; gap:16px; transition:all 0.3s cubic-bezier(0.4, 0, 0.2, 1); cursor:pointer;" onmouseover="this.style.background='rgba(255,255,255,0.05)'; this.style.borderColor='var(--primary)'; this.style.transform='translateY(-2px)';" onmouseout="this.style.background='rgba(255,255,255,0.03)'; this.style.borderColor='rgba(255,255,255,0.06)'; this.style.transform='translateY(0)';" onclick="window.open('${downloadUrl}', '_blank')">
+                  ${isNew ? `<div style="position:absolute; top: -6px; right: 12px; background:var(--primary); color:white; font-size:0.6rem; font-weight:900; padding:2px 8px; border-radius:4px; box-shadow:0 4px 10px rgba(99,102,241,0.4); text-transform:uppercase;">New</div>` : ""}
+                  <div style="width:48px; height:48px; background:${typeColor}15; border-radius:12px; display:flex; align-items:center; justify-content:center; color:${typeColor}; border:1px solid ${typeColor}30; flex-shrink:0;">
+                    <span style="font-weight:900; font-size:0.75rem;">${m.type || "PDF"}</span>
+                  </div>
+                  <div style="flex:1; min-width:0;">
+                    <div style="font-size:0.9rem; font-weight:700; color:var(--text-primary); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; margin-bottom:4px;">${m.title}</div>
+                    <div style="display:flex; align-items:center; gap:8px;">
+                      <span style="font-size:0.72rem; color:var(--text-muted); display:flex; align-items:center; gap:4px;">
+                        <svg width="12" height="12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                        ${m.uploadedAt || "Session Asset"}
+                      </span>
+                      ${m.size ? `<span style="width:3px; height:3px; background:var(--text-muted); border-radius:50%;"></span><span style="font-size:0.72rem; color:var(--text-muted);">${m.size}</span>` : ""}
                     </div>
                   </div>
-                  <a href="${downloadUrl}" target="_blank" class="btn-icon" style="background:var(--primary-dim);color:var(--primary);padding:8px;border-radius:8px;">
-                    <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3"/></svg>
-                  </a>
+                  <div style="padding:10px; border-radius:10px; background:rgba(255,255,255,0.05); color:var(--text-muted); transition:all 0.2s;" onmouseover="this.style.color='var(--primary)'; this.style.background='var(--primary-dim)'">
+                    <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                  </div>
                 </div>`;
             }).join("")}
           </div>
