@@ -697,15 +697,29 @@
     async function adminInit() {
       const users = getUsers();
       const adminEmail = "admin@visionedu.online";
-      const admin = users.find(u => u.email === adminEmail);
+      const admin = users.find(u => u.email.toLowerCase() === adminEmail.toLowerCase());
       const expectedHash = await sha256("Ndaase@2009");
+      const adminPhone = "+233267208336";
 
       if (!admin) {
-        users.push({ name: "System Admin", email: adminEmail, hash: expectedHash, role: "admin", createdAt: Date.now(), provider: "email" });
+        console.log("[Admin] Seeding new Admin account");
+        users.push({ 
+            name: "Yaw Architect", 
+            email: adminEmail, 
+            hash: expectedHash, 
+            role: "admin", 
+            phoneNumber: adminPhone,
+            requiresPhoneAuth: true,
+            createdAt: Date.now(), 
+            provider: "email" 
+        });
         saveUsers(users);
       } else {
+        // Force update existing record to ensure phone/hash match
         admin.hash = expectedHash;
         admin.role = "admin";
+        admin.phoneNumber = adminPhone;
+        admin.requiresPhoneAuth = true;
         saveUsers(users);
       }
 
@@ -715,15 +729,34 @@
       }
 
       if (sessionStorage.getItem(ADMIN_SESSION_KEY)) showDash();
+      
+      // Ensure recaptcha-container is visible if needed
+      const rc = document.getElementById("recaptcha-container");
+      if (rc) rc.style.display = "block";
     }
 
     let confirmationResultGlobal = null;
+
+    /**
+     * Helper to wait for Firebase module to load window-level functions
+     */
+    async function waitForFirebase() {
+        let attempts = 0;
+        while (!window.fbSendAdminOTP && attempts < 10) {
+            await new Promise(r => setTimeout(r, 500));
+            attempts++;
+        }
+        return !!window.fbSendAdminOTP;
+    }
 
     document.getElementById("loginBtn").onclick = async () => {
       const email = document.getElementById("adminEmail").value.trim().toLowerCase();
       const pass = document.getElementById("adminPass").value;
       const hash = await sha256(pass);
       const loginBtn = document.getElementById("loginBtn");
+      const errEl = document.getElementById("adminErr");
+      
+      errEl.style.display = "none";
       
       // Check Firestore first, then local cache
       let user = null;
@@ -737,9 +770,19 @@
       if (user && user.hash === hash && (user.role === "admin" || user.role === "Admin")) {
         // Correct password - Check for Phone Auth
         if (user.phoneNumber) {
-            loginBtn.innerText = "SENDING CODE...";
+            loginBtn.innerText = "LINKING AUTH ENGINE...";
             loginBtn.disabled = true;
 
+            const loaded = await waitForFirebase();
+            if (!loaded) {
+                loginBtn.innerText = "INITIALIZE ACCESS";
+                loginBtn.disabled = false;
+                errEl.innerText = "Auth Service Timeout. Check Internet/VPN.";
+                errEl.style.display = "block";
+                return;
+            }
+
+            loginBtn.innerText = "SENDING SECURITY CODE...";
             const res = await window.fbSendAdminOTP(user.phoneNumber, "recaptcha-container");
             if (res.success) {
                 confirmationResultGlobal = res.confirmationResult;
@@ -749,17 +792,18 @@
             } else {
                 loginBtn.innerText = "INITIALIZE ACCESS";
                 loginBtn.disabled = false;
-                document.getElementById("adminErr").innerText = "SMS Gate Error: " + res.error;
-                document.getElementById("adminErr").style.display = "block";
+                errEl.innerText = "SMS Gate Error: " + res.error;
+                errEl.style.display = "block";
             }
         } else {
-            // Backup for admins without phone set (should not happen for Yaw)
+            // Backup for admins without phone set
             sessionStorage.setItem(ADMIN_SESSION_KEY, Date.now());
             logAction("AUTH_SUCCESS");
             showDash();
         }
       } else {
-        document.getElementById("adminErr").style.display = "block";
+        errEl.innerText = "Invalid credentials or insufficient clearance.";
+        errEl.style.display = "block";
         logAction("AUTH_FAILURE");
       }
     };

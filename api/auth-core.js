@@ -8,8 +8,18 @@ const JWKS = jose.createRemoteJWKSet(new URL('https://www.googleapis.com/oauth2/
 export default async function handler(req, res) {
   const { type } = req.body || req.query || {};
 
+  // Verify and Enforce Cloud Storage Configuration
+  if (!process.env.BLOB_READ_WRITE_TOKEN) {
+    console.error("[Auth Hub] CRITICAL ERROR: BLOB_READ_WRITE_TOKEN is missing.");
+    return res.status(500).json({ 
+      success: false, 
+      error: "Authorization Backend Unconfigured",
+      detail: "Cloud storage tokens are missing from environment variables."
+    });
+  }
+
   try {
-    switch (type || (req.method==='GET'?'risc-get':null)) {
+    switch (type || (req.method === 'GET' ? 'risc-get' : null)) {
       case 'send-code': return await handleSendCode(req.body, res);
       case 'check-revocation': return await handleCheckRevocation(req.body, res);
       case 'sync-users': return await handleSyncUsers(req.body, res);
