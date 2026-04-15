@@ -9,7 +9,6 @@
     "@vercel/blob": "^2.3.2",
     "@vercel/speed-insights": "^2.0.0",
     "jose": "^6.2.2",
-    "openai": "^6.33.0",
-    "twilio": "^5.13.1"
+    "openai": "^6.33.0"
   }
 }
