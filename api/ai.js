@@ -8,7 +8,6 @@ const azureDeploymentPro = process.env.AZURE_OPENAI_DEPLOYMENT || "gpt-4o";
 const groqKey = process.env.GROQ_API_KEY;
 const groqModel = process.env.GROQ_MODEL || "llama-3.1-8b-instant";
 const azureVersion = "2025-01-01-preview";
-const azureVersion = "2025-01-01-preview";
 
 /**
  * Microsoft Azure OpenAI Client Initialization
@@ -19,6 +18,9 @@ if (azureKey && azureEndpoint) {
     endpoint: azureEndpoint,
     apiKey: azureKey,
     apiVersion: azureVersion,
+  });
+}
+
 /**
  * AI Content Generation with Multi-Provider Routing
  * Standard Users: Groq (Llama 3.1) [100% Free]
