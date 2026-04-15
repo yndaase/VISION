@@ -67,7 +67,7 @@ export default async function handler(req, res) {
             ];
         }
 
-        const fbUrl = `https://graph.facebook.com/v20.0/${phoneNumberId}/messages`;
+        const fbUrl = `https://graph.facebook.com/v25.0/${phoneNumberId}/messages`;
         
         console.log(`[Meta WA] Routing to ${recipientPhone} via ${fbUrl}`);
 
