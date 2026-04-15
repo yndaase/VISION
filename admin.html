@@ -469,6 +469,39 @@
     </div>
   </div>
 
+  <div class="modal-overlay" id="waMsgModal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 style="color: #25D366; display: flex; align-items: center; gap: 8px;">
+          <svg viewBox="0 0 24 24" width="24" height="24" fill="#25D366"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+          WhatsApp Command Center
+        </h3>
+        <p style="color: var(--admin-text-muted); font-size: 0.85rem; margin-top: 4px;">Direct student communication protocols.</p>
+      </div>
+
+      <div class="field">
+        <label class="label">Recipient Identity</label>
+        <div id="waMsgRecipient" style="padding: 12px; background: rgba(255,255,255,0.03); border: 1px solid var(--admin-border); border-radius: 10px; font-weight: 700;">Student Name (+000...)</div>
+      </div>
+
+      <div class="field">
+        <label class="label">Message Protocol (Meta Template)</label>
+        <select class="input" id="waMsgTemplate">
+          <option value="REMINDER">Study Reminder (Generic)</option>
+          <option value="EXAM_ALERT">WASSCE 2026 Critical Alert</option>
+          <option value="PERFORMANCE_UPDATE">Performance Milestone Notification</option>
+          <option value="GENERAL_ALERT">System-Wide Tactical Update</option>
+        </select>
+        <p style="font-size: 0.7rem; color: var(--admin-text-muted); margin-top: 6px;">Messages are sent using your pre-approved WhatsApp Business templates.</p>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 2rem;">
+        <button class="btn" style="background: rgba(255,255,255,0.05); color: #fff;" onclick="closeWAMsgModal()">Abort</button>
+        <button class="btn btn-primary" style="background: #25D366; border-color: #25D366;" id="sendWAMsgBtn" onclick="dispatchWACommandMessage()">Dispatch Message</button>
+      </div>
+    </div>
+  </div>
+
   <div class="toast" id="toast"></div>
 
   <script>
@@ -751,6 +784,75 @@
         }
     }
 
+    };
+
+    /**
+     * WhatsApp Command Center Handlers
+     */
+    let _activeWAMsgUser = null;
+
+    window.openWAMsgModal = (email, name, phone) => {
+        _activeWAMsgUser = { email, name, phone };
+        const modal = document.getElementById("waMsgModal");
+        const recipientEl = document.getElementById("waMsgRecipient");
+        if (modal && recipientEl) {
+            recipientEl.textContent = `${name} (${phone || "No number recorded"})`;
+            modal.style.display = "flex";
+            modal.classList.add("visible");
+        }
+    };
+
+    window.closeWAMsgModal = () => {
+        const modal = document.getElementById("waMsgModal");
+        if (modal) {
+            modal.style.display = "none";
+            modal.classList.remove("visible");
+        }
+        _activeWAMsgUser = null;
+    };
+
+    window.dispatchWACommandMessage = async () => {
+        if (!_activeWAMsgUser) return;
+        const template = document.getElementById("waMsgTemplate").value;
+        const btn = document.getElementById("sendWAMsgBtn");
+
+        if (!_activeWAMsgUser.phone) {
+            alert("No phone identity found for this student. Protocol aborted.");
+            return;
+        }
+
+        btn.disabled = true;
+        btn.textContent = "Dispatching...";
+        showToast("Synchronizing with Meta Graph API...");
+
+        try {
+            const response = await fetch("/api/whatsapp", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    email: _activeWAMsgUser.email,
+                    phone: _activeWAMsgUser.phone,
+                    name: _activeWAMsgUser.name,
+                    type: template
+                })
+            });
+
+            const result = await response.json();
+            if (result.success) {
+                showToast("Tactical message delivered successfully.");
+                closeWAMsgModal();
+            } else {
+                throw new Error(result.error || "Meta rejection.");
+            }
+        } catch(e) {
+            console.error("[Admin] Dispatch failure:", e);
+            alert("Protocol Failure: " + e.message);
+        } finally {
+            btn.disabled = false;
+            btn.textContent = "Dispatch Message";
+        }
+    };
+
     window.postAnn = async () => {
       const title = document.getElementById("annTitle").value.trim();
       const body = document.getElementById("annMsg").value.trim();
@@ -863,8 +965,8 @@
           </select></td>
           <td style="text-align: center;">
             ${u.waOptIn ? 
-              `<button class="btn" style="background: rgba(37, 211, 102, 0.1); color: #25D366; border: 1px solid rgba(37, 211, 102, 0.2); padding: 6px 10px; font-size: 0.7rem;" onclick="sendWAReminder('${u.email}', '${u.name||'Student'}')">
-                <span style="font-size: 1rem; margin-right: 4px;">💬</span> Remind
+              `<button class="btn" style="background: rgba(37, 211, 102, 0.1); color: #25D366; border: 1px solid rgba(37, 211, 102, 0.2); padding: 6px 10px; font-size: 0.7rem;" onclick="openWAMsgModal('${u.email}', '${u.name||'Student'}', '${u.phone||''}')">
+                <span style="font-size: 1rem; margin-right: 4px;">💬</span> Message
                </button>` : 
               `<span style="color: var(--admin-text-muted); font-size: 0.65rem; font-weight: 700; opacity: 0.5;">Not Opted In</span>`
             }

@@ -47,9 +47,7 @@ export default async function handler(req, res) {
             payload.template.components = [
                 {
                     type: "body",
-                    parameters: [
-                        { type: "text", text: name || "Student" }
-                    ]
+                    parameters: [ { type: "text", text: name || "Student" } ]
                 }
             ];
         } else if (type === "NEW_MATERIAL") {
@@ -65,6 +63,24 @@ export default async function handler(req, res) {
                     ]
                 }
             ];
+        } else if (type === "EXAM_ALERT") {
+             payload.template.name = templateName || "exam_countdown_2026";
+             payload.template.components = [{
+                 type: "body",
+                 parameters: [ { type: "text", text: name || "Student" } ]
+             }];
+        } else if (type === "PERFORMANCE_UPDATE") {
+             payload.template.name = templateName || "performance_milestone";
+             payload.template.components = [{
+                 type: "body",
+                 parameters: [ { type: "text", text: name || "Student" } ]
+             }];
+        } else if (type === "GENERAL_ALERT") {
+             payload.template.name = templateName || "general_system_update";
+             payload.template.components = [{
+                 type: "body",
+                 parameters: [ { type: "text", text: name || "Student" } ]
+             }];
         }
 
         const fbUrl = `https://graph.facebook.com/v25.0/${phoneNumberId}/messages`;
