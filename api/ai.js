@@ -19,22 +19,17 @@ if (azureKey) {
 }
 
 /**
- * AI Content Generation with Multi-Provider Routing
- * Standard Users: Azure (gpt-4o-mini)
- * Pro Users: Azure (gpt-4o)
+ * AI Content Generation with Unified Routing
+ * All Users: Azure (gpt-4o)
  */
 async function safeGenerateContent(contents, role = "student") {
   const mode = contents.find(c => c.mode)?.mode || "examiner";
-  const useProModel = role === "pro" || role === "admin";
 
   try {
     if (!azureKey) throw new Error("Azure or GitHub API key is missing. Please configure AZURE_OPENAI_KEY or GITHUB_TOKEN.");
     
-    if (useProModel) {
-      return await generateWithAzure(contents, mode, azureDeploymentPro);
-    } else {
-      return await generateWithAzure(contents, mode, azureDeploymentStandard);
-    }
+    // Unified model for all tiers
+    return await generateWithAzure(contents, mode, azureDeploymentPro);
   } catch (error) {
     console.error(`[AI Engine Error]:`, error.message);
     throw error;
