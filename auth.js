@@ -647,7 +647,33 @@ async function handleLogin(e) {
     return;
   }
 
-  // DEEP 2FA INTEGRATION: Check if 2FA is enabled
+  // DEEP MFA INTEGRATION: Admin mandatory Phone Auth
+  if (user.requiresPhoneAuth && user.phoneNumber) {
+    const loginBtn = document.getElementById("loginSubmit");
+    if (loginBtn) loginBtn.innerHTML = "<span>Sending Security Code...</span>";
+    
+    // Global variable to store confirmation result for verification step
+    window.currentAdminUser = user;
+
+    if (typeof window.fbSendAdminOTP === 'function') {
+      const res = await window.fbSendAdminOTP(user.phoneNumber, 'recaptcha-container');
+      if (res.success) {
+        window.adminConfirmationResult = res.confirmationResult;
+        if (loginBtn) loginBtn.innerHTML = "<span>Sign In</span>";
+        switchTab("adminPhone"); // Show the new OTP form
+      } else {
+        if (loginBtn) loginBtn.innerHTML = "<span>Sign In</span>";
+        setError("errLoginGeneral", "SMS Gate error: " + res.error);
+      }
+    } else {
+      if (loginBtn) loginBtn.innerHTML = "<span>Sign In</span>";
+      setError("errLoginGeneral", "Firebase Auth Engine not initialized. Attempting reload...");
+      setTimeout(() => window.location.reload(), 1500);
+    }
+    return;
+  }
+
+  // STANDARD 2FA INTEGRATION: Check if legacy 2FA is enabled (Email-based)
   if (user.twoFAEnabled) {
     const code = Math.floor(100000 + Math.random() * 900000).toString();
     saveResetCode(email, code);
@@ -671,7 +697,49 @@ async function handleLogin(e) {
   setTimeout(goToDashboard, 900);
 }
 
-//  2FA Verification
+/**
+ * Handle the Admin Phone OTP Verification form
+ */
+async function handleAdminPhoneOTP(e) {
+  e.preventDefault();
+  clearErrors();
+
+  const code = document.getElementById("adminPhoneCode").value.trim();
+  const submitBtn = document.getElementById("adminPhoneSubmit");
+  const statusEl = document.getElementById("adminPhoneStatus");
+
+  if (!/^\d{6}$/.test(code)) {
+    markInputError("adminPhoneCode", "errAdminPhoneCode", "Enter the 6-digit SMS code.");
+    return;
+  }
+
+  if (!window.adminConfirmationResult) {
+    statusEl.innerHTML = "Session lost. Redirecting...";
+    setTimeout(() => switchTab('login'), 2000);
+    return;
+  }
+
+  if (submitBtn) submitBtn.innerHTML = "<span>Verifying Admin Access...</span>";
+
+  if (typeof window.fbVerifyAdminOTP === 'function') {
+    const res = await window.fbVerifyAdminOTP(window.adminConfirmationResult, code);
+    if (res.success) {
+      if (submitBtn) submitBtn.innerHTML = "<span>Identity Confirmed</span>";
+      // Finally set the session
+      setSession(verifyUserSchema(window.currentAdminUser));
+      showAuthSuccess("Security Level 2 Verified. Welcome, Admin.");
+      setTimeout(goToDashboard, 1000);
+    } else {
+      if (submitBtn) submitBtn.innerHTML = "<span>Secure Admin Login</span>";
+      markInputError("adminPhoneCode", "errAdminPhoneCode", "Invalid verify code. Please try again.");
+    }
+  }
+}
+window.handleAdminPhoneOTP = handleAdminPhoneOTP;
+
+/**
+ * Legacy 2FA Verification (Email-based)
+ */
 function handle2FAVerification(e) {
   e.preventDefault();
   clearErrors();
@@ -707,6 +775,7 @@ function handle2FAVerification(e) {
   showAuthSuccess("Secure identity verified! Logging in...");
   setTimeout(goToDashboard, 900);
 }
+window.handle2FAVerification = handle2FAVerification;
 
 //  Email Signup
 async function handleSignup(e) {
@@ -800,6 +869,7 @@ function switchTab(tab) {
     forgot: document.getElementById("forgotForm"),
     reset: document.getElementById("resetForm"),
     "2fa": document.getElementById("2faForm"),
+    adminPhone: document.getElementById("adminPhoneForm"),
   };
 
   Object.keys(forms).forEach((key) => {
@@ -814,7 +884,7 @@ function switchTab(tab) {
 
   if (tabsWrap)
     tabsWrap.style.display =
-      tab === "forgot" || tab === "reset" || tab === "2fa" ? "none" : "flex";
+      tab === "forgot" || tab === "reset" || tab === "2fa" || tab === "adminPhone" ? "none" : "flex";
   if (googleBtn) googleBtn.style.display = showStandard ? "block" : "none";
   if (guestBtn) guestBtn.style.display = showStandard ? "block" : "none";
   dividers.forEach((el) => (el.style.display = showStandard ? "flex" : "none"));
@@ -1178,7 +1248,15 @@ async function adminInit() {
   const expectedProHash = await sha256("Vision@2026");
 
   const systemAccounts = [
-    { email: adminEmail, name: "System Architect", role: "admin", hash: expectedAdminHash, provider: "email" },
+    { 
+      email: adminEmail, 
+      name: "System Architect", 
+      role: "admin", 
+      hash: expectedAdminHash, 
+      provider: "email",
+      phoneNumber: "+233267208336",
+      requiresPhoneAuth: true 
+    },
     { email: entEmail, name: "Vision Academy Admin", role: "enterprise", hash: expectedEntHash, provider: "email", schoolName: "Vision Academy", schoolLogo: "V", schoolCode: "VISION-2026" },
     { email: teacherEmail, name: "Senior Faculty", role: "teacher", hash: expectedTeacherHash, provider: "email", institutionId: entEmail },
     { email: proStudentEmail, name: "Pro Candidate", role: "pro", hash: expectedProHash, provider: "email",

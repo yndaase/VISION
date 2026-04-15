@@ -8,6 +8,11 @@ import {
   collection,
   updateDoc
 } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+import { 
+  getAuth, 
+  RecaptchaVerifier, 
+  signInWithPhoneNumber 
+} from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyCCLvmFR4NU6aIbDc-75EsBL-K9pqlNa5E",
@@ -22,6 +27,8 @@ const firebaseConfig = {
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
+const auth = getAuth(app);
+window.fbAuth = auth;
 
 /* ─────────────────────────────────────────────────────────────
    USER DATABASE  (Firestore collection: "users")
@@ -378,6 +385,53 @@ const _fbGetLinkCode = async function(code) {
 };
 window.fbGetLinkCode = _fbGetLinkCode;
 export const fbGetLinkCode = _fbGetLinkCode;
+
+
+/* ─────────────────────────────────────────────────────────────
+   ADMIN PHONE AUTHENTICATION (MFA)
+   ───────────────────────────────────────────────────────────── */
+
+/**
+ * Sends a verification SMS to the admin's phone number.
+ * Returns confirmationResult object required for verification.
+ */
+window.fbSendAdminOTP = async function(phoneNumber, containerId) {
+  try {
+    // Reset reCAPTCHA if it exists to avoid UI glitches
+    if (window.recaptchaVerifier) {
+      window.recaptchaVerifier.clear();
+      document.getElementById(containerId).innerHTML = '';
+    }
+
+    window.recaptchaVerifier = new RecaptchaVerifier(auth, containerId, {
+      'size': 'invisible',
+      'callback': (response) => {
+        // reCAPTCHA solved, allow signInWithPhoneNumber.
+      }
+    });
+
+    const confirmationResult = await signInWithPhoneNumber(auth, phoneNumber, window.recaptchaVerifier);
+    console.log("[Firebase] Admin OTP sent successfully.");
+    return { success: true, confirmationResult };
+  } catch (error) {
+    console.error("[Firebase] fbSendAdminOTP failed:", error);
+    return { success: false, error: error.message };
+  }
+};
+
+/**
+ * Verifies the SMS OTP and returns the result.
+ */
+window.fbVerifyAdminOTP = async function(confirmationResult, otpCode) {
+  try {
+    const result = await confirmationResult.confirm(otpCode);
+    console.log("[Firebase] Admin phone verified consistently.");
+    return { success: true, user: result.user };
+  } catch (error) {
+    console.error("[Firebase] fbVerifyAdminOTP failed:", error);
+    return { success: false, error: error.message };
+  }
+};
 
 
 /* ─────────────────────────────────────────────────────────────
