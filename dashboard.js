@@ -108,8 +108,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
   //  Background Sync for Materials
   if (typeof syncMaterials === 'function') {
-      syncMaterials();
+      syncMaterials().then(() => {
+          if (typeof renderDashMaterials === 'function') renderDashMaterials();
+      });
   }
+  
+  // Initial render
+  if (typeof renderDashMaterials === 'function') renderDashMaterials();
 });
 
 //  Broadcast Engine
@@ -181,6 +186,65 @@ function initPremiumSubjects() {
     });
   });
 }
+
+/**
+ * Render Materials on the main dashboard container
+ */
+window.renderDashMaterials = function() {
+    console.info("[Dashboard] Rendering materials list");
+    const container = document.getElementById("materialsContainer");
+    if (!container) return;
+
+    const all = typeof getMaterials === 'function' ? getMaterials() : [];
+    if (!all.length) {
+        container.innerHTML = '<p style="color:var(--text-muted);text-align:center;padding:2rem;">No materials uploaded yet. Check back soon!</p>';
+        return;
+    }
+
+    const bySubject = {};
+    if (typeof SUBJECTS_META !== 'undefined') {
+        SUBJECTS_META.forEach((s) => { bySubject[s.id] = []; });
+    }
+    all.forEach((m) => {
+        if (bySubject[m.subject]) bySubject[m.subject].push(m);
+    });
+
+    const activeSubjects = (typeof SUBJECTS_META !== 'undefined') 
+        ? SUBJECTS_META.filter((s) => (bySubject[s.id] || []).length > 0)
+        : [];
+
+    container.innerHTML = activeSubjects.map((subj) => {
+        const mats = bySubject[subj.id] || [];
+        return `
+        <div style="margin-bottom:1.75rem;">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:0.75rem;">
+            <span style="font-size:1.2rem">${subj.icon}</span>
+            <h3 style="font-size:0.95rem;font-weight:800;color:var(--text-primary);">${subj.name}</h3>
+            <span style="font-size:0.68rem;font-weight:700;background:var(--primary-dim);color:var(--primary);padding:2px 8px;border-radius:100px;border:1px solid var(--border-accent);">${mats.length} file${mats.length !== 1 ? "s" : ""}</span>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:10px;">
+            ${mats.map((m) => {
+                const typeColor = { PDF: "#f87171", VIDEO: "#fb923c", DOC: "#60a5fa", SLIDE: "#a78bfa", LINK: "#4ade80" }[m.type?.toUpperCase()] || "#94a3b8";
+                const downloadUrl = m.url && m.url !== "#" ? m.url : "#";
+                return `
+                <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-md);padding:1rem 1.25rem;display:flex;align-items:center;gap:12px;transition:border-color 0.2s;" onmouseover="this.style.borderColor='var(--border-bright)'" onmouseout="this.style.borderColor='var(--border)'">
+                  <span style="font-size:1.4rem;flex-shrink:0;"></span>
+                  <div style="flex:1;min-width:0;">
+                    <div style="font-size:0.85rem;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${m.title}</div>
+                    <div style="display:flex;align-items:center;gap:6px;margin-top:4px;">
+                      <span style="padding:1px 7px;border-radius:4px;font-size:0.65rem;font-weight:800;background:${typeColor}22;color:${typeColor};">${m.type || "PDF"}</span>
+                      ${m.size ? `<span style="font-size:0.72rem;color:var(--text-muted);">${m.size}</span>` : ""}
+                    </div>
+                  </div>
+                  <a href="${downloadUrl}" target="_blank" class="btn-icon" style="background:var(--primary-dim);color:var(--primary);padding:8px;border-radius:8px;">
+                    <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3"/></svg>
+                  </a>
+                </div>`;
+            }).join("")}
+          </div>
+        </div>`;
+    }).join("");
+};
 
 //  Animated counter
 function animateCount(el, target) {

@@ -77,6 +77,23 @@
     }
     .input:focus { border-color: var(--admin-primary); box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1); }
     
+    select.input {
+        appearance: none;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23ffffff'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 1rem center;
+        background-size: 1.25rem;
+    }
+    select.input option {
+        background: #1a1c23; /* Solid dark background for browser native dropdowns */
+        color: #fff;
+        padding: 12px;
+    }
+
+    /* Progress bar styles */
+    .progress-container { display: none; margin-top: 1rem; background: rgba(255,255,255,0.05); border-radius: 100px; height: 8px; overflow: hidden; }
+    .progress-bar { height: 100%; background: var(--admin-primary); width: 0%; transition: width 0.3s; }
+    
     .btn-auth {
       width: 100%;
       padding: 16px;
@@ -359,22 +376,26 @@
               <div class="field"><label class="label">Password</label><input class="input" type="password" id="newUserPass" placeholder="••••••••" /></div>
             </div>
             <div style="display: flex; align-items: flex-end; gap: 1.5rem;">
-              <div class="field" style="flex: 1; margin-bottom: 0;">
-                <label class="label">User Role</label>
-                <select class="input" id="newUserRole">
+            <div class="field" style="flex: 1; margin-bottom: 0;">
+              <label class="label">User Role / Position</label>
+              <div style="display: flex; gap: 1rem;">
+                <select class="input" id="newUserRole" style="flex: 2;">
                   <option value="pro">Student (Pro Access)</option>
                   <option value="teacher">Teacher (Faculty)</option>
                   <option value="enterprise">Enterprise (School Admin)</option>
-                  <option value="President">President</option>
-                  <option value="Vice President 1">Vice President 1</option>
-                  <option value="Vice President 2">Vice President 2</option>
-                  <option value="General Secretary">General Secretary</option>
-                  <option value="Organiser">Organiser</option>
-                  <option value="PRO">PRO</option>
-                  <option value="Admin">Admin</option>
+                  <optgroup label="Institutional Roles">
+                    <option value="President">President</option>
+                    <option value="Vice President 1">Vice President 1</option>
+                    <option value="Vice President 2">Vice President 2</option>
+                    <option value="General Secretary">General Secretary</option>
+                    <option value="Organiser">Organiser</option>
+                    <option value="PRO">PRO</option>
+                    <option value="Admin">Admin</option>
+                  </optgroup>
                 </select>
+                <button class="btn btn-primary" id="createUserBtn" style="height: 50px; padding: 0 40px; white-space: nowrap;">Create Account</button>
               </div>
-              <button class="btn btn-primary" id="createUserBtn" style="height: 50px; padding: 0 40px;">Create Account</button>
+            </div>
             </div>
           </div>
         </div>
@@ -414,8 +435,29 @@
       <div class="field"><label class="label">Subject</label><select class="input" id="matSubject"></select></div>
       <div class="field"><label class="label">Title</label><input class="input" id="matTitle" placeholder="e.g. 2026 Core Maths Schema" /></div>
       <div class="field"><label class="label">Type</label><select class="input" id="matType"><option value="PDF">PDF</option><option value="VIDEO">Video</option><option value="DOC">Document</option><option value="SLIDE">Slides</option><option value="LINK">Web Link</option></select></div>
-      <div class="field"><label class="label">Resource URL</label><input class="input" id="matUrl" placeholder="https://..." /></div>
-      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 2.5rem;">
+      <div class="field">
+        <label class="label">Resource Mode</label>
+        <div style="display: flex; gap: 0.5rem; background: rgba(255,255,255,0.03); padding: 4px; border-radius: 12px; border: 1px solid var(--admin-border);">
+            <button class="btn" style="flex: 1; background: var(--admin-primary); font-size: 0.75rem;" id="modeLinkBtn" onclick="setMatMode('link')">Link / URL</button>
+            <button class="btn" style="flex: 1; background: transparent; font-size: 0.75rem;" id="modeFileBtn" onclick="setMatMode('file')">Upload File</button>
+        </div>
+      </div>
+      
+      <div id="matUrlGroup" class="field">
+        <label class="label">Resource URL</label>
+        <input class="input" id="matUrl" placeholder="https://..." />
+      </div>
+
+      <div id="matFileGroup" class="field" style="display: none;">
+        <label class="label">Select File (Max 50MB)</label>
+        <input type="file" id="matFileInput" class="input" style="padding: 10px;" />
+        <div class="progress-container" id="uploadProgressContainer">
+            <div class="progress-bar" id="uploadProgressBar"></div>
+        </div>
+        <p id="uploadStatus" style="font-size: 0.7rem; color: var(--admin-text-muted); margin-top: 6px;"></p>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 2rem;">
         <button class="btn" style="background: rgba(255,255,255,0.05); color: #fff;" id="closeMatModalBtn">Cancel</button>
         <button class="btn btn-primary" id="saveMaterialBtn">Save Material</button>
       </div>
@@ -434,6 +476,45 @@
       console.info("[Admin] Opening Material Modal");
       const m = document.getElementById("matModal");
       if(m) { m.style.display = "flex"; m.classList.add("visible"); }
+      resetMatModal();
+      
+      const subSel = document.getElementById("matSubject");
+      if (subSel && !subSel.options.length) {
+        subSel.innerHTML = SUBJECTS_META.map(s => `<option value="${s.id}">${s.name}</option>`).join("");
+      }
+    };
+
+    function resetMatModal() {
+        setMatMode('link');
+        ["matTitle", "matUrl", "matFileInput"].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.value = "";
+        });
+        const pc = document.getElementById("uploadProgressContainer");
+        const pb = document.getElementById("uploadProgressBar");
+        const us = document.getElementById("uploadStatus");
+        if (pc) pc.style.display = "none";
+        if (pb) pb.style.width = "0%";
+        if (us) us.innerText = "";
+    }
+
+    window.setMatMode = (mode) => {
+        const linkBtn = document.getElementById("modeLinkBtn");
+        const fileBtn = document.getElementById("modeFileBtn");
+        const urlGroup = document.getElementById("matUrlGroup");
+        const fileGroup = document.getElementById("matFileGroup");
+
+        if (mode === 'link') {
+            if (linkBtn) linkBtn.style.background = "var(--admin-primary)";
+            if (fileBtn) fileBtn.style.background = "transparent";
+            if (urlGroup) urlGroup.style.display = "block";
+            if (fileGroup) fileGroup.style.display = "none";
+        } else {
+            if (fileBtn) fileBtn.style.background = "var(--admin-primary)";
+            if (linkBtn) linkBtn.style.background = "transparent";
+            if (urlGroup) urlGroup.style.display = "none";
+            if (fileGroup) fileGroup.style.display = "block";
+        }
     };
     window.closeMatModal = () => { 
       const m = document.getElementById("matModal");
@@ -555,24 +636,56 @@
       const sub = document.getElementById("matSubject").value;
       const title = document.getElementById("matTitle").value.trim();
       const type = document.getElementById("matType").value;
-      const url = document.getElementById("matUrl").value.trim();
-      if (!title || !url) return showToast("Protocol error: Required fields missing");
+      const urlInput = document.getElementById("matUrl").value.trim();
+      const fileInput = document.getElementById("matFileInput");
+      const isFileUpload = document.getElementById("matFileGroup").style.display !== "none";
+      
+      if (!title) return showToast("Protocol error: Title required");
+      if (!isFileUpload && !urlInput) return showToast("Protocol error: URL required");
+      if (isFileUpload && (!fileInput.files || !fileInput.files[0])) return showToast("Protocol error: No file selected");
 
       const saveBtn = document.getElementById("saveMaterialBtn");
       saveBtn.disabled = true;
-      saveBtn.innerText = "SAVING...";
+      saveBtn.innerText = "PROCESSING...";
 
-      const entry = { id: genMatId(), subject: sub, title, type, url, uploadedAt: new Date().toISOString().split("T")[0], uploadedBy: "admin" };
-      
+      let finalUrl = urlInput;
+
       try {
+        if (isFileUpload) {
+            const file = fileInput.files[0];
+            const timestamp = Date.now();
+            const safeName = file.name.replace(/[^a-z0-9.]/gi, '_');
+            const path = `materials/${sub}/${timestamp}_${safeName}`;
+            
+            document.getElementById("uploadProgressContainer").style.display = "block";
+            
+            finalUrl = await window.fbUploadData(file, path, (pct) => {
+                document.getElementById("uploadProgressBar").style.width = pct + "%";
+                document.getElementById("uploadStatus").innerText = `Uploading: ${Math.round(pct)}%`;
+            });
+            
+            showToast("File uploaded to safe storage");
+        }
+
+        const entry = { 
+            id: 'mat-' + Date.now(), 
+            subject: sub, 
+            title, 
+            type, 
+            url: finalUrl, 
+            uploadedAt: new Date().toISOString().split("T")[0], 
+            uploadedBy: "admin",
+            size: isFileUpload ? (fileInput.files[0].size / (1024*1024)).toFixed(2) + " MB" : null
+        };
+        
         upsertMaterial(entry); // Updates local + triggers firebase sync
         logAction("MATERIAL_ADDED: " + title);
         closeMatModal(); 
         renderMats(); 
-        showToast("Material saved to Firebase");
-        ["matTitle", "matUrl"].forEach(id => document.getElementById(id).value = "");
+        showToast("Mission assets synchronized");
       } catch(e) {
-        showToast("Error saving material");
+        showToast(e.message || "Error saving material");
+        console.error(e);
       } finally {
         saveBtn.disabled = false;
         saveBtn.innerText = "Save Material";
