@@ -498,10 +498,23 @@ const MAX_FILE_SIZE = 50 * 1024 * 1024; // 50MB
  * @returns {Promise<string>} - Download URL
  */
 window.fbUploadData = async function(file, path, onProgress) {
-  if (!file) throw new Error("No file specialized for transmission.");
-  if (file.size > MAX_FILE_SIZE) throw new Error("File exceeds 50MB tactical limit.");
+  if (!file) throw new Error("No file selected.");
+  if (file.size > MAX_FILE_SIZE) throw new Error("File exceeds 50MB limit.");
+
+  // Initialization check
+  if (!storage) {
+    console.error("[Firebase] Storage not initialized. Initializing now...");
+    try {
+        const currentApp = initializeApp(firebaseConfig);
+        storage = getStorage(currentApp);
+    } catch(e) {
+        throw new Error("Could not initialize Cloud Storage module.");
+    }
+  }
 
   const storageRef = ref(storage, path);
+  console.log("[Storage] Starting upload to:", path);
+  
   const uploadTask = uploadBytesResumable(storageRef, file);
 
   return new Promise((resolve, reject) => {
@@ -511,11 +524,22 @@ window.fbUploadData = async function(file, path, onProgress) {
         if (onProgress) onProgress(progress);
       }, 
       (error) => {
-        console.error("[Storage] Upload failed:", error);
-        reject(error);
+        let msg = "Upload failed: " + error.code;
+        if (error.code === 'storage/unauthorized') {
+            msg = "Security Error: Please update your Firebase Storage Rules to allow uploads.";
+        } else if (error.code === 'storage/quota-exceeded') {
+            msg = "Quota Error: Firebase storage limit reached.";
+        }
+        console.error("[Storage] Error:", error);
+        reject(new Error(msg));
       }, 
       () => {
-        getDownloadURL(uploadTask.snapshot.ref).then(resolve).catch(reject);
+        getDownloadURL(uploadTask.snapshot.ref)
+            .then(url => {
+                console.log("[Storage] Upload complete. URL:", url);
+                resolve(url);
+            })
+            .catch(reject);
       }
     );
   });
