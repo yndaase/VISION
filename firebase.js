@@ -9,9 +9,7 @@ import {
   updateDoc
 } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 import { 
-  getAuth, 
-  RecaptchaVerifier, 
-  signInWithPhoneNumber 
+  getAuth 
 } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
 const firebaseConfig = {
@@ -385,55 +383,6 @@ const _fbGetLinkCode = async function(code) {
 };
 window.fbGetLinkCode = _fbGetLinkCode;
 export const fbGetLinkCode = _fbGetLinkCode;
-
-
-/* ─────────────────────────────────────────────────────────────
-   ADMIN PHONE AUTHENTICATION (MFA)
-   ───────────────────────────────────────────────────────────── */
-
-/**
- * Sends a verification SMS to the admin's phone number.
- * Returns confirmationResult object required for verification.
- */
-window.fbSendAdminOTP = async function(phoneNumber, containerId) {
-  try {
-    // REUSE OR INITIALIZE reCAPTCHA
-    if (!window.recaptchaVerifier) {
-        window.recaptchaVerifier = new RecaptchaVerifier(auth, containerId, {
-          'size': 'invisible',
-          'callback': (response) => {
-            // reCAPTCHA solved
-          }
-        });
-    }
-
-    const confirmationResult = await signInWithPhoneNumber(auth, phoneNumber, window.recaptchaVerifier);
-    console.log("[Firebase] Admin OTP sent successfully.");
-    return { success: true, confirmationResult };
-  } catch (error) {
-    if (error.message.includes("already been rendered")) {
-        // If it still fails, the last resort is a page reload or element clear
-        document.getElementById(containerId).innerHTML = "";
-        window.recaptchaVerifier = null;
-    }
-    console.error("[Firebase] fbSendAdminOTP failed:", error);
-    return { success: false, error: error.message };
-  }
-};
-
-/**
- * Verifies the SMS OTP and returns the result.
- */
-window.fbVerifyAdminOTP = async function(confirmationResult, otpCode) {
-  try {
-    const result = await confirmationResult.confirm(otpCode);
-    console.log("[Firebase] Admin phone verified consistently.");
-    return { success: true, user: result.user };
-  } catch (error) {
-    console.error("[Firebase] fbVerifyAdminOTP failed:", error);
-    return { success: false, error: error.message };
-  }
-};
 
 
 /* ─────────────────────────────────────────────────────────────
