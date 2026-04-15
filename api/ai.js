@@ -3,7 +3,9 @@ import { AzureOpenAI } from "openai";
 const azureKey = process.env.AZURE_OPENAI_KEY || process.env.GITHUB_TOKEN;
 const azureEndpoint = process.env.AZURE_OPENAI_ENDPOINT || "https://models.inference.ai.azure.com";
 const azureDeploymentPro = process.env.AZURE_OPENAI_DEPLOYMENT || "gpt-4o";
-const azureDeploymentFree = process.env.AZURE_OPENAI_GPT3_DEPLOYMENT || "gpt-35-turbo"; // Default Azure GPT-3 deployment name
+const perplexityKey = process.env.PERPLEXITY_API_KEY;
+const perplexityModel = process.env.PERPLEXITY_MODEL || "llama-3.1-sonar-small-128k-chat";
+const azureVersion = "2025-01-01-preview";
 const azureVersion = "2025-01-01-preview";
 
 /**
@@ -17,23 +19,23 @@ if (azureKey && azureEndpoint) {
     apiVersion: azureVersion,
 /**
  * AI Content Generation with Multi-Provider Routing
- * All Users: Azure OpenAI
- * Standard Users: GPT-3.5-Turbo
- * Pro Users: GPT-4o
+ * Standard Users: Perplexity AI
+ * Pro Users: Azure OpenAI (GPT-4o)
  */
 async function safeGenerateContent(contents, role = "student") {
-  if (!azureKey) {
-    throw new Error("Azure OpenAI API key is missing. Please configure AZURE_OPENAI_KEY.");
-  }
-  
   const mode = contents.find(c => c.mode)?.mode || "examiner";
   const useProModel = role === "pro" || role === "admin";
-  const deploymentName = useProModel ? azureDeploymentPro : azureDeploymentFree;
 
   try {
-    return await generateWithAzure(contents, mode, deploymentName);
+    if (useProModel) {
+      if (!azureKey) throw new Error("Azure OpenAI API key is missing for Pro routing.");
+      return await generateWithAzure(contents, mode, azureDeploymentPro);
+    } else {
+      if (!perplexityKey) throw new Error("Perplexity API key is missing. Please configure PERPLEXITY_API_KEY.");
+      return await generateWithPerplexity(contents, mode);
+    }
   } catch (error) {
-    console.error(`[Azure Error ${deploymentName}]:`, error.message);
+    console.error(`[AI Engine Error]:`, error.message);
     throw error;
   }
 }
@@ -41,7 +43,7 @@ async function safeGenerateContent(contents, role = "student") {
 /**
  * Microsoft Azure OpenAI SDK Handler with Dual-Mode Support
  */
-async function generateWithAzure(contents, mode = "examiner", deploymentName = azureDeploymentFree) {
+async function generateWithAzure(contents, mode = "examiner", deploymentName = azureDeploymentPro) {
   // Convert Gemini format to OpenAI format
   const messages = contents.filter(c => !c.mode).map(msg => ({
     role: msg.role === "model" ? "assistant" : msg.role,
@@ -93,6 +95,42 @@ async function generateWithAzure(contents, mode = "examiner", deploymentName = a
   return { text };
 }
 
+/**
+ * Perplexity AI Fetch Handler
+ */
+async function generateWithPerplexity(contents, mode = "examiner") {
+  const messages = contents.filter(c => !c.mode).map(msg => ({
+    role: msg.role === "model" ? "assistant" : msg.role,
+    content: msg.parts.map(p => p.text).join("\n")
+  }));
+
+  let systemContent = "";
+  if (mode === "normal") {
+    systemContent = `You are a helpful, versatile, and supportive AI Academic Assistant for Vision Education. Provide clear and accurate answers to the student's questions on any academic topic.`;
+  } else {
+    systemContent = `You are the WAEC Chief Examiner for Core Mathematics (2026 Curriculum). Provide high-accuracy marking and encouraging academic tutoring. Use LaTeX for math. Be firm but helpful.`;
+  }
+
+  messages.unshift({ role: "system", content: systemContent });
+
+  const response = await fetch("https://api.perplexity.ai/chat/completions", {
+    method: "POST",
+    headers: {
+      "Authorization": `Bearer ${perplexityKey}`,
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      model: perplexityModel,
+      messages: messages,
+      temperature: mode === "normal" ? 0.7 : 0.4
+    })
+  });
+
+  const data = await response.json();
+  if (!response.ok) throw new Error(data.error?.message || "Perplexity API Error");
+
+  return { text: data.choices[0].message.content };
+}
 
 /**
  * Robust JSON Extractor
