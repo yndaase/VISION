@@ -60,7 +60,22 @@ function markAsPurchased(itemId) {
       session.role = 'pro';
       setSession(session);
       
-      saveUsers(users); // Triggers cloud sync
+      saveUsers(users); // Triggers local/blob sync
+
+      // 3. SECURE FIREBASE CLOUD SYNC
+      if (typeof window.fbUpdateUser === 'function') {
+        window.fbUpdateUser(session.email, {
+          role: 'pro',
+          subscriptionExpiry: newExpiry
+        }).then(() => {
+          console.log("[Payment] ☁️ Firebase global subscription state updated.");
+        }).catch(err => {
+          console.error("[Payment] Firebase sync failed against Pro upgrade:", err);
+        });
+      } else {
+        console.warn("[Payment] Firebase SDK not loaded. Subscription is local-only.");
+      }
+      
       console.log("[Payment] Subscription Activated/Extended. New Expiry:", new Date(newExpiry).toLocaleDateString());
     }
   }

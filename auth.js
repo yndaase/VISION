@@ -43,12 +43,21 @@ async function fbGetUserWithFallback(email) {
     try {
       const cloudUser = await window.fbGetUser(email);
       if (cloudUser) {
+        // ENFORCE EXPIRY DOWNGRADE: If cloud still says Pro but they are expired, downgrade cloud.
+        const originalRole = cloudUser.role;
+        const verifiedUser = verifyUserSchema(cloudUser);
+        
+        if (originalRole === 'pro' && verifiedUser.role === 'student') {
+            console.log(`[Auth] ☁️ Subscription expired. Downgrading ${email} to student in Firestore.`);
+            await window.fbUpdateUser(email, { role: 'student' });
+        }
+
         // Refresh local cache with cloud data
         const users = getUsers();
-        const idx = users.findIndex(u => u.email === cloudUser.email);
-        if (idx === -1) users.push(cloudUser); else users[idx] = { ...users[idx], ...cloudUser };
+        const idx = users.findIndex(u => u.email === verifiedUser.email);
+        if (idx === -1) users.push(verifiedUser); else users[idx] = { ...users[idx], ...verifiedUser };
         localStorage.setItem(AUTH_KEY, JSON.stringify(users));
-        return cloudUser;
+        return verifiedUser;
       }
     } catch(e) {
       console.warn('[Auth] Firestore lookup failed, using local cache.');
