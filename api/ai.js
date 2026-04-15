@@ -3,8 +3,10 @@ import { AzureOpenAI } from "openai";
 const azureKey = process.env.AZURE_OPENAI_KEY || process.env.GITHUB_TOKEN;
 const azureEndpoint = process.env.AZURE_OPENAI_ENDPOINT || "https://models.inference.ai.azure.com";
 const azureDeploymentPro = process.env.AZURE_OPENAI_DEPLOYMENT || "gpt-4o";
-const perplexityKey = process.env.PERPLEXITY_API_KEY;
-const perplexityModel = process.env.PERPLEXITY_MODEL || "llama-3.1-sonar-small-128k-chat";
+
+// Groq provides a completely free, lightning-fast API for Meta's Llama 3 models
+const groqKey = process.env.GROQ_API_KEY;
+const groqModel = process.env.GROQ_MODEL || "llama-3.1-8b-instant";
 const azureVersion = "2025-01-01-preview";
 const azureVersion = "2025-01-01-preview";
 
@@ -19,7 +21,7 @@ if (azureKey && azureEndpoint) {
     apiVersion: azureVersion,
 /**
  * AI Content Generation with Multi-Provider Routing
- * Standard Users: Perplexity AI
+ * Standard Users: Groq (Llama 3.1) [100% Free]
  * Pro Users: Azure OpenAI (GPT-4o)
  */
 async function safeGenerateContent(contents, role = "student") {
@@ -31,8 +33,8 @@ async function safeGenerateContent(contents, role = "student") {
       if (!azureKey) throw new Error("Azure OpenAI API key is missing for Pro routing.");
       return await generateWithAzure(contents, mode, azureDeploymentPro);
     } else {
-      if (!perplexityKey) throw new Error("Perplexity API key is missing. Please configure PERPLEXITY_API_KEY.");
-      return await generateWithPerplexity(contents, mode);
+      if (!groqKey) throw new Error("Groq API key is missing. Please configure GROQ_API_KEY for free-tier users.");
+      return await generateWithGroq(contents, mode);
     }
   } catch (error) {
     console.error(`[AI Engine Error]:`, error.message);
@@ -96,9 +98,9 @@ async function generateWithAzure(contents, mode = "examiner", deploymentName = a
 }
 
 /**
- * Perplexity AI Fetch Handler
+ * Groq AI Fetch Handler (100% Free Tier - Llama 3)
  */
-async function generateWithPerplexity(contents, mode = "examiner") {
+async function generateWithGroq(contents, mode = "examiner") {
   const messages = contents.filter(c => !c.mode).map(msg => ({
     role: msg.role === "model" ? "assistant" : msg.role,
     content: msg.parts.map(p => p.text).join("\n")
@@ -113,21 +115,21 @@ async function generateWithPerplexity(contents, mode = "examiner") {
 
   messages.unshift({ role: "system", content: systemContent });
 
-  const response = await fetch("https://api.perplexity.ai/chat/completions", {
+  const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
     method: "POST",
     headers: {
-      "Authorization": `Bearer ${perplexityKey}`,
+      "Authorization": `Bearer ${groqKey}`,
       "Content-Type": "application/json"
     },
     body: JSON.stringify({
-      model: perplexityModel,
+      model: groqModel,
       messages: messages,
       temperature: mode === "normal" ? 0.7 : 0.4
     })
   });
 
   const data = await response.json();
-  if (!response.ok) throw new Error(data.error?.message || "Perplexity API Error");
+  if (!response.ok) throw new Error(data.error?.message || "Groq API Error");
 
   return { text: data.choices[0].message.content };
 }
