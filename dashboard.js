@@ -102,7 +102,50 @@ document.addEventListener("DOMContentLoaded", () => {
 
   //  Premium Subject Handling
   initPremiumSubjects();
+
+  //  System Broadcasts
+  initBroadcasts();
+
+  //  Background Sync for Materials
+  if (typeof syncMaterials === 'function') {
+      syncMaterials();
+  }
 });
+
+//  Broadcast Engine
+async function initBroadcasts() {
+    const container = document.getElementById("broadcastContainer");
+    const titleEl = document.getElementById("broadcastTitle");
+    const bodyEl = document.getElementById("broadcastBody");
+    const dateEl = document.getElementById("broadcastDate");
+    
+    if (!container || !titleEl || !bodyEl || !dateEl) return;
+
+    // Use local fallback first
+    const local = JSON.parse(localStorage.getItem("vision_announcements") || "[]");
+    if (local && local.length > 0) {
+        showBroadcast(local[0]);
+    }
+
+    // Then update from Firebase
+    if (typeof window.fbGetBroadcasts === 'function') {
+        try {
+            const cloud = await window.fbGetBroadcasts();
+            if (cloud && cloud.length > 0) {
+                showBroadcast(cloud[0]);
+                localStorage.setItem("vision_announcements", JSON.stringify(cloud.slice(0, 10)));
+            }
+        } catch(e) { console.error("Broadcast sync error", e); }
+    }
+
+    function showBroadcast(b) {
+        container.style.display = "block";
+        titleEl.textContent = b.title;
+        bodyEl.textContent = b.body;
+        // Simple time ago or locale date
+        dateEl.textContent = new Date(b.date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    }
+}
 
 function initPremiumSubjects() {
   const cards = document.querySelectorAll(".subject-card[data-premium='true']");

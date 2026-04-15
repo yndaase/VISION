@@ -210,6 +210,79 @@
       50% { box-shadow: 0 4px 25px rgba(0, 120, 212, 0.7); }
       100% { box-shadow: 0 4px 15px rgba(0, 120, 212, 0.4); }
     }
+
+    /* System Broadcast UI */
+    .broadcast-container {
+      margin-top: -2rem;
+      margin-bottom: 3rem;
+      position: relative;
+      z-index: 10;
+    }
+    .broadcast-card {
+      background: rgba(13, 17, 23, 0.7);
+      backdrop-filter: blur(20px);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 1.5rem 2rem;
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+      animation: fadeInRotate 0.8s cubic-bezier(0.17, 0.84, 0.44, 1);
+    }
+    @keyframes fadeInRotate {
+      from { opacity: 0; transform: translateY(20px) rotateX(-5deg); }
+      to { opacity: 1; transform: translateY(0) rotateX(0); }
+    }
+    .broadcast-icon {
+      width: 48px;
+      height: 48px;
+      background: var(--primary-dim);
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--primary);
+      flex-shrink: 0;
+    }
+    .broadcast-content {
+      flex: 1;
+      min-width: 0;
+    }
+    .broadcast-label {
+      font-size: 0.7rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--primary);
+      margin-bottom: 4px;
+      display: block;
+    }
+    .broadcast-title {
+      font-weight: 700;
+      color: var(--text-primary);
+      font-size: 1rem;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      overflow: hidden;
+    }
+    .broadcast-body {
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      margin-top: 2px;
+      display: -webkit-box;
+      -webkit-line-clamp: 1;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    .broadcast-date {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      font-weight: 600;
+      padding: 6px 12px;
+      background: rgba(255,255,255,0.03);
+      border-radius: 100px;
+    }
   </style>
 </head>
 
@@ -493,6 +566,21 @@
             <span class="dash-stat-lbl">Subjects</span>
           </div>
         </div>
+      </div>
+    </section>
+
+    <!-- SYSTEM BROADCASTS -->
+    <section class="broadcast-container" id="broadcastContainer" style="display: none; padding: 0 4rem;">
+      <div class="broadcast-card">
+        <div class="broadcast-icon">
+          <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M10.34 15.84c-.688-.06-1.386-.09-2.09-.09H7.5a4.5 4.5 0 110-9h.75c.704 0 1.402-.03 2.09-.09m0 9.18c.253.962.584 1.892.985 2.783.247.55.06 1.21-.463 1.511l-.657.38c-.551.318-1.26.117-1.527-.448a20.821 20.821 0 01-1.442-4.226m4.092-9.193a5.007 5.007 0 00-.13 5.41m0-5.41c.19-.64.456-1.259.791-1.848.24-.424.756-.547 1.144-.275l.81.57c.303.214.412.616.25.945a7.147 7.147 0 00-.671 2.45"/></svg>
+        </div>
+        <div class="broadcast-content" id="broadcastList">
+          <span class="broadcast-label">SYSTEM UPDATE</span>
+          <div class="broadcast-title" id="broadcastTitle">Mission Command: System initializing...</div>
+          <div class="broadcast-body" id="broadcastBody">Fetching global data nodes and administrative directives.</div>
+        </div>
+        <div class="broadcast-date" id="broadcastDate">--:--</div>
       </div>
     </section>
 

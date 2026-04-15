@@ -342,7 +342,7 @@
         <div class="card">
           <div class="card-header">
             <span class="card-title">Learning Materials</span>
-            <button class="btn btn-primary" id="openMatModalBtn">+ Add Material</button>
+            <button class="btn btn-primary" onclick="openMatModal()">+ Add Material</button>
           </div>
           <div class="card-body" id="matDisplay"></div>
         </div>
@@ -472,6 +472,13 @@
       const portal = document.getElementById("adminPortal");
       portal.style.display = "grid";
       portal.classList.add("visible");
+      
+      // Kick off background sync
+      syncMaterials().then(() => {
+        renderStats();
+        renderMats();
+      });
+      
       renderStats();
       renderAudit();
     }
@@ -544,18 +551,32 @@
       }).join("");
     }
 
-    window.saveNewMaterial = () => {
+    window.saveNewMaterial = async () => {
       const sub = document.getElementById("matSubject").value;
       const title = document.getElementById("matTitle").value.trim();
       const type = document.getElementById("matType").value;
       const url = document.getElementById("matUrl").value.trim();
       if (!title || !url) return showToast("Protocol error: Required fields missing");
 
-      const entry = { id: Date.now().toString(36), subject: sub, title, type, url, uploadedAt: new Date().toISOString().split("T")[0], uploadedBy: "admin" };
-      upsertMaterial(entry);
-      logAction("MATERIAL_ADDED: " + title);
-      closeMatModal(); renderMats(); showToast("Material saved successfully");
-      ["matTitle", "matUrl"].forEach(id => document.getElementById(id).value = "");
+      const saveBtn = document.getElementById("saveMaterialBtn");
+      saveBtn.disabled = true;
+      saveBtn.innerText = "SAVING...";
+
+      const entry = { id: genMatId(), subject: sub, title, type, url, uploadedAt: new Date().toISOString().split("T")[0], uploadedBy: "admin" };
+      
+      try {
+        upsertMaterial(entry); // Updates local + triggers firebase sync
+        logAction("MATERIAL_ADDED: " + title);
+        closeMatModal(); 
+        renderMats(); 
+        showToast("Material saved to Firebase");
+        ["matTitle", "matUrl"].forEach(id => document.getElementById(id).value = "");
+      } catch(e) {
+        showToast("Error saving material");
+      } finally {
+        saveBtn.disabled = false;
+        saveBtn.innerText = "Save Material";
+      }
     };
 
     window.deleteMat = (id) => {
@@ -563,16 +584,37 @@
       deleteMaterial(id); logAction("MATERIAL_DELETED"); renderMats(); showToast("Material deleted");
     };
 
-    window.postAnn = () => {
+    window.postAnn = async () => {
       const title = document.getElementById("annTitle").value.trim();
       const body = document.getElementById("annMsg").value.trim();
       if (!title || !body) return showToast("Protocol error: Null title/body broadcast");
-      const anns = JSON.parse(localStorage.getItem("vision_announcements") || "[]");
-      anns.unshift({ title, body, date: new Date().toISOString() });
-      localStorage.setItem("vision_announcements", JSON.stringify(anns.slice(0, 5)));
-      logAction("ANNOUNCEMENT_POSTED: " + title);
-      showToast("Announcement posted successfully");
-      ["annTitle", "annMsg"].forEach(id => document.getElementById(id).value = "");
+      
+      const btn = document.getElementById("postAnnBtn");
+      btn.disabled = true;
+      btn.innerText = "BROADCASTING...";
+
+      const ann = { id: "ann-" + Date.now(), title, body, date: new Date().toISOString() };
+      
+      try {
+          // Sync to Firebase
+          if (typeof window.fbSaveBroadcast === 'function') {
+              await window.fbSaveBroadcast(ann);
+          }
+          
+          // Fallback/Local cache
+          const anns = JSON.parse(localStorage.getItem("vision_announcements") || "[]");
+          anns.unshift(ann);
+          localStorage.setItem("vision_announcements", JSON.stringify(anns.slice(0, 10)));
+          
+          logAction("ANNOUNCEMENT_POSTED: " + title);
+          showToast("Broadcast sent via Firebase");
+          ["annTitle", "annMsg"].forEach(id => document.getElementById(id).value = "");
+      } catch(e) {
+          showToast("Broadcast Error");
+      } finally {
+          btn.disabled = false;
+          btn.innerText = "Post Announcement";
+      }
     };
 
     window.createUser = async () => {
