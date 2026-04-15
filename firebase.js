@@ -103,6 +103,15 @@ window.fbUpdateUser = async function(email, fields, collectionName = 'users') {
 };
 export const fbUpdateUser = window.fbUpdateUser;
 
+/**
+ * Toggle WhatsApp Opt-in for a user.
+ * @param {string} email 
+ * @param {boolean} status 
+ */
+window.fbSetWAOptIn = async function(email, status) {
+    return await window.fbUpdateUser(email, { waOptIn: status });
+};
+
 
 
 /**

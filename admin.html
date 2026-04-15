@@ -407,7 +407,7 @@
           </div>
           <div class="card-body" style="padding: 0;">
             <table class="table">
-              <thead><tr><th>User</th><th>Email Address</th><th>Role</th><th style="text-align: right;">Control</th></tr></thead>
+              <thead><tr><th>User</th><th>Email Address</th><th>Role</th><th style="text-align: center;">WhatsApp</th><th style="text-align: right;">Control</th></tr></thead>
               <tbody id="allUsersTbody"></tbody>
             </table>
           </div>
@@ -777,7 +777,7 @@
     async function renderUsers() {
       const tbody = document.getElementById("allUsersTbody");
       if (!tbody) return;
-      tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;padding:2rem;color:var(--admin-text-muted);">Loading from Firebase...</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:2rem;color:var(--admin-text-muted);">Loading from Firebase...</td></tr>';
 
       // Load from Firestore
       let users = [];
@@ -811,9 +811,17 @@
             <option value="PRO" ${u.role === 'PRO' ? 'selected' : ''}>PRO</option>
             <option value="Admin" ${u.role === 'Admin' || u.role === 'admin' ? 'selected' : ''}>Admin</option>
           </select></td>
+          <td style="text-align: center;">
+            ${u.waOptIn ? 
+              `<button class="btn" style="background: rgba(37, 211, 102, 0.1); color: #25D366; border: 1px solid rgba(37, 211, 102, 0.2); padding: 6px 10px; font-size: 0.7rem;" onclick="sendWAReminder('${u.email}', '${u.name||'Student'}')">
+                <span style="font-size: 1rem; margin-right: 4px;">💬</span> Remind
+               </button>` : 
+              `<span style="color: var(--admin-text-muted); font-size: 0.65rem; font-weight: 700; opacity: 0.5;">Not Opted In</span>`
+            }
+          </td>
           <td style="text-align: right;"><button class="btn btn-danger" style="padding: 8px;" onclick="deleteUserAccount('${u.email}')" ${u.email === 'admin@visionedu.online' ? 'disabled' : ''}><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" /></svg></button></td>
         </tr>
-      `).join("") || '<tr><td colspan="4" style="text-align:center;padding:2rem;color:var(--admin-text-muted);">No identities found.</td></tr>';
+      `).join("") || '<tr><td colspan="5" style="text-align:center;padding:2rem;color:var(--admin-text-muted);">No identities found.</td></tr>';
     }
 
     window.updateRole = async (email, newRole) => {
@@ -843,6 +851,42 @@
       logAction("USER_DELETED: " + email);
       renderUsers();
       showToast("User deleted successfully");
+    };
+
+    window.sendWAReminder = async (email, name) => {
+        if (!confirm(`Trigger WhatsApp reminder for ${name}?`)) return;
+        
+        // Find the user's phone number
+        const users = _cachedFirestoreUsers || getUsers();
+        const user = users.find(u => u.email === email);
+        if (!user || !user.phone) {
+            alert("Protocol error: No phone number associated with this identity. Ask student to update their profile.");
+            return;
+        }
+
+        showToast("Messaging protocol initiated...");
+        try {
+            const resp = await fetch("/api/whatsapp", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ 
+                    email, 
+                    type: "REMINDER", 
+                    phone: user.phone,
+                    name: user.name
+                })
+            });
+            const data = await resp.json();
+            if (data.success) {
+                showToast("WhatsApp broadcast sent!");
+                logAction("WA_REMINDER_SENT: " + email);
+            } else {
+                throw new Error(data.error || "Broadcast gateway failed.");
+            }
+        } catch(e) {
+            console.error("[Admin] WA Reminder failed:", e);
+            alert("WhatsApp Gateway Error: " + e.message);
+        }
     };
 
     function showToast(msg) {
