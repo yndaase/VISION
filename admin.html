@@ -684,8 +684,12 @@
         renderMats(); 
         showToast("Mission assets synchronized");
       } catch(e) {
+        console.error("[Admin] Material save failure:", e);
         showToast(e.message || "Error saving material");
-        console.error(e);
+        // Also alert for high visibility since toast might fade
+        if (e.message.includes("Security Error")) {
+            alert("UPLOAD FAILED: Your Firebase Storage Rules are blocking this upload. Please set them to 'allow read, write: if true;' in your console.");
+        }
       } finally {
         saveBtn.disabled = false;
         saveBtn.innerText = "Save Material";
