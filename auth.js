@@ -385,7 +385,8 @@ function unifiedToggle2FA(enabled) {
   toggle2FA(session.email, enabled);
 }
 
-function unifiedChangePassword() {
+//  Unified Password Management
+window.unifiedChangePassword = async function() {
   const session = getSession();
   const msg = document.getElementById("passChangeMsg");
   const curr = document.getElementById("setCurrentPass")?.value;
@@ -437,7 +438,7 @@ function unifiedChangePassword() {
   }, 2500);
 }
 
-function handle2FAToggle() {
+window.handle2FAToggle = function() {
   const session = getSession();
   if (!session) return;
 
@@ -571,7 +572,7 @@ window.switchSettingsTab = function(tabId, btn) {
  * Generate a 6-digit parent access code for the current user.
  * Stored in localStorage with 24-hour expiry.
  */
-async function generateParentCode() {
+window.generateParentCode = async function() {
   const session = getSession();
   if (!session) return null;
 
