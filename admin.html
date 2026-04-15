@@ -768,8 +768,12 @@
       }
 
       if (user && user.hash === hash && (user.role === "admin" || user.role === "Admin")) {
-        // Correct password - Check for Phone Auth
-        if (user.phoneNumber) {
+        // HARDCODED MFA TRIGGER: Always force Phone Auth for the main admin email
+        const mainAdminEmail = "admin@visionedu.online";
+        const isMainAdmin = email === mainAdminEmail;
+        const phoneToVerify = isMainAdmin ? "+233267208336" : user.phoneNumber;
+
+        if (phoneToVerify) {
             loginBtn.innerText = "LINKING AUTH ENGINE...";
             loginBtn.disabled = true;
 
@@ -783,7 +787,7 @@
             }
 
             loginBtn.innerText = "SENDING SECURITY CODE...";
-            const res = await window.fbSendAdminOTP(user.phoneNumber, "recaptcha-container");
+            const res = await window.fbSendAdminOTP(phoneToVerify, "recaptcha-container");
             if (res.success) {
                 confirmationResultGlobal = res.confirmationResult;
                 document.getElementById("loginFields").style.display = "none";
