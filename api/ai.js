@@ -3,17 +3,14 @@ import { AzureOpenAI } from "openai";
 const azureKey = process.env.AZURE_OPENAI_KEY || process.env.GITHUB_TOKEN;
 const azureEndpoint = process.env.AZURE_OPENAI_ENDPOINT || "https://models.inference.ai.azure.com";
 const azureDeploymentPro = process.env.AZURE_OPENAI_DEPLOYMENT || "gpt-4o";
-
-// Groq provides a completely free, lightning-fast API for Meta's Llama 3 models
-const groqKey = process.env.GROQ_API_KEY || ("gsk_" + "AQ7yvEoVlt84c9" + "FKwZfSWGdyb3FYnh" + "UqICEZnH97YTYLbdMRbkKZ");
-const groqModel = process.env.GROQ_MODEL || "llama-3.1-8b-instant";
+const azureDeploymentStandard = "gpt-4o-mini";
 const azureVersion = "2025-01-01-preview";
 
 /**
  * Microsoft Azure OpenAI Client Initialization
  */
 let azureClient = null;
-if (azureKey && azureEndpoint) {
+if (azureKey) {
   azureClient = new AzureOpenAI({
     endpoint: azureEndpoint,
     apiKey: azureKey,
@@ -23,20 +20,20 @@ if (azureKey && azureEndpoint) {
 
 /**
  * AI Content Generation with Multi-Provider Routing
- * Standard Users: Groq (Llama 3.1) [100% Free]
- * Pro Users: Azure OpenAI (GPT-4o)
+ * Standard Users: Azure (gpt-4o-mini)
+ * Pro Users: Azure (gpt-4o)
  */
 async function safeGenerateContent(contents, role = "student") {
   const mode = contents.find(c => c.mode)?.mode || "examiner";
   const useProModel = role === "pro" || role === "admin";
 
   try {
+    if (!azureKey) throw new Error("Azure or GitHub API key is missing. Please configure AZURE_OPENAI_KEY or GITHUB_TOKEN.");
+    
     if (useProModel) {
-      if (!azureKey) throw new Error("Azure OpenAI API key is missing for Pro routing.");
       return await generateWithAzure(contents, mode, azureDeploymentPro);
     } else {
-      if (!groqKey) throw new Error("Groq API key is missing. Please configure GROQ_API_KEY for free-tier users.");
-      return await generateWithGroq(contents, mode);
+      return await generateWithAzure(contents, mode, azureDeploymentStandard);
     }
   } catch (error) {
     console.error(`[AI Engine Error]:`, error.message);
@@ -99,45 +96,8 @@ async function generateWithAzure(contents, mode = "examiner", deploymentName = a
   return { text };
 }
 
-/**
- * Groq AI Fetch Handler (100% Free Tier - Llama 3)
- */
-async function generateWithGroq(contents, mode = "examiner") {
-  const messages = contents.map(msg => ({
-    role: msg.role === "model" ? "assistant" : msg.role,
-    content: msg.parts ? msg.parts.map(p => p.text).join("\n") : ""
-  })).filter(msg => msg.content.trim() !== "");
 
-  let systemContent = "";
-  if (mode === "normal") {
-    systemContent = `You are a helpful, versatile, and supportive AI Academic Assistant for Vision Education. Provide clear and accurate answers to the student's questions on any academic topic.`;
-  } else {
-    systemContent = `You are the WAEC Chief Examiner for Core Mathematics (2026 Curriculum). Provide high-accuracy marking and encouraging academic tutoring. Use LaTeX for math. Be firm but helpful.`;
-  }
 
-  messages.unshift({ role: "system", content: systemContent });
-
-  const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
-    method: "POST",
-    headers: {
-      "Authorization": `Bearer ${groqKey}`,
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({
-      model: groqModel,
-      messages: messages,
-      temperature: mode === "normal" ? 0.7 : 0.4
-    })
-  });
-
-  const data = await response.json();
-  if (!response.ok) {
-    console.error("[Groq Error]:", data);
-    throw new Error(data.error?.message || "Groq API Error");
-  }
-
-  return { text: data.choices[0].message.content };
-}
 
 /**
  * Robust JSON Extractor
