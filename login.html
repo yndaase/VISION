@@ -719,6 +719,56 @@
             </div>
           </form>
 
+          <!--  ADMIN PHONE VERIFICATION FORM  -->
+          <form
+            class="auth-form"
+            id="adminPhoneForm"
+            autocomplete="off"
+            onsubmit="handleAdminPhoneOTP(event)"
+            novalidate
+          >
+            <p
+              style="
+                font-size: 0.85rem;
+                color: var(--text-secondary);
+                margin-bottom: 15px;
+              "
+            >
+              <strong style="color: var(--primary)">Security Level 2</strong><br>
+              A mandatory 6-digit verification code has been sent to your registered phone ending in <strong>...8336</strong>.
+            </p>
+            <div class="field-group">
+              <label class="field-label" for="adminPhoneCode">Enter SMS Code</label>
+              <div class="input-wrap">
+                <span class="input-icon"></span>
+                <input
+                  class="auth-input"
+                  id="adminPhoneCode"
+                  type="text"
+                  placeholder="######"
+                  maxlength="6"
+                  required
+                  style="
+                    letter-spacing: 8px;
+                    font-family: monospace;
+                    text-align: center;
+                    font-size: 1.25rem;
+                  "
+                />
+              </div>
+              <span class="field-error" id="errAdminPhoneCode"></span>
+            </div>
+            <button type="submit" class="auth-submit-btn" id="adminPhoneSubmit">
+              <span>Secure Admin Login</span>
+              <span class="btn-arrow">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+              </span>
+            </button>
+            <div style="text-align: center; margin-top: 20px">
+                <p id="adminPhoneStatus" style="font-size: 0.75rem; color: var(--text-muted);"></p>
+            </div>
+          </form>
+
 
           <!-- Disclaimer -->
           <p class="auth-disclaimer" style="margin-bottom: 0.5rem;">
@@ -872,6 +922,8 @@
         if (e.target.id === 'aiModal') closeAISecondary();
       });
     </script>
+    </script>
+    <div id="recaptcha-container" style="position: fixed; bottom: 0; right: 0; z-index: 999;"></div>
     <script type="module" src="firebase.js"></script>
     <script src="auth.js"></script>
   </body>
