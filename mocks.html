@@ -217,10 +217,10 @@
             <div style="position: absolute; top: 1rem; right: 1rem; background: var(--primary); color: #000; font-size: 0.65rem; font-weight: 800; padding: 4px 10px; border-radius: 4px; text-transform: uppercase; animation: pulse 2s infinite;">New Goal Available</div>
             <div>
               <h3 class="mock-title" style="font-size: 1.8rem; display: flex; align-items: center; gap: 10px;">
-                <span id="challengeIcon" style="font-size: 1.4rem;"></span> <span id="challengeTitle">AI Daily Challenge</span>
+                <span id="challengeIcon" style="font-size: 1.4rem;"></span> <span id="challengeTitle">Daily WASSCE Mock</span>
               </h3>
               <p id="challengeDesc" style="color: var(--text-secondary); margin-top: 0.5rem; max-width: 600px;">
-                Our High-Performance AI has set a new 2026 WASSCE simulation for today. Fresh questions, AI marking, and examiner feedback—refreshed every 24 hours.
+                Take a new short mock exam every day. Fresh questions selected to help you prepare.
               </p>
             </div>
             <script>
@@ -228,11 +228,10 @@
                 const session = JSON.parse(sessionStorage.getItem("waec_session") || localStorage.getItem("waec_session") || "{}");
                 const isAdmin = session.role === 'admin';
                 const isPro = session.role === 'pro' || isAdmin;
-                
                 if (isPro) {
-                  document.getElementById("challengeTitle").textContent = "Azure GPT-4o Daily Mission";
-                  document.getElementById("challengeDesc").innerHTML = "<strong>Exclusive Vision Pro Upgrade:</strong> Azure GPT-4o has curated an elite 2026 simulation for your tier. High-intensity diagnostics initiated.";
-                  document.getElementById("challengeIcon").textContent = "";
+                  document.getElementById("challengeTitle").textContent = "Premium Daily Mock";
+                  document.getElementById("challengeDesc").innerHTML = "<strong>Vision Pro Feature:</strong> Get an advanced, AI-curated exam tailored to improve your weak areas.";
+                  document.getElementById("challengeIcon").textContent = "⭐";
                 }
               });
             </script>
@@ -242,7 +241,7 @@
                  <span>10 Questions</span>
                  <span>AI Grading</span>
                </div>
-               <button class="start-mock-btn" onclick="window.location.href = '/mock-hall?id=daily_ai_mock'" style="padding: 12px 30px; font-size: 1rem;">Start Daily Mission</button>
+               <button class="start-mock-btn" onclick="window.location.href = '/mock-hall?id=daily_ai_mock'" style="padding: 12px 30px; font-size: 1rem;">Start Mock</button>
             </div>
           </div>
 
