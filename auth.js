@@ -445,6 +445,62 @@ function handle2FAToggle() {
   toggle2FA(session.email, !current);
 }
 
+window.saveProfileChanges = async function() {
+    const session = getSession();
+    if (!session || !session.email) return;
+
+    const btn = document.getElementById("saveProfileBtn");
+    const phoneInput = document.getElementById("settingsPhone");
+    if (!phoneInput) return;
+
+    const phone = phoneInput.value.trim();
+    if (phone && !phone.startsWith("+")) {
+        alert("Please include country code with '+' (e.g. +233)");
+        return;
+    }
+
+    btn.disabled = true;
+    btn.innerText = "SAVING...";
+
+    try {
+        if (typeof window.fbUpdateUser === 'function') {
+            await window.fbUpdateUser(session.email, { phone });
+            // Update local session too
+            session.phone = phone;
+            localStorage.setItem('waec_session', JSON.stringify(session));
+            alert("Profile identity updated.");
+        }
+    } catch(e) {
+        console.error("[Auth] Profile save failed:", e);
+        alert("Sync error. Please try again.");
+    } finally {
+        btn.disabled = false;
+        btn.innerText = "Save Profile Changes";
+    }
+};
+
+window.handleWAToggle = async function() {
+    const session = getSession();
+    if (!session || !session.email) return;
+
+    const el = document.getElementById("waToggle");
+    const active = el.classList.contains("active");
+    const newState = !active;
+
+    // UI Feedback
+    el.classList.toggle("active", newState);
+
+    try {
+        if (typeof window.fbSetWAOptIn === 'function') {
+            await window.fbSetWAOptIn(session.email, newState);
+            console.log("[Auth] WhatsApp Opt-in updated:", newState);
+        }
+    } catch(e) {
+        console.error("[Auth] WA Toggle failed:", e);
+        el.classList.toggle("active", active); // Rollback
+    }
+};
+
 //  Settings Immersive Logic
 function openSettings() {
   const session = getSession();
@@ -456,10 +512,20 @@ function openSettings() {
   // Populate user info
   const nameEl = document.getElementById("settingsName");
   const emailEl = document.getElementById("settingsEmail");
-  const avEl = document.getElementById("settingsAvatar");
-  if (nameEl) nameEl.textContent = session.name;
-  if (emailEl) emailEl.textContent = session.email;
   if (avEl) avEl.textContent = session.name.charAt(0).toUpperCase();
+
+  // Sync Profile state
+  if (typeof window.fbGetUser === 'function') {
+      window.fbGetUser(session.email).then(userData => {
+          if (userData) {
+              const phoneEl = document.getElementById("settingsPhone");
+              if (phoneEl) phoneEl.value = userData.phone || "";
+              
+              const waEl = document.getElementById("waToggle");
+              if (waEl) waEl.classList.toggle("active", !!userData.waOptIn);
+          }
+      });
+  }
 
   // Sync 2FA state
   const enabled = is2FAEnabled(session.email);
