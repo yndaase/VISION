@@ -397,23 +397,25 @@ export const fbGetLinkCode = _fbGetLinkCode;
  */
 window.fbSendAdminOTP = async function(phoneNumber, containerId) {
   try {
-    // Reset reCAPTCHA if it exists to avoid UI glitches
-    if (window.recaptchaVerifier) {
-      window.recaptchaVerifier.clear();
-      document.getElementById(containerId).innerHTML = '';
+    // REUSE OR INITIALIZE reCAPTCHA
+    if (!window.recaptchaVerifier) {
+        window.recaptchaVerifier = new RecaptchaVerifier(auth, containerId, {
+          'size': 'invisible',
+          'callback': (response) => {
+            // reCAPTCHA solved
+          }
+        });
     }
-
-    window.recaptchaVerifier = new RecaptchaVerifier(auth, containerId, {
-      'size': 'invisible',
-      'callback': (response) => {
-        // reCAPTCHA solved, allow signInWithPhoneNumber.
-      }
-    });
 
     const confirmationResult = await signInWithPhoneNumber(auth, phoneNumber, window.recaptchaVerifier);
     console.log("[Firebase] Admin OTP sent successfully.");
     return { success: true, confirmationResult };
   } catch (error) {
+    if (error.message.includes("already been rendered")) {
+        // If it still fails, the last resort is a page reload or element clear
+        document.getElementById(containerId).innerHTML = "";
+        window.recaptchaVerifier = null;
+    }
     console.error("[Firebase] fbSendAdminOTP failed:", error);
     return { success: false, error: error.message };
   }
