@@ -147,6 +147,20 @@ function getMaterials() {
 }
 
 /**
+ * Sync materials from Firebase to localStorage
+ */
+async function syncMaterials() {
+  if (typeof window.fbGetMaterials === 'function') {
+    const cloud = await window.fbGetMaterials();
+    if (cloud && cloud.length > 0) {
+      saveMaterials(cloud);
+      return cloud;
+    }
+  }
+  return getMaterials();
+}
+
+/**
  * Get materials for a specific subject
  */
 function getMaterialsBySubject(subjectId) {
@@ -169,6 +183,11 @@ function upsertMaterial(mat) {
   if (idx >= 0) all[idx] = mat;
   else all.push(mat);
   saveMaterials(all);
+
+  // Sync to Firebase if available
+  if (typeof window.fbSaveMaterial === 'function') {
+    window.fbSaveMaterial(mat).catch(console.error);
+  }
 }
 
 /**
@@ -176,6 +195,11 @@ function upsertMaterial(mat) {
  */
 function deleteMaterial(id) {
   saveMaterials(getMaterials().filter((m) => m.id !== id));
+
+  // Sync to Firebase if available
+  if (typeof window.fbDeleteMaterial === 'function') {
+    window.fbDeleteMaterial(id).catch(console.error);
+  }
 }
 
 /**

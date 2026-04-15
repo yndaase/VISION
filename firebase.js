@@ -6,7 +6,8 @@ import {
   getDoc,
   getDocs,
   collection,
-  updateDoc
+  updateDoc,
+  deleteDoc
 } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 import { 
   getAuth 
@@ -383,6 +384,97 @@ const _fbGetLinkCode = async function(code) {
 };
 window.fbGetLinkCode = _fbGetLinkCode;
 export const fbGetLinkCode = _fbGetLinkCode;
+
+/* ─────────────────────────────────────────────────────────────
+   LEARNING MATERIALS  (Firestore collection: "learning_materials")
+   ───────────────────────────────────────────────────────────── */
+
+/**
+ * Save or update a material in Firestore.
+ */
+window.fbSaveMaterial = async function(mat) {
+  if (!mat || !mat.id) return;
+  try {
+    await setDoc(doc(db, "learning_materials", mat.id), mat, { merge: true });
+    console.log('[Firebase] Material saved:', mat.title);
+  } catch(err) {
+    console.error('[Firebase] fbSaveMaterial failed:', err.message);
+  }
+};
+
+/**
+ * Get all learning materials from Firestore.
+ */
+window.fbGetMaterials = async function() {
+  try {
+    const snapshot = await getDocs(collection(db, "learning_materials"));
+    const mats = [];
+    snapshot.forEach(d => mats.push(d.data()));
+    return mats;
+  } catch(err) {
+    console.error('[Firebase] fbGetMaterials failed:', err.message);
+    return [];
+  }
+};
+
+/**
+ * Delete a material from Firestore.
+ */
+window.fbDeleteMaterial = async function(id) {
+  if (!id) return;
+  try {
+    await deleteDoc(doc(db, "learning_materials", id));
+    console.log('[Firebase] Material deleted:', id);
+  } catch(err) {
+    console.error('[Firebase] fbDeleteMaterial failed:', err.message);
+  }
+};
+
+/* ─────────────────────────────────────────────────────────────
+   BROADCASTS  (Firestore collection: "broadcasts")
+   ───────────────────────────────────────────────────────────── */
+
+/**
+ * Save a new broadcast announcement to Firestore.
+ */
+window.fbSaveBroadcast = async function(broadcast) {
+  if (!broadcast || !broadcast.id) return;
+  try {
+    await setDoc(doc(db, "broadcasts", broadcast.id), broadcast);
+    console.log('[Firebase] Broadcast saved:', broadcast.title);
+  } catch(err) {
+    console.error('[Firebase] fbSaveBroadcast failed:', err.message);
+  }
+};
+
+/**
+ * Get the latest broadcasts from Firestore.
+ */
+window.fbGetBroadcasts = async function() {
+  try {
+    const snapshot = await getDocs(collection(db, "broadcasts"));
+    const list = [];
+    snapshot.forEach(d => list.push(d.data()));
+    // Sort by date descending
+    return list.sort((a, b) => new Date(b.date) - new Date(a.date));
+  } catch(err) {
+    console.error('[Firebase] fbGetBroadcasts failed:', err.message);
+    return [];
+  }
+};
+
+/**
+ * Delete a broadcast from Firestore.
+ */
+window.fbDeleteBroadcast = async function(id) {
+  if (!id) return;
+  try {
+    await deleteDoc(doc(db, "broadcasts", id));
+    console.log('[Firebase] Broadcast deleted:', id);
+  } catch(err) {
+    console.error('[Firebase] fbDeleteBroadcast failed:', err.message);
+  }
+};
 
 
 /* ─────────────────────────────────────────────────────────────
