@@ -47,10 +47,10 @@ async function safeGenerateContent(contents, role = "student") {
  */
 async function generateWithAzure(contents, mode = "examiner", deploymentName = azureDeploymentPro) {
   // Convert Gemini format to OpenAI format
-  const messages = contents.filter(c => !c.mode).map(msg => ({
+  const messages = contents.map(msg => ({
     role: msg.role === "model" ? "assistant" : msg.role,
-    content: msg.parts.map(p => p.text).join("\n")
-  }));
+    content: msg.parts ? msg.parts.map(p => p.text).join("\n") : ""
+  })).filter(msg => msg.content.trim() !== "");
 
   // Branching System Prompt
   let systemContent = "";
@@ -101,10 +101,10 @@ async function generateWithAzure(contents, mode = "examiner", deploymentName = a
  * Groq AI Fetch Handler (100% Free Tier - Llama 3)
  */
 async function generateWithGroq(contents, mode = "examiner") {
-  const messages = contents.filter(c => !c.mode).map(msg => ({
+  const messages = contents.map(msg => ({
     role: msg.role === "model" ? "assistant" : msg.role,
-    content: msg.parts.map(p => p.text).join("\n")
-  }));
+    content: msg.parts ? msg.parts.map(p => p.text).join("\n") : ""
+  })).filter(msg => msg.content.trim() !== "");
 
   let systemContent = "";
   if (mode === "normal") {
