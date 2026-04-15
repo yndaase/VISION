@@ -208,7 +208,7 @@
 
     /* --- MODAL --- */
     .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(8px); display: none; align-items: center; justify-content: center; z-index: 3000; padding: 1.5rem; }
-    .modal-overlay.visible { display: flex; }
+    .modal-overlay.visible { display: flex; opacity: 1; pointer-events: all; }
     .modal-card { background: var(--admin-card); border: 1px solid var(--admin-border); border-radius: 32px; width: 100%; max-width: 540px; padding: 3rem; }
     .modal-header { margin-bottom: 2rem; }
     .modal-header h3 { font-size: 1.5rem; font-weight: 800; letter-spacing: -0.02em; }
