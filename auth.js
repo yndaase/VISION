@@ -502,8 +502,9 @@ window.handleWAToggle = async function() {
 };
 
 //  Settings Immersive Logic
-function openSettings() {
-  const session = getSession();
+window.openSettings = function() {
+  console.log("[Settings] Opening immersive workspace");
+  const session = typeof getSession === 'function' ? getSession() : null;
   if (!session) return;
 
   const modal = document.getElementById("settingsModal");
@@ -512,7 +513,11 @@ function openSettings() {
   // Populate user info
   const nameEl = document.getElementById("settingsName");
   const emailEl = document.getElementById("settingsEmail");
-  if (avEl) avEl.textContent = session.name.charAt(0).toUpperCase();
+  const avatarEl = document.getElementById("settingsAvatar");
+  
+  if (nameEl) nameEl.textContent = session.name;
+  if (emailEl) emailEl.textContent = session.email;
+  if (avatarEl) avatarEl.textContent = session.name.charAt(0).toUpperCase();
 
   // Sync Profile state
   if (typeof window.fbGetUser === 'function') {
@@ -528,32 +533,31 @@ function openSettings() {
   }
 
   // Sync 2FA state
-  const enabled = is2FAEnabled(session.email);
-  updateSecurityStatusUI(enabled);
+  if (typeof is2FAEnabled === 'function') {
+    const enabled = is2FAEnabled(session.email);
+    updateSecurityStatusUI(enabled);
+  }
 
   // Show immersive view
   modal.classList.add("visible");
-  document.body.style.overflow = "hidden"; // Prevent background scroll
+  modal.style.display = "flex";
+  document.body.style.overflow = "hidden"; 
 
-  // Refresh Subscription UI (fix for "Processing..." hang)
   if (typeof updateSettingsSubUI === "function") {
     updateSettingsSubUI();
   }
-}
+};
 
-function closeSettings() {
+window.closeSettings = function() {
   const modal = document.getElementById("settingsModal");
   if (modal) {
     modal.classList.remove("visible");
+    modal.style.display = "none";
     document.body.style.overflow = ""; 
   }
-}
+};
 
-/**
- * Switch tabs in the immersive settings view
- */
-function switchSettingsTab(tabId, btn) {
-  // Update nav buttons
+window.switchSettingsTab = function(tabId, btn) {
   document.querySelectorAll('.settings-nav-item').forEach(el => el.classList.remove('active'));
   if (btn) btn.classList.add('active');
 
