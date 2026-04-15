@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>System Architecture | Vision Admin Portal</title>
+  <title>Dashboard | Vision Admin Portal</title>
   <meta name="robots" content="noindex, nofollow" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -220,37 +220,37 @@
   <div id="adminAuth">
       <div class="auth-card">
         <div class="auth-header">
-          <h1>VISION <span>SYSTEM</span></h1>
-          <p id="authSubtext">Architect-level authorized access required.</p>
+          <h1>VISION <span>ADMIN</span></h1>
+          <p id="authSubtext">Admin access required.</p>
         </div>
 
         <div id="loginFields">
             <div class="field">
-              <label class="label">System Identity</label>
+              <label class="label">Email Address</label>
               <input type="email" id="adminEmail" class="input" placeholder="admin@visionedu.online" />
             </div>
             <div class="field">
-              <label class="label">Access Key</label>
+              <label class="label">Password</label>
               <input type="password" id="adminPass" class="input" placeholder="••••••••" />
             </div>
             <p id="adminErr" style="color: var(--admin-danger); font-size: 0.8rem; margin-bottom: 1rem; display: none;">Invalid credentials or insufficient clearance.</p>
-            <button class="btn-auth" id="loginBtn">INITIALIZE ACCESS</button>
+            <button class="btn-auth" id="loginBtn">LOGIN</button>
         </div>
 
         <div id="otpSection">
             <div class="otp-info">
-                <strong>Identity Verification Required</strong><br>
-                A high-security 6-digit code has been sent to your registered phone.
+                <strong>Verification Required</strong><br>
+                A 6-digit code has been sent to your recovery email.
             </div>
             <div class="field">
                 <input type="text" id="adminOTP" class="input" placeholder="ENTER 6-DIGIT CODE" maxlength="6" style="letter-spacing: 0.5em; text-align: center; font-weight: 800; font-size: 1.2rem; font-family: 'JetBrains Mono', monospace;" />
             </div>
             <p id="otpErr" style="color: var(--admin-danger); font-size: 0.8rem; margin-bottom: 1rem; display: none;">Invalid verification code. Access Denied.</p>
-            <button class="btn-auth" id="verifyBtn">CONFIRM IDENTITY</button>
+            <button class="btn-auth" id="verifyBtn">VERIFY CODE</button>
             <button class="btn-link" onclick="location.reload()" style="background:none; border:none; color: var(--admin-text-muted); font-size: 0.75rem; margin-top: 20px; width: 100%; cursor: pointer;">Cancel and return</button>
         </div>
 
-        <div id="recaptcha-container" style="margin-top: 20px;"></div>
+        <!-- Twilio Verify does not require a client-side reCAPTCHA container -->
       </div>
   </div>
 
@@ -259,7 +259,7 @@
     <aside class="sidebar">
       <div class="brand">
         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 21v-8.25M15.75 21v-8.25M8.25 21v-8.25M3 9l9-6 9 6m-1.5 12V10.332A4.839 4.839 0 0012 9a4.839 4.839 0 00-7.5 1.332V21" /></svg>
-        <span>Architect Core</span>
+        <span>Admin Portal</span>
       </div>
 
       <div class="nav-group">
@@ -297,12 +297,12 @@
     <main class="main">
       <div class="header-bar">
         <div class="page-title">
-          <h2 id="pageTitleText">System Overview</h2>
-          <p id="pageSubText">Architect-level control & platform metrics</p>
+          <h2 id="pageTitleText">Dashboard</h2>
+          <p id="pageSubText">Manage your platform and metrics</p>
         </div>
         <div class="security-status">
           <div class="pulse"></div>
-          <span>Expert Encryption Active (256-bit)</span>
+          <span>Secure Connection Active</span>
         </div>
       </div>
 
@@ -314,13 +314,13 @@
 
         <div style="display: grid; grid-template-columns: 1.8fr 1fr; gap: 2rem; align-items: start;">
           <div class="card">
-            <div class="card-header"><span class="card-title">Audit Log Timeline</span></div>
+            <div class="card-header"><span class="card-title">Recent Activity</span></div>
             <div class="card-body">
               <div class="audit-timeline" id="auditList"></div>
             </div>
           </div>
           <div class="card">
-            <div class="card-header"><span class="card-title">Infrastructure Status</span></div>
+            <div class="card-header"><span class="card-title">System Status</span></div>
             <div class="card-body">
               <div style="display: flex; flex-direction: column; gap: 1rem;">
                 <div style="display: flex; justify-content: space-between; font-size: 0.85rem; padding: 12px; background: rgba(255,255,255,0.02); border-radius: 12px; border: 1px solid var(--admin-border);">
@@ -341,8 +341,8 @@
       <section class="admin-section" id="sec-materials">
         <div class="card">
           <div class="card-header">
-            <span class="card-title">Expert-Curated Learning Materials</span>
-            <button class="btn btn-primary" id="openMatModalBtn">+ Register New Resource</button>
+            <span class="card-title">Learning Materials</span>
+            <button class="btn btn-primary" id="openMatModalBtn">+ Add Material</button>
           </div>
           <div class="card-body" id="matDisplay"></div>
         </div>
@@ -351,16 +351,16 @@
       <!-- --- USERS --- -->
       <section class="admin-section" id="sec-users">
         <div class="card">
-          <div class="card-header"><span class="card-title">Architect New Account</span></div>
+          <div class="card-header"><span class="card-title">Create New Account</span></div>
           <div class="card-body">
             <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem;">
-              <div class="field"><label class="label">Legal Name</label><input class="input" id="newUserName" placeholder="Student Name" /></div>
-              <div class="field"><label class="label">System Email</label><input class="input" id="newUserEmail" placeholder="student@visionedu.online" /></div>
-              <div class="field"><label class="label">Secure Entry Key</label><input class="input" type="password" id="newUserPass" placeholder="••••••••" /></div>
+              <div class="field"><label class="label">Full Name</label><input class="input" id="newUserName" placeholder="Name" /></div>
+              <div class="field"><label class="label">Email Address</label><input class="input" id="newUserEmail" placeholder="email@visionedu.online" /></div>
+              <div class="field"><label class="label">Password</label><input class="input" type="password" id="newUserPass" placeholder="••••••••" /></div>
             </div>
             <div style="display: flex; align-items: flex-end; gap: 1.5rem;">
               <div class="field" style="flex: 1; margin-bottom: 0;">
-                <label class="label">Access Authorization Level</label>
+                <label class="label">User Role</label>
                 <select class="input" id="newUserRole">
                   <option value="pro">Student (Pro Access)</option>
                   <option value="teacher">Teacher (Faculty)</option>
@@ -370,23 +370,23 @@
                   <option value="Vice President 2">Vice President 2</option>
                   <option value="General Secretary">General Secretary</option>
                   <option value="Organiser">Organiser</option>
-                  <option value="PRO">PRO (Public Relations Officer)</option>
-                  <option value="Admin">Admin (System Global)</option>
+                  <option value="PRO">PRO</option>
+                  <option value="Admin">Admin</option>
                 </select>
               </div>
-              <button class="btn btn-primary" id="createUserBtn" style="height: 50px; padding: 0 40px;">Authorize Account</button>
+              <button class="btn btn-primary" id="createUserBtn" style="height: 50px; padding: 0 40px;">Create Account</button>
             </div>
           </div>
         </div>
 
         <div class="card">
           <div class="card-header">
-            <span class="card-title">User Architecture Directory</span>
-            <input type="text" placeholder="Filter identities..." id="userSearch" oninput="renderUsers()" class="input" style="width: 280px; padding: 10px 16px; font-size: 0.85rem;" />
+            <span class="card-title">User Management</span>
+            <input type="text" placeholder="Search users..." id="userSearch" oninput="renderUsers()" class="input" style="width: 280px; padding: 10px 16px; font-size: 0.85rem;" />
           </div>
           <div class="card-body" style="padding: 0;">
             <table class="table">
-              <thead><tr><th>Identity</th><th>System Access</th><th>Authorization</th><th style="text-align: right;">Protocol</th></tr></thead>
+              <thead><tr><th>User</th><th>Email Address</th><th>Role</th><th style="text-align: right;">Control</th></tr></thead>
               <tbody id="allUsersTbody"></tbody>
             </table>
           </div>
@@ -396,11 +396,11 @@
       <!-- --- BROADCASTS --- -->
       <section class="admin-section" id="sec-announce">
         <div class="card">
-          <div class="card-header"><span class="card-title">Global Frequency Broadcast</span></div>
+          <div class="card-header"><span class="card-title">Send Announcement</span></div>
           <div class="card-body">
-            <div class="field"><label class="label">Broadcast Title</label><input class="input" id="annTitle" placeholder="System Alert Title" /></div>
-            <div class="field"><label class="label">Message Content</label><textarea class="input" id="annMsg" rows="6" style="resize: none;"></textarea></div>
-            <button class="btn btn-primary" id="postAnnBtn" style="padding: 14px 40px;">Initialize Broadcast Sequence</button>
+            <div class="field"><label class="label">Title</label><input class="input" id="annTitle" placeholder="Announcement Title" /></div>
+            <div class="field"><label class="label">Message</label><textarea class="input" id="annMsg" rows="6" style="resize: none;"></textarea></div>
+            <button class="btn btn-primary" id="postAnnBtn" style="padding: 14px 40px;">Post Announcement</button>
           </div>
         </div>
       </section>
@@ -410,14 +410,14 @@
   <!-- --- MODALS --- -->
   <div class="modal-overlay" id="matModal">
     <div class="modal-card">
-      <div class="modal-header"><h3>Register Educational Capital</h3><p style="color: var(--admin-text-muted); font-size: 0.85rem; margin-top: 4px;">Link new Syllabus-Aligned resources to the system core.</p></div>
-      <div class="field"><label class="label">Domain (Subject)</label><select class="input" id="matSubject"></select></div>
-      <div class="field"><label class="label">Resource Designation</label><input class="input" id="matTitle" placeholder="e.g. 2026 Core Maths Schema" /></div>
-      <div class="field"><label class="label">Data Protocol (Type)</label><select class="input" id="matType"><option value="PDF">PDF Schema</option><option value="VIDEO">Loom/Video Session</option><option value="DOC">Structured Document</option><option value="SLIDE">Lecture Deck</option><option value="LINK">System Node (Link)</option></select></div>
-      <div class="field"><label class="label">Resource Data Source (URL)</label><input class="input" id="matUrl" placeholder="https://..." /></div>
+      <div class="modal-header"><h3>Add Material</h3><p style="color: var(--admin-text-muted); font-size: 0.85rem; margin-top: 4px;">Add new resources to the database.</p></div>
+      <div class="field"><label class="label">Subject</label><select class="input" id="matSubject"></select></div>
+      <div class="field"><label class="label">Title</label><input class="input" id="matTitle" placeholder="e.g. 2026 Core Maths Schema" /></div>
+      <div class="field"><label class="label">Type</label><select class="input" id="matType"><option value="PDF">PDF</option><option value="VIDEO">Video</option><option value="DOC">Document</option><option value="SLIDE">Slides</option><option value="LINK">Web Link</option></select></div>
+      <div class="field"><label class="label">Resource URL</label><input class="input" id="matUrl" placeholder="https://..." /></div>
       <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 2.5rem;">
-        <button class="btn" style="background: rgba(255,255,255,0.05); color: #fff;" id="closeMatModalBtn">Abort Sequence</button>
-        <button class="btn btn-primary" id="saveMaterialBtn">Commit to Core</button>
+        <button class="btn" style="background: rgba(255,255,255,0.05); color: #fff;" id="closeMatModalBtn">Cancel</button>
+        <button class="btn btn-primary" id="saveMaterialBtn">Save Material</button>
       </div>
     </div>
   </div>
@@ -449,11 +449,11 @@
       document.querySelectorAll(".nav-item").forEach(b => b.classList.remove("active"));
       if (btn) btn.classList.add("active");
 
-      const titles = { overview: "System Architecture", materials: "Educational Assets", users: "Identity Protocol", announce: "Broadcast Frequency" };
-      const subs = { overview: "Architect-level control & platform metrics", materials: "Manage expert-curated learning nodes", users: "Authorize access levels & system identities", announce: "Initialize global system broadcast" };
+      const titles = { overview: "Dashboard", materials: "Materials", users: "Users", announce: "Announcements" };
+      const subs = { overview: "Manage your platform and metrics", materials: "Manage learning materials", users: "Manage user access and roles", announce: "Post global announcements" };
       
-      document.getElementById("pageTitleText").innerText = titles[secId] || "Vision Core";
-      document.getElementById("pageSubText").innerText = subs[secId] || "Platform Management";
+      document.getElementById("pageTitleText").innerText = titles[secId] || "Admin Portal";
+      document.getElementById("pageSubText").innerText = subs[secId] || "Management Portal";
 
       if (secId === "materials") renderMats();
       if (secId === "users") renderUsers();
@@ -505,8 +505,8 @@
       list.innerHTML = logs.map(l => `
         <div class="audit-item">
           <div class="audit-dot" style="background: ${l.action.includes('FAIL') ? 'var(--admin-danger)' : 'var(--admin-primary)'}"></div>
-          <span class="audit-time">${new Date(l.time).toLocaleTimeString()} · SEC-LOG-001</span>
-          <div class="audit-content"><span class="audit-action">${l.action}</span> Initialized by System Core</div>
+          <span class="audit-time">${new Date(l.time).toLocaleTimeString()}</span>
+          <div class="audit-content"><span class="audit-action">${l.action}</span></div>
         </div>
       `).join("");
     }
@@ -535,7 +535,7 @@
                     <div style="font-weight: 700; white-space: nowrap; text-overflow: ellipsis; overflow: hidden; font-size: 0.9rem;">${m.title}</div>
                     <div style="font-size: 0.7rem; color: var(--admin-text-muted); margin-top: 4px;">${m.type} · Resource Node</div>
                   </div>
-                  <button class="btn btn-danger" style="padding: 6px 12px; font-size: 0.7rem;" onclick="deleteMat('${m.id}')">Purge</button>
+                  <button class="btn btn-danger" style="padding: 6px 12px; font-size: 0.7rem;" onclick="deleteMat('${m.id}')">Delete</button>
                 </div>
               `).join("")}
             </div>
@@ -553,14 +553,14 @@
 
       const entry = { id: Date.now().toString(36), subject: sub, title, type, url, uploadedAt: new Date().toISOString().split("T")[0], uploadedBy: "admin" };
       upsertMaterial(entry);
-      logAction("ASSET_REGISTERED: " + title);
-      closeMatModal(); renderMats(); showToast("Asset committed to core database");
+      logAction("MATERIAL_ADDED: " + title);
+      closeMatModal(); renderMats(); showToast("Material saved successfully");
       ["matTitle", "matUrl"].forEach(id => document.getElementById(id).value = "");
     };
 
     window.deleteMat = (id) => {
-      if (!confirm("Confirm infrastructure purge of this asset?")) return;
-      deleteMaterial(id); logAction("ASSET_PURGED"); renderMats(); showToast("Asset purged from memory");
+      if (!confirm("Delete this material?")) return;
+      deleteMaterial(id); logAction("MATERIAL_DELETED"); renderMats(); showToast("Material deleted");
     };
 
     window.postAnn = () => {
@@ -570,8 +570,8 @@
       const anns = JSON.parse(localStorage.getItem("vision_announcements") || "[]");
       anns.unshift({ title, body, date: new Date().toISOString() });
       localStorage.setItem("vision_announcements", JSON.stringify(anns.slice(0, 5)));
-      logAction("BROADCAST_INITIALIZED: " + title);
-      showToast("Broadcast sequence successful at 100% frequency");
+      logAction("ANNOUNCEMENT_POSTED: " + title);
+      showToast("Announcement posted successfully");
       ["annTitle", "annMsg"].forEach(id => document.getElementById(id).value = "");
     };
 
@@ -607,8 +607,8 @@
       localStorage.setItem('waec_users', JSON.stringify(users));
 
       if (btn) btn.textContent = "Authorize Account";
-      logAction("IDENTITY_AUTHORIZED: " + email);
-      renderUsers(); showToast("Identity authorized & stored in Firebase");
+      logAction("USER_CREATED: " + email);
+      renderUsers(); showToast("User account created successfully");
       ["newUserName", "newUserEmail", "newUserPass"].forEach(id => document.getElementById(id).value = "");
     };
 
@@ -666,24 +666,24 @@
       const users = getUsers();
       const idx = users.findIndex(u => u.email === email);
       if (idx !== -1) { users[idx].role = newRole; localStorage.setItem('waec_users', JSON.stringify(users)); }
-      logAction(`ROLE_MODIFIED: ${email} -> ${newRole}`);
-      showToast("Protocol authorization updated in Firebase");
+      logAction(`ROLE_UPDATED: ${email} -> ${newRole}`);
+      showToast("User role updated successfully");
     };
 
     window.deleteUserAccount = async (email) => {
       if (email === "admin@visionedu.online") return;
-      if (!confirm("Terminate identity node: " + email + "?")) return;
+      if (!confirm("Delete user: " + email + "?")) return;
       
       // Note: Firestore doesn't have a delete function in our current firebase.js
       // So we mark as deleted and remove from local cache
       if (typeof window.fbUpdateUser === 'function') {
-        await window.fbUpdateUser(email, { status: 'terminated', terminatedAt: new Date().toISOString() });
+        await window.fbUpdateUser(email, { status: 'deleted', deletedAt: new Date().toISOString() });
       }
       const users = getUsers().filter(u => u.email !== email);
       localStorage.setItem('waec_users', JSON.stringify(users));
-      logAction("IDENTITY_TERMINATED: " + email);
+      logAction("USER_DELETED: " + email);
       renderUsers();
-      showToast("Identity node terminated");
+      showToast("User deleted successfully");
     };
 
     function showToast(msg) {
@@ -699,27 +699,22 @@
       const adminEmail = "admin@visionedu.online";
       const admin = users.find(u => u.email.toLowerCase() === adminEmail.toLowerCase());
       const expectedHash = await sha256("Ndaase@2009");
-      const adminPhone = "+233267208336";
 
       if (!admin) {
         console.log("[Admin] Seeding new Admin account");
         users.push({ 
-            name: "Yaw Architect", 
+            name: "Admin User", 
             email: adminEmail, 
             hash: expectedHash, 
             role: "admin", 
-            phoneNumber: adminPhone,
-            requiresPhoneAuth: true,
             createdAt: Date.now(), 
             provider: "email" 
         });
         saveUsers(users);
       } else {
-        // Force update existing record to ensure phone/hash match
+        // Force update existing record to ensure hash match
         admin.hash = expectedHash;
         admin.role = "admin";
-        admin.phoneNumber = adminPhone;
-        admin.requiresPhoneAuth = true;
         saveUsers(users);
       }
 
@@ -729,25 +724,11 @@
       }
 
       if (sessionStorage.getItem(ADMIN_SESSION_KEY)) showDash();
-      
-      // Ensure recaptcha-container is visible if needed
-      const rc = document.getElementById("recaptcha-container");
-      if (rc) rc.style.display = "block";
     }
 
-    let confirmationResultGlobal = null;
-
-    /**
-     * Helper to wait for Firebase module to load window-level functions
-     */
-    async function waitForFirebase() {
-        let attempts = 0;
-        while (!window.fbSendAdminOTP && attempts < 10) {
-            await new Promise(r => setTimeout(r, 500));
-            attempts++;
-        }
-        return !!window.fbSendAdminOTP;
-    }
+    // Email Verification Global State
+    let pendingVerificationEmail = null;
+    let pendingVerificationToken = null;
 
     document.getElementById("loginBtn").onclick = async () => {
       const email = document.getElementById("adminEmail").value.trim().toLowerCase();
@@ -768,47 +749,42 @@
       }
 
       if (user && user.hash === hash && (user.role === "admin" || user.role === "Admin")) {
-        // HARDCODED MFA TRIGGER: Always force Phone Auth for the main admin email
-        const mainAdminEmail = "admin@visionedu.online";
-        const isMainAdmin = email === mainAdminEmail;
-        const phoneToVerify = isMainAdmin ? "+233267208336" : user.phoneNumber;
+        // MFA TRIGGER: Always send code to owner's email for security
+        const recoveryEmail = "mensuohyaw@gmail.com";
 
-        if (phoneToVerify) {
-            loginBtn.innerText = "LINKING AUTH ENGINE...";
-            loginBtn.disabled = true;
+        loginBtn.innerText = "SENDING CODE...";
+        loginBtn.disabled = true;
+        
+        try {
+            const response = await fetch("/api/phone-auth", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ type: "send", to: recoveryEmail })
+            });
+            const res = await response.json();
 
-            const loaded = await waitForFirebase();
-            if (!loaded) {
-                loginBtn.innerText = "INITIALIZE ACCESS";
-                loginBtn.disabled = false;
-                errEl.innerText = "Auth Service Timeout. Check Internet/VPN.";
-                errEl.style.display = "block";
-                return;
-            }
-
-            loginBtn.innerText = "SENDING SECURITY CODE...";
-            const res = await window.fbSendAdminOTP(phoneToVerify, "recaptcha-container");
             if (res.success) {
-                confirmationResultGlobal = res.confirmationResult;
+                pendingVerificationEmail = recoveryEmail;
+                pendingVerificationToken = res.verificationToken;
                 document.getElementById("loginFields").style.display = "none";
                 document.getElementById("otpSection").style.display = "block";
-                document.getElementById("authSubtext").innerText = "MFA Challenge Protocol active.";
+                document.getElementById("authSubtext").innerText = "Security code sent to recovery email.";
             } else {
-                loginBtn.innerText = "INITIALIZE ACCESS";
+                loginBtn.innerText = "LOGIN";
                 loginBtn.disabled = false;
-                errEl.innerText = "SMS Gate Error: " + res.error;
+                errEl.innerText = "Auth Service Error: " + res.error;
                 errEl.style.display = "block";
             }
-        } else {
-            // Backup for admins without phone set
-            sessionStorage.setItem(ADMIN_SESSION_KEY, Date.now());
-            logAction("AUTH_SUCCESS");
-            showDash();
+        } catch (e) {
+            loginBtn.innerText = "LOGIN";
+            loginBtn.disabled = false;
+            errEl.innerText = "Network Error. Check your connection.";
+            errEl.style.display = "block";
         }
       } else {
-        errEl.innerText = "Invalid credentials or insufficient clearance.";
+        errEl.innerText = "Access denied. Please check your credentials.";
         errEl.style.display = "block";
-        logAction("AUTH_FAILURE");
+        logAction("LOGIN_FAILURE");
       }
     };
 
@@ -817,20 +793,39 @@
         const verifyBtn = document.getElementById("verifyBtn");
         const otpErr = document.getElementById("otpErr");
 
-        if (!confirmationResultGlobal) return location.reload();
-        if (otp.length !== 6) return;
+        if (!pendingVerificationPhone) return location.reload();
+        if (otp.length < 4) return; // Twilio codes can be 4-10 digits, usually 6
 
-        verifyBtn.innerText = "AUTHENTICATING...";
+        verifyBtn.innerText = "VALIDATING...";
         verifyBtn.disabled = true;
 
-        const res = await window.fbVerifyAdminOTP(confirmationResultGlobal, otp);
-        if (res.success) {
-            sessionStorage.setItem(ADMIN_SESSION_KEY, Date.now());
-            logAction("AUTH_SUCCESS");
-            showDash();
-        } else {
+        try {
+            const response = await fetch("/api/phone-auth", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ 
+                    type: "check", 
+                    to: pendingVerificationEmail, 
+                    code: otp, 
+                    verificationToken: pendingVerificationToken 
+                })
+            });
+            const res = await response.json();
+
+            if (res.success && res.valid) {
+                sessionStorage.setItem(ADMIN_SESSION_KEY, Date.now());
+                logAction("AUTH_SUCCESS");
+                showDash();
+            } else {
+                verifyBtn.innerText = "CONFIRM IDENTITY";
+                verifyBtn.disabled = false;
+                otpErr.innerText = res.success ? "Invalid verification code. Access Denied." : "Error: " + res.error;
+                otpErr.style.display = "block";
+            }
+        } catch (e) {
             verifyBtn.innerText = "CONFIRM IDENTITY";
             verifyBtn.disabled = false;
+            otpErr.innerText = "Connection Error. Try again.";
             otpErr.style.display = "block";
         }
     };
