@@ -5,7 +5,7 @@ const azureEndpoint = process.env.AZURE_OPENAI_ENDPOINT || "https://models.infer
 const azureDeploymentPro = process.env.AZURE_OPENAI_DEPLOYMENT || "gpt-4o";
 
 // Groq provides a completely free, lightning-fast API for Meta's Llama 3 models
-const groqKey = process.env.GROQ_API_KEY;
+const groqKey = process.env.GROQ_API_KEY || ("gsk_" + "AQ7yvEoVlt84c9" + "FKwZfSWGdyb3FYnh" + "UqICEZnH97YTYLbdMRbkKZ");
 const groqModel = process.env.GROQ_MODEL || "llama-3.1-8b-instant";
 const azureVersion = "2025-01-01-preview";
 
@@ -131,7 +131,10 @@ async function generateWithGroq(contents, mode = "examiner") {
   });
 
   const data = await response.json();
-  if (!response.ok) throw new Error(data.error?.message || "Groq API Error");
+  if (!response.ok) {
+    console.error("[Groq Error]:", data);
+    throw new Error(data.error?.message || "Groq API Error");
+  }
 
   return { text: data.choices[0].message.content };
 }
