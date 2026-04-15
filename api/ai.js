@@ -40,11 +40,27 @@ async function safeGenerateContent(contents, role = "student") {
  * Microsoft Azure OpenAI SDK Handler with Dual-Mode Support
  */
 async function generateWithAzure(contents, mode = "examiner", deploymentName = azureDeploymentPro) {
-  // Convert Gemini format to OpenAI format
-  const messages = contents.map(msg => ({
-    role: msg.role === "model" ? "assistant" : msg.role,
-    content: msg.parts ? msg.parts.map(p => p.text).join("\n") : ""
-  })).filter(msg => msg.content.trim() !== "");
+  // Convert Gemini format (parts) to OpenAI multi-modal format
+  const messages = contents.map(msg => {
+    if (!msg.parts) return { role: msg.role === "model" ? "assistant" : msg.role, content: "" };
+
+    const content = msg.parts.map(p => {
+      if (p.text) return { type: "text", text: p.text };
+      if (p.inlineData) return { 
+        type: "image_url", 
+        image_url: { url: `data:${p.inlineData.mimeType};base64,${p.inlineData.data}` } 
+      };
+      return null;
+    }).filter(p => p !== null);
+
+    return {
+      role: msg.role === "model" ? "assistant" : msg.role,
+      content: content.length === 1 && content[0].type === "text" ? content[0].text : content
+    };
+  }).filter(msg => {
+    if (typeof msg.content === "string") return msg.content.trim() !== "";
+    return msg.content.length > 0;
+  });
 
   // Branching System Prompt
   let systemContent = "";
