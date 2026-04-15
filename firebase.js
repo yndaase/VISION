@@ -12,6 +12,12 @@ import {
 import { 
   getAuth 
 } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+import { 
+  getStorage, 
+  ref, 
+  uploadBytesResumable, 
+  getDownloadURL 
+} from "https://www.gstatic.com/firebasejs/10.8.0/firebase-storage.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyCCLvmFR4NU6aIbDc-75EsBL-K9pqlNa5E",
@@ -27,7 +33,10 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const auth = getAuth(app);
+const storage = getStorage(app);
+
 window.fbAuth = auth;
+window.fbStorage = storage;
 
 /* ─────────────────────────────────────────────────────────────
    USER DATABASE  (Firestore collection: "users")
@@ -474,6 +483,42 @@ window.fbDeleteBroadcast = async function(id) {
   } catch(err) {
     console.error('[Firebase] fbDeleteBroadcast failed:', err.message);
   }
+};
+
+/* ─────────────────────────────────────────────────────────────
+   STORAGE UPLOADS
+   ───────────────────────────────────────────────────────────── */
+const MAX_FILE_SIZE = 50 * 1024 * 1024; // 50MB
+
+/**
+ * Upload a file to Firebase Storage.
+ * @param {File} file - The file object to upload
+ * @param {string} path - The storage path (e.g. 'materials/physics.pdf')
+ * @param {Function} onProgress - Progress callback (percentage)
+ * @returns {Promise<string>} - Download URL
+ */
+window.fbUploadData = async function(file, path, onProgress) {
+  if (!file) throw new Error("No file specialized for transmission.");
+  if (file.size > MAX_FILE_SIZE) throw new Error("File exceeds 50MB tactical limit.");
+
+  const storageRef = ref(storage, path);
+  const uploadTask = uploadBytesResumable(storageRef, file);
+
+  return new Promise((resolve, reject) => {
+    uploadTask.on('state_changed', 
+      (snapshot) => {
+        const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+        if (onProgress) onProgress(progress);
+      }, 
+      (error) => {
+        console.error("[Storage] Upload failed:", error);
+        reject(error);
+      }, 
+      () => {
+        getDownloadURL(uploadTask.snapshot.ref).then(resolve).catch(reject);
+      }
+    );
+  });
 };
 
 

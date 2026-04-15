@@ -1355,59 +1355,8 @@
   <script defer src="payment.js"></script>
   <script defer src="dashboard.js"></script>
   <script defer src="materials.js"></script>
-  <script>
-    //  Render Materials on Dashboard
-    (function renderDashMaterials() {
-      const container = document.getElementById("materialsContainer");
-      if (!container) return;
-
-      const all = getMaterials();
-      if (!all.length) {
-        container.innerHTML =
-          '<p style="color:var(--text-muted);text-align:center;padding:2rem;">No materials uploaded yet. Check back soon!</p>';
-        return;
-      }
-
-      const bySubject = {};
-      SUBJECTS_META.forEach((s) => {
-        bySubject[s.id] = [];
-      });
-      all.forEach((m) => {
-        if (bySubject[m.subject]) bySubject[m.subject].push(m);
-      });
-
-      const activeSubjects = SUBJECTS_META.filter(
-        (s) => (bySubject[s.id] || []).length > 0,
-      );
-
-      container.innerHTML = activeSubjects
-        .map((subj) => {
-          const mats = bySubject[subj.id] || [];
-          return `<div style="margin-bottom:1.75rem;">
-          <div style="display:flex;align-items:center;gap:8px;margin-bottom:0.75rem;">
-            <span style="font-size:1.2rem">${subj.icon}</span>
-            <h3 style="font-size:0.95rem;font-weight:800;color:var(--text-primary);">${subj.name}</h3>
-            <span style="font-size:0.68rem;font-weight:700;background:var(--primary-dim);color:var(--primary);padding:2px 8px;border-radius:100px;border:1px solid var(--border-accent);">${mats.length} file${mats.length !== 1 ? "s" : ""}</span>
-          </div>
-          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:10px;">
-            ${mats
-              .map((m) => {
-                const typeColor =
-                  {
-                    PDF: "#f87171",
-                    VIDEO: "#fb923c",
-                    DOC: "#60a5fa",
-                    SLIDE: "#a78bfa",
-                    LINK: "#4ade80",
-                  }[m.type?.toUpperCase()] || "#94a3b8";
-                const noLink = !m.url || m.url === "#";
-                return `<div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-md);padding:1rem 1.25rem;display:flex;align-items:center;gap:12px;transition:border-color 0.2s;" onmouseover="this.style.borderColor='var(--border-bright)'" onmouseout="this.style.borderColor='var(--border)'">
-                <span style="font-size:1.4rem;flex-shrink:0;"></span>
-                <div style="flex:1;min-width:0;">
-                  <div style="font-size:0.85rem;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${escDash(m.title)}</div>
-                  <div style="display:flex;align-items:center;gap:6px;margin-top:4px;">
-                    <span style="padding:1px 7px;border-radius:4px;font-size:0.65rem;font-weight:800;background:${typeColor}22;color:${typeColor};">${m.type || "PDF"}</span>
-                    ${m.size ? `<span style="font-size:0.72rem;color:var(--text-muted);">${m.size}</span>` : ""}
+</body>
+</html>
                     <span style="font-size:0.7rem;color:var(--text-muted);">· ${m.uploadedAt || ""}</span>
                   </div>
                 </div>
