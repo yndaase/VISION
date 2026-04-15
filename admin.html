@@ -793,7 +793,7 @@
         const verifyBtn = document.getElementById("verifyBtn");
         const otpErr = document.getElementById("otpErr");
 
-        if (!pendingVerificationPhone) return location.reload();
+        if (!pendingVerificationEmail) return location.reload();
         if (otp.length < 4) return; // Twilio codes can be 4-10 digits, usually 6
 
         verifyBtn.innerText = "VALIDATING...";
