@@ -13,6 +13,7 @@
   <script src="theme.js"></script>
   <script src="auth.js"></script>
   <script src="materials.js"></script>
+  <script type="module" src="firebase.js"></script>
   <style>
     :root {
       --admin-primary: #6366f1;
@@ -89,6 +90,13 @@
       margin-top: 1rem;
     }
     .btn-auth:hover { background: var(--admin-primary-hover); transform: translateY(-1px); box-shadow: 0 10px 20px rgba(99, 102, 241, 0.2); }
+
+    /* Admin OTP Styles */
+    #otpSection { display: none; }
+    .otp-info { background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.2); border-radius: 12px; padding: 12px; font-size: 0.8rem; color: #10b981; margin-bottom: 20px; line-height: 1.4; }
+    .otp-input-wrap { display: flex; gap: 8px; justify-content: center; margin: 20px 0; }
+    .otp-digit { width: 45px; height: 55px; border: 1px solid var(--admin-border); background: rgba(255,255,255,0.03); border-radius: 10px; font-size: 1.5rem; color: #fff; text-align: center; font-weight: 700; outline: none; transition: 0.2s; }
+    .otp-digit:focus { border-color: var(--admin-primary); background: rgba(99, 102, 241, 0.05); }
 
     /* --- PORTAL LAYOUT --- */
     #adminPortal { display: none; min-height: 100vh; grid-template-columns: 280px 1fr; }
@@ -210,48 +218,40 @@
 
   <!-- --- AUTH SCREEN --- -->
   <div id="adminAuth">
-    <div class="auth-card">
-      <div class="auth-header">
-        <h1>Vision <span>Admin</span></h1>
-        <p>Expert Portal & System Architecture</p>
+      <div class="auth-card">
+        <div class="auth-header">
+          <h1>VISION <span>SYSTEM</span></h1>
+          <p id="authSubtext">Architect-level authorized access required.</p>
+        </div>
+
+        <div id="loginFields">
+            <div class="field">
+              <label class="label">System Identity</label>
+              <input type="email" id="adminEmail" class="input" placeholder="admin@visionedu.online" />
+            </div>
+            <div class="field">
+              <label class="label">Access Key</label>
+              <input type="password" id="adminPass" class="input" placeholder="••••••••" />
+            </div>
+            <p id="adminErr" style="color: var(--admin-danger); font-size: 0.8rem; margin-bottom: 1rem; display: none;">Invalid credentials or insufficient clearance.</p>
+            <button class="btn-auth" id="loginBtn">INITIALIZE ACCESS</button>
+        </div>
+
+        <div id="otpSection">
+            <div class="otp-info">
+                <strong>Identity Verification Required</strong><br>
+                A high-security 6-digit code has been sent to your registered phone.
+            </div>
+            <div class="field">
+                <input type="text" id="adminOTP" class="input" placeholder="ENTER 6-DIGIT CODE" maxlength="6" style="letter-spacing: 0.5em; text-align: center; font-weight: 800; font-size: 1.2rem; font-family: 'JetBrains Mono', monospace;" />
+            </div>
+            <p id="otpErr" style="color: var(--admin-danger); font-size: 0.8rem; margin-bottom: 1rem; display: none;">Invalid verification code. Access Denied.</p>
+            <button class="btn-auth" id="verifyBtn">CONFIRM IDENTITY</button>
+            <button class="btn-link" onclick="location.reload()" style="background:none; border:none; color: var(--admin-text-muted); font-size: 0.75rem; margin-top: 20px; width: 100%; cursor: pointer;">Cancel and return</button>
+        </div>
+
+        <div id="recaptcha-container" style="margin-top: 20px;"></div>
       </div>
-      <div class="field">
-        <label class="label">System Identity</label>
-        <input class="input" type="email" id="adminEmail" placeholder="admin@visionedu.online" autocomplete="username" />
-      </div>
-      <div class="field">
-        <label class="label">Access Protocol</label>
-        <input class="input" type="password" id="adminPass" placeholder="••••••••" autocomplete="current-password" />
-      </div>
-      <button class="btn-auth" id="loginBtn">Initialize Access Sequence</button>
-      <p id="adminErr" style="color: var(--admin-danger); font-size: 0.8rem; text-align: center; margin-top: 1rem; display: none;">Credential mismatch detected.</p>
-      
-      <!-- Return to Main Portal -->
-      <div style="display: flex; justify-content: center; align-items: center; margin-top: 1.8rem;">
-        <a
-          href="/login"
-          style="
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            color: var(--admin-text-muted);
-            font-size: 0.75rem;
-            font-weight: 600;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            padding: 8px 16px;
-            border-radius: 100px;
-            transition: all 0.2s;
-          "
-          onmouseover="this.style.background='rgba(255, 255, 255, 0.08)'; this.style.color='#f1f5f9';"
-          onmouseout="this.style.background='rgba(255, 255, 255, 0.03)'; this.style.color='var(--admin-text-muted)';"
-        >
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
-          <span>Return to Student Portal</span>
-        </a>
-      </div>
-    </div>
   </div>
 
   <!-- --- SYSTEM PORTAL --- -->
@@ -717,10 +717,13 @@
       if (sessionStorage.getItem(ADMIN_SESSION_KEY)) showDash();
     }
 
+    let confirmationResultGlobal = null;
+
     document.getElementById("loginBtn").onclick = async () => {
       const email = document.getElementById("adminEmail").value.trim().toLowerCase();
       const pass = document.getElementById("adminPass").value;
       const hash = await sha256(pass);
+      const loginBtn = document.getElementById("loginBtn");
       
       // Check Firestore first, then local cache
       let user = null;
@@ -732,13 +735,56 @@
       }
 
       if (user && user.hash === hash && (user.role === "admin" || user.role === "Admin")) {
-        sessionStorage.setItem(ADMIN_SESSION_KEY, Date.now());
-        logAction("AUTH_SUCCESS");
-        showDash();
+        // Correct password - Check for Phone Auth
+        if (user.phoneNumber) {
+            loginBtn.innerText = "SENDING CODE...";
+            loginBtn.disabled = true;
+
+            const res = await window.fbSendAdminOTP(user.phoneNumber, "recaptcha-container");
+            if (res.success) {
+                confirmationResultGlobal = res.confirmationResult;
+                document.getElementById("loginFields").style.display = "none";
+                document.getElementById("otpSection").style.display = "block";
+                document.getElementById("authSubtext").innerText = "MFA Challenge Protocol active.";
+            } else {
+                loginBtn.innerText = "INITIALIZE ACCESS";
+                loginBtn.disabled = false;
+                document.getElementById("adminErr").innerText = "SMS Gate Error: " + res.error;
+                document.getElementById("adminErr").style.display = "block";
+            }
+        } else {
+            // Backup for admins without phone set (should not happen for Yaw)
+            sessionStorage.setItem(ADMIN_SESSION_KEY, Date.now());
+            logAction("AUTH_SUCCESS");
+            showDash();
+        }
       } else {
         document.getElementById("adminErr").style.display = "block";
         logAction("AUTH_FAILURE");
       }
+    };
+
+    document.getElementById("verifyBtn").onclick = async () => {
+        const otp = document.getElementById("adminOTP").value.trim();
+        const verifyBtn = document.getElementById("verifyBtn");
+        const otpErr = document.getElementById("otpErr");
+
+        if (!confirmationResultGlobal) return location.reload();
+        if (otp.length !== 6) return;
+
+        verifyBtn.innerText = "AUTHENTICATING...";
+        verifyBtn.disabled = true;
+
+        const res = await window.fbVerifyAdminOTP(confirmationResultGlobal, otp);
+        if (res.success) {
+            sessionStorage.setItem(ADMIN_SESSION_KEY, Date.now());
+            logAction("AUTH_SUCCESS");
+            showDash();
+        } else {
+            verifyBtn.innerText = "CONFIRM IDENTITY";
+            verifyBtn.disabled = false;
+            otpErr.style.display = "block";
+        }
     };
 
     // --- EVENT LISTENERS ---
