@@ -1369,7 +1369,5 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 // Bootstrap Firebase Engine (user DB + stats sync)
-try {
-  import('./firebase.js').catch(err => console.warn('[Firebase] Module blocked or missing:', err));
-} catch(e) {}
+// Removed redundant dynamic import as firebase.js is loaded via script tag in HTML.
 
