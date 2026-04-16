@@ -456,20 +456,35 @@ window.saveProfileChanges = async function() {
 
     const phone = phoneInput.value.trim();
     if (phone && !phone.startsWith("+")) {
-        alert("Please include country code with '+' (e.g. +233)");
+        alert("Tactical Error: Please include country code with '+' (e.g. +233)");
         return;
     }
 
     btn.disabled = true;
-    btn.innerText = "SAVING...";
+    btn.innerText = "SYNCHRONIZING...";
 
     try {
         if (typeof window.fbUpdateUser === 'function') {
-            await window.fbUpdateUser(session.email, { phone });
-            // Update local session too
+            // Update Firestore with phone AND auto-opt-in for WhatsApp
+            await window.fbUpdateUser(session.email, { 
+                phone: phone,
+                waOptIn: !!phone // Automatically opt-in if phone is provided
+            });
+            
+            // Update local session for immediate UI reflection
             session.phone = phone;
+            session.waOptIn = !!phone;
             localStorage.setItem('waec_session', JSON.stringify(session));
-            alert("Profile identity updated.");
+            sessionStorage.setItem('waec_session', JSON.stringify(session));
+            
+            if (typeof showToast === 'function') {
+                showToast("Profile identity synchronized with Firebase");
+            } else {
+                alert("Profile identity synchronized.");
+            }
+            
+            // Refresh settings UI to show updated state (badges, etc)
+            openSettings();
         }
     } catch(e) {
         console.error("[Auth] Profile save failed:", e);
@@ -520,7 +535,7 @@ window.openSettings = function() {
   if (emailEl) emailEl.textContent = session.email;
   if (avatarEl) avatarEl.textContent = session.name.charAt(0).toUpperCase();
 
-  // Sync Profile state
+  // Sync Profile state from Firestore (Ground Truth)
   if (typeof window.fbGetUser === 'function') {
       window.fbGetUser(session.email).then(userData => {
           if (userData) {
@@ -529,6 +544,12 @@ window.openSettings = function() {
               
               const waEl = document.getElementById("waToggle");
               if (waEl) waEl.classList.toggle("active", !!userData.waOptIn);
+              
+              const waStatusText = document.getElementById("waStatusText");
+              if (waStatusText) {
+                  waStatusText.innerText = userData.phone ? "WhatsApp Linked" : "Not Linked";
+                  waStatusText.style.color = userData.phone ? "#10b981" : "var(--text-muted)";
+              }
           }
       });
   }
