@@ -402,7 +402,14 @@
 
         <div class="card">
           <div class="card-header">
-            <span class="card-title">User Management</span>
+            <div style="display: flex; align-items: center; gap: 2rem;">
+              <span class="card-title">User Management</span>
+              <!-- Database Context Toggle -->
+              <div style="display: flex; gap: 0.5rem; background: rgba(255,255,255,0.03); padding: 4px; border-radius: 12px; border: 1px solid var(--admin-border);">
+                <button class="btn" style="padding: 6px 16px; background: var(--admin-primary); font-size: 0.75rem;" id="viewStudentsBtn" onclick="setViewMode('users', this)">Students</button>
+                <button class="btn" style="padding: 6px 16px; background: transparent; font-size: 0.75rem;" id="viewParentsBtn" onclick="setViewMode('parent_users', this)">Parents</button>
+              </div>
+            </div>
             <input type="text" placeholder="Search users..." id="userSearch" oninput="renderUsers()" class="input" style="width: 280px; padding: 10px 16px; font-size: 0.85rem;" />
           </div>
           <div class="card-body" style="padding: 0;">
@@ -922,61 +929,71 @@
     };
 
     // Cache of Firestore users for the admin panel
-    let _cachedFirestoreUsers = null;
+    l    // --- USER MANAGEMENT ---
+    let currentViewCollection = 'users';
 
-    async function renderUsers() {
+    window.setViewMode = (collection, btn) => {
+        currentViewCollection = collection;
+        // Basic toggle UI feedback
+        const sBtn = document.getElementById("viewStudentsBtn");
+        const pBtn = document.getElementById("viewParentsBtn");
+        if (sBtn) sBtn.style.background = collection === 'users' ? 'var(--admin-primary)' : 'transparent';
+        if (pBtn) pBtn.style.background = collection === 'parent_users' ? 'var(--admin-primary)' : 'transparent';
+        renderUsers();
+    };
+
+    window.renderUsers = async function() {
       const tbody = document.getElementById("allUsersTbody");
       if (!tbody) return;
-      tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:2rem;color:var(--admin-text-muted);">Loading system identities...</td></tr>';
+      tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;padding:2rem;color:var(--admin-text-muted);">Accessing ${currentViewCollection.toUpperCase()} dataset...</td></tr>`;
 
-      // 1. Fetch Users
       let users = [];
-      let source = "Cache";
       if (typeof window.fbGetAllUsers === 'function') {
         try {
-          users = await window.fbGetAllUsers();
+          users = await window.fbGetAllUsers(currentViewCollection);
           if (users && users.length > 0) {
-            source = "Cloud";
-            localStorage.setItem('waec_users', JSON.stringify(users));
+            if (currentViewCollection === 'users') localStorage.setItem('waec_users', JSON.stringify(users));
           } else {
-            console.log("[Admin] Cloud returned empty set, falling back to cache.");
-            users = getUsers();
+            if (currentViewCollection === 'users') users = getUsers();
           }
         } catch(e) {
           console.warn("[Admin] Firestore fetch failed:", e);
-          users = getUsers();
+          if (currentViewCollection === 'users') users = getUsers();
         }
       } else {
-        console.warn("[Admin] Firebase module not yet available.");
-        users = getUsers();
+        if (currentViewCollection === 'users') users = getUsers();
       }
 
       const q = (document.getElementById("userSearch")?.value || "").toLowerCase();
-      console.log(`[Admin] Rendering users... Search: "${q}", Total Raw: ${users.length}`);
-
       const filtered = users.filter(u => {
         const nameMatch = u.name && u.name.toLowerCase().includes(q);
         const emailMatch = u.email && u.email.toLowerCase().includes(q);
         return nameMatch || emailMatch;
       });
 
+      if (!filtered.length) {
+          tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;padding:2rem;color:var(--admin-text-muted);">No identities found in ${currentViewCollection}.</td></tr>`;
+          return;
+      }
+
       tbody.innerHTML = filtered.map(u => {
         const displayName = u.name || (u.email ? u.email.split('@')[0] : 'Unknown');
+        const role = u.role || 'user';
         return `
         <tr>
           <td><div style="font-weight: 700;">${displayName}</div><div style="font-size: 0.7rem; color: var(--admin-text-muted);">${u.createdAt ? new Date(u.createdAt).toLocaleDateString() : 'N/A'}</div></td>
           <td style="font-family: 'JetBrains Mono'; font-size: 0.8rem;">${u.email}</td>
-          <td><select class="input" style="padding: 6px 12px; font-size: 0.75rem; width: auto;" onchange="updateRole('${u.email}', this.value)">
-            <option value="pro" ${u.role === 'pro' || u.role === 'student' ? 'selected' : ''}>Student</option>
-            <option value="teacher" ${u.role === 'teacher' ? 'selected' : ''}>Teacher</option>
-            <option value="enterprise" ${u.role === 'enterprise' ? 'selected' : ''}>Enterprise Admin</option>
-            <option value="President" ${u.role === 'President' ? 'selected' : ''}>President</option>
-            <option value="Vice President 1" ${u.role === 'Vice President 1' ? 'selected' : ''}>Vice President 1</option>
-            <option value="Vice President 2" ${u.role === 'Vice President 2' ? 'selected' : ''}>Vice President 2</option>
-            <option value="General Secretary" ${u.role === 'General Secretary' ? 'selected' : ''}>General Secretary</option>
-            <option value="Organiser" ${u.role === 'Organiser' ? 'selected' : ''}>Organiser</option>
-            <option value="PRO" ${u.role === 'PRO' ? 'selected' : ''}>PRO</option>
-            <option value="Admin" ${u.role === 'Admin' || u.role === 'admin' ? 'selected' : ''}>Admin</option>
+          <td><select class="input" style="padding: 6px 12px; font-size: 0.75rem; width: auto;" onchange="updateRole('${u.email}', this.value, '${currentViewCollection}')">
+            <option value="pro" ${role === 'pro' || role === 'student' ? 'selected' : ''}>Student</option>
+            <option value="teacher" ${role === 'teacher' ? 'selected' : ''}>Teacher</option>
+            <option value="enterprise" ${role === 'enterprise' ? 'selected' : ''}>Enterprise Admin</option>
+            <option value="President" ${role === 'President' ? 'selected' : ''}>President</option>
+            <option value="Vice President 1" ${role === 'Vice President 1' ? 'selected' : ''}>Vice President 1</option>
+            <option value="Vice President 2" ${role === 'Vice President 2' ? 'selected' : ''}>Vice President 2</option>
+            <option value="General Secretary" ${role === 'General Secretary' ? 'selected' : ''}>General Secretary</option>
+            <option value="Organiser" ${role === 'Organiser' ? 'selected' : ''}>Organiser</option>
+            <option value="PRO" ${role === 'PRO' ? 'selected' : ''}>PRO</option>
+            <option value="Admin" ${role === 'Admin' || role === 'admin' ? 'selected' : ''}>Admin</option>
           </select></td>
           <td style="text-align: center;">
             ${u.waOptIn ? 
@@ -986,39 +1003,57 @@
               `<span style="color: var(--admin-text-muted); font-size: 0.65rem; font-weight: 700; opacity: 0.5;">Not Opted In</span>`
             }
           </td>
-          <td style="text-align: right;"><button class="btn btn-danger" style="padding: 8px;" onclick="deleteUserAccount('${u.email}')" ${u.email === 'admin@visionedu.online' ? 'disabled' : ''}><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" /></svg></button></td>
+          <td style="text-align: right;"><button class="btn btn-danger" style="padding: 8px;" onclick="deleteUserAccount('${u.email}', '${currentViewCollection}')" ${u.email === 'admin@visionedu.online' ? 'disabled' : ''}><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" /></svg></button></td>
         </tr>
-      `;
-    }).join("") || '<tr><td colspan="5" style="text-align:center;padding:2rem;color:var(--admin-text-muted);">No identities found.</td></tr>';
+        `;
+      }).join("");
+    }
+">No identities found.</td></tr>';
   }
 
-    window.updateRole = async (email, newRole) => {
-      // Update Firestore
+    window.updateRole = async (email, newRole, collection = 'users') => {
+      // Update Firestore (Collection-aware)
       if (typeof window.fbUpdateUser === 'function') {
-        await window.fbUpdateUser(email, { role: newRole });
+        await window.fbUpdateUser(email, { role: newRole }, collection);
       }
-      // Update local cache
-      const users = getUsers();
-      const idx = users.findIndex(u => u.email === email);
-      if (idx !== -1) { users[idx].role = newRole; localStorage.setItem('waec_users', JSON.stringify(users)); }
-      logAction(`ROLE_UPDATED: ${email} -> ${newRole}`);
+      // Update local cache only if it's the students collection
+      if (collection === 'users') {
+          const users = getUsers();
+          const idx = users.findIndex(u => u.email === email);
+          if (idx !== -1) { users[idx].role = newRole; localStorage.setItem('waec_users', JSON.stringify(users)); }
+      }
+      logAction(`ROLE_UPDATED: ${email} -> ${newRole} (${collection})`);
       showToast("User role updated successfully");
     };
 
-    window.deleteUserAccount = async (email) => {
-      if (email === "admin@visionedu.online") return;
-      if (!confirm("Delete user: " + email + "?")) return;
-      
-      // Note: Firestore doesn't have a delete function in our current firebase.js
-      // So we mark as deleted and remove from local cache
-      if (typeof window.fbUpdateUser === 'function') {
-        await window.fbUpdateUser(email, { status: 'deleted', deletedAt: new Date().toISOString() });
+    window.deleteUserAccount = async (email, collection = 'users') => {
+      if (email === "admin@visionedu.online") {
+          showToast("Access Denied: Admin account cannot be purged.", "error");
+          return;
       }
-      const users = getUsers().filter(u => u.email !== email);
-      localStorage.setItem('waec_users', JSON.stringify(users));
-      logAction("USER_DELETED: " + email);
-      renderUsers();
-      showToast("User deleted successfully");
+      if (!confirm(`CAUTION: Permanently purge ${email} from ${collection}? This action is irreversible and mirrors immediately to the Cloud.`)) return;
+      
+      try {
+          if (typeof window.fbDeleteUser === 'function') {
+            const res = await window.fbDeleteUser(email, collection);
+            if (res.success) {
+                showToast(`Purged ${email} from Cloud`);
+                logAction(`DECOMMISSIONED: ${email} (${collection})`);
+                
+                // Also remove from local cache if it was the 'users' collection
+                if (collection === 'users') {
+                    const users = getUsers().filter(u => u.email !== email);
+                    localStorage.setItem('waec_users', JSON.stringify(users));
+                }
+                renderUsers();
+            } else {
+                throw new Error(res.error);
+            }
+          }
+      } catch(e) {
+          console.error("[Admin] Delete failed:", e);
+          showToast("Sync Failure: " + e.message, "error");
+      }
     };
 
     window.sendWAReminder = async (email, name) => {
