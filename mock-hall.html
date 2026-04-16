@@ -91,7 +91,8 @@
     .option-text { font-weight: 500; font-size: 1rem; color: #cbd5e1; }
 
     .essay-container { display: flex; flex-direction: column; gap: 1.5rem; }
-    .essay-input { width: 100%; height: 300px; background: rgba(5, 8, 15, 0.4); border: 1px solid rgba(255,255,255,0.08); border-radius: 2rem; padding: 2rem; color: white; font-size: 1rem; outline: none; focus: border-color: #6366f1; resize: none; }
+    .essay-input:focus { border-color: #6366f1; }
+    .essay-input { width: 100%; height: 300px; background: rgba(5, 8, 15, 0.4); border: 1px solid rgba(255,255,255,0.08); border-radius: 2rem; padding: 2rem; color: white; font-size: 1rem; outline: none; resize: none; }
     .ai-mark-btn { align-self: flex-start; padding: 12px 24px; background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); color: #34d399; font-weight: 800; font-size: 10px; text-transform: uppercase; border-radius: 12px; cursor: pointer; }
     .ai-feedback-box { padding: 2rem; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.08); border-radius: 2rem; margin-top: 1rem; }
     
@@ -186,6 +187,7 @@
                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M15 19l-7-7 7-7"/></svg>
                Exit Exam
            </a>
+        </div>
         </div>
      </aside>
 
