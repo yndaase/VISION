@@ -929,16 +929,19 @@
       if (!tbody) return;
       tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:2rem;color:var(--admin-text-muted);">Loading from Firebase...</td></tr>';
 
-      // Load from Firestore
+      // 1. Fetch Users
       let users = [];
       if (typeof window.fbGetAllUsers === 'function') {
         try {
           users = await window.fbGetAllUsers();
-          _cachedFirestoreUsers = users;
+          // Update local cache
+          localStorage.setItem('vision_users', JSON.stringify(users));
         } catch(e) {
-          users = getUsers(); // fallback
+          console.warn("[Admin] Firestore fetch failed, using local cache.", e);
+          users = getUsers();
         }
       } else {
+        console.warn("[Admin] Firebase module not yet available, using local cache.");
         users = getUsers();
       }
 
@@ -1214,10 +1217,24 @@
     }
 
     // Bootstrap
-    (async () => {
-      await adminInit();
-      initEvents();
-    })();
+    // --- BOOTSTRAP ---
+    document.addEventListener("DOMContentLoaded", async () => {
+      // Wait for Firebase module to initialize its window exports
+      let attempts = 0;
+      const waitForFirebase = setInterval(async () => {
+        attempts++;
+        if (typeof window.fbGetAllUsers === 'function' || attempts > 20) {
+          clearInterval(waitForFirebase);
+          try {
+            await adminInit();
+            initEvents();
+            console.log("[Admin] Initialization complete.");
+          } catch (e) {
+            console.error("[Admin] Initialization failed:", e);
+          }
+        }
+      }, 100);
+    });
   </script>
 </body>
 </html>
