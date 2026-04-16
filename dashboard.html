@@ -272,6 +272,7 @@
       margin-top: 2px;
       display: -webkit-box;
       -webkit-line-clamp: 1;
+      line-clamp: 1;
       -webkit-box-orient: vertical;
       overflow: hidden;
     }
@@ -986,46 +987,6 @@
             <div class="subject-card-glow" style="--glow: #14b8a6"></div>
           </a>
 
-          <!-- Integrated Science -->
-          <a class="subject-card available" href="/?sub=science" id="card-science">
-            <div class="subject-card-inner">
-              <div class="subject-top">
-                <div class="subject-icon-wrap" style="--subj-color: #10b981">
-                  <span class="subject-icon"></span>
-                </div>
-                <div style="
-                      display: flex;
-                      flex-direction: column;
-                      align-items: flex-end;
-                      gap: 4px;
-                    ">
-                  <span class="subject-status available-tag">Available</span>
-                  <span style="
-                        font-size: 0.6rem;
-                        font-weight: 800;
-                        color: var(--primary);
-                        background: var(--primary-dim);
-                        padding: 2px 8px;
-                        border-radius: 4px;
-                        letter-spacing: 0.05em;
-                        border: 1px solid var(--border-accent);
-                      ">NEW MODULE</span>
-                </div>
-              </div>
-              <h3 class="subject-name">Integrated Science</h3>
-              <p class="subject-desc">
-                Biology, Chemistry &amp; Physics for Senior High Schools.
-              </p>
-              <div class="subject-meta">
-                <span class="meta-chip">15+ Questions</span>
-                <span class="meta-chip">MCQ + Theory</span>
-              </div>
-              <div class="subject-cta">
-                Start Practice <span class="cta-arrow">→</span>
-              </div>
-            </div>
-            <div class="subject-card-glow" style="--glow: #10b981"></div>
-          </a>
 
           <!-- Vision Education Robotics -->
           <a class="subject-card available" href="/robotics-login" id="card-robotics" style="
@@ -1370,7 +1331,6 @@
            // Run after setting data
            setTimeout(updateSettingsSubUI, 100);
         </script>
-      </main>
     </div>
   </div>
   <!-- /main-wrapper -->
@@ -1381,8 +1341,6 @@
   <script defer src="payment.js"></script>
   <script defer src="dashboard.js"></script>
   <script defer src="materials.js"></script>
-</body>
-</html>
 
     <script>
       (function() {

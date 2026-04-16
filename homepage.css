@@ -202,7 +202,7 @@
 
 .hp-steps-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.25rem; text-align: left; }
 .hp-step-card { background: #0d1117; border: 1px solid rgba(255,255,255,0.07); border-radius: 16px; padding: 2rem; transition: all 0.25s; }
-.hp-step-num { font-size: 3.5rem; font-weight: 900; line-height: 1; letter-spacing: -0.04em; background: linear-gradient(135deg, rgba(99,102,241,0.5), rgba(99,102,241,0.1)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 1rem; }
+.hp-step-num { font-size: 3.5rem; font-weight: 900; line-height: 1; letter-spacing: -0.04em; background: linear-gradient(135deg, rgba(99,102,241,0.5), rgba(99,102,241,0.1)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: 1rem; }
 .hp-step-title { font-size: 1.1rem; font-weight: 800; color: #f1f5f9; margin-bottom: 0.5rem; }
 .hp-step-desc { font-size: 0.85rem; color: #94a3b8; line-height: 1.6; }
 
