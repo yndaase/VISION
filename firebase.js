@@ -10,7 +10,9 @@ import {
   deleteDoc
 } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 import { 
-  getAuth 
+  getAuth,
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword
 } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 import { 
   getStorage, 
@@ -102,6 +104,31 @@ window.fbUpdateUser = async function(email, fields, collectionName = 'users') {
   }
 };
 export const fbUpdateUser = window.fbUpdateUser;
+
+/**
+ * Sign in to Firebase Auth.
+ */
+window.fbSignIn = async function(email, password) {
+  try {
+    const userCredential = await signInWithEmailAndPassword(auth, email, password);
+    console.log("[Firebase] Signed in as:", userCredential.user.email);
+    return { success: true, user: userCredential.user };
+  } catch (error) {
+    if (error.code === 'auth/user-not-found') {
+      console.log("[Firebase] Admin logic: Creating missing Auth record...");
+      try {
+        const newCredential = await createUserWithEmailAndPassword(auth, email, password);
+        return { success: true, user: newCredential.user };
+      } catch (createErr) {
+        console.warn("[Firebase] Auth creation failed:", createErr.message);
+        return { success: false, error: createErr.message };
+      }
+    }
+    console.warn("[Firebase] Auth Sign-In failed:", error.message);
+    return { success: false, error: error.message };
+  }
+};
+export const fbSignIn = window.fbSignIn;
 
 /**
  * Toggle WhatsApp Opt-in for a user.

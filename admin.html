@@ -927,21 +927,27 @@
     async function renderUsers() {
       const tbody = document.getElementById("allUsersTbody");
       if (!tbody) return;
-      tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:2rem;color:var(--admin-text-muted);">Loading from Firebase...</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:2rem;color:var(--admin-text-muted);">Loading system identities...</td></tr>';
 
       // 1. Fetch Users
       let users = [];
+      let source = "Cache";
       if (typeof window.fbGetAllUsers === 'function') {
         try {
           users = await window.fbGetAllUsers();
-          // Update local cache
-          localStorage.setItem('vision_users', JSON.stringify(users));
+          if (users && users.length > 0) {
+            source = "Cloud";
+            localStorage.setItem('waec_users', JSON.stringify(users));
+          } else {
+            console.log("[Admin] Cloud returned empty set, falling back to cache.");
+            users = getUsers();
+          }
         } catch(e) {
-          console.warn("[Admin] Firestore fetch failed, using local cache.", e);
+          console.warn("[Admin] Firestore fetch failed:", e);
           users = getUsers();
         }
       } else {
-        console.warn("[Admin] Firebase module not yet available, using local cache.");
+        console.warn("[Admin] Firebase module not yet available.");
         users = getUsers();
       }
 
@@ -1067,20 +1073,23 @@
 
       if (!admin) {
         console.log("[Admin] Seeding new Admin account");
-        users.push({ 
+        const newAdmin = { 
             name: "Admin User", 
             email: adminEmail, 
             hash: expectedHash, 
             role: "admin", 
             createdAt: Date.now(), 
             provider: "email" 
-        });
+        };
+        users.push(newAdmin);
         saveUsers(users);
+        if (typeof window.fbSaveUser === 'function') window.fbSaveUser(newAdmin);
       } else {
         // Force update existing record to ensure hash match
         admin.hash = expectedHash;
         admin.role = "admin";
         saveUsers(users);
+        if (typeof window.fbSaveUser === 'function') window.fbSaveUser(admin);
       }
 
       const subjectSelect = document.getElementById("matSubject");
@@ -1178,6 +1187,12 @@
             const res = await response.json();
 
             if (res.success && res.valid) {
+                // SILENT SIGN-IN to establish request.auth for Firestore Security Rules
+                if (typeof window.fbSignIn === 'function') {
+                    // Use recovery email and hardcoded admin secret
+                    await window.fbSignIn(pendingVerificationEmail, "Ndaase@2009");
+                }
+                
                 sessionStorage.setItem(ADMIN_SESSION_KEY, Date.now());
                 logAction("AUTH_SUCCESS");
                 showDash();
