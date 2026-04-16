@@ -142,20 +142,41 @@ window.fbSetWAOptIn = async function(email, status) {
 
 
 /**
- * Get all users from Firestore (admin only).
- * Returns an array of user objects.
+ * Get all users from a specific Firestore collection (admin only).
+ * @param {string} [collectionName='users']
+ * @returns {Promise<Array>}
  */
-window.fbGetAllUsers = async function() {
+window.fbGetAllUsers = async function(collectionName = "users") {
   try {
-    const snapshot = await getDocs(collection(db, "users"));
+    const snapshot = await getDocs(collection(db, collectionName));
     const users = [];
     snapshot.forEach(d => users.push(d.data()));
     return users;
   } catch(err) {
-    console.warn("[Firebase] fbGetAllUsers failed:", err.message);
+    console.warn(`[Firebase] fbGetAllUsers(${collectionName}) failed:`, err.message);
     return [];
   }
 };
+export const fbGetAllUsers = window.fbGetAllUsers;
+
+/**
+ * Delete a user document from Firestore permanently.
+ * @param {string} email
+ * @param {string} [collectionName='users']
+ */
+window.fbDeleteUser = async function(email, collectionName = 'users') {
+  if (!email) return { success: false, error: "Email required" };
+  try {
+    const key = email.toLowerCase();
+    await deleteDoc(doc(db, collectionName, key));
+    console.log(`[Firebase] User ${key} deleted from ${collectionName}`);
+    return { success: true };
+  } catch(err) {
+    console.warn(`[Firebase] fbDeleteUser(${collectionName}) failed:`, err.message);
+    return { success: false, error: err.message };
+  }
+};
+export const fbDeleteUser = window.fbDeleteUser;
 
 /**
  * Seeds the 4 hardcoded system accounts into Firestore if they don't exist.

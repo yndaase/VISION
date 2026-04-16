@@ -466,10 +466,16 @@ window.saveProfileChanges = async function() {
     try {
         if (typeof window.fbUpdateUser === 'function') {
             // Update Firestore with phone AND auto-opt-in for WhatsApp
-            await window.fbUpdateUser(session.email, { 
+            const res = await window.fbUpdateUser(session.email, { 
                 phone: phone,
                 waOptIn: !!phone // Automatically opt-in if phone is provided
             });
+            
+            // If we still get a sync error, it might be a missing session
+            if (res && res.error) {
+                 console.error("[Auth] Firestore Sync failed:", res.error);
+                 throw new Error(res.error);
+            }
             
             // Update local session for immediate UI reflection
             session.phone = phone;
@@ -739,6 +745,16 @@ async function handleLogin(e) {
     return;
   }
 
+  // --- SILENT AUTH BRIDGE START ---
+  // Ensure the user has a valid Firebase Auth session for Firestore security rules
+  if (typeof window.fbSignIn === 'function') {
+    window.fbSignIn(email, pass).then(res => {
+        if (res.success) console.log("[Auth] Firebase Silent Auth successful.");
+        else console.warn("[Auth] Firebase Silent Auth failed:", res.error);
+    });
+  }
+  // --- SILENT AUTH BRIDGE END ---
+
   // DEEP 2FA INTEGRATION: Check if 2FA is enabled
   if (user.twoFAEnabled) {
     const code = Math.floor(100000 + Math.random() * 900000).toString();
@@ -847,6 +863,13 @@ async function handleSignup(e) {
     valid = false;
   }
   if (!valid) return;
+
+  // --- SILENT AUTH BRIDGE FOR SIGNUP ---
+  if (typeof window.fbSignIn === 'function') {
+    // fbSignIn auto-creates the account if it doesn't exist in Firebase Auth
+    await window.fbSignIn(email, pass);
+  }
+
 
   // Check Firestore first, then local cache
   const existingCloud = await fbGetUserWithFallback(email);
