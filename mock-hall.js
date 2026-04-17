@@ -754,6 +754,18 @@ function submitExam() {
   document.getElementById("rSkipped").textContent = skipped;
   document.getElementById("rTime").textContent = timeStr;
 
+  localStorage.setItem('vision_last_mock_result', JSON.stringify({
+    score: pct,
+    subject: examState.mockConfig.subject || examState.mockConfig.title,
+    accuracy: pct
+  }));
+
+  const certBtn = document.getElementById("certBtn");
+  if (certBtn) {
+    certBtn.style.display = "block";
+    certBtn.classList.remove("hidden");
+  }
+
   modal.style.display = "block";
   modal.scrollTop = 0;
 }
