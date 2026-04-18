@@ -20,6 +20,30 @@
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>https://visionedu.online/features</loc>
+    <lastmod>2026-04-18</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://visionedu.online/pricing</loc>
+    <lastmod>2026-04-18</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://visionedu.online/parent-portal</loc>
+    <lastmod>2026-04-18</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://visionedu.online/robotics</loc>
+    <lastmod>2026-04-18</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://visionedu.online/privacy</loc>
     <lastmod>2026-04-05</lastmod>
     <changefreq>monthly</changefreq>
