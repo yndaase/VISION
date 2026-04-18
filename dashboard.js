@@ -115,7 +115,63 @@ document.addEventListener("DOMContentLoaded", () => {
   
   // Initial render
   if (typeof renderDashMaterials === 'function') renderDashMaterials();
+
+  // Check if WhatsApp is already set up
+  updateWAStatus();
 });
+
+// WhatsApp Integration Logic
+async function setupWhatsAppReminder() {
+    const session = JSON.parse(sessionStorage.getItem("waec_session") || localStorage.getItem("waec_session"));
+    if (!session) return;
+
+    const phone = prompt("Enter your WhatsApp number (with country code, e.g., 233244123456):", session.phone || "");
+    if (!phone) return;
+
+    const btn = document.getElementById("enableWAButton");
+    const originalText = btn.textContent;
+    btn.disabled = true;
+    btn.textContent = "Setting up...";
+
+    // 1. Save to session/local
+    session.phone = phone;
+    sessionStorage.setItem("waec_session", JSON.stringify(session));
+    localStorage.setItem("waec_session", JSON.stringify(session));
+
+    // 2. Trigger a welcome/confirmation message via our new service
+    if (window.WhatsAppService) {
+        const result = await window.WhatsAppService.sendNotification({
+            phone: phone,
+            type: 'REMINDER',
+            name: session.name.split(' ')[0],
+            templateName: 'study_reminder' // Using the default approved template
+        });
+
+        if (result.success) {
+            alert("Success! Check your WhatsApp for a confirmation message.");
+            updateWAStatus();
+        } else {
+            alert("We couldn't send the message: " + result.error);
+        }
+    }
+
+    btn.disabled = false;
+    btn.textContent = originalText;
+}
+
+function updateWAStatus() {
+    const session = JSON.parse(sessionStorage.getItem("waec_session") || localStorage.getItem("waec_session"));
+    const btn = document.getElementById("enableWAButton");
+    if (session && session.phone && btn) {
+        btn.textContent = "Reminders Active";
+        btn.style.background = "rgba(37, 211, 102, 0.2)";
+        btn.style.color = "#25D366";
+        btn.style.borderColor = "transparent";
+        btn.onclick = () => {
+            if(confirm("Do you want to change your WhatsApp number?")) setupWhatsAppReminder();
+        };
+    }
+}
 
 //  Broadcast Engine
 async function initBroadcasts() {

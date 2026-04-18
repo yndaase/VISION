@@ -472,7 +472,7 @@ window.saveProfileChanges = async function() {
             });
             
             // If we still get a sync error, it might be a missing session
-            if (res && res.error) {
+            if (res && !res.success) {
                  console.error("[Auth] Firestore Sync failed:", res.error);
                  throw new Error(res.error);
             }
