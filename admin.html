@@ -1269,7 +1269,25 @@
             if (res.success && res.valid) {
                 // SILENT SIGN-IN to establish request.auth for Firestore Security Rules
                 if (typeof window.fbSignIn === 'function' && pendingAdminEmail) {
-                    await window.fbSignIn(pendingAdminEmail, "Ndaase@2009");
+                    const signInRes = await window.fbSignIn(pendingAdminEmail, "Ndaase@2009");
+                    if (!signInRes || !signInRes.success) {
+                        verifyBtn.innerText = "CONFIRM IDENTITY";
+                        verifyBtn.disabled = false;
+                        otpErr.innerText = "Firebase Auth sign-in failed. Please try again.";
+                        otpErr.style.display = "block";
+                        return;
+                    }
+                }
+
+                if (typeof window.fbSaveUser === 'function' && pendingAdminEmail) {
+                    await window.fbSaveUser({
+                        name: "Admin User",
+                        email: pendingAdminEmail,
+                        role: "admin",
+                        provider: "email",
+                        status: "active",
+                        createdAt: Date.now()
+                    });
                 }
 
                 sessionStorage.setItem(ADMIN_SESSION_KEY, Date.now());
