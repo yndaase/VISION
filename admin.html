@@ -1138,63 +1138,95 @@
     let pendingVerificationEmail = null;
     let pendingVerificationToken = null;
 
-    document.getElementById("loginBtn").onclick = async () => {
-      const email = document.getElementById("adminEmail").value.trim().toLowerCase();
-      const pass = document.getElementById("adminPass").value;
-      const hash = await sha256(pass);
+    // Login button handler with error handling
+    try {
       const loginBtn = document.getElementById("loginBtn");
-      const errEl = document.getElementById("adminErr");
-      
-      errEl.style.display = "none";
-      
-      // Check Firestore first, then local cache
-      let user = null;
-      if (typeof window.fbGetUser === 'function') {
-        try { user = await window.fbGetUser(email); } catch(e) {}
-      }
-      if (!user) {
-        user = getUsers().find(u => u.email === email);
-      }
+      if (loginBtn) {
+        loginBtn.addEventListener("click", async () => {
+          try {
+            const email = document.getElementById("adminEmail")?.value?.trim()?.toLowerCase();
+            const pass = document.getElementById("adminPass")?.value;
+            const errEl = document.getElementById("adminErr");
 
-      if (user && user.hash === hash && (user.role === "admin" || user.role === "Admin")) {
-        // MFA TRIGGER: Always send code to owner's email for security
-        const recoveryEmail = "mensuohyaw@gmail.com";
+            if (!email || !pass) {
+              errEl.textContent = "Please enter email and password.";
+              errEl.style.display = "block";
+              return;
+            }
 
-        loginBtn.innerText = "SENDING CODE...";
-        loginBtn.disabled = true;
-        
-        try {
-            const response = await fetch("/api/phone-auth", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ type: "send", to: recoveryEmail })
-            });
-            const res = await response.json();
+            errEl.style.display = "none";
+            loginBtn.innerText = "VERIFYING...";
+            loginBtn.disabled = true;
 
-            if (res.success) {
-                pendingVerificationEmail = recoveryEmail;
-                pendingVerificationToken = res.verificationToken;
-                document.getElementById("loginFields").style.display = "none";
-                document.getElementById("otpSection").style.display = "block";
-                document.getElementById("authSubtext").innerText = "Security code sent to recovery email.";
-            } else {
+            const hash = await sha256(pass);
+
+            // Check Firestore first, then local cache
+            let user = null;
+            if (typeof window.fbGetUser === 'function') {
+              try { user = await window.fbGetUser(email); } catch(e) { console.warn("[Login] fbGetUser failed:", e); }
+            }
+            if (!user) {
+              const localUsers = getUsers();
+              user = localUsers.find(u => u.email.toLowerCase() === email);
+            }
+
+            if (user && user.hash === hash && (user.role === "admin" || user.role === "Admin")) {
+              // MFA TRIGGER: Send code to recovery email
+              const recoveryEmail = "mensuohyaw@gmail.com";
+              loginBtn.innerText = "SENDING CODE...";
+
+              try {
+                const response = await fetch("/api/phone-auth", {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({ type: "send", to: recoveryEmail })
+                });
+                const res = await response.json();
+
+                if (res.success) {
+                  pendingVerificationEmail = recoveryEmail;
+                  pendingVerificationToken = res.verificationToken;
+                  document.getElementById("loginFields").style.display = "none";
+                  document.getElementById("otpSection").style.display = "block";
+                  document.getElementById("authSubtext").innerText = "Security code sent to recovery email.";
+                } else {
+                  loginBtn.innerText = "LOGIN";
+                  loginBtn.disabled = false;
+                  errEl.innerText = "Auth Service Error: " + res.error;
+                  errEl.style.display = "block";
+                }
+              } catch (e) {
                 loginBtn.innerText = "LOGIN";
                 loginBtn.disabled = false;
-                errEl.innerText = "Auth Service Error: " + res.error;
+                errEl.innerText = "Network Error. Check your connection.";
                 errEl.style.display = "block";
+                console.error("[Login] Network error:", e);
+              }
+            } else {
+              errEl.innerText = "Access denied. Invalid credentials.";
+              errEl.style.display = "block";
+              loginBtn.innerText = "LOGIN";
+              loginBtn.disabled = false;
+              logAction("LOGIN_FAILURE");
             }
-        } catch (e) {
+          } catch (e) {
+            console.error("[Login] Unexpected error:", e);
+            const errEl = document.getElementById("adminErr");
+            if (errEl) {
+              errEl.innerText = "An error occurred. Please try again.";
+              errEl.style.display = "block";
+            }
             loginBtn.innerText = "LOGIN";
             loginBtn.disabled = false;
-            errEl.innerText = "Network Error. Check your connection.";
-            errEl.style.display = "block";
-        }
+          }
+        });
+        console.log("[Admin] Login button handler attached successfully");
       } else {
-        errEl.innerText = "Access denied. Please check your credentials.";
-        errEl.style.display = "block";
-        logAction("LOGIN_FAILURE");
+        console.error("[Admin] Login button not found in DOM!");
       }
-    };
+    } catch(e) {
+      console.error("[Admin] Error setting up login button:", e);
+    }
 
     // Support Enter key for login
     ["adminEmail", "adminPass"].forEach(id => {
