@@ -82,6 +82,7 @@ const AI_MOCK_CONFIGS = {
   ai_mock_physics:     { subject: "Physics",             title: "Physics AI Mock",              mcqCount: 25, theoryCount: 5, timeLimit: 150 },
   ai_mock_chemistry:   { subject: "Chemistry",           title: "Chemistry AI Mock",            mcqCount: 25, theoryCount: 5, timeLimit: 150 },
   ai_mock_biology:     { subject: "Biology",             title: "Biology AI Mock",              mcqCount: 25, theoryCount: 5, timeLimit: 150 },
+  ai_mock_bertina:     { subject: "Core Mathematics",    title: "Bertinas Mock",                mcqCount: 24, theoryCount: 6, timeLimit: 120, focusTopics: "Graph differentiation and modulo arithmetic" },
 };
 
 // ============================================================
@@ -96,6 +97,12 @@ async function initSingleSubjectAIMock(mockId) {
   }
 
   const session = typeof getSession === 'function' ? getSession() : JSON.parse(sessionStorage.getItem("waec_session") || "{}");
+  const sessionEmail = (session?.email || "").toLowerCase();
+  if (mockId === "ai_mock_bertina" && sessionEmail !== "bertina@vision.edu" && session?.role !== "admin") {
+    alert("This mock is reserved for Bertina's account.");
+    window.location.href = "/mocks";
+    return;
+  }
   const isAdmin = session.role === 'admin';
   const isPro = session.role === 'pro' || isAdmin;
   const engineName = isPro ? "Azure GPT-4o" : "Gemini AI";
@@ -139,6 +146,7 @@ async function initSingleSubjectAIMock(mockId) {
           subject: config.subject,
           mcqCount: batch.mcqs,
           theoryCount: batch.theory,
+          focusTopics: config.focusTopics || "",
           batchIndex: bIdx,
           dateSeed: today,
           role: userRole,
