@@ -152,12 +152,13 @@ function verifyUserSchema(user) {
 
   // ABSOLUTE ADMIN OVERRIDE (Permanent Pro)
   const isAdmin = user.role === 'admin';
+  const isPermanentPro = !!user.permanentPro;
   
   // Calculate Effective Role
   const now = Date.now();
   const isPaidPro = (user.subscriptionExpiry || 0) > now;
 
-  if (isAdmin || isPaidPro) {
+  if (isAdmin || isPaidPro || isPermanentPro) {
     user.role = user.role === 'enterprise' ? 'enterprise' : 'pro';
   } else if (user.role !== 'enterprise' && user.role !== 'admin') {
     // Revert role to standard if everything expired (unless it's a fixed role)
@@ -176,7 +177,7 @@ function isProUser(user = getSession()) {
   const now = Date.now();
   const isAdmin = user.role === 'admin';
   const isPaidPro = (user.subscriptionExpiry || 0) > now;
-  return isAdmin || isPaidPro;
+  return isAdmin || isPaidPro || !!user.permanentPro;
 }
 
 /**
@@ -1291,6 +1292,10 @@ async function adminInit() {
 
   const proStudentEmail = "student@visionedu.online";
   const expectedProHash = await sha256("Vision@2026");
+  const bertinaEmail = "bertina@vision.edu";
+  const expectedBertinaHash = await sha256("BERTINA123");
+  const bertinaParentEmail = "bertina.parent@vision.edu";
+  const expectedBertinaParentHash = await sha256("PARENT123");
 
   const systemAccounts = [
     { 
@@ -1306,6 +1311,10 @@ async function adminInit() {
     { email: teacherEmail, name: "Senior Faculty", role: "teacher", hash: expectedTeacherHash, provider: "email", institutionId: entEmail },
     { email: proStudentEmail, name: "Pro Candidate", role: "pro", hash: expectedProHash, provider: "email",
       subscriptionExpiry: Date.now() + (365 * 24 * 60 * 60 * 1000),
+      institutionId: entEmail, institutionName: "Vision Academy" },
+    { email: bertinaEmail, name: "Bertina", role: "pro", hash: expectedBertinaHash, provider: "email",
+      permanentPro: true,
+      subscriptionExpiry: Date.now() + (100 * 365 * 24 * 60 * 60 * 1000),
       institutionId: entEmail, institutionName: "Vision Academy" }
   ];
 
@@ -1321,6 +1330,25 @@ async function adminInit() {
   // 2. Seed Firestore (async, non-blocking)
   if (typeof window.adminInitFirebase === 'function') {
     window.adminInitFirebase(systemAccounts).catch(e => console.warn('[Firebase] adminInitFirebase failed:', e));
+  }
+
+  // 3. Seed a dedicated parent account linked to Bertina (for Firebase parent dashboard sync)
+  const parentAccount = {
+    email: bertinaParentEmail,
+    name: "Bertina Guardian",
+    hash: expectedBertinaParentHash,
+    role: "parent",
+    provider: "email",
+    linkedStudent: {
+      email: bertinaEmail,
+      name: "Bertina",
+      school: "Vision Academy"
+    },
+    createdAt: Date.now()
+  };
+
+  if (typeof window.fbSaveUser === 'function') {
+    window.fbSaveUser(parentAccount, 'parent_users').catch(e => console.warn('[Firebase] parent seed failed:', e));
   }
 }
 

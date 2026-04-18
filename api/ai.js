@@ -228,7 +228,7 @@ async function handleVision(data, role, res) {
 }
 
 async function handleGenerateQuestions(data, role, res) {
-  const { subject, dateSeed, mcqCount = 5, theoryCount = 2, email = "", batchIndex = 1 } = data;
+  const { subject, dateSeed, mcqCount = 5, theoryCount = 2, email = "", batchIndex = 1, focusTopics = "" } = data;
   
   const effectiveRole = role;
   
@@ -236,6 +236,7 @@ async function handleGenerateQuestions(data, role, res) {
   
   const prompt = `You are a ${isPro ? 'Senior Elite' : 'Senior'} WASSCE Examiner. Generate a ${isPro ? 'High-Precision Strategic' : 'Daily'} AI Mock for ${subject} on ${dateSeed}.
   ${isPro ? 'Focus on advanced deductive reasoning and complex Section B scenarios.' : ''}
+  ${focusTopics ? `Topic Focus Requirement: Prioritize questions on ${focusTopics}.` : ''}
   This is Batch #${batchIndex} of the generation process. Ensure these questions are unique and do not duplicate common exam patterns from previous years unless they are foundational.
   Return exactly ${mcqCount} MCQs and ${theoryCount} Theory questions in a single JSON object.
   
