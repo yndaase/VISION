@@ -18,9 +18,9 @@ async function sendTest() {
             },
             body: JSON.stringify({
                 phone: phone,
-                type: 'REMINDER',
+                type: 'GENERAL_ALERT',
                 name: name,
-                templateName: 'study_reminder'
+                templateName: 'hello_world'
             })
         });
 
