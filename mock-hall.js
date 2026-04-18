@@ -475,6 +475,10 @@ async function markEssayWithAI(qId) {
   const feedbackEl = document.getElementById(`ai-feedback-${qId}`);
   
   if (!feedbackEl) return;
+  if (!q) {
+    alert("Tactical Error: Question data not found.");
+    return;
+  }
   if (!answer || answer.trim().length < 10) {
     alert("Please write a more detailed answer (at least 10 characters) before requesting AI marking.");
     return;
@@ -536,7 +540,7 @@ async function markEssayWithAI(qId) {
         <div class="ai-error-card" style="border: 1px solid var(--error); padding: 1rem; border-radius: 8px; text-align:center;">
           <p style="color: var(--error); font-weight: 600; font-size: 0.85rem; margin-bottom: 0.5rem;">AI Marking Unavailable</p>
           <p style="color: var(--text-muted); font-size: 0.8rem;">${result.error || 'Could not analyze response. Please try again.'}</p>
-          <button onclick="markEssayWithAI(${qId})" class="nav-btn" style="margin-top: 0.5rem; width: 100%; font-size: 0.75rem;">Try Again</button>
+          <button onclick="markEssayWithAI('${qId}')" class="nav-btn" style="margin-top: 0.5rem; width: 100%; font-size: 0.75rem;">Try Again</button>
         </div>
       `;
     }
@@ -664,6 +668,11 @@ function updateSideStats() {
 function confirmSubmit() {
   const answered = Object.keys(examState.answers).length;
   const total = examState.questions.length;
+
+  if (total === 0) {
+    alert("Please wait for questions to finish loading before submitting.");
+    return;
+  }
   const unanswered = total - answered;
 
   if (unanswered > 0) {
@@ -700,6 +709,8 @@ function submitExam() {
   });
 
   const total = examState.questions.length;
+  if (total === 0) return; // Mission aborted
+
   const pct = Math.round((correct / total) * 100);
 
   // WAEC Grading Scale
@@ -754,11 +765,13 @@ function submitExam() {
   document.getElementById("rSkipped").textContent = skipped;
   document.getElementById("rTime").textContent = timeStr;
 
-  localStorage.setItem('vision_last_mock_result', JSON.stringify({
-    score: pct,
-    subject: examState.mockConfig.subject || examState.mockConfig.title,
-    accuracy: pct
-  }));
+  if (examState.mockConfig) {
+    localStorage.setItem('vision_last_mock_result', JSON.stringify({
+      score: pct,
+      subject: examState.mockConfig.subject || examState.mockConfig.title,
+      accuracy: pct
+    }));
+  }
 
   const certBtn = document.getElementById("certBtn");
   if (certBtn) {
@@ -788,18 +801,12 @@ function saveExamResult({
     stats.answered = (stats.answered || 0) + (correct + wrong);
     stats.correct = (stats.correct || 0) + correct;
 
-    // AI Grading Handshake for any mock with theory/essay questions
-    const hasEssayQuestions = examState.questions.some(q => q.type === 'essay');
-    if (examState.mockId === "daily_ai_mock" || hasEssayQuestions) {
-      performAIGrading(stats);
-      return; 
-    }
-
     // History array (last 10 mocks)
     if (!stats.mockHistory) stats.mockHistory = [];
     stats.mockHistory.unshift({
       mockId: examState.mockId,
-      title: examState.mockConfig.title,
+      title: examState.mockConfig ? examState.mockConfig.title : "Daily AI Mock",
+      subject: (examState.mockConfig ? (examState.mockConfig.subject || examState.mockConfig.title) : "Daily AI Mock"),
       grade,
       pct,
       correct,
@@ -816,6 +823,13 @@ function saveExamResult({
     if (stats.mockHistory.length > 10) stats.mockHistory.pop();
 
     saveStats(stats); // from auth.js
+
+    // AI Grading Handshake for any mock with theory/essay questions
+    const hasEssayQuestions = examState.questions.some(q => q.type === 'essay');
+    if (examState.mockId === "daily_ai_mock" || hasEssayQuestions) {
+      performAIGrading(stats);
+      return; 
+    }
 
     // ── Firebase: Push topic mastery & sync stats for leaderboard ──
     const session = typeof getSession === 'function' ? getSession() : null;
