@@ -71,17 +71,17 @@ document.addEventListener("DOMContentLoaded", async () => {
 // Format: ai_mock_<id> -> { subject, title, mcqCount, theoryCount, timeLimit }
 // ============================================================
 const AI_MOCK_CONFIGS = {
-  ai_mock_maths:       { subject: "Core Mathematics",    title: "Core Maths AI Mock",          mcqCount: 50, theoryCount: 10, timeLimit: 150 },
-  ai_mock_science:     { subject: "Integrated Science",  title: "Integrated Science AI Mock",   mcqCount: 50, theoryCount: 10, timeLimit: 150 },
-  ai_mock_english:     { subject: "English Language",    title: "English Language AI Mock",     mcqCount: 80, theoryCount: 10, timeLimit: 120 },
-  ai_mock_social:      { subject: "Social Studies",      title: "Social Studies AI Mock",       mcqCount: 50, theoryCount: 10, timeLimit: 150 },
-  ai_mock_cs:          { subject: "Computer Science",    title: "Computer Science AI Mock",     mcqCount: 50, theoryCount: 10, timeLimit: 150 },
-  ai_mock_economics:   { subject: "Economics",           title: "Economics AI Mock",            mcqCount: 50, theoryCount: 10, timeLimit: 150 },
-  ai_mock_geography:   { subject: "Geography",           title: "Geography AI Mock",            mcqCount: 50, theoryCount: 10, timeLimit: 150 },
-  ai_mock_elective_maths: { subject: "Elective Mathematics", title: "Elective Maths AI Mock",  mcqCount: 50, theoryCount: 10, timeLimit: 180 },
-  ai_mock_physics:     { subject: "Physics",             title: "Physics AI Mock",              mcqCount: 50, theoryCount: 10, timeLimit: 150 },
-  ai_mock_chemistry:   { subject: "Chemistry",           title: "Chemistry AI Mock",            mcqCount: 50, theoryCount: 10, timeLimit: 150 },
-  ai_mock_biology:     { subject: "Biology",             title: "Biology AI Mock",              mcqCount: 50, theoryCount: 10, timeLimit: 150 },
+  ai_mock_maths:       { subject: "Core Mathematics",    title: "Core Maths AI Mock",          mcqCount: 25, theoryCount: 5, timeLimit: 150 },
+  ai_mock_science:     { subject: "Integrated Science",  title: "Integrated Science AI Mock",   mcqCount: 25, theoryCount: 5, timeLimit: 150 },
+  ai_mock_english:     { subject: "English Language",    title: "English Language AI Mock",     mcqCount: 25, theoryCount: 5, timeLimit: 120 },
+  ai_mock_social:      { subject: "Social Studies",      title: "Social Studies AI Mock",       mcqCount: 25, theoryCount: 5, timeLimit: 150 },
+  ai_mock_cs:          { subject: "Computer Science",    title: "Computer Science AI Mock",     mcqCount: 25, theoryCount: 5, timeLimit: 150 },
+  ai_mock_economics:   { subject: "Economics",           title: "Economics AI Mock",            mcqCount: 25, theoryCount: 5, timeLimit: 150 },
+  ai_mock_geography:   { subject: "Geography",           title: "Geography AI Mock",            mcqCount: 25, theoryCount: 5, timeLimit: 150 },
+  ai_mock_elective_maths: { subject: "Elective Mathematics", title: "Elective Maths AI Mock",  mcqCount: 25, theoryCount: 5, timeLimit: 180 },
+  ai_mock_physics:     { subject: "Physics",             title: "Physics AI Mock",              mcqCount: 25, theoryCount: 5, timeLimit: 150 },
+  ai_mock_chemistry:   { subject: "Chemistry",           title: "Chemistry AI Mock",            mcqCount: 25, theoryCount: 5, timeLimit: 150 },
+  ai_mock_biology:     { subject: "Biology",             title: "Biology AI Mock",              mcqCount: 25, theoryCount: 5, timeLimit: 150 },
 };
 
 // ============================================================
@@ -105,7 +105,13 @@ async function initSingleSubjectAIMock(mockId) {
     qCard.innerHTML = `
       <div style='text-align:center; padding: 3rem;'>
         <h2 style='color:var(--primary); margin-bottom:1rem;'>${engineName} is generating your ${config.title}...</h2>
-        <p style='color:var(--text-secondary); margin-bottom: 2rem; font-size: 0.9rem;'>Generating ${config.mcqCount} objective + ${config.theoryCount} theory questions. This may take up to 30 seconds.</p>
+        <div id="genStatus" style="margin-bottom: 2rem; display: flex; flex-direction: column; gap: 0.5rem; align-items: center;">
+           <p style='color:var(--text-secondary); font-size: 0.9rem;'>Task: 30 Questions (2-Pass Strategic Parallelism)</p>
+           <div id="batchProgress" style="display: flex; gap: 0.5rem;">
+              <div class="batch-dot" id="dot-1" style="width:12px; height:12px; border-radius:50%; background: var(--bg-lighter); border: 1px solid var(--border);"></div>
+              <div class="batch-dot" id="dot-2" style="width:12px; height:12px; border-radius:50%; background: var(--bg-lighter); border: 1px solid var(--border);"></div>
+           </div>
+        </div>
         <div class="pixel-loader" style="margin: 0 auto;"></div>
       </div>`;
   }
@@ -114,53 +120,66 @@ async function initSingleSubjectAIMock(mockId) {
   const userRole = session?.role || 'student';
   const email = session?.email || "";
 
+  // Batching Logic (Total 30: 25 MCQ, 5 Theory)
+  // Batch 1: 15 MCQ
+  // Batch 2: 10 MCQ + 5 Theory
+  const batchConfigs = [
+    { mcqs: 15, theory: 0 },
+    { mcqs: 10, theory: 5 }
+  ];
+
   try {
-    const res = await fetch('/api/ai', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        type: 'generate-questions',
-        subject: config.subject,
-        mcqCount: config.mcqCount,
-        theoryCount: config.theoryCount,
-        dateSeed: today,
-        role: userRole,
-        email: email
-      })
+    const requests = batchConfigs.map(async (batch, idx) => {
+      const bIdx = idx + 1;
+      const res = await fetch('/api/ai', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          type: 'generate-questions',
+          subject: config.subject,
+          mcqCount: batch.mcqs,
+          theoryCount: batch.theory,
+          batchIndex: bIdx,
+          dateSeed: today,
+          role: userRole,
+          email: email
+        })
+      });
+
+      if (!res.ok) throw new Error(`Batch ${bIdx} failed (HTTP ${res.status})`);
+      const data = await res.json();
+      
+      // Update UI dot
+      const dot = document.getElementById(`dot-${bIdx}`);
+      if (dot) dot.style.background = "var(--primary)";
+
+      return data;
     });
 
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    const data = await res.json();
-
+    const results = await Promise.all(requests);
     let allQuestions = [];
-    if (data.mcqs && Array.isArray(data.mcqs)) {
-      allQuestions.push(...data.mcqs.map((q, i) => ({
-        ...q,
-        id: `ai-mcq-${mockId}-${i}`,
-        type: 'mcq',
-        topic: q.topic || config.subject
-      })));
-    }
-    if (data.theory && Array.isArray(data.theory)) {
-      allQuestions.push(...data.theory.map((q, i) => ({
-        ...q,
-        id: `ai-theory-${mockId}-${i}`,
-        type: 'essay',
-        topic: q.topic || config.subject
-      })));
-    }
+
+    results.forEach((data, bIdx) => {
+      if (data.mcqs && Array.isArray(data.mcqs)) {
+        allQuestions.push(...data.mcqs.map((q, i) => ({
+          ...q,
+          id: `ai-mcq-${mockId}-b${bIdx}-${i}`,
+          type: 'mcq',
+          topic: q.topic || config.subject
+        })));
+      }
+      if (data.theory && Array.isArray(data.theory)) {
+        allQuestions.push(...data.theory.map((q, i) => ({
+          ...q,
+          id: `ai-theory-${mockId}-b${bIdx}-${i}`,
+          type: 'essay',
+          topic: q.topic || config.subject
+        })));
+      }
+    });
 
     if (allQuestions.length === 0) {
-      if (qCard) {
-        qCard.innerHTML = `
-          <div style='text-align:center; padding: 3rem;'>
-            <h2 style='color:var(--error); margin-bottom:1rem;'>Generation Failed</h2>
-            <p style='color:var(--text-secondary); margin-bottom: 2rem;'>The AI could not generate questions right now. Please try again.</p>
-            <button class="cta-btn" onclick="window.location.reload()" style="margin-right:12px;">Retry</button>
-            <button class="nav-btn" onclick="window.location.href='/mocks'">Back to Mocks</button>
-          </div>`;
-      }
-      return;
+      throw new Error("AI returned empty responses.");
     }
 
     examState.mockId = mockId;
