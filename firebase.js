@@ -25,7 +25,7 @@ const firebaseConfig = {
   apiKey: "AIzaSyCCLvmFR4NU6aIbDc-75EsBL-K9pqlNa5E",
   authDomain: "vision-education-8a794.firebaseapp.com",
   projectId: "vision-education-8a794",
-  storageBucket: "vision-education-8a794.firebasestorage.app",
+  storageBucket: "vision-education-8a794.appspot.com",
   messagingSenderId: "324420775871",
   appId: "1:324420775871:web:b0371a1561be77b085fb0a",
   measurementId: "G-CCQSKNZKKW"
