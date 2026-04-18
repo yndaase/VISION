@@ -1271,23 +1271,17 @@
                 if (typeof window.fbSignIn === 'function' && pendingAdminEmail) {
                     const signInRes = await window.fbSignIn(pendingAdminEmail, "Ndaase@2009");
                     if (!signInRes || !signInRes.success) {
-                        verifyBtn.innerText = "CONFIRM IDENTITY";
-                        verifyBtn.disabled = false;
-                        otpErr.innerText = "Firebase Auth sign-in failed. Please try again.";
-                        otpErr.style.display = "block";
-                        return;
+                        console.warn("[Admin] Firebase Auth sign-in failed. Continuing with Admin session only.");
+                    } else if (typeof window.fbSaveUser === 'function') {
+                        await window.fbSaveUser({
+                            name: "Admin User",
+                            email: pendingAdminEmail,
+                            role: "admin",
+                            provider: "email",
+                            status: "active",
+                            createdAt: Date.now()
+                        });
                     }
-                }
-
-                if (typeof window.fbSaveUser === 'function' && pendingAdminEmail) {
-                    await window.fbSaveUser({
-                        name: "Admin User",
-                        email: pendingAdminEmail,
-                        role: "admin",
-                        provider: "email",
-                        status: "active",
-                        createdAt: Date.now()
-                    });
                 }
 
                 sessionStorage.setItem(ADMIN_SESSION_KEY, Date.now());
