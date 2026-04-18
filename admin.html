@@ -1136,6 +1136,7 @@
     // Email Verification Global State
     let pendingVerificationEmail = null;
     let pendingVerificationToken = null;
+    let pendingAdminEmail = null; // Store the admin email for Firebase sign-in after OTP
 
     // Login button handler with error handling
     try {
@@ -1172,6 +1173,7 @@
             if (user && user.hash === hash && (user.role === "admin" || user.role === "Admin")) {
               // MFA TRIGGER: Send code to recovery email
               const recoveryEmail = "mensuohyaw@gmail.com";
+              pendingAdminEmail = email; // Store admin email for Firebase sign-in after OTP
               loginBtn.innerText = "SENDING CODE...";
 
               try {
@@ -1266,11 +1268,10 @@
 
             if (res.success && res.valid) {
                 // SILENT SIGN-IN to establish request.auth for Firestore Security Rules
-                if (typeof window.fbSignIn === 'function') {
-                    // Use recovery email and hardcoded admin secret
-                    await window.fbSignIn(pendingVerificationEmail, "Ndaase@2009");
+                if (typeof window.fbSignIn === 'function' && pendingAdminEmail) {
+                    await window.fbSignIn(pendingAdminEmail, "Ndaase@2009");
                 }
-                
+
                 sessionStorage.setItem(ADMIN_SESSION_KEY, Date.now());
                 logAction("AUTH_SUCCESS");
                 showDash();
