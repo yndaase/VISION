@@ -723,7 +723,7 @@
             size: isFileUpload ? (fileInput.files[0].size / (1024*1024)).toFixed(2) + " MB" : null
         };
         
-        upsertMaterial(entry); // Updates local + triggers firebase sync
+        await upsertMaterial(entry); // Updates local + triggers firebase sync
         logAction("MATERIAL_ADDED: " + title);
         
         // Automated WhatsApp Blast
@@ -750,7 +750,8 @@
 
     window.deleteMat = (id) => {
       if (!confirm("Delete this material?")) return;
-      deleteMaterial(id); logAction("MATERIAL_DELETED"); renderMats(); showToast("Material deleted");
+      deleteMaterial(id).then(() => { renderMats(); showToast("Material deleted"); }).catch(console.error);
+      logAction("MATERIAL_DELETED");
     };
 
     /**

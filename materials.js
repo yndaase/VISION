@@ -151,11 +151,20 @@ function getMaterials() {
  */
 async function syncMaterials() {
   if (typeof window.fbGetMaterials === 'function') {
-    const cloud = await window.fbGetMaterials();
-    if (cloud && cloud.length > 0) {
-      saveMaterials(cloud);
-      return cloud;
+    try {
+      const cloud = await window.fbGetMaterials();
+      if (cloud && cloud.length > 0) {
+        saveMaterials(cloud);
+        console.log('[Materials] Synced', cloud.length, 'materials from Firebase');
+        return cloud;
+      } else {
+        console.log('[Materials] No materials in Firebase, using local cache');
+      }
+    } catch(err) {
+      console.error('[Materials] Firebase sync failed:', err.message);
     }
+  } else {
+    console.warn('[Materials] fbGetMaterials not available');
   }
   return getMaterials();
 }
@@ -176,8 +185,9 @@ function saveMaterials(materials) {
 
 /**
  * Add or update a single material (admin only)
+ * Returns a promise that resolves when Firebase sync is complete
  */
-function upsertMaterial(mat) {
+async function upsertMaterial(mat) {
   const all = getMaterials();
   const idx = all.findIndex((m) => m.id === mat.id);
   if (idx >= 0) all[idx] = mat;
@@ -186,19 +196,31 @@ function upsertMaterial(mat) {
 
   // Sync to Firebase if available
   if (typeof window.fbSaveMaterial === 'function') {
-    window.fbSaveMaterial(mat).catch(console.error);
+    try {
+      await window.fbSaveMaterial(mat);
+      console.log('[Materials] Synced to Firebase:', mat.title);
+    } catch(err) {
+      console.error('[Materials] Firebase sync failed:', err.message);
+    }
+  } else {
+    console.warn('[Materials] fbSaveMaterial not available - material saved locally only');
   }
 }
 
 /**
  * Delete a material by id (admin only)
  */
-function deleteMaterial(id) {
+async function deleteMaterial(id) {
   saveMaterials(getMaterials().filter((m) => m.id !== id));
 
   // Sync to Firebase if available
   if (typeof window.fbDeleteMaterial === 'function') {
-    window.fbDeleteMaterial(id).catch(console.error);
+    try {
+      await window.fbDeleteMaterial(id);
+      console.log('[Materials] Deleted from Firebase:', id);
+    } catch(err) {
+      console.error('[Materials] Firebase delete failed:', err.message);
+    }
   }
 }
 
