@@ -150,10 +150,21 @@
 .bottom-nav-item:hover {
   color: var(--text-primary);
 }
+.bottom-nav-item:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: -2px;
+  border-radius: 8px;
+}
+.bottom-nav-item:active {
+  transform: scale(0.95);
+  transition: transform 0.1s;
+}
 
 .bottom-icon {
-  font-size: 1.2rem;
   line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 @media (max-width: 900px) {
