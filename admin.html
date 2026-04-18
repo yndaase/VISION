@@ -370,10 +370,11 @@
         <div class="card">
           <div class="card-header"><span class="card-title">Create New Account</span></div>
           <div class="card-body">
-            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem;">
+            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem;">
               <div class="field"><label class="label">Full Name</label><input class="input" id="newUserName" placeholder="Name" /></div>
               <div class="field"><label class="label">Email Address</label><input class="input" id="newUserEmail" placeholder="email@visionedu.online" /></div>
               <div class="field"><label class="label">Password</label><input class="input" type="password" id="newUserPass" placeholder="••••••••" /></div>
+              <div class="field"><label class="label">Firebase UID (Optional)</label><input class="input" id="newUserUid" placeholder="dJ2DwYOGw4NXi6F1Io1neHaPakx1" /></div>
             </div>
             <div style="display: flex; align-items: flex-end; gap: 1.5rem;">
             <div class="field" style="flex: 1; margin-bottom: 0;">
@@ -414,7 +415,7 @@
           </div>
           <div class="card-body" style="padding: 0;">
             <table class="table">
-              <thead><tr><th>User</th><th>Email Address</th><th>Role</th><th style="text-align: center;">WhatsApp</th><th style="text-align: right;">Control</th></tr></thead>
+              <thead><tr><th>User</th><th>Email Address</th><th>UID</th><th>Role</th><th style="text-align: center;">WhatsApp</th><th style="text-align: right;">Control</th></tr></thead>
               <tbody id="allUsersTbody"></tbody>
             </table>
           </div>
@@ -904,6 +905,7 @@
       const name = document.getElementById("newUserName").value.trim();
       const email = document.getElementById("newUserEmail").value.trim().toLowerCase();
       const pass = document.getElementById("newUserPass").value;
+      const uid = (document.getElementById("newUserUid")?.value || "").trim();
       const role = document.getElementById("newUserRole").value;
 
       if (!name || !email || !pass) return showToast("Protocol error: Missing identity parameters");
@@ -921,7 +923,7 @@
       if (alreadyExists) { if (btn) btn.textContent = "Authorize Account"; return showToast("Identity conflict: Email registry exists"); }
 
       const hash = await sha256(pass);
-      const newUser = { name, email, hash, role, provider: "email", createdAt: Date.now(), status: "active" };
+      const newUser = { name, email, hash, role, uid: uid || null, provider: "email", createdAt: Date.now(), status: "active" };
       
       // Save to Firestore
       if (typeof window.fbSaveUser === 'function') await window.fbSaveUser(newUser);
@@ -934,7 +936,7 @@
       if (btn) btn.textContent = "Authorize Account";
       logAction("USER_CREATED: " + email);
       renderUsers(); showToast("User account created successfully");
-      ["newUserName", "newUserEmail", "newUserPass"].forEach(id => document.getElementById(id).value = "");
+      ["newUserName", "newUserEmail", "newUserPass", "newUserUid"].forEach(id => document.getElementById(id).value = "");
     };
 
     // Cache of Firestore users for the admin panel
@@ -953,7 +955,7 @@
     window.renderUsers = async function() {
       const tbody = document.getElementById("allUsersTbody");
       if (!tbody) return;
-      tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;padding:2rem;color:var(--admin-text-muted);">Accessing ${currentViewCollection.toUpperCase()} dataset...</td></tr>`;
+      tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;padding:2rem;color:var(--admin-text-muted);">Accessing ${currentViewCollection.toUpperCase()} dataset...</td></tr>`;
 
       let users = [];
       if (typeof window.fbGetAllUsers === 'function') {
@@ -980,7 +982,7 @@
       });
 
       if (!filtered.length) {
-          tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;padding:2rem;color:var(--admin-text-muted);">No identities found in ${currentViewCollection}.</td></tr>`;
+          tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;padding:2rem;color:var(--admin-text-muted);">No identities found in ${currentViewCollection}.</td></tr>`;
           return;
       }
 
@@ -991,6 +993,9 @@
         <tr>
           <td><div style="font-weight: 700;">${displayName}</div><div style="font-size: 0.7rem; color: var(--admin-text-muted);">${u.createdAt ? new Date(u.createdAt).toLocaleDateString() : 'N/A'}</div></td>
           <td style="font-family: 'JetBrains Mono'; font-size: 0.8rem;">${u.email}</td>
+          <td style="width: 260px;">
+            <input class="input" style="padding: 6px 12px; font-size: 0.75rem; font-family: 'JetBrains Mono';" value="${u.uid || ""}" placeholder="Firebase UID" onchange="updateUid('${u.email}', this.value, '${currentViewCollection}')" />
+          </td>
           <td><select class="input" style="padding: 6px 12px; font-size: 0.75rem; width: auto;" onchange="updateRole('${u.email}', this.value, '${currentViewCollection}')">
             <option value="pro" ${role === 'pro' || role === 'student' ? 'selected' : ''}>Student</option>
             <option value="teacher" ${role === 'teacher' ? 'selected' : ''}>Teacher</option>
@@ -1016,6 +1021,26 @@
         `;
       }).join("");
     }
+
+    window.updateUid = async (email, uid, collection = 'users') => {
+      const normalizedUid = (uid || "").trim() || null;
+
+      if (typeof window.fbUpdateUser === 'function') {
+        await window.fbUpdateUser(email, { uid: normalizedUid }, collection);
+      }
+
+      if (collection === 'users') {
+        const users = getUsers();
+        const idx = users.findIndex(u => u.email === email);
+        if (idx !== -1) {
+          users[idx].uid = normalizedUid;
+          localStorage.setItem('waec_users', JSON.stringify(users));
+        }
+      }
+
+      logAction(`UID_UPDATED: ${email} (${collection})`);
+      showToast("User UID updated");
+    };
 
     window.updateRole = async (email, newRole, collection = 'users') => {
       // Update Firestore (Collection-aware)
