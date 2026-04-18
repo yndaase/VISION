@@ -110,13 +110,7 @@
     <link rel="manifest" href="manifest.json" />
     <meta name="theme-color" content="#0ea5e9" />
     <link rel="apple-touch-icon" href="assets/logo.png" />
-    <script>
-      if ("serviceWorker" in navigator) {
-        window.addEventListener("load", () => {
-          navigator.serviceWorker.register("sw.js");
-        });
-      }
-    </script>
+    <script src="register-sw.js"></script>
     <script src="https://accounts.google.com/gsi/client" async defer></script>
     <!-- All dark-mode and component overrides are now in login.css -->
 </head>
