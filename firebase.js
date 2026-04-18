@@ -89,7 +89,7 @@ export const fbSaveUser = window.fbSaveUser;
  * @param {string} [collectionName='users']
  */
 window.fbUpdateUser = async function(email, fields, collectionName = 'users') {
-  if (!email || !fields) return;
+  if (!email || !fields) return { success: false, error: "Missing email or fields" };
   try {
     const key = email.toLowerCase();
     const ref = doc(db, collectionName, key);
@@ -99,8 +99,10 @@ window.fbUpdateUser = async function(email, fields, collectionName = 'users') {
     } else {
       await setDoc(ref, { email: key, ...fields, lastUpdated: new Date().toISOString() }, { merge: true });
     }
+    return { success: true };
   } catch(e) {
     console.warn(`[Firebase] fbUpdateUser(${collectionName}) failed:`, e.message);
+    return { success: false, error: e.message };
   }
 };
 export const fbUpdateUser = window.fbUpdateUser;
@@ -136,8 +138,9 @@ export const fbSignIn = window.fbSignIn;
  * @param {boolean} status 
  */
 window.fbSetWAOptIn = async function(email, status) {
-    return await window.fbUpdateUser(email, { waOptIn: status });
+  return await window.fbUpdateUser(email, { waOptIn: status });
 };
+export const fbSetWAOptIn = window.fbSetWAOptIn;
 
 
 

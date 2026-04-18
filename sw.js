@@ -1,4 +1,4 @@
-const CACHE_NAME = 'vision-edu-v5';
+const CACHE_NAME = 'vision-edu-v6';
 const ASSETS_TO_CACHE = [
   '/',
   '/index.html',
@@ -19,11 +19,12 @@ const ASSETS_TO_CACHE = [
   '/login.css?v=6',
   '/theme.js',
   '/app.js',
-  '/auth.js',
-  '/firebase.js',
-  '/questions.js',
-  '/register-sw.js',
-  '/assets/logo.png',
+   '/auth.js',
+   '/firebase.js',
+   '/questions.js',
+   '/register-sw.js',
+   '/whatsapp-service.js',
+   '/assets/logo.png',
   '/assets/crest.png',
   '/assets/augusco_crest.png',
   'https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap'
