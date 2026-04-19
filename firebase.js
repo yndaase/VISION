@@ -40,6 +40,25 @@ const storage = getStorage(app);
 window.fbAuth = auth;
 window.fbStorage = storage;
 
+function resolveEmailKey(email) {
+  const raw = (email || "").toString().trim();
+  const lower = raw.toLowerCase();
+  const authEmail = auth?.currentUser?.email || "";
+  if (authEmail && authEmail.toLowerCase() === lower) return authEmail;
+  return lower;
+}
+
+function candidateEmailKeys(email) {
+  const raw = (email || "").toString().trim();
+  const lower = raw.toLowerCase();
+  const authEmail = auth?.currentUser?.email || "";
+  const keys = [];
+  if (authEmail && authEmail.toLowerCase() === lower) keys.push(authEmail);
+  if (raw) keys.push(raw);
+  if (lower) keys.push(lower);
+  return [...new Set(keys.filter(Boolean))];
+}
+
 /* ─────────────────────────────────────────────────────────────
    USER DATABASE  (Firestore collection: "users")
    Document ID = lowercased email address
@@ -54,8 +73,11 @@ window.fbStorage = storage;
 window.fbGetUser = async function(email, collectionName = 'users') {
   if (!email) return null;
   try {
-    const docSnap = await getDoc(doc(db, collectionName, email.toLowerCase()));
-    if (docSnap.exists()) return docSnap.data();
+    const keys = candidateEmailKeys(email);
+    for (const key of keys) {
+      const docSnap = await getDoc(doc(db, collectionName, key));
+      if (docSnap.exists()) return docSnap.data();
+    }
     return null;
   } catch(err) {
     console.warn(`[Firebase] fbGetUser(${collectionName}) failed:`, err.message);
@@ -72,8 +94,8 @@ export const fbGetUser = window.fbGetUser;
 window.fbSaveUser = async function(user, collectionName = 'users') {
   if (!user || !user.email) return;
   try {
-    const key = user.email.toLowerCase();
-    const payload = { ...user, email: key, lastUpdated: new Date().toISOString() };
+    const key = resolveEmailKey(user.email);
+    const payload = { ...user, email: key, emailLower: user.email.toLowerCase(), lastUpdated: new Date().toISOString() };
     await setDoc(doc(db, collectionName, key), payload, { merge: true });
     console.log(`[Firebase] User saved to ${collectionName}: ${key}`);
   } catch(err) {
@@ -91,14 +113,12 @@ export const fbSaveUser = window.fbSaveUser;
 window.fbUpdateUser = async function(email, fields, collectionName = 'users') {
   if (!email || !fields) return { success: false, error: "Missing email or fields" };
   try {
-    const key = email.toLowerCase();
+    const key = resolveEmailKey(email);
     const ref = doc(db, collectionName, key);
     const snap = await getDoc(ref);
-    if (snap.exists()) {
-      await updateDoc(ref, { ...fields, lastUpdated: new Date().toISOString() });
-    } else {
-      await setDoc(ref, { email: key, ...fields, lastUpdated: new Date().toISOString() }, { merge: true });
-    }
+    const next = { ...fields, emailLower: email.toLowerCase(), lastUpdated: new Date().toISOString() };
+    if (snap.exists()) await updateDoc(ref, next);
+    else await setDoc(ref, { email: key, ...next }, { merge: true });
     return { success: true };
   } catch(e) {
     console.warn(`[Firebase] fbUpdateUser(${collectionName}) failed:`, e.message);
