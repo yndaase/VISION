@@ -746,18 +746,28 @@ async function handleLogin(e) {
     return;
   }
 
-  // --- SILENT AUTH BRIDGE START ---
-  // Ensure the user has a valid Firebase Auth session for Firestore security rules
-  if (typeof window.fbSignIn === 'function') {
-    window.fbSignIn(email, pass).then(res => {
-        if (res.success) console.log("[Auth] Firebase Silent Auth successful.");
-        else console.warn("[Auth] Firebase Silent Auth failed:", res.error);
-    });
-  }
-  // --- SILENT AUTH BRIDGE END ---
+  const waitFor = (fn, timeoutMs = 4000, stepMs = 100) => new Promise((resolve) => {
+    const start = Date.now();
+    const tick = () => {
+      if (fn()) return resolve(true);
+      if (Date.now() - start >= timeoutMs) return resolve(false);
+      setTimeout(tick, stepMs);
+    };
+    tick();
+  });
+
+  const ensureFirebaseAuth = async (email, pass) => {
+    const ok = await waitFor(() => typeof window.fbSignIn === "function");
+    if (!ok) return { success: false, error: "Firebase not ready" };
+    return await window.fbSignIn(email, pass);
+  };
 
   // DEEP 2FA INTEGRATION: Check if 2FA is enabled
   if (user.twoFAEnabled) {
+    try {
+      sessionStorage.setItem("waec_login_pw", pass);
+      sessionStorage.setItem("waec_login_pw_ts", String(Date.now()));
+    } catch (e) {}
     const code = Math.floor(100000 + Math.random() * 900000).toString();
     saveResetCode(email, code);
     const hiddenEl = document.getElementById("2faEmailHidden");
@@ -775,13 +785,20 @@ async function handleLogin(e) {
     return;
   }
 
+  try {
+    const fb = await ensureFirebaseAuth(email, pass);
+    if (!fb || !fb.success) {
+      console.warn("[Auth] Firebase Silent Auth failed:", fb?.error);
+    }
+  } catch (e) {}
+
   setSession(verifyUserSchema(user));
   showAuthSuccess("Welcome back, " + user.name + "! ");
   setTimeout(goToDashboard, 900);
 }
 
 //  2FA Verification
-function handle2FAVerification(e) {
+async function handle2FAVerification(e) {
   e.preventDefault();
   clearErrors();
 
@@ -799,6 +816,22 @@ function handle2FAVerification(e) {
     return;
   }
 
+  const waitFor = (fn, timeoutMs = 4000, stepMs = 100) => new Promise((resolve) => {
+    const start = Date.now();
+    const tick = () => {
+      if (fn()) return resolve(true);
+      if (Date.now() - start >= timeoutMs) return resolve(false);
+      setTimeout(tick, stepMs);
+    };
+    tick();
+  });
+
+  const ensureFirebaseAuth = async (email, pass) => {
+    const ok = await waitFor(() => typeof window.fbSignIn === "function");
+    if (!ok) return { success: false, error: "Firebase not ready" };
+    return await window.fbSignIn(email, pass);
+  };
+
   const storedCode = getStoredResetCode(email);
   if (storedCode !== code) {
     markInputError(
@@ -811,6 +844,19 @@ function handle2FAVerification(e) {
 
   // Clear code and log in
   clearResetCode(email);
+  try {
+    const ts = Number(sessionStorage.getItem("waec_login_pw_ts") || "0");
+    const pw = sessionStorage.getItem("waec_login_pw") || "";
+    if (pw && Date.now() - ts < 5 * 60 * 1000) {
+      const fb = await ensureFirebaseAuth(email, pw);
+      if (!fb || !fb.success) console.warn("[Auth] Firebase Silent Auth failed:", fb?.error);
+    }
+  } catch (e) {} finally {
+    try {
+      sessionStorage.removeItem("waec_login_pw");
+      sessionStorage.removeItem("waec_login_pw_ts");
+    } catch (e) {}
+  }
   const user = getUsers().find((u) => u.email === email);
   setSession(user);
   showAuthSuccess("Secure identity verified! Logging in...");
