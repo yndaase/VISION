@@ -17,18 +17,27 @@ export default async function handler(req, res) {
         }
 
         try {
-            const url = `https://graph.facebook.com/v25.0/${businessId}/message_templates?name=${templateName}`;
+            const safeName = (templateName || '').toString().trim();
+            const url = `https://graph.facebook.com/v25.0/${businessId}/message_templates?name=${encodeURIComponent(safeName)}&fields=name,status,category,language`;
             const response = await fetch(url, { headers: { 'Authorization': `Bearer ${accessToken}` } });
             const data = await response.json();
             
             if (!response.ok) throw new Error(data.error?.message || "Failed to fetch template status");
             
-            const template = data.data?.[0];
+            const templates = Array.isArray(data.data) ? data.data : [];
+            const template = templates[0];
             return res.status(200).json({ 
                 success: true, 
-                name: templateName,
+                name: safeName,
                 status: template?.status || "NOT_FOUND",
-                category: template?.category
+                category: template?.category,
+                language: template?.language || null,
+                matches: templates.map(t => ({
+                    name: t?.name || null,
+                    status: t?.status || null,
+                    category: t?.category || null,
+                    language: t?.language || null
+                }))
             });
         } catch (error) {
             return res.status(500).json({ success: false, error: error.message });
@@ -59,13 +68,16 @@ export default async function handler(req, res) {
          * META TEMPLATE SYSTEM
          * Official notifications MUST use approved templates.
          */
+        const normalizedTemplateName = (templateName || "").toString().trim() || "hello_world";
+        const requestedLang = (lang || "").toString().trim();
+
         let payload = {
             messaging_product: "whatsapp",
             to: recipientPhone,
             type: "template",
             template: {
-                name: templateName || "hello_world", // Default placeholder
-                language: { code: lang || "en_US" }
+                name: normalizedTemplateName, // Default placeholder
+                language: { code: requestedLang || "en_US" }
             }
         };
 
@@ -84,7 +96,7 @@ export default async function handler(req, res) {
             payload.template.components = components;
         } else if (type === "REMINDER") {
             // We expect an approved template called 'study_reminder' with 1 parameter (name)
-            payload.template.name = templateName || "study_reminder";
+            payload.template.name = normalizedTemplateName || "study_reminder";
             payload.template.components = [
                 {
                     type: "body",
@@ -128,28 +140,57 @@ export default async function handler(req, res) {
         
         console.log(`[Meta WA] Routing to ${recipientPhone} via ${fbUrl}`);
 
-        const response = await fetch(fbUrl, {
-            method: 'POST',
-            headers: {
-                'Authorization': `Bearer ${accessToken}`,
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(payload)
-        });
+        const sendOnce = async (langCode) => {
+            const nextPayload = {
+                ...payload,
+                template: {
+                    ...payload.template,
+                    language: { code: langCode }
+                }
+            };
 
-        const data = await response.json();
+            const response = await fetch(fbUrl, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${accessToken}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(nextPayload)
+            });
 
-        if (!response.ok) {
+            const data = await response.json();
+            return { response, data, usedLang: langCode };
+        };
+
+        const primaryLang = requestedLang || "en_US";
+        const fallbackLangs = requestedLang ? [] : ["en_GB", "en"];
+        const attemptLangs = [primaryLang, ...fallbackLangs].filter((v, i, a) => v && a.indexOf(v) === i);
+
+        let lastError = null;
+        let lastData = null;
+        let usedLang = primaryLang;
+
+        for (const attemptLang of attemptLangs) {
+            const { response, data, usedLang: langUsed } = await sendOnce(attemptLang);
+            usedLang = langUsed;
+            lastData = data;
+
+            if (response.ok) {
+                console.log("[Meta WA] Message dispatched successfully. ID:", data.messages?.[0]?.id);
+                return res.status(200).json({ success: true, messageId: data.messages?.[0]?.id, lang: usedLang });
+            }
+
+            const errCode = data?.error?.code;
+            const errMsg = data?.error?.message || "Meta API request failed.";
             console.error("[Meta API Error Response]:", data);
-            throw new Error(data.error?.message || "Meta API request failed.");
+
+            lastError = new Error(errMsg);
+
+            if (errCode !== 132001) {
+                break;
+            }
         }
-
-        console.log("[Meta WA] Message dispatched successfully. ID:", data.messages?.[0]?.id);
-
-        return res.status(200).json({ 
-            success: true, 
-            messageId: data.messages?.[0]?.id 
-        });
+        throw lastError || new Error(lastData?.error?.message || "Meta API request failed.");
 
     } catch (error) {
         console.error("[Meta WhatsApp Gateway Failure]:", error);
