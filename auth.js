@@ -475,6 +475,9 @@ window.saveProfileChanges = async function() {
             // If we still get a sync error, it might be a missing session
             if (res && !res.success) {
                  console.error("[Auth] Firestore Sync failed:", res.error);
+                 if ((res.error || "").toLowerCase().includes("missing or insufficient permissions")) {
+                   throw new Error("Firebase permissions blocked this update. Please log out, log back in, then try again.");
+                 }
                  throw new Error(res.error);
             }
             
