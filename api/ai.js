@@ -240,6 +240,16 @@ async function handleGenerateQuestions(data, role, res) {
   This is Batch #${batchIndex} of the generation process. Ensure these questions are unique and do not duplicate common exam patterns from previous years unless they are foundational.
   Return exactly ${mcqCount} MCQs and ${theoryCount} Theory questions in a single JSON object.
   
+  CRITICAL MATH FORMATTING RULES:
+  - Use LaTeX notation wrapped in dollar signs for ALL mathematical expressions.
+  - For matrices, ALWAYS use: $\\begin{pmatrix} a & b \\\\ c & d \\end{pmatrix}$ (parenthesized matrix).
+  - For example: "Find A + B where $A = \\begin{pmatrix} 2 & 3 \\\\ 5 & 1 \\end{pmatrix}$ and $B = \\begin{pmatrix} 4 & 0 \\\\ 1 & 6 \\end{pmatrix}$".
+  - For determinants use: $\\begin{vmatrix} a & b \\\\ c & d \\end{vmatrix}$.
+  - For fractions use: $\\frac{a}{b}$. For square roots: $\\sqrt{x}$.
+  - NEVER use plain text matrix notation like [[2,3],[5,1]]. Always use LaTeX.
+  - Use display math ($$...$$) for standalone equations and inline math ($...$) for expressions within text.
+  - Option values containing math must also use LaTeX: e.g. "A": "$\\begin{pmatrix} 6 & 3 \\\\ 6 & 7 \\end{pmatrix}$".
+  
   Format:
   {
     "mcqs": [

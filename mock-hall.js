@@ -397,10 +397,62 @@ function updateTimerDisplay() {
   else if (t <= 900) el.classList.add("warning");
 }
 
+//  Matrix & Math Notation Sanitizer
+// Converts plain-text matrix notation [[a,b],[c,d]] into KaTeX-compatible LaTeX
+function sanitizeMatrixNotation(text) {
+  if (!text || typeof text !== 'string') return text || '';
+
+  // Match patterns like [[a, b], [c, d]] or [[a,b],[c,d]] (nested arrays)
+  let result = text.replace(/\[\[\s*([\s\S]*?)\s*\]\]/g, (match) => {
+    // Check if it's already inside a LaTeX block
+    const beforeMatch = result ? result.indexOf(match) : -1;
+    if (beforeMatch > 0) {
+      const preceding = text.substring(Math.max(0, beforeMatch - 20), beforeMatch);
+      if (preceding.includes('$') || preceding.includes('\\begin')) return match;
+    }
+
+    try {
+      // Try to parse as a 2D array
+      const parsed = JSON.parse(match);
+      if (Array.isArray(parsed) && parsed.length > 0 && Array.isArray(parsed[0])) {
+        const rows = parsed.map(row => row.join(' & ')).join(' \\\\ ');
+        return `$\\begin{pmatrix} ${rows} \\end{pmatrix}$`;
+      }
+    } catch (e) {
+      // Not valid JSON — try regex-based row extraction
+      const inner = match.slice(1, -1); // remove outer [ ]
+      const rowMatches = inner.match(/\[([^\]]+)\]/g);
+      if (rowMatches && rowMatches.length > 0) {
+        const rows = rowMatches.map(r => {
+          const vals = r.replace(/[\[\]]/g, '').split(',').map(v => v.trim());
+          return vals.join(' & ');
+        }).join(' \\\\ ');
+        return `$\\begin{pmatrix} ${rows} \\end{pmatrix}$`;
+      }
+    }
+    return match;
+  });
+
+  return result;
+}
+
+// Sanitize all math content in a question object before rendering
+function prepareQuestionForRender(q) {
+  if (!q) return q;
+  q.question = sanitizeMatrixNotation(q.question);
+  if (q.options) {
+    for (const key of Object.keys(q.options)) {
+      q.options[key] = sanitizeMatrixNotation(q.options[key]);
+    }
+  }
+  return q;
+}
+
 //  Question Rendering
 function renderQuestion() {
-  const q = examState.questions[examState.currentIndex];
-  if (!q) return;
+  const rawQ = examState.questions[examState.currentIndex];
+  if (!rawQ) return;
+  const q = prepareQuestionForRender({ ...rawQ, options: rawQ.options ? { ...rawQ.options } : null });
 
   const card = document.getElementById("qDisplayCard");
   const diffLabel =

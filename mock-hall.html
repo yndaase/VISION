@@ -105,6 +105,19 @@
     .ai-msg { padding: 1rem 1.5rem; background: rgba(99, 102, 241, 0.1); border-radius: 1.5rem 1.5rem 1.5rem 0; align-self: flex-start; font-size: 0.8rem; color: #cbd5e1; max-width: 85%; border-left: 3px solid #6366f1; }
 
     #resultsModal { display: none; }
+
+    /* KaTeX Math & Matrix Rendering */
+    .katex-display { overflow-x: auto; overflow-y: hidden; padding: 0.5rem 0; }
+    .katex { font-size: 1.1em; }
+    .q-text .katex-display { text-align: center; margin: 1.5rem 0; }
+    .q-text .katex-display > .katex { text-align: center; }
+    .option-text .katex { font-size: 1em; }
+    .option-text .katex-display { margin: 0.25rem 0; padding: 0; overflow-x: auto; }
+    .option-row { min-height: 56px; align-items: center; }
+    .option-text { overflow-x: auto; flex: 1; min-width: 0; }
+    /* Ensure matrix brackets scale properly */
+    .katex .mord .minner { display: inline-flex; align-items: center; }
+    .katex .arraycolsep { width: 0.5em !important; }
   </style>
 </head>
 <body class="bg-navy text-white font-sans min-h-screen flex flex-col selection:bg-indigo-500/30 overflow-hidden">
