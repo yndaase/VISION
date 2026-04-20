@@ -1090,9 +1090,17 @@
     window.sendWAReminder = async (email, name) => {
         if (!confirm(`Trigger WhatsApp reminder for ${name}?`)) return;
         
-        // Find the user's phone number
-        const users = _cachedFirestoreUsers || getUsers();
-        const user = users.find(u => u.email === email);
+        // Find the user's phone number from Firebase or local cache
+        let user = null;
+        if (typeof window.fbGetUser === 'function') {
+            try {
+                user = await window.fbGetUser(email);
+            } catch(e) {}
+        }
+        if (!user) {
+            const users = getUsers();
+            user = users.find(u => u.email === email);
+        }
         if (!user || !user.phone) {
             alert("Protocol error: No phone number associated with this identity. Ask student to update their profile.");
             return;
@@ -1107,7 +1115,7 @@
                     email, 
                     type: "REMINDER", 
                     phone: user.phone,
-                    name: user.name
+                    name: user.name || name
                 })
             });
             const data = await resp.json();

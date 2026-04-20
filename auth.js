@@ -519,8 +519,18 @@ window.saveProfileChanges = async function() {
             // Update local session for immediate UI reflection
             session.phone = phone;
             session.waOptIn = !!phone;
-            localStorage.setItem('waec_session', JSON.stringify(session));
-            sessionStorage.setItem('waec_session', JSON.stringify(session));
+            setSession(session);
+
+            // Also update local users array so admin panel sees the phone
+            try {
+                const users = getUsers();
+                const idx = users.findIndex(u => u.email === session.email);
+                if (idx !== -1) {
+                    users[idx].phone = phone;
+                    users[idx].waOptIn = !!phone;
+                    saveUsers(users);
+                }
+            } catch(e) {}
             
             if (typeof showToast === 'function') {
                 showToast(cloudSyncOk ? "Profile identity synchronized with Firebase" : "Profile saved locally. Firebase sync pending.");
@@ -551,14 +561,31 @@ window.handleWAToggle = async function() {
     // UI Feedback
     el.classList.toggle("active", newState);
 
+    // Persist to local session immediately
+    session.waOptIn = newState;
+    setSession(session);
+
+    // Update local users array
+    try {
+        const users = getUsers();
+        const idx = users.findIndex(u => u.email === session.email);
+        if (idx !== -1) {
+            users[idx].waOptIn = newState;
+            saveUsers(users);
+        }
+    } catch(e) {}
+
+    // Sync to Firebase
     try {
         if (typeof window.fbSetWAOptIn === 'function') {
             await window.fbSetWAOptIn(session.email, newState);
-            console.log("[Auth] WhatsApp Opt-in updated:", newState);
+            console.log("[Auth] WhatsApp Opt-in synced to Firebase:", newState);
         }
     } catch(e) {
-        console.error("[Auth] WA Toggle failed:", e);
-        el.classList.toggle("active", active); // Rollback
+        console.error("[Auth] WA Toggle Firebase sync failed:", e);
+        el.classList.toggle("active", active); // Rollback UI
+        session.waOptIn = active; // Rollback session
+        setSession(session);
     }
 };
 
@@ -580,7 +607,20 @@ window.openSettings = function() {
   if (emailEl) emailEl.textContent = session.email;
   if (avatarEl) avatarEl.textContent = session.name.charAt(0).toUpperCase();
 
-  // Sync Profile state from Firestore (Ground Truth)
+  // Immediate local state (fast path — no waiting for Firebase)
+  const phoneEl = document.getElementById("settingsPhone");
+  if (phoneEl) phoneEl.value = session.phone || "";
+
+  const waEl = document.getElementById("waToggle");
+  if (waEl) waEl.classList.toggle("active", !!session.waOptIn);
+
+  const waStatusText = document.getElementById("waStatusText");
+  if (waStatusText) {
+      waStatusText.innerText = session.phone ? "WhatsApp Linked" : "Not Linked";
+      waStatusText.style.color = session.phone ? "#10b981" : "var(--text-muted)";
+  }
+
+  // Sync Profile state from Firestore (Ground Truth — overwrites local when ready)
   if (typeof window.fbGetUser === 'function') {
       window.fbGetUser(session.email).then(userData => {
           if (userData) {
