@@ -849,16 +849,51 @@ function submitExam() {
   document.getElementById("rSkipped").textContent = skipped;
   document.getElementById("rTime").textContent = timeStr;
 
-  if (examState.mockConfig) {
-    localStorage.setItem('vision_last_mock_result', JSON.stringify({
-      score: pct,
-      subject: examState.mockConfig.subject || examState.mockConfig.title,
-      accuracy: pct
-    }));
-  }
+  // Build certificate data
+  const session = typeof getSession === 'function' ? getSession() : JSON.parse(sessionStorage.getItem('waec_session') || localStorage.getItem('waec_session') || '{}');
+  const studentName = session?.name || 'Student';
+  const studentEmail = session?.email || '';
+  const subjectName = examState.mockConfig?.subject || examState.mockConfig?.title || 'General';
+  const dateStr = new Date().toLocaleDateString('en-GB', { year: 'numeric', month: 'long', day: 'numeric' });
+  const certId = generateCertificateId(studentEmail, examState.mockId);
+
+  // Save full mock result to localStorage
+  const mockResultPayload = {
+    score: pct,
+    subject: subjectName,
+    accuracy: pct,
+    grade,
+    name: studentName,
+    email: studentEmail,
+    date: dateStr,
+    certId,
+    mockId: examState.mockId,
+    mockTitle: examState.mockConfig?.title || 'Mock Exam',
+    correct,
+    wrong,
+    skipped,
+    total,
+    timeStr,
+    timestamp: Date.now()
+  };
+  localStorage.setItem('vision_last_mock_result', JSON.stringify(mockResultPayload));
+
+  // Save certificate to Firebase
+  saveCertificateToFirebase(mockResultPayload);
+
+  // Build cert URL with full params
+  const certParams = new URLSearchParams({
+    name: studentName,
+    subject: subjectName,
+    score: pct.toString(),
+    grade: grade,
+    date: dateStr,
+    id: certId
+  });
 
   const certBtn = document.getElementById("certBtn");
   if (certBtn) {
+    certBtn.href = `/certificate?${certParams.toString()}`;
     certBtn.style.display = "block";
     certBtn.classList.remove("hidden");
   }
@@ -1231,4 +1266,67 @@ function showGenerationLoading() {
 
 function hideGenerationLoading() {
   // Logic to restore normally will be handled by renderQuestion()
+}
+
+// ============================================================
+// Certificate ID Generator & Firebase Sync
+// ============================================================
+
+function generateCertificateId(email, mockId) {
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  const today = new Date().toISOString().split('T')[0];
+  // Create a deterministic seed from email + mockId + date
+  const seed = (email || '') + (mockId || '') + today;
+  let hash = 0;
+  for (let i = 0; i < seed.length; i++) {
+    hash = ((hash << 5) - hash) + seed.charCodeAt(i);
+    hash |= 0;
+  }
+  let id = 'VE-';
+  for (let i = 0; i < 8; i++) {
+    const idx = Math.abs(hash * (i + 1) * 7919) % chars.length;
+    id += chars.charAt(idx);
+  }
+  return id;
+}
+
+async function saveCertificateToFirebase(payload) {
+  try {
+    const session = typeof getSession === 'function' ? getSession() : JSON.parse(sessionStorage.getItem('waec_session') || localStorage.getItem('waec_session') || '{}');
+    const email = (session?.email || payload.email || '').toLowerCase();
+    if (!email) return;
+
+    const certData = {
+      certId: payload.certId,
+      name: payload.name,
+      email: email,
+      subject: payload.subject,
+      score: payload.score,
+      grade: payload.grade,
+      correct: payload.correct,
+      wrong: payload.wrong,
+      skipped: payload.skipped,
+      total: payload.total,
+      timeStr: payload.timeStr,
+      mockId: payload.mockId,
+      mockTitle: payload.mockTitle,
+      date: payload.date,
+      issuedAt: new Date().toISOString(),
+      timestamp: Date.now()
+    };
+
+    // Save to 'certificates' collection (document ID = certId)
+    if (typeof window.fbSaveCertificate === 'function') {
+      await window.fbSaveCertificate(certData);
+    }
+
+    // Also append to user's student_stats.certificates array
+    if (typeof window.fbAppendCertificateToUser === 'function') {
+      await window.fbAppendCertificateToUser(email, certData);
+    }
+
+    console.log('[Certificate] Saved to Firebase:', certData.certId);
+  } catch (err) {
+    console.warn('[Certificate] Firebase save failed:', err.message);
+  }
 }

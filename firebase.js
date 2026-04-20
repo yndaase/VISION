@@ -627,6 +627,110 @@ window.fbUploadData = async function(file, path, onProgress) {
 
 
 /* ─────────────────────────────────────────────────────────────
+   CERTIFICATES  (Firestore collection: "certificates")
+   Also stored as an array in student_stats for per-user access
+   ───────────────────────────────────────────────────────────── */
+
+/**
+ * Save a certificate to the dedicated 'certificates' Firestore collection.
+ * Document ID = certId (e.g. "VE-AB3K7WX2")
+ * @param {object} certData - Full certificate payload
+ */
+window.fbSaveCertificate = async function(certData) {
+  if (!certData || !certData.certId) return;
+  try {
+    await setDoc(doc(db, "certificates", certData.certId), {
+      ...certData,
+      emailLower: (certData.email || '').toLowerCase(),
+      savedAt: new Date().toISOString()
+    });
+    console.log('[Firebase] Certificate saved:', certData.certId);
+  } catch(err) {
+    console.warn('[Firebase] fbSaveCertificate failed:', err.message);
+  }
+};
+
+/**
+ * Look up a certificate by its ID (for verification/sharing).
+ * @param {string} certId
+ * @returns {object|null}
+ */
+window.fbGetCertificate = async function(certId) {
+  if (!certId) return null;
+  try {
+    const snap = await getDoc(doc(db, "certificates", certId));
+    if (snap.exists()) return snap.data();
+    return null;
+  } catch(err) {
+    console.warn('[Firebase] fbGetCertificate failed:', err.message);
+    return null;
+  }
+};
+
+/**
+ * Append a certificate summary to the user's student_stats document.
+ * This allows the dashboard to quickly list all certificates without
+ * querying the entire certificates collection.
+ * @param {string} email
+ * @param {object} certData
+ */
+window.fbAppendCertificateToUser = async function(email, certData) {
+  if (!email || !certData) return;
+  try {
+    const key = email.toLowerCase();
+    const statsRef = doc(db, "student_stats", key);
+    const snap = await getDoc(statsRef);
+    
+    const certSummary = {
+      certId: certData.certId,
+      subject: certData.subject,
+      score: certData.score,
+      grade: certData.grade,
+      mockTitle: certData.mockTitle,
+      date: certData.date,
+      issuedAt: certData.issuedAt || new Date().toISOString()
+    };
+
+    let certificates = [];
+    if (snap.exists() && snap.data().certificates) {
+      certificates = snap.data().certificates;
+      // Avoid duplicates (same certId)
+      if (certificates.some(c => c.certId === certData.certId)) {
+        console.log('[Firebase] Certificate already exists for user, skipping.');
+        return;
+      }
+    }
+    certificates.unshift(certSummary);
+    // Keep last 50 certificates
+    if (certificates.length > 50) certificates = certificates.slice(0, 50);
+
+    await setDoc(statsRef, { certificates, lastUpdated: new Date().toISOString() }, { merge: true });
+    console.log('[Firebase] Certificate appended to user stats:', certData.certId);
+  } catch(err) {
+    console.warn('[Firebase] fbAppendCertificateToUser failed:', err.message);
+  }
+};
+
+/**
+ * Get all certificates for a user from their student_stats doc.
+ * @param {string} email
+ * @returns {Array} - Array of certificate summary objects
+ */
+window.fbGetUserCertificates = async function(email) {
+  if (!email) return [];
+  try {
+    const snap = await getDoc(doc(db, "student_stats", email.toLowerCase()));
+    if (snap.exists() && snap.data().certificates) {
+      return snap.data().certificates;
+    }
+    return [];
+  } catch(err) {
+    console.warn('[Firebase] fbGetUserCertificates failed:', err.message);
+    return [];
+  }
+};
+
+/* ─────────────────────────────────────────────────────────────
    AUTO-SYNC on import (non-parent pages)
    ───────────────────────────────────────────────────────────── */
 if (typeof window !== 'undefined' && window.location.pathname !== '/parent-portal') {
@@ -642,3 +746,4 @@ if (typeof window !== 'undefined' && window.location.pathname !== '/parent-porta
     } catch(e) {}
   }, 2000);
 }
+

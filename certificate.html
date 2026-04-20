@@ -79,6 +79,9 @@
     <div class="cert-id" id="certId">CERT-XXXXXXXX</div>
   </div>
 
+  <script type="module">
+    import './firebase.js';
+  </script>
   <script>
     // ─── Certificate Engine ───
     
@@ -91,18 +94,33 @@
       return id;
     }
 
-    function loadCertificateData() {
-      // Get data from URL params or localStorage
+    async function loadCertificateData() {
+      // Get data from URL params first (most reliable — passed from mock-hall)
       const params = new URLSearchParams(window.location.search);
       
-      // Try URL params first
       let name = params.get('name');
       let subject = params.get('subject');
       let score = params.get('score');
+      let grade = params.get('grade');
       let date = params.get('date');
       let certId = params.get('id');
 
-      // Fallback to session data
+      // Fallback to latest mock result from localStorage (enriched data)
+      if (!score || !subject) {
+        try {
+          const mockResult = JSON.parse(localStorage.getItem('vision_last_mock_result'));
+          if (mockResult) {
+            score = score || (mockResult.score != null ? mockResult.score.toString() : null);
+            subject = subject || mockResult.subject;
+            grade = grade || mockResult.grade;
+            name = name || mockResult.name;
+            date = date || mockResult.date;
+            certId = certId || mockResult.certId;
+          }
+        } catch(e) {}
+      }
+
+      // Fallback to session data for name
       if (!name) {
         try {
           const SESSION_KEY = 'waec_session';
@@ -114,21 +132,29 @@
         } catch(e) {}
       }
 
-      // Fallback to latest mock result
-      if (!score) {
+      // If we have a certId, try to verify/load from Firebase
+      if (certId && typeof window.fbGetCertificate === 'function') {
         try {
-          const mockResult = JSON.parse(localStorage.getItem('vision_last_mock_result'));
-          if (mockResult) {
-            score = mockResult.score || mockResult.accuracy;
-            subject = mockResult.subject || subject;
+          const fbCert = await window.fbGetCertificate(certId);
+          if (fbCert) {
+            // Firebase is the source of truth — override with verified data
+            name = fbCert.name || name;
+            subject = fbCert.subject || subject;
+            score = fbCert.score != null ? fbCert.score.toString() : score;
+            grade = fbCert.grade || grade;
+            date = fbCert.date || date;
+            console.log('[Certificate] Verified from Firebase:', certId);
           }
-        } catch(e) {}
+        } catch(e) {
+          console.warn('[Certificate] Firebase verification failed:', e.message);
+        }
       }
 
       // Defaults
       name = name || 'Student';
       subject = subject || 'Core Mathematics';
       score = score || '—';
+      grade = grade || '';
       date = date || new Date().toLocaleDateString('en-GB', { year: 'numeric', month: 'long', day: 'numeric' });
       certId = certId || generateCertId();
 
@@ -138,6 +164,20 @@
       document.getElementById('certDate').textContent = date;
       document.getElementById('certSubject').textContent = formatSubject(subject);
       document.getElementById('certId').textContent = certId;
+
+      // Show grade badge if available
+      if (grade) {
+        const scoreBadge = document.querySelector('.cert-score-badge');
+        if (scoreBadge) {
+          scoreBadge.innerHTML = `
+            <span class="cert-score-label">Grade</span>
+            <span class="cert-score-val">${grade}</span>
+            <span style="width:1px; height:20px; background:rgba(251,191,36,0.3); margin:0 8px;"></span>
+            <span class="cert-score-label">Score</span>
+            <span class="cert-score-val">${score.toString().includes('%') ? score : score + '%'}</span>
+          `;
+        }
+      }
 
       // Update description
       document.getElementById('certDescription').textContent = 
@@ -157,7 +197,9 @@
         'chemistry': 'Chemistry',
         'biology': 'Biology',
         'economics': 'Economics',
-        'compsci': 'Computer Science'
+        'compsci': 'Computer Science',
+        'elective_maths': 'Elective Mathematics',
+        'geography': 'Geography'
       };
       return map[sub] || sub || 'Core Mathematics';
     }
@@ -173,7 +215,7 @@
       const certId = document.getElementById('certId').textContent;
 
       const shareUrl = `${window.location.origin}/certificate?name=${encodeURIComponent(name)}&subject=${encodeURIComponent(subject)}&score=${encodeURIComponent(score)}&id=${encodeURIComponent(certId)}`;
-      const shareText = `I just earned a Vision Education certificate in ${subject} with a score of ${score}! 🎓🇬🇭 #WASSCE2026 #VisionEducation`;
+      const shareText = `I just earned a Vision Education certificate in ${subject} with a score of ${score}! #WASSCE2026 #VisionEducation`;
 
       if (navigator.share) {
         navigator.share({
@@ -192,8 +234,11 @@
       }
     }
 
-    // Init
-    document.addEventListener('DOMContentLoaded', loadCertificateData);
+    // Init — wait for Firebase to load then populate
+    document.addEventListener('DOMContentLoaded', () => {
+      // Give Firebase module a moment to initialize
+      setTimeout(() => loadCertificateData(), 300);
+    });
   </script>
 </body>
 </html>
