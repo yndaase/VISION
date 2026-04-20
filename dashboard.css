@@ -72,7 +72,7 @@
 .nav-item:hover {
   background: var(--primary-dim);
   color: var(--text-primary);
-  transform: translateX(3px);
+  transform: none;
 }
 
 .nav-item.active {
@@ -80,6 +80,11 @@
   color: var(--primary);
   font-weight: 700;
   box-shadow: inset 3px 0 0 var(--primary);
+}
+
+.nav-item:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
 }
 
 .nav-item-icon {
@@ -384,6 +389,11 @@
   box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
 }
 
+#globalSearch:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
 .search-kbd {
   position: absolute;
   right: 12px;
@@ -492,7 +502,7 @@
 .dash-hero {
   position: relative;
   background: var(--bg-hero);
-  padding: 5rem 2rem 4rem;
+  padding: 3.25rem 1.75rem 2.5rem;
   border-bottom: 1px solid var(--border);
   overflow: hidden;
 }
@@ -518,9 +528,9 @@
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  background: var(--indigo-dim);
-  border: 1px solid var(--border-bright);
-  color: var(--indigo);
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  color: var(--text-muted);
   font-size: 0.7rem;
   font-weight: 800;
   letter-spacing: 0.1em;
@@ -528,11 +538,11 @@
   padding: 6px 16px;
   border-radius: 100px;
   margin-bottom: 1.5rem;
-  backdrop-filter: blur(10px);
+  backdrop-filter: none;
 }
 
 .welcome-heading {
-  font-size: clamp(2.2rem, 6vw, 3.8rem);
+  font-size: clamp(2rem, 5vw, 3rem);
   font-weight: 800;
   line-height: 1.1;
   letter-spacing: -0.03em;
@@ -543,7 +553,7 @@
 }
 
 .welcome-sub {
-  font-size: 1.05rem;
+  font-size: 0.98rem;
   color: var(--text-secondary);
   margin-bottom: 2rem;
   line-height: 1.7;
@@ -569,33 +579,30 @@
   font-size: 0.92rem;
   font-weight: 700;
   text-decoration: none;
-  transition: all 0.25s;
+  transition: background-color 0.2s, border-color 0.2s, color 0.2s;
   cursor: pointer;
   box-sizing: border-box;
   line-height: 1;
   border: 2px solid transparent;
 }
 .hero-btn-primary {
-  background: linear-gradient(135deg, var(--primary) 0%, #8b5cf6 100%);
+  background: var(--primary);
   color: #fff;
-  box-shadow: 0 4px 20px rgba(99, 102, 241, 0.35);
+  box-shadow: none;
 }
 .hero-btn-primary:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 30px rgba(99, 102, 241, 0.5);
-  opacity: 0.92;
+  background: color-mix(in srgb, var(--primary) 88%, #000);
 }
 .hero-btn-secondary {
   background: transparent;
   color: var(--text-primary);
   border-color: var(--border-accent);
-  backdrop-filter: blur(8px);
+  backdrop-filter: none;
 }
 .hero-btn-secondary:hover {
   background: var(--primary-dim);
   border-color: var(--primary);
   color: var(--primary);
-  transform: translateY(-2px);
 }
 .hero-btn-icon {
   font-size: 1rem;
@@ -606,7 +613,12 @@
   transition: transform 0.2s;
 }
 .hero-btn-primary:hover .hero-btn-arrow {
-  transform: translateX(4px);
+  transform: none;
+}
+
+.hero-btn:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
 }
 
 /* ─── Trusted Schools Section ─── */
@@ -649,17 +661,14 @@
   flex-direction: column;
   align-items: center;
   gap: 3px;
-  backdrop-filter: blur(12px);
+  backdrop-filter: none;
   transition:
     border-color 0.3s,
-    transform 0.3s,
     box-shadow 0.3s;
-  animation: fadeInUp 0.5s ease both;
   box-shadow: var(--shadow-sm);
 }
 .dash-stat-chip:hover {
   border-color: var(--border-bright);
-  transform: translateY(-3px);
   box-shadow: var(--shadow-md);
 }
 
@@ -724,12 +733,10 @@
   color: var(--text-primary);
   border: 1px solid var(--border);
   background: var(--bg-card);
-  backdrop-filter: blur(12px);
+  backdrop-filter: none;
   transition:
     border-color 0.3s,
-    transform 0.3s,
     box-shadow 0.3s;
-  animation: fadeInUp 0.5s ease both;
   display: block;
 }
 .subject-card-inner {
@@ -744,8 +751,20 @@
 }
 .subject-card.available:hover {
   border-color: var(--border-accent);
-  transform: translateY(-5px);
-  box-shadow: var(--shadow-lg);
+  box-shadow: var(--shadow-md);
+}
+
+.subject-card:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    scroll-behavior: auto !important;
+    transition: none !important;
+    animation: none !important;
+  }
 }
 
 .subject-card.available::before {
@@ -1155,6 +1174,10 @@
 .setting-input:focus {
   border-color: var(--primary);
   box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+}
+.setting-input:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
 }
 .setting-input::placeholder {
   color: var(--text-muted);

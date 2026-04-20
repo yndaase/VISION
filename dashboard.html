@@ -140,6 +140,12 @@
       color: var(--text-primary);
     }
 
+    .dropdown-item:focus-visible {
+      outline: 2px solid var(--primary);
+      outline-offset: -2px;
+      border-radius: 10px;
+    }
+
     .dropdown-item.danger {
       color: var(--error);
     }
@@ -156,14 +162,14 @@
     .pro-badge {
       font-size: 0.62rem;
       font-weight: 900;
-      background: linear-gradient(135deg, #fbbf24, #f59e0b);
-      color: #000;
+      background: rgba(99, 102, 241, 0.15);
+      color: var(--text-primary);
       padding: 2px 6px;
       border-radius: 4px;
       margin-left: 8px;
       text-transform: uppercase;
       letter-spacing: 0.04em;
-      box-shadow: 0 4px 10px rgba(251, 191, 36, 0.25);
+      box-shadow: none;
       display: inline-flex;
       align-items: center;
       line-height: 1;
@@ -178,7 +184,7 @@
       justify-content: center;
       margin-top: auto;
       padding: 14px;
-      background: linear-gradient(135deg, #0078d4, #288ad6);
+      background: var(--primary);
       color: white !important;
       border-radius: 12px;
       margin-bottom: 24px;
@@ -186,30 +192,18 @@
       font-weight: 800;
       font-size: 0.88rem;
       text-align: center;
-      animation: pulse-pro 2s infinite;
-      box-shadow: 0 4px 20px rgba(0, 120, 212, 0.4);
-      transition: all 0.3s ease;
+      box-shadow: none;
+      transition: background-color 0.2s, transform 0.2s;
     }
     .nav-get-pro:hover {
-      transform: scale(1.02) translateY(-2px);
-      box-shadow: 0 6px 25px rgba(0, 120, 212, 0.6);
-    }
-    @keyframes pulse-pro {
-      0% { transform: scale(1); box-shadow: 0 4px 15px rgba(0, 120, 212, 0.3); }
-      50% { transform: scale(1.02); box-shadow: 0 4px 25px rgba(0, 120, 212, 0.5); }
-      100% { transform: scale(1); box-shadow: 0 4px 15px rgba(0, 120, 212, 0.3); }
+      transform: translateY(-1px);
+      background: color-mix(in srgb, var(--primary) 88%, #000);
     }
     .hero-btn-pro {
-      background: linear-gradient(135deg, #0078d4, #288ad6);
-      border: none !important;
+      background: var(--primary);
+      border: 2px solid transparent !important;
       color: white !important;
-      animation: pulse-hero-pro 2s infinite;
-      box-shadow: 0 4px 15px rgba(0, 120, 212, 0.4);
-    }
-    @keyframes pulse-hero-pro {
-      0% { box-shadow: 0 4px 15px rgba(0, 120, 212, 0.4); }
-      50% { box-shadow: 0 4px 25px rgba(0, 120, 212, 0.7); }
-      100% { box-shadow: 0 4px 15px rgba(0, 120, 212, 0.4); }
+      box-shadow: none;
     }
 
     /* System Broadcast UI */
@@ -220,20 +214,15 @@
       z-index: 10;
     }
     .broadcast-card {
-      background: rgba(13, 17, 23, 0.7);
-      backdrop-filter: blur(20px);
+      background: var(--bg-card);
+      backdrop-filter: none;
       border: 1px solid var(--border);
       border-radius: 24px;
       padding: 1.5rem 2rem;
       display: flex;
       align-items: center;
       gap: 1.5rem;
-      box-shadow: 0 20px 40px rgba(0,0,0,0.3);
-      animation: fadeInRotate 0.8s cubic-bezier(0.17, 0.84, 0.44, 1);
-    }
-    @keyframes fadeInRotate {
-      from { opacity: 0; transform: translateY(20px) rotateX(-5deg); }
-      to { opacity: 1; transform: translateY(0) rotateX(0); }
+      box-shadow: var(--shadow-sm);
     }
     .broadcast-icon {
       width: 48px;
@@ -466,8 +455,8 @@
     
     <!-- PRO PROMO STRIP -->
     <div class="pro-promo-strip" id="proPromoStrip" style="background: rgba(251, 191, 36, 0.1); border-bottom: 1px solid rgba(251, 191, 36, 0.2); color: #fb923c; padding: 0.6rem 1rem; text-align: center; font-size: 0.82rem; z-index: 1000;">
-        <span style="font-weight: 600;">PROMO ACTIVE: </span>
-        <span>Upgrade to <strong style="color: #fbbf24;">VISION PRO</strong> for just <strong>1 GHS</strong> (<s>5 GHS</s>)</span>
+        <span style="font-weight: 600;">Promo: </span>
+        <span>Vision Pro for <strong style="color: #fbbf24;">1 GHS</strong> (<s>5 GHS</s>)</span>
         <a href="pricing.html" style="color: #fbbf24; text-decoration: underline; font-weight: 700;">View Pricing</a>
       </div>
 
@@ -486,14 +475,14 @@
 
         <div class="welcome-badge" id="welcomeBadge">
           <span class="badge-dot"></span>
-          Official Examination Portal &middot; 2026 WASSCE
+          Student Dashboard &middot; 2026 WASSCE
         </div>
         <h1 class="welcome-heading">
-          Strategic Excellence,<br />
-          <span class="welcome-name gradient-text" id="welcomeName">Student</span>
+          Welcome,<br />
+          <span class="welcome-name" id="welcomeName">Student</span>
         </h1>
         <p class="welcome-sub">
-          Authorized 2026 Curriculum &middot; Specialised Section B Analysis.
+          Choose a subject to practice, take a mock, or review your performance.
         </p>
 
         <!-- Pro Section Banner -->
@@ -521,8 +510,7 @@
         <div class="hero-actions">
           <a href="/mocks" class="hero-btn hero-btn-primary">
             <span class="hero-btn-icon"></span>
-            <span>Start Mock Exam</span>
-            <span class="hero-btn-arrow">→</span>
+            <span>Mocks</span>
           </a>
           <!-- Added Get Pro Button for Hero Visibility -->
           <a href="pricing.html" class="hero-btn hero-btn-pro" id="heroGetProBtn" style="display:none;">
@@ -530,17 +518,19 @@
           </a>
           <a href="ai-learning.html" class="hero-btn hero-btn-secondary" style="border-color: var(--primary); color: var(--primary); background: var(--primary-dim);">
             <span class="hero-btn-icon"></span>
-            <span>AI Learning Hub</span>
+            <span>AI Learning</span>
           </a>
           <a href="/analytics" class="hero-btn hero-btn-secondary">
             <span class="hero-btn-icon"></span>
-            <span>View Analytics</span>
+            <span>Analytics</span>
           </a>
         </div>
 
         <!-- Streak Card -->
         <div class="streak-card" style="margin-bottom: 1.5rem;">
-          <div class="streak-fire streak-fire-cold" id="streakFire">🔥</div>
+          <div class="streak-fire streak-fire-cold" id="streakFire">
+            <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M13.5 0.67s0.74 2.65-0.8 4.2c-1.54 1.55-3.34 1.9-2.98 5.14.36 3.24 3.05 3.54 3.05 3.54s-0.69-1.21 0.09-2.36c0.78-1.15 2.09-1.86 2.46-3.43 0.37-1.57-0.82-3.31-0.82-3.31s2.67 1.87 3.33 4.63c0.66 2.76-0.21 4.87-1.61 6.28-1.4 1.41-3.43 2.1-5.26 1.83-1.83-0.27-3.42-1.38-4.31-2.92-0.89-1.54-1.05-3.45-0.55-5.14 0.5-1.69 1.58-3.02 2.86-4.15C11.27 3.52 13.5 0.67 13.5 0.67z"/></svg>
+          </div>
           <div class="streak-info">
             <span class="streak-count" id="streakCurrent">0</span>
             <span class="streak-label">Day Streak</span>
@@ -599,8 +589,8 @@
         </div>
         <div class="broadcast-content" id="broadcastList">
           <span class="broadcast-label">SYSTEM UPDATE</span>
-          <div class="broadcast-title" id="broadcastTitle">Mission Command: System initializing...</div>
-          <div class="broadcast-body" id="broadcastBody">Fetching global data nodes and administrative directives.</div>
+          <div class="broadcast-title" id="broadcastTitle">Loading updates...</div>
+          <div class="broadcast-body" id="broadcastBody">Checking for announcements.</div>
         </div>
         <div class="broadcast-date" id="broadcastDate">--:--</div>
       </div>
@@ -608,7 +598,7 @@
 
     <!--  TRUSTED SCHOOLS  -->
     <section class="trusted-schools">
-      <p class="trusted-label">Trusted by Top Institutions in Ghana</p>
+      <p class="trusted-label">Trusted by schools in Ghana</p>
       <div class="trusted-pills">
         <div class="institution-pill">
           <div class="institution-avatar"></div>
@@ -627,7 +617,7 @@
         <div class="section-header">
           <h2 class="section-title">Subject Modules</h2>
           <p class="section-sub">
-            WAEC 2026 syllabus · Crafted by Senior Curriculum Specialists
+            WAEC 2026 syllabus aligned
           </p>
         </div>
 
@@ -1268,7 +1258,7 @@
                 <div style="font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; font-weight: 800; margin-bottom: 4px;">Renewal / Expiry Date</div>
                 <div id="subExpiryDate" style="font-size: 1.1rem; font-weight: 700; color: var(--text-primary);">Processing...</div>
             </div>
-            <p id="subDescription" style="color: var(--text-secondary); line-height: 1.6; font-size: 0.9rem;">Enjoy full access to the 2026 High-Performance suite, including Azure GPT-4o and Strategic Study Planning.</p>
+            <p id="subDescription" style="color: var(--text-secondary); line-height: 1.6; font-size: 0.9rem;">Full access to premium mocks and AI tools.</p>
           </div>
         </div>
 
@@ -1339,7 +1329,7 @@
                   badgeEl.style.background = "var(--ent-accent, #fbbf24)";
                   badgeEl.style.color = "#000";
                   dateEl.textContent = "Managed by Institution";
-                  descEl.textContent = "You are currently covered by an official institutional license. Full access to the 2026 Strategic Suite is active.";
+                  descEl.textContent = "Your school license is active. Full access is enabled.";
                   card.style.border = "1px solid #fbbf24";
                   card.style.background = "linear-gradient(135deg, rgba(251, 191, 36, 0.05), rgba(0, 0, 0, 0.2))";
               } else if (isAdmin) {
