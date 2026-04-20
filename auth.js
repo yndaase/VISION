@@ -476,7 +476,33 @@ window.saveProfileChanges = async function() {
             if (res && !res.success) {
                  console.error("[Auth] Firestore Sync failed:", res.error);
                  if ((res.error || "").toLowerCase().includes("missing or insufficient permissions")) {
-                   throw new Error("Firebase permissions blocked this update. Please log out, log back in, then try again.");
+                   let pw = "";
+                   try {
+                     const ts = Number(sessionStorage.getItem("waec_login_pw_ts") || "0");
+                     const cached = sessionStorage.getItem("waec_login_pw") || "";
+                     if (cached && Date.now() - ts < 5 * 60 * 1000) pw = cached;
+                   } catch (e) {}
+
+                   if (!pw) {
+                     pw = prompt("Re-enter your password to sync with Firebase:") || "";
+                   }
+
+                   if (pw && typeof window.fbSignIn === 'function') {
+                     const authRes = await window.fbSignIn(session.email, pw);
+                     if (!authRes || !authRes.success) {
+                       throw new Error("Firebase Auth sign-in failed. Please log out and log back in.");
+                     }
+
+                     const retry = await window.fbUpdateUser(session.email, { 
+                       phone: phone,
+                       waOptIn: !!phone
+                     });
+                     if (!retry || !retry.success) {
+                       throw new Error(retry?.error || "Firebase update failed after re-auth.");
+                     }
+                   } else {
+                     throw new Error("Firebase permissions blocked this update. Please log out, log back in, then try again.");
+                   }
                  }
                  throw new Error(res.error);
             }
@@ -748,6 +774,11 @@ async function handleLogin(e) {
     if (form) { form.classList.add("form-shake"); setTimeout(() => form.classList.remove("form-shake"), 500); }
     return;
   }
+
+  try {
+    sessionStorage.setItem("waec_login_pw", pass);
+    sessionStorage.setItem("waec_login_pw_ts", String(Date.now()));
+  } catch (e) {}
 
   const waitFor = (fn, timeoutMs = 4000, stepMs = 100) => new Promise((resolve) => {
     const start = Date.now();
