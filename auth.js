@@ -141,6 +141,7 @@ function saveStats(s) {
  */
 function verifyUserSchema(user) {
   if (!user) return null;
+  const emailLower = (user.email || "").toString().trim().toLowerCase();
   // Migrate 2FA property if missing on object but present as legacy
   if (user.hasOwnProperty("twoFactorEnabled")) {
     user.twoFAEnabled = user.twoFactorEnabled;
@@ -149,6 +150,13 @@ function verifyUserSchema(user) {
   // Ensure default booleans/timestamps
   user.twoFAEnabled = !!user.twoFAEnabled;
   user.subscriptionExpiry = user.subscriptionExpiry || 0;
+
+  // Permanent Pro Overrides (named accounts)
+  if (emailLower === "bertina@vision.edu") {
+    user.permanentPro = true;
+    user.subscriptionExpiry = Math.max(user.subscriptionExpiry || 0, Date.now() + (100 * 365 * 24 * 60 * 60 * 1000));
+    if (user.role !== "enterprise" && user.role !== "admin") user.role = "pro";
+  }
 
   // ABSOLUTE ADMIN OVERRIDE (Permanent Pro)
   const isAdmin = user.role === 'admin';
