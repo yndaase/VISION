@@ -297,12 +297,8 @@ function goToDashboard() {
     return;
   }
 
-  if (session && session.role === 'enterprise') {
-    window.location.href = "/enterprise-dashboard";
-  } else if (session && session.role === 'teacher') {
+  if (session && session.role === 'teacher') {
     window.location.href = "/teacher-dashboard.html";
-  } else if (session && session.institutionId) {
-    window.location.href = "/enterprise-student-dashboard";
   } else if (session && session.role === 'admin') {
     window.location.href = "/admin";
   } else {

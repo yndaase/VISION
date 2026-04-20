@@ -575,8 +575,34 @@
 .dash-hero-content {
   position: relative;
   z-index: 2;
-  max-width: 700px;
+  max-width: 1100px;
   margin: 0 auto;
+}
+
+.hero-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+  align-items: start;
+}
+
+@media (min-width: 920px) {
+  .hero-grid {
+    grid-template-columns: 1fr 360px;
+    gap: 2rem;
+  }
+}
+
+.hero-right {
+  align-self: start;
+}
+
+.hero-right .dash-stats {
+  margin-bottom: 0;
+}
+
+.hero-right .dash-stat-chip {
+  box-shadow: none;
 }
 
 .welcome-badge {

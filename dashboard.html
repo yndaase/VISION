@@ -297,12 +297,6 @@
         </span>
         <span>Mock Exams</span>
       </a>
-      <a href="/analytics" class="nav-item">
-        <span class="nav-item-icon">
-          <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/></svg>
-        </span>
-        <span>Performance</span>
-      </a>
       <a href="/ai-learning" class="nav-item">
         <span class="nav-item-icon">
           <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M19 13l-1.26-2.74L15 9l2.74-1.26L19 5l1.26 2.74L23 9l-2.74 1.26L19 13zM9 13l-2.26-4.74L2 6l4.74-2.26L9 1.5l2.26 4.74L16 8.26l-4.74 2.26L9 13zm10 9.5l-1.26-2.74L15 18.5l2.74-1.26L19 14.5l1.26 2.74L23 18.5l-2.74 1.26L19 22.5z"/></svg>
@@ -320,18 +314,6 @@
           <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM7 10h5v5H7z"/></svg>
         </span>
         <span>Study Planner</span>
-      </a>
-      <a href="/leaderboard" class="nav-item">
-        <span class="nav-item-icon">
-          <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M7.5 21H2V9h5.5v12zm7.25-18h-5.5v18h5.5V3zM22 11h-5.5v10H22V11z"/></svg>
-        </span>
-        <span>Leaderboard</span>
-      </a>
-      <a href="/forum" class="nav-item">
-        <span class="nav-item-icon">
-          <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M21 6h-2v9H6v2c0 .55.45 1 1 1h11l4 4V7c0-.55-.45-1-1-1zm-4 6V3c0-.55-.45-1-1-1H3c-.55 0-1 .45-1 1v14l4-4h10c.55 0 1-.45 1-1z"/></svg>
-        </span>
-        <span>Forum</span>
       </a>
       <a href="/pricing" class="nav-get-pro" id="sideNavGetPro">
         <span>Upgrade</span>
@@ -377,12 +359,6 @@
         <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor"><path d="M19 13l-1.26-2.74L15 9l2.74-1.26L19 5l1.26 2.74L23 9l-2.74 1.26L19 13zM9 13l-2.26-4.74L2 6l4.74-2.26L9 1.5l2.26 4.74L16 8.26l-4.74 2.26L9 13zm10 9.5l-1.26-2.74L15 18.5l2.74-1.26L19 14.5l1.26 2.74L23 18.5l-2.74 1.26L19 22.5z"/></svg>
       </span>
       <span style="font-weight: 800;">AI Hub</span>
-    </a>
-    <a href="/analytics" class="bottom-nav-item">
-      <span class="bottom-icon">
-        <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/></svg>
-      </span>
-      <span>Stats</span>
     </a>
     <a href="#" class="bottom-nav-item" onclick="openSettings(); return false;">
       <span class="bottom-icon">
@@ -441,8 +417,7 @@
                   ">
                 Settings
               </button>
-              <a class="dropdown-item" href="/analytics">
-                My Performance</a>
+              
               <button class="dropdown-item danger" onclick="handleLogout()">
                 <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
                 Logout
@@ -463,6 +438,8 @@
     <!--  HERO / WELCOME  -->
     <section class="dash-hero">
       <div class="dash-hero-content">
+        <div class="hero-grid">
+          <div class="hero-left">
         <!-- WELCOME CARD -->
         
         <!-- Institutional Branding Column -->
@@ -482,7 +459,7 @@
           <span class="welcome-name" id="welcomeName">Student</span>
         </h1>
         <p class="welcome-sub">
-          Choose a subject to practice, take a mock, or review your performance.
+          Choose a subject to practice, take a mock, or review your progress.
         </p>
 
         <!-- Pro Section Banner -->
@@ -493,8 +470,7 @@
                 Vision Pro <span class="pro-badge" style="background: linear-gradient(135deg, #0078d4, #288ad6);">Azure AI Powered</span>
               </h3>
               <p style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.6;">
-                Unlock **Microsoft Copilot-grade Intelligence**, proctored Part B analysis, and comprehensive subject packs. 
-                Premium Membership: **30.00 GHS / month**.
+                Premium mocks and AI tools. 30.00 GHS / month.
               </p>
             </div>
             <div style="display: flex; flex-direction: column; gap: 0.8rem; min-width: 200px;">
@@ -516,48 +492,54 @@
           <a href="pricing.html" class="hero-btn hero-btn-pro" id="heroGetProBtn" style="display:none;">
             <span>Upgrade</span>
           </a>
-          <a href="ai-learning.html" class="hero-btn hero-btn-secondary" style="border-color: var(--primary); color: var(--primary); background: var(--primary-dim);">
+          <a href="ai-learning.html" class="hero-btn hero-btn-secondary">
             <span class="hero-btn-icon"></span>
             <span>AI Learning</span>
           </a>
-          <a href="/analytics" class="hero-btn hero-btn-secondary">
+          <a href="/planner" class="hero-btn hero-btn-secondary">
             <span class="hero-btn-icon"></span>
-            <span>Analytics</span>
+            <span>Planner</span>
           </a>
+          <button type="button" class="hero-btn hero-btn-secondary" onclick="openSettings()">
+            <span class="hero-btn-icon"></span>
+            <span>Settings</span>
+          </button>
         </div>
 
-        <!-- Streak Card -->
-        <div class="streak-card" style="margin-bottom: 1.5rem;">
-          <div class="streak-fire streak-fire-cold" id="streakFire">
-            <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M13.5 0.67s0.74 2.65-0.8 4.2c-1.54 1.55-3.34 1.9-2.98 5.14.36 3.24 3.05 3.54 3.05 3.54s-0.69-1.21 0.09-2.36c0.78-1.15 2.09-1.86 2.46-3.43 0.37-1.57-0.82-3.31-0.82-3.31s2.67 1.87 3.33 4.63c0.66 2.76-0.21 4.87-1.61 6.28-1.4 1.41-3.43 2.1-5.26 1.83-1.83-0.27-3.42-1.38-4.31-2.92-0.89-1.54-1.05-3.45-0.55-5.14 0.5-1.69 1.58-3.02 2.86-4.15C11.27 3.52 13.5 0.67 13.5 0.67z"/></svg>
           </div>
-          <div class="streak-info">
-            <span class="streak-count" id="streakCurrent">0</span>
-            <span class="streak-label">Day Streak</span>
-          </div>
-          <div class="streak-meta">
-            <span class="streak-longest">Best: <span id="streakLongest">0</span> days</span>
-            <span class="streak-status" id="streakStatus"></span>
-          </div>
-        </div>
+          <div class="hero-right">
+            <div class="streak-card" style="margin-bottom: 1.25rem;">
+              <div class="streak-fire streak-fire-cold" id="streakFire">
+                <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M13.5 0.67s0.74 2.65-0.8 4.2c-1.54 1.55-3.34 1.9-2.98 5.14.36 3.24 3.05 3.54 3.05 3.54s-0.69-1.21 0.09-2.36c0.78-1.15 2.09-1.86 2.46-3.43 0.37-1.57-0.82-3.31-0.82-3.31s2.67 1.87 3.33 4.63c0.66 2.76-0.21 4.87-1.61 6.28-1.4 1.41-3.43 2.1-5.26 1.83-1.83-0.27-3.42-1.38-4.31-2.92-0.89-1.54-1.05-3.45-0.55-5.14 0.5-1.69 1.58-3.02 2.86-4.15C11.27 3.52 13.5 0.67 13.5 0.67z"/></svg>
+              </div>
+              <div class="streak-info">
+                <span class="streak-count" id="streakCurrent">0</span>
+                <span class="streak-label">Day Streak</span>
+              </div>
+              <div class="streak-meta">
+                <span class="streak-longest">Best: <span id="streakLongest">0</span> days</span>
+                <span class="streak-status" id="streakStatus"></span>
+              </div>
+            </div>
 
-        <!-- Stats row -->
-        <div class="dash-stats" id="dashStats">
-          <div class="dash-stat-chip">
-            <span class="dash-stat-num" id="statAnswered">0</span>
-            <span class="dash-stat-lbl">Questions Done</span>
-          </div>
-          <div class="dash-stat-chip">
-            <span class="dash-stat-num" id="statCorrect">0</span>
-            <span class="dash-stat-lbl">Correct</span>
-          </div>
-          <div class="dash-stat-chip">
-            <span class="dash-stat-num" id="statPct"></span>
-            <span class="dash-stat-lbl">Accuracy</span>
-          </div>
-          <div class="dash-stat-chip">
-            <span class="dash-stat-num">8</span>
-            <span class="dash-stat-lbl">Subjects</span>
+            <div class="dash-stats" id="dashStats">
+              <div class="dash-stat-chip">
+                <span class="dash-stat-num" id="statAnswered">0</span>
+                <span class="dash-stat-lbl">Questions Done</span>
+              </div>
+              <div class="dash-stat-chip">
+                <span class="dash-stat-num" id="statCorrect">0</span>
+                <span class="dash-stat-lbl">Correct</span>
+              </div>
+              <div class="dash-stat-chip">
+                <span class="dash-stat-num" id="statPct"></span>
+                <span class="dash-stat-lbl">Accuracy</span>
+              </div>
+              <div class="dash-stat-chip">
+                <span class="dash-stat-num">8</span>
+                <span class="dash-stat-lbl">Subjects</span>
+              </div>
+            </div>
           </div>
         </div>
 
