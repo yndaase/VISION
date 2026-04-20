@@ -459,47 +459,32 @@
 
 
 
-        <!-- Action Buttons -->
-        <div class="hero-actions">
-          <a href="/mocks" class="hero-btn hero-btn-primary">
-            <span class="hero-btn-icon"></span>
-            <span>Mocks</span>
-          </a>
 
-          <a href="ai-learning.html" class="hero-btn hero-btn-secondary">
-            <span class="hero-btn-icon"></span>
-            <span>AI Learning</span>
-          </a>
-          <a href="/planner" class="hero-btn hero-btn-secondary">
-            <span class="hero-btn-icon"></span>
-            <span>Planner</span>
-          </a>
-          <button type="button" class="hero-btn hero-btn-secondary" onclick="openSettings()">
-            <span class="hero-btn-icon"></span>
-            <span>Settings</span>
-          </button>
-        </div>
 
           </div>
           <div class="hero-right">
-            <div class="streak-card" style="margin-bottom: 1.25rem;">
-              <div class="streak-fire streak-fire-cold" id="streakFire">
-                <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M13.5 0.67s0.74 2.65-0.8 4.2c-1.54 1.55-3.34 1.9-2.98 5.14.36 3.24 3.05 3.54 3.05 3.54s-0.69-1.21 0.09-2.36c0.78-1.15 2.09-1.86 2.46-3.43 0.37-1.57-0.82-3.31-0.82-3.31s2.67 1.87 3.33 4.63c0.66 2.76-0.21 4.87-1.61 6.28-1.4 1.41-3.43 2.1-5.26 1.83-1.83-0.27-3.42-1.38-4.31-2.92-0.89-1.54-1.05-3.45-0.55-5.14 0.5-1.69 1.58-3.02 2.86-4.15C11.27 3.52 13.5 0.67 13.5 0.67z"/></svg>
+            <!-- Streak Widget -->
+            <div class="streak-widget">
+              <div class="streak-widget-top">
+                <div class="streak-fire streak-fire-cold" id="streakFire">
+                  <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M13.5 0.67s0.74 2.65-0.8 4.2c-1.54 1.55-3.34 1.9-2.98 5.14.36 3.24 3.05 3.54 3.05 3.54s-0.69-1.21 0.09-2.36c0.78-1.15 2.09-1.86 2.46-3.43 0.37-1.57-0.82-3.31-0.82-3.31s2.67 1.87 3.33 4.63c0.66 2.76-0.21 4.87-1.61 6.28-1.4 1.41-3.43 2.1-5.26 1.83-1.83-0.27-3.42-1.38-4.31-2.92-0.89-1.54-1.05-3.45-0.55-5.14 0.5-1.69 1.58-3.02 2.86-4.15C11.27 3.52 13.5 0.67 13.5 0.67z"/></svg>
+                </div>
+                <div class="streak-widget-count">
+                  <span class="streak-num" id="streakCurrent">0</span>
+                  <span class="streak-unit">day streak</span>
+                </div>
               </div>
-              <div class="streak-info">
-                <span class="streak-count" id="streakCurrent">0</span>
-                <span class="streak-label">Day Streak</span>
-              </div>
-              <div class="streak-meta">
-                <span class="streak-longest">Best: <span id="streakLongest">0</span> days</span>
+              <div class="streak-widget-footer">
+                <span class="streak-best">Best: <strong id="streakLongest">0</strong> days</span>
                 <span class="streak-status" id="streakStatus"></span>
               </div>
             </div>
 
+            <!-- Stats Grid -->
             <div class="dash-stats" id="dashStats">
               <div class="dash-stat-chip">
                 <span class="dash-stat-num" id="statAnswered">0</span>
-                <span class="dash-stat-lbl">Questions Done</span>
+                <span class="dash-stat-lbl">Answered</span>
               </div>
               <div class="dash-stat-chip">
                 <span class="dash-stat-num" id="statCorrect">0</span>
@@ -569,24 +554,7 @@
                 <div class="subject-icon-wrap" style="--subj-color: var(--primary)">
                   <span class="subject-icon"></span>
                 </div>
-                <div style="
-                      display: flex;
-                      flex-direction: column;
-                      align-items: flex-end;
-                      gap: 4px;
-                    ">
-                  <span class="subject-status available-tag">Available</span>
-                  <span style="
-                        font-size: 0.6rem;
-                        font-weight: 800;
-                        color: var(--primary);
-                        background: var(--primary-dim);
-                        padding: 2px 8px;
-                        border-radius: 4px;
-                        letter-spacing: 0.05em;
-                        border: 1px solid var(--border-accent);
-                      ">WAEC VERIFIED</span>
-                </div>
+                <span class="subject-status available-tag">Available</span>
               </div>
               <h3 class="subject-name">Core Mathematics</h3>
               <p class="subject-desc">
@@ -611,24 +579,7 @@
                 <div class="subject-icon-wrap" style="--subj-color: #60a5fa">
                   <span class="subject-icon"></span>
                 </div>
-                <div style="
-                      display: flex;
-                      flex-direction: column;
-                      align-items: flex-end;
-                      gap: 4px;
-                    ">
-                  <span class="subject-status available-tag">Available</span>
-                  <span style="
-                        font-size: 0.6rem;
-                        font-weight: 800;
-                        color: var(--primary);
-                        background: var(--primary-dim);
-                        padding: 2px 8px;
-                        border-radius: 4px;
-                        letter-spacing: 0.05em;
-                        border: 1px solid var(--border-accent);
-                      ">2026 ALIGNED</span>
-                </div>
+                <span class="subject-status available-tag">Available</span>
               </div>
               <h3 class="subject-name">English Language</h3>
               <p class="subject-desc">
@@ -653,24 +604,7 @@
                 <div class="subject-icon-wrap" style="--subj-color: #34d399">
                   <span class="subject-icon"></span>
                 </div>
-                <div style="
-                      display: flex;
-                      flex-direction: column;
-                      align-items: flex-end;
-                      gap: 4px;
-                    ">
-                  <span class="subject-status available-tag">Available</span>
-                  <span style="
-                        font-size: 0.6rem;
-                        font-weight: 800;
-                        color: var(--primary);
-                        background: var(--primary-dim);
-                        padding: 2px 8px;
-                        border-radius: 4px;
-                        letter-spacing: 0.05em;
-                        border: 1px solid var(--border-accent);
-                      ">EXPERT CURATED</span>
-                </div>
+                <span class="subject-status available-tag">Available</span>
               </div>
               <h3 class="subject-name">Integrated Science</h3>
               <p class="subject-desc">
@@ -694,24 +628,7 @@
                 <div class="subject-icon-wrap" style="--subj-color: #a78bfa">
                   <span class="subject-icon"></span>
                 </div>
-                <div style="
-                      display: flex;
-                      flex-direction: column;
-                      align-items: flex-end;
-                      gap: 4px;
-                    ">
-                  <span class="subject-status available-tag">Available</span>
-                  <span style="
-                        font-size: 0.6rem;
-                        font-weight: 800;
-                        color: var(--primary);
-                        background: var(--primary-dim);
-                        padding: 2px 8px;
-                        border-radius: 4px;
-                        letter-spacing: 0.05em;
-                        border: 1px solid var(--border-accent);
-                      ">2026 ALIGNED</span>
-                </div>
+                <span class="subject-status available-tag">Available</span>
               </div>
               <h3 class="subject-name">Social Studies</h3>
               <p class="subject-desc">
@@ -736,24 +653,7 @@
                 <div class="subject-icon-wrap" style="--subj-color: #f87171">
                   <span class="subject-icon"></span>
                 </div>
-                <div style="
-                      display: flex;
-                      flex-direction: column;
-                      align-items: flex-end;
-                      gap: 4px;
-                    ">
-                  <span class="subject-status premium-tag">Premium Access</span>
-                  <span style="
-                        font-size: 0.6rem;
-                        font-weight: 800;
-                        color: #f59e0b;
-                        background: rgba(245, 158, 11, 0.1);
-                        padding: 2px 8px;
-                        border-radius: 4px;
-                        letter-spacing: 0.05em;
-                        border: 1px solid rgba(245, 158, 11, 0.2);
-                      ">10.00 GHS</span>
-                </div>
+                <span class="subject-status premium-tag">Premium</span>
               </div>
               <h3 class="subject-name">Physics</h3>
               <p class="subject-desc">
@@ -777,24 +677,7 @@
                 <div class="subject-icon-wrap" style="--subj-color: #fb923c">
                   <span class="subject-icon"></span>
                 </div>
-                <div style="
-                      display: flex;
-                      flex-direction: column;
-                      align-items: flex-end;
-                      gap: 4px;
-                    ">
-                  <span class="subject-status available-tag">Available</span>
-                  <span style="
-                        font-size: 0.6rem;
-                        font-weight: 800;
-                        color: var(--primary);
-                        background: var(--primary-dim);
-                        padding: 2px 8px;
-                        border-radius: 4px;
-                        letter-spacing: 0.05em;
-                        border: 1px solid var(--border-accent);
-                      ">2026 ALIGNED</span>
-                </div>
+                <span class="subject-status available-tag">Available</span>
               </div>
               <h3 class="subject-name">Chemistry</h3>
               <p class="subject-desc">
@@ -819,24 +702,7 @@
                 <div class="subject-icon-wrap" style="--subj-color: #4ade80">
                   <span class="subject-icon"></span>
                 </div>
-                <div style="
-                      display: flex;
-                      flex-direction: column;
-                      align-items: flex-end;
-                      gap: 4px;
-                    ">
-                  <span class="subject-status available-tag">Available</span>
-                  <span style="
-                        font-size: 0.6rem;
-                        font-weight: 800;
-                        color: var(--primary);
-                        background: var(--primary-dim);
-                        padding: 2px 8px;
-                        border-radius: 4px;
-                        letter-spacing: 0.05em;
-                        border: 1px solid var(--border-accent);
-                      ">EXPERT CURATED</span>
-                </div>
+                <span class="subject-status available-tag">Available</span>
               </div>
               <h3 class="subject-name">Biology</h3>
               <p class="subject-desc">
@@ -861,24 +727,7 @@
                 <div class="subject-icon-wrap" style="--subj-color: #38bdf8">
                   <span class="subject-icon"></span>
                 </div>
-                <div style="
-                      display: flex;
-                      flex-direction: column;
-                      align-items: flex-end;
-                      gap: 4px;
-                    ">
-                  <span class="subject-status available-tag">Available</span>
-                  <span style="
-                        font-size: 0.6rem;
-                        font-weight: 800;
-                        color: var(--primary);
-                        background: var(--primary-dim);
-                        padding: 2px 8px;
-                        border-radius: 4px;
-                        letter-spacing: 0.05em;
-                        border: 1px solid var(--border-accent);
-                      ">2026 ALIGNED</span>
-                </div>
+                <span class="subject-status available-tag">Available</span>
               </div>
               <h3 class="subject-name">Economics</h3>
               <p class="subject-desc">
@@ -903,24 +752,7 @@
                 <div class="subject-icon-wrap" style="--subj-color: #14b8a6">
                   <span class="subject-icon"></span>
                 </div>
-                <div style="
-                      display: flex;
-                      flex-direction: column;
-                      align-items: flex-end;
-                      gap: 4px;
-                    ">
-                  <span class="subject-status premium-tag">Premium Access</span>
-                  <span style="
-                        font-size: 0.6rem;
-                        font-weight: 800;
-                        color: #f59e0b;
-                        background: rgba(245, 158, 11, 0.1);
-                        padding: 2px 8px;
-                        border-radius: 4px;
-                        letter-spacing: 0.05em;
-                        border: 1px solid rgba(245, 158, 11, 0.2);
-                      ">5.00 GHS</span>
-                </div>
+                <span class="subject-status premium-tag">Premium</span>
               </div>
               <h3 class="subject-name">Computer Science</h3>
               <p class="subject-desc">
