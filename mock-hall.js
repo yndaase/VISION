@@ -83,6 +83,7 @@ const AI_MOCK_CONFIGS = {
   ai_mock_chemistry:   { subject: "Chemistry",           title: "Chemistry AI Mock",            mcqCount: 25, theoryCount: 5, timeLimit: 150 },
   ai_mock_biology:     { subject: "Biology",             title: "Biology AI Mock",              mcqCount: 25, theoryCount: 5, timeLimit: 150 },
   ai_mock_bertina:     { subject: "Core Mathematics",    title: "Bertinas Mock",                mcqCount: 24, theoryCount: 6, timeLimit: 30, focusTopics: "Graph differentiation and modulo arithmetic" },
+  ai_mock_emath_focus: { subject: "Elective Mathematics", title: "Elective Maths: Graphs, Gradients, Modulo & Differentiation", mcqCount: 25, theoryCount: 5, timeLimit: 150, focusTopics: "Graphs and graph interpretation, Gradient of a line (slope, equation of a line, parallel and perpendicular lines), Modulo arithmetic (mod operations, congruences, clock arithmetic), Differentiation (first principles, power rule, product rule, quotient rule, chain rule, applications of differentiation including maxima, minima, rate of change)" },
 };
 
 // ============================================================
