@@ -382,9 +382,9 @@
     <a href="/" class="pr-nav-brand" aria-label="Vision Education Home">
       <span class="pr-nav-brand-name">Vision <span>Education</span></span>
     </a>
-    <a href="/" class="pr-nav-back">
+    <a href="/" class="pr-nav-back" id="pricingBackBtn">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
-      Back to Home
+      Back
     </a>
   </nav>
 
@@ -657,6 +657,19 @@
     // Check if already Pro
     window.addEventListener('DOMContentLoaded', () => {
       const session = typeof getSession === 'function' ? getSession() : null;
+
+      // Smart back button: logged-in users go to dashboard, visitors go home
+      const backBtn = document.getElementById('pricingBackBtn');
+      if (backBtn) {
+        if (session) {
+          backBtn.href = '/dashboard';
+          backBtn.lastChild.textContent = ' Dashboard';
+        } else {
+          backBtn.href = '/';
+          backBtn.lastChild.textContent = ' Home';
+        }
+      }
+
       if (session && session.role === 'pro') {
         const btn = document.getElementById('proLink');
         if (btn) {
