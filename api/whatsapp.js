@@ -48,7 +48,7 @@ export default async function handler(req, res) {
         return res.status(405).json({ error: 'Method not allowed' });
     }
 
-    const { email, type, phone, name, templateName, lang, components, scheduledTime } = req.body;
+    const { email, type, phone, name, templateName, lang, components, scheduledTime, message } = req.body;
 
     const accessToken = process.env.WHATSAPP_ACCESS_TOKEN;
     const phoneNumberId = process.env.WHATSAPP_PHONE_NUMBER_ID;
@@ -63,134 +63,114 @@ export default async function handler(req, res) {
 
     try {
         let recipientPhone = phone.toString().replace(/\D/g, ''); // Ensure only numbers
-        
-        /**
-         * META TEMPLATE SYSTEM
-         * Official notifications MUST use approved templates.
-         */
-        const normalizedTemplateName = (templateName || "").toString().trim() || "hello_world";
-        const requestedLang = (lang || "").toString().trim();
-
-        let payload = {
-            messaging_product: "whatsapp",
-            to: recipientPhone,
-            type: "template",
-            template: {
-                name: normalizedTemplateName, // Default placeholder
-                language: { code: requestedLang || "en_US" }
-            }
-        };
-
-        // Support for scheduled messages (if platform supports it)
-        // Note: Meta doesn't have a direct 'scheduledTime' in the /messages payload for Cloud API, 
-        // it's usually handled by a separate scheduler or a business service provider.
-        // However, we can track it for our internal logs.
-        if (scheduledTime) {
-            console.log(`[Meta WA] Scheduling message for ${scheduledTime}`);
-            // This would normally be queued in a database or a worker.
-        }
-
-        // Custom Logic for specific types or raw components override
-        if (components) {
-            // Full manual override for advanced use cases
-            payload.template.components = components;
-        } else if (type === "REMINDER") {
-            // We expect an approved template called 'study_reminder' with 1 parameter (name)
-            payload.template.name = normalizedTemplateName || "study_reminder";
-            payload.template.components = [
-                {
-                    type: "body",
-                    parameters: [ { type: "text", text: name || "Student" } ]
-                }
-            ];
-        } else if (type === "NEW_MATERIAL") {
-            // We expect an approved template called 'new_material_alert' with 3 parameters: name, title, subject
-            payload.template.name = templateName || "new_material_alert";
-            payload.template.components = [
-                {
-                    type: "body",
-                    parameters: [
-                        { type: "text", text: name || "Student" },
-                        { type: "text", text: req.body.title || "New Resource" },
-                        { type: "text", text: req.body.subject || "Mission Prep" }
-                    ]
-                }
-            ];
-        } else if (type === "EXAM_ALERT") {
-             payload.template.name = templateName || "exam_countdown_2026";
-             payload.template.components = [{
-                 type: "body",
-                 parameters: [ { type: "text", text: name || "Student" } ]
-             }];
-        } else if (type === "PERFORMANCE_UPDATE") {
-             payload.template.name = templateName || "performance_milestone";
-             payload.template.components = [{
-                 type: "body",
-                 parameters: [ { type: "text", text: name || "Student" } ]
-             }];
-        } else if (type === "GENERAL_ALERT") {
-             payload.template.name = templateName || "general_system_update";
-             payload.template.components = [{
-                 type: "body",
-                 parameters: [ { type: "text", text: name || "Student" } ]
-             }];
-        }
-
         const fbUrl = `https://graph.facebook.com/v25.0/${phoneNumberId}/messages`;
         
-        console.log(`[Meta WA] Routing to ${recipientPhone} via ${fbUrl}`);
+        // If an approved template name is explicitly provided, use template mode
+        const hasExplicitTemplate = templateName && templateName.trim() && templateName.trim() !== 'hello_world';
+        
+        let payload;
 
-        const sendOnce = async (langCode) => {
-            const nextPayload = {
-                ...payload,
+        if (hasExplicitTemplate) {
+            // ── TEMPLATE MODE ──
+            // Use when the admin has a Meta-approved template
+            const requestedLang = (lang || "").toString().trim();
+            payload = {
+                messaging_product: "whatsapp",
+                to: recipientPhone,
+                type: "template",
                 template: {
-                    ...payload.template,
-                    language: { code: langCode }
+                    name: templateName.trim(),
+                    language: { code: requestedLang || "en_US" }
                 }
             };
 
-            const response = await fetch(fbUrl, {
-                method: 'POST',
-                headers: {
-                    'Authorization': `Bearer ${accessToken}`,
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(nextPayload)
-            });
+            // Attach components if provided
+            if (components) {
+                payload.template.components = components;
+            } else if (name) {
+                // Default: pass name as first body parameter
+                payload.template.components = [{
+                    type: "body",
+                    parameters: [{ type: "text", text: name || "Student" }]
+                }];
+            }
+        } else {
+            // ── FREE-FORM TEXT MODE ──
+            // Works within 24hr customer service window (after user messages first)
+            // No Meta template approval needed
+            let messageText = message || "";
 
-            const data = await response.json();
-            return { response, data, usedLang: langCode };
-        };
-
-        const primaryLang = requestedLang || "en_US";
-        const fallbackLangs = requestedLang ? [] : ["en_GB", "en"];
-        const attemptLangs = [primaryLang, ...fallbackLangs].filter((v, i, a) => v && a.indexOf(v) === i);
-
-        let lastError = null;
-        let lastData = null;
-        let usedLang = primaryLang;
-
-        for (const attemptLang of attemptLangs) {
-            const { response, data, usedLang: langUsed } = await sendOnce(attemptLang);
-            usedLang = langUsed;
-            lastData = data;
-
-            if (response.ok) {
-                console.log("[Meta WA] Message dispatched successfully. ID:", data.messages?.[0]?.id);
-                return res.status(200).json({ success: true, messageId: data.messages?.[0]?.id, lang: usedLang });
+            if (!messageText) {
+                // Build message based on notification type
+                const studentName = name || "Student";
+                
+                switch(type) {
+                    case "REMINDER":
+                        messageText = `📚 *Vision Education - Study Reminder*\n\nHi ${studentName}! 👋\n\nThis is your daily reminder to keep studying. Consistent practice is the key to WASSCE success!\n\n✅ Complete today's mock exam\n✅ Review your weak topics\n✅ Aim for at least 30 minutes of focused practice\n\n_\"Success is the sum of small efforts repeated day in and day out.\"_\n\n🌐 visionedu.online`;
+                        break;
+                    case "NEW_MATERIAL":
+                        const title = req.body.title || "New Resource";
+                        const subject = req.body.subject || "your subject";
+                        messageText = `📖 *Vision Education - New Material Alert*\n\nHi ${studentName}! 🎉\n\nA new study resource has just been uploaded:\n\n📄 *${title}*\nSubject: ${subject}\n\nLog in now to access it and stay ahead of your WASSCE preparation!\n\n🌐 visionedu.online`;
+                        break;
+                    case "EXAM_ALERT":
+                        messageText = `🚨 *Vision Education - WASSCE 2026 Alert*\n\nHi ${studentName}!\n\nImportant exam update! Make sure you're staying on track with your preparation.\n\n📝 Take a practice mock today\n📊 Review your performance dashboard\n🎯 Focus on your weak areas\n\nYour future self will thank you!\n\n🌐 visionedu.online`;
+                        break;
+                    case "PERFORMANCE_UPDATE":
+                        messageText = `🏆 *Vision Education - Performance Update*\n\nHi ${studentName}! 🌟\n\nGreat progress on Vision Education! Keep pushing your limits.\n\nCheck your latest scores and performance trends on your dashboard.\n\n🌐 visionedu.online`;
+                        break;
+                    case "GENERAL_ALERT":
+                        messageText = `📢 *Vision Education - Update*\n\nHi ${studentName}!\n\nThere's an important update from Vision Education. Log in to check the latest announcements.\n\n🌐 visionedu.online`;
+                        break;
+                    default:
+                        messageText = `👋 Hi ${studentName}!\n\nThis is a message from Vision Education.\n\n🌐 visionedu.online`;
+                }
             }
 
-            const errCode = data?.error?.code;
-            const errMsg = data?.error?.message || "Meta API request failed.";
-            console.error("[Meta API Error Response]:", data);
-
-            lastError = new Error(errMsg);
-
-            if (errCode !== 132001) {
-                break;
-            }
+            payload = {
+                messaging_product: "whatsapp",
+                to: recipientPhone,
+                type: "text",
+                text: { 
+                    preview_url: true,
+                    body: messageText 
+                }
+            };
         }
-        throw lastError || new Error(lastData?.error?.message || "Meta API request failed.");
+
+        console.log(`[Meta WA] Sending ${hasExplicitTemplate ? 'template' : 'text'} message to ${recipientPhone}`);
+
+        const response = await fetch(fbUrl, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${accessToken}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(payload)
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+            console.log("[Meta WA] Message sent successfully. ID:", data.messages?.[0]?.id);
+            return res.status(200).json({ success: true, messageId: data.messages?.[0]?.id });
+        }
+
+        // Handle specific Meta errors
+        const errCode = data?.error?.code;
+        const errMsg = data?.error?.message || "Meta API request failed.";
+        console.error("[Meta API Error]:", data);
+
+        // Error 131047: Re-engagement message — user hasn't messaged in 24hrs, needs template
+        if (errCode === 131047 && !hasExplicitTemplate) {
+            return res.status(400).json({
+                success: false,
+                error: "This student hasn't messaged Vision Education on WhatsApp yet. Ask them to send any message to your WhatsApp Business number first, then you can message them within 24 hours.",
+                code: errCode
+            });
+        }
+
+        throw new Error(errMsg);
 
     } catch (error) {
         console.error("[Meta WhatsApp Gateway Failure]:", error);
