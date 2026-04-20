@@ -154,8 +154,12 @@ async function initSingleSubjectAIMock(mockId) {
         })
       });
 
-      if (!res.ok) throw new Error(`Batch ${bIdx} failed (HTTP ${res.status})`);
-      const data = await res.json();
+      let data = null;
+      try { data = await res.json(); } catch (e) {}
+      if (!res.ok) {
+        const msg = data?.error || data?.message || `Batch ${bIdx} failed (HTTP ${res.status})`;
+        throw new Error(msg);
+      }
       
       // Update UI dot
       const dot = document.getElementById(`dot-${bIdx}`);
