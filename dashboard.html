@@ -47,7 +47,6 @@
   <link rel="stylesheet" href="style.css" />
   <link rel="stylesheet" href="dashboard.css" />
   <link rel="stylesheet" href="theme.css" />
-  <link rel="stylesheet" href="leaderboard.css" />
 
   <script src="theme.js"></script>
   <script src="whatsapp-service.js"></script>
@@ -432,7 +431,7 @@
           <span id="proHeaderBadge" class="pro-badge" style="display: none; background: linear-gradient(135deg, #0078d4, #288ad6); color: white;">AZURE PRO</span>
           <button class="theme-toggle-btn" onclick="toggleTheme()" title="Toggle Theme"></button>
           <div class="nav-user-chip" id="navUserChip" onclick="toggleUserDropdown()">
-            <div class="nav-avatar" id="navAvatar"><img src="assets/yaw.jpg"
+            <div class="nav-avatar" id="navAvatar"><img src="assets/logo.png" onerror="this.src='assets/logo.png'"
                 style="width:100%; height:100%; object-fit:cover; border-radius:inherit;"></div>
             <span class="nav-username" id="navUsername">Yaw Ndaase</span>
             <span style="
@@ -1314,7 +1313,13 @@
       </main>
       <script>
            window.updateSettingsSubUI = function() {
-              const session = getSession();
+              const session = (typeof getSession === "function")
+                ? getSession()
+                : (() => {
+                    try {
+                      return JSON.parse(sessionStorage.getItem("waec_session") || localStorage.getItem("waec_session") || "null");
+                    } catch(e) { return null; }
+                  })();
               if (!session) return;
               
               const now = Date.now();

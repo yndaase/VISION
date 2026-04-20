@@ -251,8 +251,8 @@ function checkAuth() {
     return null;
   }
   
-  // Background Security Check (RISC)
-  if (session.provider === 'google' || session.email) {
+  // Background Security Check (RISC) for Google identities only
+  if (session.provider === 'google' && session.sub) {
     validateRevocationStatus(session);
   }
   
@@ -465,6 +465,7 @@ window.saveProfileChanges = async function() {
     btn.innerText = "SYNCHRONIZING...";
 
     try {
+        let cloudSyncOk = true;
         if (typeof window.fbUpdateUser === 'function') {
             // Update Firestore with phone AND auto-opt-in for WhatsApp
             const res = await window.fbUpdateUser(session.email, { 
@@ -498,13 +499,17 @@ window.saveProfileChanges = async function() {
                        waOptIn: !!phone
                      });
                      if (!retry || !retry.success) {
-                       throw new Error(retry?.error || "Firebase update failed after re-auth.");
+                       cloudSyncOk = false;
                      }
                    } else {
-                     throw new Error("Firebase permissions blocked this update. Please log out, log back in, then try again.");
+                     cloudSyncOk = false;
                    }
                  }
-                 throw new Error(res.error);
+                 if (!cloudSyncOk) {
+                   console.warn("[Auth] Falling back to local profile save only.");
+                 } else {
+                   throw new Error(res.error);
+                 }
             }
             
             // Update local session for immediate UI reflection
@@ -514,9 +519,9 @@ window.saveProfileChanges = async function() {
             sessionStorage.setItem('waec_session', JSON.stringify(session));
             
             if (typeof showToast === 'function') {
-                showToast("Profile identity synchronized with Firebase");
+                showToast(cloudSyncOk ? "Profile identity synchronized with Firebase" : "Profile saved locally. Firebase sync pending.");
             } else {
-                alert("Profile identity synchronized.");
+                alert(cloudSyncOk ? "Profile identity synchronized." : "Profile saved locally. Firebase sync pending.");
             }
             
             // Refresh settings UI to show updated state (badges, etc)
@@ -1488,8 +1493,12 @@ document.addEventListener("DOMContentLoaded", () => {
   // Always run migration first to ensure database is in sync
   migrateLegacyData();
 
-  // Bootstrap academic tiers
-  adminInit().catch(console.error);
+  // Bootstrap academic tiers only on auth/admin routes to avoid permission noise on student dashboard.
+  const path = (window.location.pathname || "").toLowerCase();
+  const shouldRunAdminInit = path.includes("/admin") || path.includes("/login") || !!document.getElementById("loginForm");
+  if (shouldRunAdminInit) {
+    adminInit().catch(console.error);
+  }
 
   if (document.getElementById("loginForm")) {
     if (getSession()) {
