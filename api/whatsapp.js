@@ -186,6 +186,45 @@ export default async function handler(req, res) {
         const textErrCode = textData?.error?.code;
         console.error("[Meta WA] Both attempts failed. Template:", templateErrMsg, "| Text:", textData?.error?.message);
 
+        // ── Attempt 3: Absolute Fallback (hello_world) ──
+        // If the number hasn't messaged within 24hrs AND custom template isn't approved,
+        // we can try the Meta-default 'hello_world' template just to verify connectivity.
+        if (textErrCode === 131047) {
+            console.log(`[Meta WA] Attempt 3: 'hello_world' fallback to ${recipientPhone}`);
+            const helloPayload = {
+                messaging_product: "whatsapp",
+                to: recipientPhone,
+                type: "template",
+                template: { name: "hello_world", language: { code: "en_US" } }
+            };
+            const helloRes = await fetch(fbUrl, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${accessToken}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(helloPayload)
+            });
+            const helloData = await helloRes.json();
+            if (helloRes.ok) {
+                console.log("[Meta WA] hello_world sent successfully. ID:", helloData.messages?.[0]?.id);
+                return res.status(200).json({ 
+                    success: true, 
+                    messageId: helloData.messages?.[0]?.id, 
+                    method: "hello_world_fallback",
+                    warning: "Custom template not approved yet. Sent Meta's default 'hello_world' testing template."
+                });
+            }
+            console.error("[Meta WA] hello_world also failed:", helloData.error?.message);
+            // If hello_world fails, it's a test number sync issue
+            if (helloData.error?.code === 131030 || helloData.error?.code === 131026) {
+                 return res.status(400).json({ 
+                    success: false, 
+                    error: "Recipient phone number not allowed. If you're using a Meta Developer Test Number, you must verify the recipient's phone number exactly in the Meta App Dashboard first." 
+                });
+            }
+        }
+
         let userError = textData?.error?.message || templateErrMsg || "Message delivery failed.";
         
         if (templateErrCode === 131047 || textErrCode === 131047) {
