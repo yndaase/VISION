@@ -374,6 +374,16 @@
   <script src="auth.js"></script>
   <script src="dashboard.js"></script>
   <script>
+    if (typeof window.handleLogout !== "function") {
+      window.handleLogout = function() {
+        try {
+          sessionStorage.removeItem("waec_session");
+          localStorage.removeItem("waec_session");
+        } catch (e) {}
+        window.location.href = "/login";
+      };
+    }
+
     // Init User Data
     (function initEnterpriseDash() {
       const sessionStr = sessionStorage.getItem("waec_session") || localStorage.getItem("waec_session");
