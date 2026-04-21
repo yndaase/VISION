@@ -11,15 +11,13 @@ export default async function handler(req, res) {
     }
 
     const { selfieBase64, idBase64 } = req.body;
-    const apiKey = process.env.COMPREFACE_API_KEY;
-    const comprefaceUrl = process.env.COMPREFACE_URL;
+    
+    // Fallback for local dev if .env isn't loading automatically
+    const apiKey = process.env.COMPREFACE_API_KEY || "aa0edaa5-95f7-4420-953d-1b9e6449cf5b";
+    const comprefaceUrl = process.env.COMPREFACE_URL || "http://172.25.42.254:8000";
 
     if (!selfieBase64 || !idBase64) {
-        return res.status(400).json({ error: 'Missing required parameters (selfieBase64, idBase64)' });
-    }
-
-    if (!apiKey || !comprefaceUrl) {
-        return res.status(500).json({ error: 'Verification server is not configured. (Check .env)' });
+        return res.status(400).json({ error: 'Missing images. Please ensure you captured both ID and Selfie.' });
     }
 
     try {
