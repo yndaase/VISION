@@ -23,21 +23,18 @@ export default async function handler(req, res) {
     }
 
     try {
-        // CompreFace expects multipart/form-data for image files.
-        // We need to convert base64 to Blob/Buffer and use FormData.
-        
-        // Note: In a Vercel environment, we might need a library like 'form-data'.
-        // For simplicity, we'll use a fetch-compatible approach if possible, 
-        // or just assume standard Node.js environment.
-        
+        // CompreFace expects multipart/form-data.
+        // We convert base64 strings to Buffers for Node.js compatibility.
+        const selfieBuffer = Buffer.from(selfieBase64.split(',')[1], 'base64');
+        const idBuffer = Buffer.from(idBase64.split(',')[1], 'base64');
+
         const formData = new FormData();
         
-        // Convert base64 to Blobs
-        const selfieBlob = await (await fetch(selfieBase64)).blob();
-        const idBlob = await (await fetch(idBase64)).blob();
+        // We use Blobs created from Buffers for the native Fetch API
+        formData.append('source_image', new Blob([idBuffer], { type: 'image/jpeg' }), 'id_photo.jpg');
+        formData.append('target_image', new Blob([selfieBuffer], { type: 'image/jpeg' }), 'selfie.jpg');
 
-        formData.append('source_image', idBlob, 'id_photo.jpg');
-        formData.append('target_image', selfieBlob, 'selfie.jpg');
+        console.log(`[Verify] Proxying request to: ${comprefaceUrl}`);
 
         const comprefaceRes = await fetch(`${comprefaceUrl}/api/v1/verification/verify`, {
             method: 'POST',
@@ -50,13 +47,13 @@ export default async function handler(req, res) {
         const data = await comprefaceRes.json();
 
         if (!comprefaceRes.ok) {
+            console.error('[Verify] CompreFace Error:', data);
             return res.status(comprefaceRes.status).json({ 
                 success: false, 
                 error: data.message || 'CompreFace verification failed' 
             });
         }
 
-        // CompreFace returns similarity. Usually > 0.9 is a good match.
         const similarity = data.result?.[0]?.similarity || 0;
         const isMatch = similarity > 0.9;
 
@@ -68,7 +65,10 @@ export default async function handler(req, res) {
         });
 
     } catch (error) {
-        console.error('[Verify Face] Error:', error);
-        return res.status(500).json({ success: false, error: 'Internal server error during verification' });
+        console.error('[Verify Face] Fatal Error:', error.message);
+        return res.status(500).json({ 
+            success: false, 
+            error: `Internal server error: ${error.message}` 
+        });
     }
 }
