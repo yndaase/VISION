@@ -1,0 +1,46 @@
+version: '3.4'
+
+services:
+  compreface-admin:
+    image: exadel/compreface-admin:1.2.0
+    container_name: compreface-admin
+    environment:
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=admin
+      - POSTGRES_URL=jdbc:postgresql://compreface-postgres:5432/compreface
+      - SPRING_PROFILES_ACTIVE=dev
+    depends_on:
+      - compreface-postgres
+
+  compreface-api:
+    image: exadel/compreface-api:1.2.0
+    container_name: compreface-api
+    environment:
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=admin
+      - POSTGRES_URL=jdbc:postgresql://compreface-postgres:5432/compreface
+      - SPRING_PROFILES_ACTIVE=dev
+    depends_on:
+      - compreface-postgres
+
+  compreface-fe:
+    image: exadel/compreface-fe:1.2.0
+    container_name: compreface-fe
+    ports:
+      - "8000:80"
+    depends_on:
+      - compreface-api
+
+  compreface-postgres:
+    image: postgres:13-alpine
+    container_name: compreface-postgres
+    environment:
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=admin
+      - POSTGRES_DB=compreface
+
+  compreface-core:
+    image: exadel/compreface-core:1.2.0
+    container_name: compreface-core
+    environment:
+      - ML_PORT=3000

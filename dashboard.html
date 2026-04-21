@@ -399,6 +399,9 @@
             <div class="nav-avatar" id="navAvatar"><img src="assets/logo.png" onerror="this.src='assets/logo.png'"
                 style="width:100%; height:100%; object-fit:cover; border-radius:inherit;"></div>
             <span class="nav-username" id="navUsername">Yaw Ndaase</span>
+            <span id="navVerifiedBadge" class="verified-badge-icon" style="display: none; margin-left: 4px; color: #0ea5e9;">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+            </span>
             <span style="
                   font-size: 0.7rem;
                   color: var(--text-muted);
@@ -452,6 +455,9 @@
         <h1 class="welcome-heading">
           Welcome,<br />
           <span class="welcome-name" id="welcomeName">Student</span>
+          <span id="heroVerifiedBadge" class="verified-badge-icon" style="display: none; color: #0ea5e9; margin-left: 8px; vertical-align: middle;">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+          </span>
         </h1>
         <p class="welcome-sub">
           Choose a subject to practice, take a mock, or review your progress.
@@ -927,7 +933,12 @@
             <div style="display: flex; align-items: center; gap: 24px; margin-bottom: 2rem;">
               <div id="settingsAvatar" style="width: 80px; height: 80px; background: var(--primary); border-radius: 20px; display: flex; align-items: center; justify-content: center; font-size: 2rem; font-weight: 800; color: #fff;">S</div>
               <div>
-                <h2 id="settingsName" style="margin: 0 0 4px 0; font-size: 1.5rem;">Student Name</h2>
+                <div style="display: flex; align-items: center; gap: 8px;">
+                  <h2 id="settingsName" style="margin: 0; font-size: 1.5rem;">Student Name</h2>
+                  <span id="settingsVerifiedBadge" class="verified-badge-icon" style="display: none; color: #0ea5e9;">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+                  </span>
+                </div>
                 <p id="settingsEmail" style="margin: 0; color: var(--text-muted);">student@visionedu.online</p>
               </div>
             </div>
@@ -945,6 +956,16 @@
             </div>
 
             <div style="margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid rgba(255,255,255,0.05);">
+                <div style="margin-bottom: 2rem;" id="verificationContainer">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                        <div>
+                            <h3 style="margin: 0; font-size: 1rem; font-weight: 700;">Identity Verification</h3>
+                            <p style="margin: 4px 0 0 0; font-size: 0.8rem; color: var(--text-muted);">Verify your identity with CompreFace biometrics.</p>
+                        </div>
+                    </div>
+                    <button class="hero-btn-primary" id="verifyNowBtn" onclick="handleFaceVerification()" style="height: auto; padding: 12px 24px; font-size: 0.85rem; width: fit-content; background: var(--bg-card); border: 1px solid var(--primary); color: var(--primary);">Verify Identity Now</button>
+                </div>
+
                 <div style="margin-bottom: 1.5rem;">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
                         <label style="display: block; font-size: 0.75rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; margin: 0;">WhatsApp Phone Number</label>
@@ -1132,6 +1153,16 @@
           if (avatarS) avatarS.textContent = session.name.charAt(0).toUpperCase();
 
           if (typeof syncProUI === 'function') syncProUI();
+          
+          // Show verification badges if verified
+          if (session.isVerified) {
+            const navBadge = document.getElementById("navVerifiedBadge");
+            const setBadge = document.getElementById("settingsVerifiedBadge");
+            const heroBadge = document.getElementById("heroVerifiedBadge");
+            if (navBadge) navBadge.style.display = "inline-flex";
+            if (setBadge) setBadge.style.display = "inline-flex";
+            if (heroBadge) heroBadge.style.display = "inline-flex";
+          }
         }
 
         // Show announcements
@@ -1293,6 +1324,42 @@
             }
         }
     </script>
+    <!-- BIOMETRIC VERIFICATION MODAL -->
+    <div id="biometricModal" style="display:none; position:fixed; inset:0; background:rgba(15,23,42,0.95); backdrop-filter:blur(20px); z-index:10000; align-items:center; justify-content:center; padding:2rem;">
+        <div style="background:var(--bg-card); border:1px solid var(--border-accent); border-radius:32px; max-width:500px; width:100%; padding:2.5rem; text-align:center; position:relative; overflow:hidden;">
+            <!-- Scanning Animation Overlay -->
+            <div id="scannerLine" style="display:none; position:absolute; top:0; left:0; width:100%; height:4px; background:linear-gradient(to right, transparent, var(--primary), transparent); box-shadow:0 0 15px var(--primary); z-index:10; animation:scan 2s linear infinite;"></div>
+            
+            <h2 id="bioModalTitle" style="font-size:1.5rem; font-weight:800; margin-bottom:0.5rem;">Biometric Scan</h2>
+            <p id="bioModalDesc" style="color:var(--text-secondary); font-size:0.9rem; margin-bottom:1.5rem;">Align your ID card within the frame.</p>
+            
+            <div style="position:relative; width:100%; aspect-ratio:4/3; background:#000; border-radius:20px; overflow:hidden; border:2px solid var(--border-accent); margin-bottom:1.5rem;">
+                <video id="bioVideo" autoplay playsinline style="width:100%; height:100%; object-fit:cover;"></video>
+                <canvas id="bioCanvas" style="display:none;"></canvas>
+                
+                <!-- ID/Face Guides -->
+                <div id="idGuide" style="position:absolute; inset:20%; border:2px dashed rgba(255,255,255,0.5); border-radius:12px;"></div>
+                <div id="faceGuide" style="display:none; position:absolute; top:15%; left:25%; width:50%; height:70%; border:2px dashed var(--primary); border-radius:100px;"></div>
+            </div>
+            
+            <div style="display:flex; gap:12px;">
+                <button id="captureBtn" onclick="captureBiometric()" style="flex:2; background:var(--primary); color:white; border:none; padding:14px; border-radius:14px; font-weight:800; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px;">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+                    Capture Image
+                </button>
+                <button onclick="closeBiometricModal()" style="flex:1; background:rgba(255,255,255,0.05); color:#fff; border:none; padding:14px; border-radius:14px; font-weight:700; cursor:pointer;">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        @keyframes scan {
+            0% { top: 0%; opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { top: 100%; opacity: 0; }
+        }
+    </style>
     <script src="streaks.js"></script>
     <script>
       // Show streak toast on dashboard load

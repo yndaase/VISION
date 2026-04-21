@@ -149,6 +149,7 @@ function verifyUserSchema(user) {
   }
   // Ensure default booleans/timestamps
   user.twoFAEnabled = !!user.twoFAEnabled;
+  user.isVerified = !!user.isVerified;
   user.subscriptionExpiry = user.subscriptionExpiry || 0;
 
   // Permanent Pro Overrides (named accounts)
@@ -645,6 +646,9 @@ window.openSettings = function() {
     updateSecurityStatusUI(enabled);
   }
 
+  // Sync Verification State
+  updateVerificationUI(session.isVerified);
+
   // Show immersive view
   modal.classList.add("visible");
   modal.style.display = "flex";
@@ -722,6 +726,151 @@ window.generateParentCode = async function() {
 
 function handleModalOutsideClick(event) {
   // Immersive view doesn't close on outside click by design (it's full screen)
+}
+
+/**
+ * Handle Face Verification using CompreFace
+ */
+let bioStream = null;
+let bioStep = 'id'; // 'id' or 'selfie'
+let idData = null;
+let selfieData = null;
+
+window.handleFaceVerification = async function() {
+    const session = getSession();
+    if (!session) return;
+
+    // Open Modal
+    const modal = document.getElementById("biometricModal");
+    modal.style.display = "flex";
+    
+    bioStep = 'id';
+    updateBioUI();
+    
+    try {
+        bioStream = await navigator.mediaDevices.getUserMedia({ 
+            video: { facingMode: "user", width: { ideal: 1280 }, height: { ideal: 720 } } 
+        });
+        document.getElementById("bioVideo").srcObject = bioStream;
+    } catch (err) {
+        console.error("Camera Error:", err);
+        alert("Tactical Error: Camera access denied. Verification requires biometric input.");
+        closeBiometricModal();
+    }
+}
+
+function updateBioUI() {
+    const title = document.getElementById("bioModalTitle");
+    const desc = document.getElementById("bioModalDesc");
+    const idGuide = document.getElementById("idGuide");
+    const faceGuide = document.getElementById("faceGuide");
+    const scanner = document.getElementById("scannerLine");
+
+    if (bioStep === 'id') {
+        title.innerText = "Step 1: ID Verification";
+        desc.innerText = "Align your Student ID or National ID within the frame.";
+        idGuide.style.display = "block";
+        faceGuide.style.display = "none";
+        scanner.style.display = "none";
+    } else if (bioStep === 'selfie') {
+        title.innerText = "Step 2: Live Selfie";
+        desc.innerText = "Look directly into the camera. Ensure good lighting.";
+        idGuide.style.display = "none";
+        faceGuide.style.display = "block";
+        scanner.style.display = "block";
+    }
+}
+
+window.captureBiometric = async function() {
+    const video = document.getElementById("bioVideo");
+    const canvas = document.getElementById("bioCanvas");
+    const ctx = canvas.getContext("2d");
+
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    ctx.drawImage(video, 0, 0);
+    
+    const base64 = canvas.toDataURL("image/jpeg", 0.8);
+
+    if (bioStep === 'id') {
+        idData = base64;
+        bioStep = 'selfie';
+        updateBioUI();
+    } else {
+        selfieData = base64;
+        await runFinalVerification();
+    }
+}
+
+async function runFinalVerification() {
+    const btn = document.getElementById("captureBtn");
+    const session = getSession();
+    
+    btn.disabled = true;
+    btn.innerText = "ANALYZING BIOMETRICS...";
+
+    try {
+        const res = await fetch('/api/verify-face', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                selfieBase64: selfieData,
+                idBase64: idData
+            })
+        });
+
+        const data = await res.json();
+
+        if (data.success && data.match) {
+            // Update Local State
+            session.isVerified = true;
+            setSession(session);
+
+            // Update Firebase
+            if (typeof window.fbUpdateUser === 'function') {
+                await window.fbUpdateUser(session.email, { isVerified: true });
+            }
+
+            alert("Biometric Match Confirmed! Identity Verified.");
+            location.reload();
+        } else {
+            alert("Verification Failed: " + (data.error || "Faces do not match. Please ensure both photos are clear."));
+            bioStep = 'id';
+            updateBioUI();
+        }
+    } catch (err) {
+        console.error("Verification error:", err);
+        alert("Internal Error: Could not connect to verification server.");
+    } finally {
+        btn.disabled = false;
+        btn.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg> Capture Image`;
+    }
+}
+
+window.closeBiometricModal = function() {
+    if (bioStream) {
+        bioStream.getTracks().forEach(track => track.stop());
+        bioStream = null;
+    }
+    document.getElementById("biometricModal").style.display = "none";
+}
+
+function updateVerificationUI(isVerified) {
+    const container = document.getElementById("verificationContainer");
+    const badge = document.getElementById("settingsVerifiedBadge");
+    
+    if (isVerified) {
+        if (container) container.innerHTML = `
+            <div style="background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.2); padding: 1rem; border-radius: 12px; display: flex; align-items: center; gap: 12px;">
+                <div style="width: 32px; height: 32px; background: #10b981; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff;">✓</div>
+                <div>
+                    <div style="font-weight: 700; color: #10b981;">Identity Verified</div>
+                    <div style="font-size: 0.75rem; color: var(--text-muted);">Biometric verification successful.</div>
+                </div>
+            </div>
+        `;
+        if (badge) badge.style.display = "inline-flex";
+    }
 }
 
 //  Google Sign-In callback (GIS)
