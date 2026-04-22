@@ -90,10 +90,13 @@ function captureSelfie() {
 
     canvas.width = video.videoWidth;
     canvas.height = video.videoHeight;
-    canvas.getContext('2d').drawImage(video, 0, 0);
+    const ctx = canvas.getContext('2d');
     
-    // Quality reduced to 0.5 for stability
-    const selfieBase64 = canvas.toDataURL('image/jpeg', 0.5);
+    // DIGITAL FLASH: Boost brightness and contrast for the AI
+    ctx.filter = 'brightness(1.1) contrast(1.1) saturate(1.1)';
+    ctx.drawImage(video, 0, 0);
+    
+    const selfieBase64 = canvas.toDataURL('image/jpeg', 0.7);
     if (preview) preview.src = selfieBase64;
     
     console.log("[Verification] Captured image size:", Math.round(selfieBase64.length / 1024), "KB");

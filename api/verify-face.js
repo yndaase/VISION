@@ -26,6 +26,8 @@ export default async function handler(req, res) {
         formBody.append('api_key', apiKey);
         formBody.append('api_secret', apiSecret);
         formBody.append('image_base64', base64Data);
+        formBody.append('min_face_size', '20'); // Lower is more lenient
+        formBody.append('return_landmark', '1'); // Helps AI focus
 
         // Try US Endpoint first, then CN as fallback
         let response = await fetch('https://api-us.faceplusplus.com/facepp/v3/detect', {
