@@ -1688,17 +1688,27 @@
 
             mediaRecorder.ondataavailable = (event) => audioChunks.push(event.data);
             mediaRecorder.onstop = async () => {
+                console.log("[Voice] Recording stopped. Preparing upload...");
                 const audioBlob = new Blob(audioChunks, { type: 'audio/ogg' });
                 const formData = new FormData();
                 formData.append('audio', audioBlob);
 
                 try {
                     showToast("Uploading voice note...");
+                    console.log("[Voice] Hitting /api/whatsapp for upload...");
                     const uploadRes = await fetch("/api/whatsapp", { method: "POST", body: formData });
+                    
+                    if (!uploadRes.ok) {
+                        const err = await uploadRes.json();
+                        throw new Error(err.error || "Upload failed");
+                    }
+
                     const { mediaId } = await uploadRes.json();
+                    console.log("[Voice] Upload success! Media ID:", mediaId);
                     
                     if (mediaId) {
-                        await fetch("/api/whatsapp", {
+                        showToast("Sending to WhatsApp...");
+                        const sendRes = await fetch("/api/whatsapp", {
                             method: "POST",
                             headers: { "Content-Type": "application/json" },
                             body: JSON.stringify({ 
@@ -1708,20 +1718,28 @@
                             })
                         });
 
-                        if (typeof window.fbSaveChatMessage === 'function') {
-                            await window.fbSaveChatMessage(activeChatPhone, {
-                                text: "🎤 Voice Message (Admin)",
-                                type: "audio",
-                                mediaId,
-                                from: 'admin',
-                                timestamp: new Date().toISOString()
-                            });
+                        const sendData = await sendRes.json();
+                        console.log("[Voice] Send Response:", sendData);
+
+                        if (sendRes.ok) {
+                            showToast("Voice message sent!");
+                            if (typeof window.fbSaveChatMessage === 'function') {
+                                await window.fbSaveChatMessage(activeChatPhone, {
+                                    text: "🎤 Voice Message (Admin)",
+                                    type: "audio",
+                                    mediaId,
+                                    from: 'admin',
+                                    timestamp: new Date().toISOString()
+                                });
+                            }
+                            loadChat(activeChatPhone, document.getElementById("activeChatHeader").querySelector('div div div').innerText);
+                        } else {
+                            throw new Error(sendData.error || "Delivery failed");
                         }
-                        loadChat(activeChatPhone, document.getElementById("activeChatHeader").querySelector('div div div').innerText);
                     }
                 } catch (err) {
-                    console.error("Voice send failed:", err);
-                    showToast("Failed to send voice note");
+                    console.error("[Voice] Process Error:", err);
+                    showToast(`❌ Error: ${err.message}`);
                 }
             };
 
