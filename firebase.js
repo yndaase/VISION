@@ -767,6 +767,55 @@ window.fbDeleteMaterial = async function(id) {
   }
 };
 
+/**
+ * USER MANAGEMENT (Firestore collection: "users")
+ */
+
+window.fbGetAllUsers = async function() {
+  try {
+    const snap = await getDocs(collection(db, "users"));
+    const users = [];
+    snap.forEach(doc => users.push({ id: doc.id, ...doc.data() }));
+    return users;
+  } catch(err) {
+    console.error('[Firebase] fbGetAllUsers failed:', err.message);
+    return [];
+  }
+};
+
+window.fbGetUser = async function(email) {
+  if (!email) return null;
+  try {
+    const snap = await getDoc(doc(db, "users", email.toLowerCase()));
+    return snap.exists() ? snap.data() : null;
+  } catch(err) {
+    console.error('[Firebase] fbGetUser failed:', err.message);
+    return null;
+  }
+};
+
+window.fbUpdateUser = async function(email, data) {
+  if (!email) return;
+  try {
+    await setDoc(doc(db, "users", email.toLowerCase()), data, { merge: true });
+    console.log('[Firebase] User updated:', email);
+  } catch(err) {
+    console.error('[Firebase] fbUpdateUser failed:', err.message);
+  }
+};
+
+window.fbDeleteUser = async function(email) {
+  if (!email) return { success: false };
+  try {
+    await deleteDoc(doc(db, "users", email.toLowerCase()));
+    console.log('[Firebase] User purged:', email);
+    return { success: true };
+  } catch(err) {
+    console.error('[Firebase] fbDeleteUser failed:', err.message);
+    return { success: false, error: err.message };
+  }
+};
+
 /* ─────────────────────────────────────────────────────────────
    AUTO-SYNC on import (non-parent pages)
    ───────────────────────────────────────────────────────────── */
@@ -785,5 +834,6 @@ if (typeof window !== 'undefined' && window.location.pathname !== '/parent-porta
     } catch(e) {}
   }, 2000);
 }
+
 
 
