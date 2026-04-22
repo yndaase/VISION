@@ -53,8 +53,8 @@ async function startCamera() {
         stream = await navigator.mediaDevices.getUserMedia({ 
             video: { 
                 facingMode: currentFacingMode,
-                width: { ideal: 1280 },
-                height: { ideal: 720 }
+                width: { ideal: 640 },
+                height: { ideal: 480 }
             } 
         });
         document.getElementById('selfieVideo').srcObject = stream;
@@ -97,7 +97,8 @@ function captureSelfie() {
     const ctx = canvas.getContext('2d');
     ctx.drawImage(video, 0, 0);
     
-    const selfieBase64 = canvas.toDataURL('image/jpeg', 0.7);
+    // Quality reduced to 0.4 for maximum Face++ compatibility
+    const selfieBase64 = canvas.toDataURL('image/jpeg', 0.4);
     if (preview) preview.src = selfieBase64;
     
     processVerification(selfieBase64);
