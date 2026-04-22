@@ -53,8 +53,8 @@ async function startCamera() {
         stream = await navigator.mediaDevices.getUserMedia({ 
             video: { 
                 facingMode: currentFacingMode,
-                width: { ideal: 2560 },
-                height: { ideal: 1920 }
+                width: { ideal: 1280 },
+                height: { ideal: 720 }
             } 
         });
         document.getElementById('selfieVideo').srcObject = stream;
