@@ -1,17 +1,6 @@
-import admin from 'firebase-admin';
-
-// Initialize Firebase Admin
-if (!admin.apps.length) {
-  let rawKey = process.env.FIREBASE_SERVICE_ACCOUNT;
-  if (rawKey.startsWith("'") && rawKey.endsWith("'")) rawKey = rawKey.slice(1, -1);
-  if (rawKey.startsWith('"') && rawKey.endsWith('"')) rawKey = rawKey.slice(1, -1);
-  const serviceAccount = JSON.parse(rawKey);
-  admin.initializeApp({ credential: admin.credential.cert(serviceAccount) });
-}
-const db = admin.firestore();
-
 export default async function handler(req, res) {
   // 1. Meta Webhook Verification (GET)
+  // This must work even if Firebase is not yet configured!
   if (req.method === 'GET') {
     const mode = req.query['hub.mode'];
     const token = req.query['hub.verify_token'];
@@ -25,10 +14,22 @@ export default async function handler(req, res) {
         return res.status(403).send('Forbidden');
       }
     }
+    return res.status(400).send('Bad Request');
   }
 
   // 2. Handle Incoming Messages (POST)
   if (req.method === 'POST') {
+    // Only initialize Firebase when we actually receive a message
+    const admin = await import('firebase-admin');
+    if (!admin.apps.length) {
+      let rawKey = process.env.FIREBASE_SERVICE_ACCOUNT;
+      if (rawKey.startsWith("'") && rawKey.endsWith("'")) rawKey = rawKey.slice(1, -1);
+      if (rawKey.startsWith('"') && rawKey.endsWith('"')) rawKey = rawKey.slice(1, -1);
+      const serviceAccount = JSON.parse(rawKey);
+      admin.initializeApp({ credential: admin.credential.cert(serviceAccount) });
+    }
+    const db = admin.firestore();
+
     try {
       const body = req.body;
 
