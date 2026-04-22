@@ -704,37 +704,35 @@
             const pathname = `materials/${sub}/${timestamp}_${safeName}`;
             
             document.getElementById("uploadProgressContainer").style.display = "block";
-            document.getElementById("uploadStatus").innerText = "Uploading to server...";
-            document.getElementById("uploadProgressBar").style.width = "50%";
 
             try {
-                // Direct Binary Upload to our own API
-                const resp = await fetch('/api/upload', {
-                    method: 'POST',
-                    body: file, // Send binary file directly
+                // Using the specific stable ESM build for the browser
+                const { upload } = await import('https://esm.sh/@vercel/blob@0.22.1/client');
+
+                const blob = await upload(pathname, file, {
+                    access: 'public',
+                    handleUploadUrl: window.location.origin + '/api/upload', // Absolute URL prevents CORS fallbacks
+                    onUploadProgress: (progressEvent) => {
+                        const pct = (progressEvent.loaded / progressEvent.total) * 100;
+                        document.getElementById("uploadProgressBar").style.width = pct + "%";
+                        document.getElementById("uploadStatus").innerText = `Uploading: ${Math.round(pct)}%`;
+                    },
                     headers: {
-                        'Content-Type': file.type,
                         'x-mat-title': encodeURIComponent(title),
                         'x-mat-subject': sub,
-                        'x-mat-type': type,
-                        'x-filename': safeName
+                        'x-mat-type': type
                     }
                 });
-
-                if (!resp.ok) {
-                    const errData = await resp.json();
-                    throw new Error(errData.error || "Server Upload Failed");
-                }
-
-                const data = await resp.json();
-                finalUrl = data.url;
                 
-                document.getElementById("uploadProgressBar").style.width = "100%";
-                document.getElementById("uploadStatus").innerText = "Successfully linked!";
-                showToast("Asset secured and linked to Firebase");
+                finalUrl = blob.url;
+                showToast("Large asset secured and linked to Firebase");
             } catch (uploadErr) {
-                console.error("[Upload Detail]:", uploadErr);
-                throw new Error("Upload Failed: " + (uploadErr.message || "Unknown Error"));
+                console.error("[Large Upload Error]:", uploadErr);
+                // If it fails with 'public access' error, remind the user about Vercel settings
+                if (uploadErr.message.includes("public access")) {
+                    alert("CRITICAL: Your Vercel Storage is set to PRIVATE. Please go to Vercel -> Storage -> Settings and change Access Level to PUBLIC.");
+                }
+                throw new Error("Upload Failed: " + uploadErr.message);
             }
         } else {
             // ONLY for manual links (non-file uploads)
