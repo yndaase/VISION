@@ -16,33 +16,32 @@ export default async function handler(request, response) {
   }
 
   try {
+    console.log("[Blob] Request type:", request.headers['x-vercel-id'] ? 'Completion Callback' : 'Token Request');
+    
     const jsonResponse = await handleUpload({
       body: request.body,
       request,
       onBeforeGenerateToken: async (pathname) => {
-        // We can enforce security here, but since the admin portal is protected
-        // we'll allow standard document and media types.
+        console.log("[Blob] Generating token for:", pathname);
         return {
           allowedContentTypes: [
             'application/pdf', 
             'video/mp4', 
             'application/msword', 
             'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-            'application/vnd.ms-powerpoint',
-            'application/vnd.openxmlformats-officedocument.presentationml.presentation',
             'image/jpeg', 
             'image/png',
             'application/octet-stream'
           ],
           tokenPayload: JSON.stringify({
-            title: decodeURIComponent(request.headers['x-mat-title'] || ''),
-            subject: request.headers['x-mat-subject'],
-            type: request.headers['x-mat-type']
+            title: decodeURIComponent(request.headers['x-mat-title'] || 'Untitled'),
+            subject: request.headers['x-mat-subject'] || 'general',
+            type: request.headers['x-mat-type'] || 'PDF'
           }),
         };
       },
       onUploadCompleted: async ({ blob, tokenPayload }) => {
-        console.log('Blob upload completed:', blob.url);
+        console.log('[Blob] Upload finished. Starting Firebase link...');
         
         try {
           const { title, subject, type } = JSON.parse(tokenPayload);
@@ -50,27 +49,28 @@ export default async function handler(request, response) {
           
           const entry = {
             id: matId,
-            subject: subject || 'general',
-            title: title || 'Untitled Resource',
-            type: type || 'PDF',
+            subject: subject,
+            title: title,
+            type: type,
             url: blob.url,
             uploadedAt: new Date().toISOString().split("T")[0],
             uploadedBy: "admin",
-            source: "vercel-blob-atomic"
+            source: "atomic-sync"
           };
 
-          // ATOMIC LINKING: Save directly to Firebase from the server
           await db.collection('learning_materials').doc(matId).set(entry);
-          console.log('[Firebase] Material linked successfully via Server Strategy:', title);
+          console.log('[Firebase] Successfully linked:', title);
         } catch (err) {
           console.error('[Firebase Sync Error]:', err.message);
+          // Even if Firebase fails, we don't throw an error here 
+          // to prevent the client from looping.
         }
       },
     });
 
     return response.status(200).json(jsonResponse);
   } catch (error) {
-    console.error("Vercel Blob Upload Error:", error);
+    console.error("[Vercel Blob Error]:", error.message);
     return response.status(400).json({ error: error.message });
   }
 }
