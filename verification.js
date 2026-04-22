@@ -150,7 +150,7 @@ async function processVerification(selfieBase64) {
 
     try {
         // Phase 1 indicator
-        if (statusText) statusText.innerHTML = "Phase 1: Scanning National ID...<br><span style='font-size:0.75rem; color:var(--text-muted);'>Extracting text for name verification</span>";
+        if (statusText) statusText.innerHTML = "Comparing faces...<br><span style='font-size:0.75rem; color:var(--text-muted);'>Matching your ID photo against your selfie</span>";
         
         const res = await fetch('/api/verify-face', {
             method: 'POST',
@@ -158,8 +158,7 @@ async function processVerification(selfieBase64) {
             body: JSON.stringify({ 
                 selfieBase64,
                 idBase64: idImageBase64,
-                email: session.email,
-                name: session.name || ''
+                email: session.email
             })
         });
         
