@@ -773,30 +773,26 @@ window.captureBiometric = async function() {
 
     btn.disabled = true;
     btn.innerText = "VERIFYING FACE...";
-
     try {
+        const session = getSession();
+        if (!session) {
+            alert("Session error. Please log in again.");
+            return;
+        }
+        
         const res = await fetch('/api/verify-face', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ selfieBase64: base64 })
+            body: JSON.stringify({ selfieBase64: base64, email: session.email })
         });
 
         const data = await res.json();
 
         if (data.success && data.verified) {
-            const session = getSession();
-
             // Update Local State
             session.isVerified = true;
             setSession(session);
 
-            // Update Firebase
-            if (typeof window.fbUpdateUser === 'function') {
-                await window.fbUpdateUser(session.email, {
-                    isVerified: true,
-                    verifiedAt: new Date().toISOString()
-                });
-            }
 
             closeBiometricModal();
             alert("✅ Face Verified! Your verified badge is now active.");

@@ -10,7 +10,7 @@ export default async function handler(req, res) {
         return res.status(405).json({ error: 'Method not allowed' });
     }
 
-    const { selfieBase64 } = req.body;
+    const { selfieBase64, email } = req.body;
 
     if (!selfieBase64) {
         return res.status(400).json({ error: 'Missing selfie image.' });
@@ -67,6 +67,36 @@ export default async function handler(req, res) {
                 error: 'Image is too blurry. Please hold still and try again.'
             });
         }
+
+        // Initialize Firebase Admin securely
+        if (!global.adminApp) {
+            const admin = (await import('firebase-admin')).default;
+            if (!admin.apps.length) {
+                const serviceAccountStr = process.env.FIREBASE_SERVICE_ACCOUNT;
+                if (!serviceAccountStr) {
+                    throw new Error("Missing FIREBASE_SERVICE_ACCOUNT env var");
+                }
+                global.adminApp = admin.initializeApp({
+                    credential: admin.credential.cert(JSON.parse(serviceAccountStr))
+                });
+            } else {
+                global.adminApp = admin.app();
+            }
+        }
+        
+        const admin = (await import('firebase-admin')).default;
+        const db = admin.firestore();
+
+        // Ensure email was provided
+        if (!email) {
+            return res.status(400).json({ success: false, error: 'Email is required for verification.' });
+        }
+
+        // Securely update user in Firestore
+        await db.collection('users').doc(email).set({
+            isVerified: true,
+            verifiedAt: new Date().toISOString()
+        }, { merge: true });
 
         return res.status(200).json({
             success: true,
