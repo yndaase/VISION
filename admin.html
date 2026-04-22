@@ -301,6 +301,10 @@
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M10.34 15.84c-.688-.06-1.386-.09-2.09-.09H7.5a4.5 4.5 0 110-9h.75c.704 0 1.402-.03 2.09-.09m0 9.18c.253.962.584 1.892.985 2.783.247.55.06 1.21-.463 1.511l-.657.38c-.551.318-1.26.117-1.527-.448a20.821 20.821 0 01-1.442-4.226m4.092-9.193a5.007 5.007 0 00-.13 5.41m0-5.41c.19-.64.456-1.259.791-1.848.24-.424.756-.547 1.144-.275l.81.57c.303.214.412.616.25.945a7.147 7.147 0 00-.671 2.45" /></svg>
           <span>Broadcasts</span>
         </button>
+        <button class="nav-item" onclick="navTo('support', this)">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M8.625 12a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H8.25m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H12.375m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0h-.375M21 12c0 4.556-4.03 8.25-9 8.25a9.764 9.764 0 01-2.555-.337A5.972 5.972 0 015.41 20.97a5.969 5.969 0 01-.474-.065 4.48 4.48 0 00.978-2.025c.09-.457-.133-.901-.467-1.226C3.93 16.178 3 14.189 3 12c0-4.556 4.03-8.25 9-8.25s9 3.694 9 8.25z" /></svg>
+          <span>Support Chat</span>
+        </button>
       </div>
 
       <div style="margin-top: auto;">
@@ -432,8 +436,37 @@
             <button class="btn btn-primary" id="postAnnBtn" style="padding: 14px 40px;">Post Announcement</button>
           </div>
         </div>
+      <!-- --- SUPPORT --- -->
+      <section class="admin-section" id="sec-support">
+        <div class="support-layout" style="display: grid; grid-template-columns: 320px 1fr; gap: 24px; height: calc(100vh - 200px);">
+          <!-- Chat List -->
+          <div class="support-list-card" style="background: var(--admin-card-bg); border-radius: 20px; border: 1px solid var(--admin-border); overflow: hidden; display: flex; flex-direction: column;">
+            <div style="padding: 20px; border-bottom: 1px solid var(--admin-border);">
+              <h3 style="font-size: 1.1rem; font-weight: 800;">Conversations</h3>
+            </div>
+            <div id="chatListContainer" style="flex: 1; overflow-y: auto; padding: 10px;">
+              <!-- Chats rendered here -->
+            </div>
+          </div>
+          
+          <!-- Chat Window -->
+          <div class="support-window-card" style="background: var(--admin-card-bg); border-radius: 20px; border: 1px solid var(--admin-border); display: flex; flex-direction: column; overflow: hidden;">
+            <div id="activeChatHeader" style="padding: 15px 25px; border-bottom: 1px solid var(--admin-border); background: rgba(255,255,255,0.02);">
+              <span style="color: var(--admin-text-muted);">Select a conversation to start messaging</span>
+            </div>
+            <div id="chatMessagesContainer" style="flex: 1; overflow-y: auto; padding: 25px; display: flex; flex-direction: column; gap: 15px;">
+              <!-- Messages rendered here -->
+            </div>
+            <div id="chatInputArea" style="padding: 20px; border-top: 1px solid var(--admin-border); display: none;">
+              <div style="display: flex; gap: 12px;">
+                <input type="text" id="replyInput" placeholder="Type a message..." style="flex: 1; background: rgba(255,255,255,0.05); border: 1px solid var(--admin-border); padding: 14px 20px; border-radius: 100px; color: white;">
+                <button onclick="sendReply()" class="btn btn-primary" style="border-radius: 100px; padding: 0 25px;">Send</button>
+              </div>
+            </div>
+          </div>
+        </div>
       </section>
-    </main>
+
   </div>
 
   <!-- --- MODALS --- -->
@@ -576,8 +609,8 @@
       document.querySelectorAll(".nav-item").forEach(b => b.classList.remove("active"));
       if (btn) btn.classList.add("active");
 
-      const titles = { overview: "Dashboard", materials: "Materials", users: "Users", announce: "Announcements" };
-      const subs = { overview: "Manage your platform and metrics", materials: "Manage learning materials", users: "Manage user access and roles", announce: "Post global announcements" };
+      const titles = { overview: "Dashboard", materials: "Materials", users: "Users", announce: "Announcements", support: "Support Chat" };
+      const subs = { overview: "Manage your platform and metrics", materials: "Manage learning materials", users: "Manage user access and roles", announce: "Post global announcements", support: "Direct WhatsApp student support" };
       
       document.getElementById("pageTitleText").innerText = titles[secId] || "Admin Portal";
       document.getElementById("pageSubText").innerText = subs[secId] || "Management Portal";
@@ -589,6 +622,7 @@
               renderMats();
           }
       }
+      if (secId === "support") renderSupport();
       if (secId === "users") renderUsers();
       if (secId === "overview") renderStats();
     };
@@ -1419,6 +1453,132 @@
             verifyBtn.disabled = false;
             otpErr.innerText = "Connection Error. Try again.";
             otpErr.style.display = "block";
+        }
+    // --- SUPPORT CHAT ENGINE ---
+    let activeChatPhone = null;
+
+    window.renderSupport = async function() {
+        const listContainer = document.getElementById("chatListContainer");
+        if (!listContainer) return;
+        
+        listContainer.innerHTML = `<div style="padding: 20px; text-align: center; color: var(--admin-text-muted);">Syncing cloud chats...</div>`;
+        
+        try {
+            if (typeof window.fbGetSupportChats !== 'function') return;
+            const chats = await window.fbGetSupportChats();
+            
+            if (!chats || chats.length === 0) {
+                listContainer.innerHTML = `<div style="padding: 40px 20px; text-align: center; color: var(--admin-text-muted); font-size: 0.85rem;">No incoming messages yet.</div>`;
+                return;
+            }
+
+            listContainer.innerHTML = chats.map(c => `
+                <div class="chat-list-item ${activeChatPhone === c.phone ? 'active' : ''}" 
+                     onclick="loadChat('${c.phone}', '${c.studentName}')"
+                     style="padding: 15px; border-radius: 12px; cursor: pointer; margin-bottom: 8px; transition: all 0.2s; border: 1px solid transparent; ${activeChatPhone === c.phone ? 'background: rgba(255,255,255,0.05); border-color: var(--admin-primary);' : ''}">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                        <span style="font-weight: 800; font-size: 0.9rem;">${c.studentName}</span>
+                        <span style="font-size: 0.7rem; color: var(--admin-text-muted);">${new Date(c.lastUpdated).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}</span>
+                    </div>
+                    <div style="font-size: 0.75rem; color: var(--admin-text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                        ${c.lastMessage}
+                    </div>
+                </div>
+            `).join("");
+        } catch (err) {
+            console.error("[Support] Fetch error:", err);
+            listContainer.innerHTML = `<div style="padding: 20px; text-align: center; color: var(--admin-danger);">Failed to sync chats</div>`;
+        }
+    };
+
+    window.loadChat = async function(phone, name) {
+        activeChatPhone = phone;
+        renderSupport(); // Refresh list to show active state
+        
+        const header = document.getElementById("activeChatHeader");
+        const msgContainer = document.getElementById("chatMessagesContainer");
+        const inputArea = document.getElementById("chatInputArea");
+        
+        header.innerHTML = `
+            <div style="display: flex; align-items: center; justify-content: space-between;">
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <div style="width: 32px; height: 32px; background: var(--admin-primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 0.8rem;">${name[0]}</div>
+                    <div>
+                        <div style="font-weight: 800; font-size: 0.95rem;">${name}</div>
+                        <div style="font-size: 0.7rem; color: var(--admin-text-muted);">${phone}</div>
+                    </div>
+                </div>
+                <div style="background: var(--admin-success); color: white; padding: 4px 12px; border-radius: 100px; font-size: 0.65rem; font-weight: 800;">LIVE CONNECTION</div>
+            </div>
+        `;
+        
+        msgContainer.innerHTML = `<div style="padding: 20px; text-align: center; color: var(--admin-text-muted);">Decrypting history...</div>`;
+        inputArea.style.display = "block";
+
+        try {
+            if (typeof window.fbGetChatMessages !== 'function') return;
+            const messages = await window.fbGetChatMessages(phone);
+            
+            msgContainer.innerHTML = messages.map(m => `
+                <div style="align-self: ${m.from === 'admin' ? 'flex-end' : 'flex-start'}; 
+                            background: ${m.from === 'admin' ? 'var(--admin-primary)' : 'rgba(255,255,255,0.05)'}; 
+                            color: white; 
+                            padding: 12px 18px; 
+                            border-radius: ${m.from === 'admin' ? '20px 20px 0 20px' : '20px 20px 20px 0'}; 
+                            max-width: 80%; 
+                            font-size: 0.9rem;
+                            border: 1px solid ${m.from === 'admin' ? 'transparent' : 'var(--admin-border)'};">
+                    ${m.text}
+                    <div style="font-size: 0.6rem; margin-top: 5px; opacity: 0.5; text-align: right;">${new Date(m.timestamp).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}</div>
+                </div>
+            `).join("");
+            
+            msgContainer.scrollTop = msgContainer.scrollHeight;
+        } catch (err) {
+            msgContainer.innerHTML = `<div style="padding: 20px; text-align: center; color: var(--admin-danger);">Failed to load history</div>`;
+        }
+    };
+
+    window.sendReply = async function() {
+        const input = document.getElementById("replyInput");
+        const text = input.value.trim();
+        if (!text || !activeChatPhone) return;
+
+        const originalText = input.value;
+        input.value = "";
+        input.disabled = true;
+
+        try {
+            // 1. Send via WhatsApp API
+            const resp = await fetch("/api/whatsapp", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ 
+                    phone: activeChatPhone, 
+                    message: text,
+                    type: "DIRECT"
+                })
+            });
+
+            if (!resp.ok) throw new Error("API transmission failed");
+
+            // 2. Save to Firebase
+            if (typeof window.fbSaveChatMessage === 'function') {
+                await window.fbSaveChatMessage(activeChatPhone, {
+                    text,
+                    from: 'admin',
+                    timestamp: new Date().toISOString()
+                });
+            }
+
+            // 3. Refresh UI
+            loadChat(activeChatPhone, document.getElementById("activeChatHeader").querySelector('div div div').innerText);
+            input.disabled = false;
+        } catch (err) {
+            console.error("[Support] Send error:", err);
+            showToast("Failed to send message");
+            input.value = originalText;
+            input.disabled = false;
         }
     };
 

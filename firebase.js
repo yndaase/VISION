@@ -768,8 +768,53 @@ window.fbDeleteMaterial = async function(id) {
 };
 
 /**
- * USER MANAGEMENT (Firestore collection: "users")
+ * SUPPORT CHATS (Firestore collection: "support_chats")
  */
+
+window.fbGetSupportChats = async function() {
+  try {
+    const q = query(collection(db, "support_chats"), orderBy("lastUpdated", "desc"));
+    const snap = await getDocs(q);
+    const chats = [];
+    snap.forEach(doc => chats.push({ id: doc.id, ...doc.data() }));
+    return chats;
+  } catch(err) {
+    console.error('[Firebase] fbGetSupportChats failed:', err.message);
+    return [];
+  }
+};
+
+window.fbGetChatMessages = async function(phone) {
+  if (!phone) return [];
+  try {
+    const q = query(collection(db, "support_chats", phone, "messages"), orderBy("timestamp", "asc"));
+    const snap = await getDocs(q);
+    const messages = [];
+    snap.forEach(doc => messages.push({ id: doc.id, ...doc.data() }));
+    return messages;
+  } catch(err) {
+    console.error('[Firebase] fbGetChatMessages failed:', err.message);
+    return [];
+  }
+};
+
+window.fbSaveChatMessage = async function(phone, msgData) {
+  if (!phone || !msgData) return;
+  try {
+    // 1. Add to messages sub-collection
+    await addDoc(collection(db, "support_chats", phone, "messages"), msgData);
+    
+    // 2. Update main chat doc for sorting
+    await setDoc(doc(db, "support_chats", phone), {
+      lastMessage: msgData.text,
+      lastUpdated: new Date().toISOString()
+    }, { merge: true });
+    
+    console.log('[Firebase] Chat message saved');
+  } catch(err) {
+    console.error('[Firebase] fbSaveChatMessage failed:', err.message);
+  }
+};
 
 window.fbGetAllUsers = async function(collectionName = 'users') {
   try {
