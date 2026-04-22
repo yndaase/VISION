@@ -582,7 +582,13 @@
       document.getElementById("pageTitleText").innerText = titles[secId] || "Admin Portal";
       document.getElementById("pageSubText").innerText = subs[secId] || "Management Portal";
 
-      if (secId === "materials") renderMats();
+      if (secId === "materials") {
+          if (typeof syncMaterials === 'function') {
+              syncMaterials().then(renderMats);
+          } else {
+              renderMats();
+          }
+      }
       if (secId === "users") renderUsers();
       if (secId === "overview") renderStats();
     };
@@ -725,7 +731,26 @@
                 });
                 
                 finalUrl = blob.url;
-                showToast("Large asset secured and linked to Firebase");
+
+                // INSTANT UI UPDATE: Add to local list so it shows up without refresh
+                const entry = { 
+                    id: 'mat-' + timestamp, 
+                    subject: sub, 
+                    title, 
+                    type, 
+                    url: finalUrl, 
+                    uploadedAt: new Date().toISOString().split("T")[0], 
+                    uploadedBy: "admin",
+                    size: (file.size / (1024*1024)).toFixed(2) + " MB"
+                };
+                
+                // Update local storage so it persists immediately
+                const all = getMaterials();
+                all.push(entry);
+                saveMaterials(all);
+                renderMats(); // Re-render the list on screen
+                
+                showToast("Asset secured and linked to Firebase");
             } catch (uploadErr) {
                 console.error("[Large Upload Error]:", uploadErr);
                 // If it fails with 'public access' error, remind the user about Vercel settings

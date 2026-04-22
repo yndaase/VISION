@@ -730,6 +730,43 @@ window.fbGetUserCertificates = async function(email) {
   }
 };
 
+/**
+ * MATERIALS ENGINE (Firestore collection: "learning_materials")
+ */
+
+window.fbGetMaterials = async function() {
+  try {
+    const q = query(collection(db, "learning_materials"), orderBy("uploadedAt", "desc"));
+    const snap = await getDocs(q);
+    const mats = [];
+    snap.forEach(doc => mats.push({ id: doc.id, ...doc.data() }));
+    return mats;
+  } catch(err) {
+    console.error('[Firebase] fbGetMaterials failed:', err.message);
+    return [];
+  }
+};
+
+window.fbSaveMaterial = async function(mat) {
+  if (!mat || !mat.id) return;
+  try {
+    await setDoc(doc(db, "learning_materials", mat.id), mat, { merge: true });
+    console.log('[Firebase] Material record synced:', mat.title);
+  } catch(err) {
+    console.error('[Firebase] fbSaveMaterial failed:', err.message);
+  }
+};
+
+window.fbDeleteMaterial = async function(id) {
+  if (!id) return;
+  try {
+    await deleteDoc(doc(db, "learning_materials", id));
+    console.log('[Firebase] Material record deleted:', id);
+  } catch(err) {
+    console.error('[Firebase] fbDeleteMaterial failed:', err.message);
+  }
+};
+
 /* ─────────────────────────────────────────────────────────────
    AUTO-SYNC on import (non-parent pages)
    ───────────────────────────────────────────────────────────── */
@@ -741,9 +778,12 @@ if (typeof window !== 'undefined' && window.location.pathname !== '/parent-porta
         const session = JSON.parse(sessionString);
         if (session && session.email && session.role !== 'parent') {
           window.syncStateToCloud(session.email);
+          // Also sync materials for student dashboard
+          if (typeof window.syncMaterials === 'function') window.syncMaterials();
         }
       }
     } catch(e) {}
   }, 2000);
 }
+
 
