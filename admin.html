@@ -1663,7 +1663,15 @@
 
         try {
             const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-            mediaRecorder = new MediaRecorder(stream);
+            
+            // Force opus encoding for WhatsApp compatibility
+            const options = { mimeType: 'audio/ogg; codecs=opus' };
+            if (!MediaRecorder.isTypeSupported(options.mimeType)) {
+                console.warn("Opus not supported, falling back to default");
+                delete options.mimeType;
+            }
+            
+            mediaRecorder = new MediaRecorder(stream, options);
             audioChunks = [];
             seconds = 0;
             
