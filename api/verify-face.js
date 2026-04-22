@@ -1,4 +1,4 @@
-import fs from 'fs';
+// VISION Face Verification API — Face++ Integration
 
 export default async function handler(req, res) {
     if (req.method !== 'POST') {

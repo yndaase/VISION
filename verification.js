@@ -1,6 +1,7 @@
 /**
  * VISION Face Verification System
- * Handles ID upload, Camera capture, and CompreFace matching
+ * Handles Camera capture and Face++ API matching
+ * This is the CANONICAL verification flow — all entry points route here.
  */
 
 let idFile = null;
@@ -21,21 +22,6 @@ function resetVerifySteps() {
     document.getElementById('verifyStep1').style.display = 'block';
     document.getElementById('verifyStep2').style.display = 'none';
     document.getElementById('verifyStep3').style.display = 'none';
-    document.getElementById('idPreview').innerText = '📇';
-    document.getElementById('idUploadLabel').innerText = 'Upload Student ID Card';
-    document.getElementById('nextToSelfie').disabled = true;
-    document.getElementById('nextToSelfie').style.opacity = '0.5';
-    idFile = null;
-}
-
-function handleIdSelect(input) {
-    if (input.files && input.files[0]) {
-        idFile = input.files[0];
-        document.getElementById('idPreview').innerText = '✅';
-        document.getElementById('idUploadLabel').innerText = idFile.name;
-        document.getElementById('nextToSelfie').disabled = false;
-        document.getElementById('nextToSelfie').style.opacity = '1';
-    }
 }
 
 let currentFacingMode = 'user'; // 'user' is front, 'environment' is back
@@ -110,10 +96,16 @@ async function processVerification(selfieBase64) {
     document.getElementById('verifyStep3').style.display = 'block';
     
     const statusText = document.getElementById('verifyStatusText');
-    const session = JSON.parse(localStorage.getItem('waec_session'));
+    const session = JSON.parse(sessionStorage.getItem('waec_session') || localStorage.getItem('waec_session') || 'null');
     
+    if (!session || !session.email) {
+        statusText.innerHTML = "<span style='color:#ef4444; font-weight:800;'>Session Error</span><br>Please log in again.";
+        setTimeout(() => closeVerifyModal(), 2000);
+        return;
+    }
+
     try {
-        statusText.innerText = "Analyzing...";
+        statusText.innerText = "Analyzing biometric data...";
         const res = await fetch('/api/verify-face', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -127,34 +119,34 @@ async function processVerification(selfieBase64) {
         
         if (result.match) {
             statusText.innerHTML = "<span style='color:#10b981; font-weight:800;'>VERIFIED!</span>";
+            
+            // Update local session state immediately
+            session.isVerified = true;
+            try { sessionStorage.setItem('waec_session', JSON.stringify(session)); } catch(e) {}
+            try { localStorage.setItem('waec_session', JSON.stringify(session)); } catch(e) {}
+            
+            // Also update via auth.js setSession if available
+            if (typeof setSession === 'function') {
+                setSession(session);
+            }
+
+            // Update verification UI badges immediately (no reload needed for badge display)
+            if (typeof updateVerificationUI === 'function') {
+                updateVerificationUI(true);
+            }
+            
             setTimeout(() => {
+                closeVerifyModal();
                 window.location.reload();
             }, 1500);
         } else {
-            statusText.innerHTML = "<span style='color:#ef4444; font-weight:800;'>FAILED</span><br>" + (result.error || "No face detected.");
-            
-            // KILL THE GHOST: If the scan fails, ensure the session reflects it
-            const session = JSON.parse(localStorage.getItem('waec_session'));
-            if (session) {
-                session.isVerified = false;
-                localStorage.setItem('waec_session', JSON.stringify(session));
-            }
+            statusText.innerHTML = "<span style='color:#ef4444; font-weight:800;'>FAILED</span><br>" + (result.error || "No face detected. Ensure good lighting and try again.");
             
             setTimeout(() => resetVerifySteps(), 3000);
         }
     } catch (err) {
-        statusText.innerHTML = "System Error. Try again.";
+        console.error("[Verification] System Error:", err);
+        statusText.innerHTML = "System Error. Please try again.";
         setTimeout(() => resetVerifySteps(), 3000);
     }
 }
-
-// Global UI Updater
-window.updateVerificationUI = function(isVerified) {
-    const navBadge = document.getElementById('navVerifiedBadge');
-    const heroBadge = document.getElementById('heroVerifiedBadge');
-    const verifyBtn = document.getElementById('navVerifyBtn');
-    
-    if (navBadge) navBadge.style.display = isVerified ? 'inline-flex' : 'none';
-    if (heroBadge) heroBadge.style.display = isVerified ? 'inline-flex' : 'none';
-    if (verifyBtn) verifyBtn.style.display = isVerified ? 'none' : 'flex';
-};

@@ -729,92 +729,27 @@ function handleModalOutsideClick(event) {
 }
 
 /**
- * Handle Face Verification — Single Selfie Flow
+ * Handle Face Verification — Routes to the unified verifyModal system
  */
-let bioStream = null;
-
-window.handleFaceVerification = async function() {
+window.handleFaceVerification = function() {
     const session = getSession();
     if (!session) return;
 
-    const modal = document.getElementById("biometricModal");
-    modal.style.display = "flex";
-
-    // Update UI for selfie-only mode
-    document.getElementById("bioModalTitle").innerText = "Face Verification";
-    document.getElementById("bioModalDesc").innerText = "Look directly at the camera. Ensure good lighting.";
-    if (document.getElementById("idGuide")) document.getElementById("idGuide").style.display = "none";
-    if (document.getElementById("faceGuide")) document.getElementById("faceGuide").style.display = "block";
-    if (document.getElementById("scannerLine")) document.getElementById("scannerLine").style.display = "block";
-
-    try {
-        bioStream = await navigator.mediaDevices.getUserMedia({
-            video: { facingMode: "user", width: { ideal: 1280 }, height: { ideal: 720 } }
-        });
-        document.getElementById("bioVideo").srcObject = bioStream;
-    } catch (err) {
-        console.error("Camera Error:", err);
-        alert("Camera access denied. Verification requires camera permission.");
-        closeBiometricModal();
+    // Use the unified verification modal from verification.js
+    if (typeof openVerifyModal === 'function') {
+        openVerifyModal();
+    } else {
+        alert("Verification system is loading. Please try again.");
     }
 }
 
-window.captureBiometric = async function() {
-    const video = document.getElementById("bioVideo");
-    const canvas = document.getElementById("bioCanvas");
-    const ctx = canvas.getContext("2d");
-    const btn = document.getElementById("captureBtn");
-
-    canvas.width = video.videoWidth;
-    canvas.height = video.videoHeight;
-    ctx.drawImage(video, 0, 0);
-
-    const base64 = canvas.toDataURL("image/jpeg", 0.85);
-
-    btn.disabled = true;
-    btn.innerText = "VERIFYING FACE...";
-    try {
-        const session = getSession();
-        if (!session) {
-            alert("Session error. Please log in again.");
-            return;
-        }
-        
-        const res = await fetch('/api/verify-face', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ selfieBase64: base64, email: session.email })
-        });
-
-        const data = await res.json();
-
-        if (data.success && data.verified) {
-            // Update Local State
-            session.isVerified = true;
-            setSession(session);
-
-
-            closeBiometricModal();
-            alert("✅ Face Verified! Your verified badge is now active.");
-            location.reload();
-        } else {
-            alert("Verification Failed: " + (data.error || "Could not detect a clear face. Try again."));
-        }
-    } catch (err) {
-        console.error("Verification error:", err);
-        alert("Connection error. Please check your internet and try again.");
-    } finally {
-        btn.disabled = false;
-        btn.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg> Capture Selfie`;
-    }
+// Legacy stubs — kept for backward compatibility
+window.captureBiometric = function() {
+    if (typeof captureSelfie === 'function') captureSelfie();
 }
 
 window.closeBiometricModal = function() {
-    if (bioStream) {
-        bioStream.getTracks().forEach(track => track.stop());
-        bioStream = null;
-    }
-    document.getElementById("biometricModal").style.display = "none";
+    if (typeof closeVerifyModal === 'function') closeVerifyModal();
 }
 
 function updateVerificationUI(isVerified) {
