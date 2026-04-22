@@ -10,7 +10,6 @@ const VISION_TEMPLATE = "vision_study_update";
 export default async function handler(req, res) {
     const accessToken = process.env.WHATSAPP_ACCESS_TOKEN;
     const phoneNumberId = process.env.WHATSAPP_PHONE_NUMBER_ID || "1032433326630998";
-    const businessId = process.env.WHATSAPP_BUSINESS_ACCOUNT_ID;
     const method = req.method;
 
     // --- 1. MEDIA PLAYBACK (GET) ---
@@ -49,6 +48,7 @@ export default async function handler(req, res) {
                             body: formData
                         });
                         const data = await metaRes.json();
+                        console.log("[Meta Upload Debug]:", data);
                         res.status(200).json({ mediaId: data.id });
                         resolve();
                     } catch (e) { res.status(500).json({ error: e.message }); resolve(); }
@@ -79,14 +79,27 @@ export default async function handler(req, res) {
                 payload = { messaging_product: "whatsapp", to: recipient, type: "text", text: { body: message || "Vision Education Update" } };
             }
 
+            console.log(`[Meta WA Debug] Sending Payload:`, JSON.stringify(payload));
+
             const response = await fetch(fbUrl, {
                 method: 'POST',
                 headers: { 'Authorization': `Bearer ${accessToken}`, 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload)
             });
             const result = await response.json();
-            return res.status(200).json({ success: true, messageId: result.messages?.[0]?.id });
-        } catch (err) { return res.status(500).json({ error: err.message }); }
+            
+            console.log(`[Meta WA Debug] Response Status: ${response.status}`);
+            console.log(`[Meta WA Debug] Response Body:`, JSON.stringify(result));
+
+            if (response.ok) {
+                return res.status(200).json({ success: true, messageId: result.messages?.[0]?.id });
+            } else {
+                return res.status(response.status).json({ success: false, error: result.error?.message, details: result });
+            }
+        } catch (err) { 
+            console.error("[Meta WA Debug] Crash:", err.message);
+            return res.status(500).json({ error: err.message }); 
+        }
     }
 
     return res.status(405).send('Not Allowed');
