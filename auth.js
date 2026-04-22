@@ -822,20 +822,18 @@ window.closeBiometricModal = function() {
 }
 
 function updateVerificationUI(isVerified) {
-    const container = document.getElementById("verificationContainer");
+    const unverifiedState = document.getElementById("verifyUnverifiedState");
+    const verifiedState = document.getElementById("verifyVerifiedState");
     const badge = document.getElementById("settingsVerifiedBadge");
     
     if (isVerified) {
-        if (container) container.innerHTML = `
-            <div style="background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.2); padding: 1rem; border-radius: 12px; display: flex; align-items: center; gap: 12px;">
-                <div style="width: 32px; height: 32px; background: #10b981; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff;">✓</div>
-                <div>
-                    <div style="font-weight: 700; color: #10b981;">Identity Verified</div>
-                    <div style="font-size: 0.75rem; color: var(--text-muted);">Biometric verification successful.</div>
-                </div>
-            </div>
-        `;
+        if (unverifiedState) unverifiedState.style.display = "none";
+        if (verifiedState) verifiedState.style.display = "block";
         if (badge) badge.style.display = "inline-flex";
+    } else {
+        if (unverifiedState) unverifiedState.style.display = "block";
+        if (verifiedState) verifiedState.style.display = "none";
+        if (badge) badge.style.display = "none";
     }
 }
 
