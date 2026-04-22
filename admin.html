@@ -701,19 +701,25 @@
             const file = fileInput.files[0];
             const timestamp = Date.now();
             const safeName = file.name.replace(/[^a-z0-9.]/gi, '_');
-            const path = `materials/${sub}/${timestamp}_${safeName}`;
+            const pathname = `materials/${sub}/${timestamp}_${safeName}`;
             
             document.getElementById("uploadProgressContainer").style.display = "block";
 
-            const adminEmail = sessionStorage.getItem("vision_admin_email") || "admin@visionedu.online";
-            // Proceed directly to upload using the active Firebase Auth session
-            
-            finalUrl = await window.fbUploadData(file, path, (pct) => {
-                document.getElementById("uploadProgressBar").style.width = pct + "%";
-                document.getElementById("uploadStatus").innerText = `Uploading: ${Math.round(pct)}%`;
+            // Dynamically import Vercel Blob client
+            const { upload } = await import('https://esm.sh/@vercel/blob/client');
+
+            const blob = await upload(pathname, file, {
+                access: 'public',
+                handleUploadUrl: '/api/upload',
+                onUploadProgress: (progressEvent) => {
+                    const pct = (progressEvent.loaded / progressEvent.total) * 100;
+                    document.getElementById("uploadProgressBar").style.width = pct + "%";
+                    document.getElementById("uploadStatus").innerText = `Uploading: ${Math.round(pct)}%`;
+                },
             });
             
-            showToast("File uploaded to safe storage");
+            finalUrl = blob.url;
+            showToast("File uploaded to Vercel storage");
         }
 
         const entry = { 
