@@ -706,12 +706,7 @@
             document.getElementById("uploadProgressContainer").style.display = "block";
 
             const adminEmail = sessionStorage.getItem("vision_admin_email") || "admin@visionedu.online";
-            if (typeof window.fbSignIn === "function") {
-                const signInRes = await window.fbSignIn(adminEmail, "Ndaase@2009");
-                if (!signInRes || !signInRes.success) {
-                    throw new Error("Firebase upload blocked. Enable Firebase Authentication (Email/Password) and create the admin user, then try again.");
-                }
-            }
+            // Proceed directly to upload using the active Firebase Auth session
             
             finalUrl = await window.fbUploadData(file, path, (pct) => {
                 document.getElementById("uploadProgressBar").style.width = pct + "%";
