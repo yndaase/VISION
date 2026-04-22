@@ -1391,62 +1391,139 @@
         }
       });
     </script>
-  <!-- --- IDENTITY VERIFICATION MODAL --- -->
-  <div id="verifyModal" class="modal" style="display:none; position:fixed; inset:0; z-index:2000; background:rgba(0,0,0,0.85); backdrop-filter:blur(8px); align-items:center; justify-content:center; padding:20px;">
-    <div class="modal-card" style="background:var(--bg-card); border:1px solid var(--border); border-radius:32px; width:100%; max-width:500px; overflow:hidden; position:relative; animation: modalIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);">
-      <button onclick="closeVerifyModal()" style="position:absolute; top:24px; right:24px; width:40px; height:40px; border-radius:50%; background:rgba(255,255,255,0.05); border:1px solid var(--border); color:var(--text-primary); display:flex; align-items:center; justify-content:center; cursor:pointer; z-index:10; transition:all 0.2s;">
-        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M6 18L18 6M6 6l12 12"/></svg>
+  <!-- --- IDENTITY VERIFICATION MODAL (Dual-Check) --- -->
+  <div id="verifyModal" class="modal" style="display:none; position:fixed; inset:0; z-index:2000; background:rgba(0,0,0,0.88); backdrop-filter:blur(12px); align-items:center; justify-content:center; padding:20px;">
+    <div class="modal-card" style="background:var(--bg-card); border:1px solid var(--border); border-radius:32px; width:100%; max-width:520px; overflow:hidden; position:relative; animation: modalIn 0.4s cubic-bezier(0.16, 1, 0.3, 1); max-height:90vh; overflow-y:auto;">
+      <!-- Scanning line -->
+      <div style="position:absolute; top:0; left:0; width:100%; height:3px; background:linear-gradient(to right, transparent, var(--primary), transparent); box-shadow:0 0 15px var(--primary); z-index:10; animation:scan 2.5s linear infinite;"></div>
+
+      <button onclick="closeVerifyModal()" style="position:absolute; top:20px; right:20px; width:36px; height:36px; border-radius:50%; background:rgba(255,255,255,0.05); border:1px solid var(--border); color:var(--text-primary); display:flex; align-items:center; justify-content:center; cursor:pointer; z-index:10;">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M6 18L18 6M6 6l12 12"/></svg>
       </button>
 
-      <div class="modal-body" style="padding:40px;">
+      <div class="modal-body" style="padding:36px;">
+
+        <!-- ═══ STEP 1: Upload National ID ═══ -->
         <div id="verifyStep1">
-          <h2 style="font-size:1.75rem; font-weight:900; color:var(--text-primary); margin-bottom:12px; letter-spacing:-0.02em;">Face Verification</h2>
-          <p style="color:var(--text-muted); line-height:1.6; margin-bottom:32px;">To secure your account and get your verified badge, we need to perform a quick 3D face scan.</p>
+          <div style="display:flex; align-items:center; gap:10px; margin-bottom:6px;">
+            <div style="width:28px; height:28px; background:var(--primary); border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:0.75rem; font-weight:900; color:#fff;">1</div>
+            <span style="font-size:0.7rem; font-weight:800; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.1em;">Step 1 of 2</span>
+          </div>
+          <h2 style="font-size:1.6rem; font-weight:900; color:var(--text-primary); margin-bottom:8px; letter-spacing:-0.02em;">Upload National ID</h2>
+          <p style="color:var(--text-muted); font-size:0.88rem; line-height:1.6; margin-bottom:28px;">Upload a clear photo of your Ghana Card or student ID. We'll verify the name matches your Vision Education account.</p>
           
-          <div style="background:var(--primary-dim); border:1px solid var(--primary); border-radius:24px; padding:32px; text-align:center;">
-            <div style="font-size:3rem; margin-bottom:16px;">🤳</div>
-            <div style="font-weight:800; color:var(--text-primary); margin-bottom:4px;">Live Selfie Scan</div>
-            <div style="font-size:0.8rem; color:var(--text-muted);">Ensure your face is well-lit and clear</div>
+          <!-- Upload Zone -->
+          <label for="idFileInput" style="display:block; cursor:pointer;">
+            <div id="idUploadPlaceholder" style="display:flex; flex-direction:column; align-items:center; justify-content:center; gap:16px; padding:40px 20px; background:rgba(99,102,241,0.04); border:2px dashed rgba(99,102,241,0.25); border-radius:20px; transition:all 0.3s;" onmouseover="this.style.borderColor='var(--primary)'; this.style.background='rgba(99,102,241,0.08)';" onmouseout="this.style.borderColor='rgba(99,102,241,0.25)'; this.style.background='rgba(99,102,241,0.04)';">
+              <div style="width:56px; height:56px; background:var(--primary-dim); border-radius:16px; display:flex; align-items:center; justify-content:center; border:1px solid var(--primary);">
+                <svg width="28" height="28" fill="none" stroke="var(--primary)" stroke-width="1.5" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 10h18"/><circle cx="8" cy="7" r="1" fill="var(--primary)"/><path d="M7 15l3-3 2 2 4-4 4 4"/></svg>
+              </div>
+              <div style="text-align:center;">
+                <div style="font-weight:700; color:var(--text-primary); margin-bottom:4px;">Tap to upload ID card photo</div>
+                <div style="font-size:0.78rem; color:var(--text-muted);">Ghana Card, Student ID, or Passport</div>
+              </div>
+            </div>
+            <input type="file" id="idFileInput" accept="image/*" capture="environment" onchange="handleIdUpload(this)" style="display:none;">
+          </label>
+
+          <!-- ID Preview (hidden initially) -->
+          <div style="margin-top:16px; position:relative; display:flex; align-items:center; gap:14px;">
+            <img id="idCardPreview" style="display:none; width:100px; height:70px; object-fit:cover; border-radius:12px; border:2px solid var(--primary);">
+            <div>
+              <div id="idFileName" style="font-size:0.85rem; font-weight:700; color:var(--text-primary);"></div>
+              <div style="font-size:0.72rem; color:var(--text-muted); margin-top:2px;">ID photo ready for verification</div>
+            </div>
           </div>
 
-          <button onclick="showSelfieStep()" class="btn btn-primary" style="width:100%; margin-top:24px; padding:16px; border-radius:16px; font-weight:800;">
-            Start Face Scan
+          <!-- Info chips -->
+          <div style="display:flex; gap:10px; margin-top:24px; flex-wrap:wrap;">
+            <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.06); padding:8px 14px; border-radius:10px; display:flex; align-items:center; gap:8px;">
+              <span style="font-size:1rem;">🔍</span>
+              <span style="font-size:0.75rem; color:var(--text-secondary); font-weight:600;">AI Name Detection</span>
+            </div>
+            <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.06); padding:8px 14px; border-radius:10px; display:flex; align-items:center; gap:8px;">
+              <span style="font-size:1rem;">🔒</span>
+              <span style="font-size:0.75rem; color:var(--text-secondary); font-weight:600;">Encrypted & Private</span>
+            </div>
+          </div>
+
+          <button id="idNextBtn" onclick="showSelfieStep()" disabled style="opacity:0.4; width:100%; margin-top:24px; padding:16px; border-radius:16px; font-weight:800; background:linear-gradient(135deg, var(--primary), #3b82f6); color:#fff; border:none; cursor:pointer; font-size:0.95rem; transition:all 0.3s; display:flex; align-items:center; justify-content:center; gap:8px;">
+            <span>Continue to Face Scan</span>
+            <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
           </button>
         </div>
 
+        <!-- ═══ STEP 2: Selfie Camera ═══ -->
         <div id="verifyStep2" style="display:none;">
-          <h2 style="font-size:1.5rem; font-weight:900; color:var(--text-primary); margin-bottom:12px;">Take a Selfie</h2>
-          <p style="color:var(--text-muted); font-size:0.85rem; margin-bottom:24px;">Position your face in the circle below.</p>
+          <div style="display:flex; align-items:center; gap:10px; margin-bottom:6px;">
+            <div style="width:28px; height:28px; background:var(--primary); border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:0.75rem; font-weight:900; color:#fff;">2</div>
+            <span style="font-size:0.7rem; font-weight:800; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.1em;">Step 2 of 2</span>
+          </div>
+          <h2 style="font-size:1.5rem; font-weight:900; color:var(--text-primary); margin-bottom:8px;">Take a Live Selfie</h2>
+          <p style="color:var(--text-muted); font-size:0.85rem; margin-bottom:24px;">Position your face in the circle. Ensure good lighting.</p>
           
-          <div style="position:relative; width:280px; height:280px; margin:0 auto 32px; border-radius:50%; overflow:hidden; border:4px solid var(--primary); box-shadow:0 0 0 10px rgba(14,165,233,0.1);">
+          <div style="position:relative; width:260px; height:260px; margin:0 auto 28px; border-radius:50%; overflow:hidden; border:4px solid var(--primary); box-shadow:0 0 0 10px rgba(99,102,241,0.08), 0 0 40px rgba(99,102,241,0.12);">
             <video id="selfieVideo" autoplay playsinline style="width:100%; height:100%; object-fit:cover;"></video>
             <canvas id="selfieCanvas" style="display:none;"></canvas>
-            <div id="shutterOverlay" style="position:absolute; inset:0; background:white; opacity:0; pointer-events:none;"></div>
+            <div id="shutterOverlay" style="position:absolute; inset:0; background:white; opacity:0; pointer-events:none; transition:opacity 0.12s;"></div>
             
-            <!-- Switch Camera Button -->
-            <button onclick="switchCamera()" style="position:absolute; bottom:20px; right:20px; width:44px; height:44px; border-radius:50%; background:rgba(0,0,0,0.5); border:1px solid rgba(255,255,255,0.2); color:white; display:flex; align-items:center; justify-content:center; cursor:pointer; backdrop-filter:blur(4px); transition:all 0.2s; z-index:20;">
-              <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99"/></svg>
+            <!-- Switch Camera -->
+            <button onclick="switchCamera()" style="position:absolute; bottom:16px; right:16px; width:40px; height:40px; border-radius:50%; background:rgba(0,0,0,0.5); border:1px solid rgba(255,255,255,0.2); color:white; display:flex; align-items:center; justify-content:center; cursor:pointer; backdrop-filter:blur(4px); z-index:20;">
+              <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99"/></svg>
             </button>
           </div>
 
-          <button id="verifyCaptureBtn" onclick="captureSelfie()" class="btn btn-primary" style="width:100%; padding:16px; border-radius:16px; font-weight:800;">
-            Take Photo
+          <button id="verifyCaptureBtn" onclick="captureSelfie()" style="width:100%; padding:16px; border-radius:16px; font-weight:800; background:linear-gradient(135deg, var(--primary), #3b82f6); color:#fff; border:none; cursor:pointer; font-size:0.95rem; display:flex; align-items:center; justify-content:center; gap:10px;">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+            Capture & Verify
           </button>
         </div>
 
+        <!-- ═══ STEP 3: Processing & Result ═══ -->
         <div id="verifyStep3" style="display:none; text-align:center; padding:20px 0;">
-          <div style="width:120px; height:120px; margin:0 auto 20px; border-radius:18px; overflow:hidden; border:2px solid var(--primary); box-shadow:0 10px 20px rgba(0,0,0,0.2);">
-            <img id="capturedPhotoPreview" style="width:100%; height:100%; object-fit:cover;">
+          <!-- Photo Preview -->
+          <div style="display:flex; justify-content:center; gap:16px; margin-bottom:24px;">
+            <div style="text-align:center;">
+              <div style="width:72px; height:72px; border-radius:14px; overflow:hidden; border:2px solid var(--border); margin:0 auto 6px;">
+                <img id="capturedPhotoPreview" style="width:100%; height:100%; object-fit:cover;">
+              </div>
+              <div style="font-size:0.65rem; font-weight:700; color:var(--text-muted); text-transform:uppercase;">Selfie</div>
+            </div>
           </div>
-          <div class="pulse" style="width:50px; height:50px; background:var(--primary-dim); border-radius:50%; margin:0 auto 20px; display:flex; align-items:center; justify-content:center;">
-             <svg class="spin" width="24" height="24" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+
+          <!-- Spinner -->
+          <div id="verifySpinner" style="width:50px; height:50px; background:var(--primary-dim); border-radius:50%; margin:0 auto 20px; display:flex; align-items:center; justify-content:center; border:1px solid var(--primary); animation: pulse 1.5s ease infinite;">
+            <svg class="spin" width="24" height="24" fill="none" stroke="var(--primary)" stroke-width="2.5" viewBox="0 0 24 24"><path d="M12 2v4m0 12v4m-7.07-3.93l2.83-2.83m8.48-8.48l2.83-2.83M2 12h4m12 0h4M4.93 4.93l2.83 2.83m8.48 8.48l2.83 2.83"/></svg>
           </div>
-          <h2 style="font-size:1.5rem; font-weight:900; color:var(--text-primary); margin-bottom:12px;">Analyzing Scan</h2>
-          <p id="verifyStatusText" style="color:var(--text-muted); font-size:0.9rem;">Connecting to Face++ Identity Server...</p>
+
+          <!-- Result Icon (hidden initially) -->
+          <div id="verifyResultIcon" style="display:none; width:64px; height:64px; border-radius:50%; margin:0 auto 20px; align-items:center; justify-content:center; border:2px solid var(--border);"></div>
+
+          <h2 id="verifyStatusTitle" style="font-size:1.4rem; font-weight:900; color:var(--text-primary); margin-bottom:10px;">Verifying Identity</h2>
+          <p id="verifyStatusText" style="color:var(--text-muted); font-size:0.88rem; line-height:1.6;">Connecting to identity verification server...</p>
         </div>
+
       </div>
     </div>
   </div>
+
+  <style>
+    @keyframes scan {
+      0% { top: 0%; opacity: 0; }
+      10% { opacity: 1; }
+      90% { opacity: 1; }
+      100% { top: 100%; opacity: 0; }
+    }
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.08); opacity: 0.7; }
+    }
+    .spin { animation: spinAnim 1.2s linear infinite; }
+    @keyframes spinAnim {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+  </style>
 
   <script src="verification.js"></script>
 </body>
