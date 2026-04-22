@@ -1,12 +1,13 @@
 export default async function handler(req, res) {
   const { mediaId } = req.query;
-  const token = process.env.WHATSAPP_TOKEN;
+  // Using your specific environment variable name
+  const token = process.env.WHATSAPP_ACCESS_TOKEN;
 
   console.log(`[Media Debug] Fetching Media ID: ${mediaId}`);
 
   if (!mediaId) return res.status(400).json({ error: 'Missing Media ID' });
   if (!token) {
-    console.error("[Media Debug] CRITICAL: WHATSAPP_TOKEN is not set in Vercel!");
+    console.error("[Media Debug] CRITICAL: WHATSAPP_ACCESS_TOKEN is not set in Vercel!");
     return res.status(500).json({ error: 'Server token missing' });
   }
 
@@ -24,7 +25,6 @@ export default async function handler(req, res) {
     }
 
     // 2. Fetch the actual binary audio file
-    console.log(`[Media Debug] Downloading from Meta URL: ${metaData.url.substring(0, 50)}...`);
     const mediaFile = await fetch(metaData.url, {
       headers: { 'Authorization': `Bearer ${token}` }
     });
@@ -37,8 +37,6 @@ export default async function handler(req, res) {
 
     // 3. Stream it back
     const contentType = mediaFile.headers.get('content-type') || 'audio/ogg';
-    console.log(`[Media Debug] Success! Streaming content-type: ${contentType}`);
-    
     res.setHeader('Content-Type', contentType);
     const buffer = await mediaFile.arrayBuffer();
     return res.status(200).send(Buffer.from(buffer));
