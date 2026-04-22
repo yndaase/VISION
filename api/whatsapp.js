@@ -8,6 +8,7 @@ export const config = {
 const VISION_TEMPLATE = "vision_study_update";
 
 export default async function handler(req, res) {
+    console.log(`[API ENTRY] ${req.method} request received at ${new Date().toISOString()}`);
     const accessToken = process.env.WHATSAPP_ACCESS_TOKEN;
     const phoneNumberId = process.env.WHATSAPP_PHONE_NUMBER_ID || "1032433326630998";
     const method = req.method;
