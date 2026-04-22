@@ -1664,14 +1664,13 @@
         try {
             const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
             
-            // Force opus encoding for WhatsApp compatibility
-            const options = { mimeType: 'audio/ogg; codecs=opus' };
-            if (!MediaRecorder.isTypeSupported(options.mimeType)) {
-                console.warn("Opus not supported, falling back to default");
-                delete options.mimeType;
+            // Use MP4/AAC which Chrome and Meta both love
+            let mimeType = 'audio/mp4';
+            if (!MediaRecorder.isTypeSupported(mimeType)) {
+                mimeType = 'audio/webm'; // Fallback for older browsers
             }
             
-            mediaRecorder = new MediaRecorder(stream, options);
+            mediaRecorder = new MediaRecorder(stream, { mimeType });
             audioChunks = [];
             seconds = 0;
             
@@ -1688,8 +1687,8 @@
 
             mediaRecorder.ondataavailable = (event) => audioChunks.push(event.data);
             mediaRecorder.onstop = async () => {
-                console.log("[Voice] Recording stopped. Preparing upload...");
-                const audioBlob = new Blob(audioChunks, { type: 'audio/ogg' });
+                console.log("[Voice] Recording stopped. Format:", mimeType);
+                const audioBlob = new Blob(audioChunks, { type: mimeType });
                 const formData = new FormData();
                 formData.append('audio', audioBlob);
 

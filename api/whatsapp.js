@@ -39,12 +39,15 @@ export default async function handler(req, res) {
                     if (err || !files.audio) { res.status(400).json({ error: 'No file' }); return resolve(); }
                     try {
                         const fileData = fs.readFileSync(files.audio[0].filepath);
+                        const mimeType = files.audio[0].mimetype || 'audio/mp4';
+                        const ext = mimeType.includes('mp4') ? 'mp4' : (mimeType.includes('ogg') ? 'ogg' : 'webm');
+                        
                         const formData = new FormData();
                         formData.append('messaging_product', 'whatsapp');
                         
-                        const blob = new Blob([fileData], { type: 'audio/ogg' });
-                        formData.append('file', blob, 'voice_note.ogg');
-                        formData.append('type', 'audio/ogg');
+                        const blob = new Blob([fileData], { type: mimeType });
+                        formData.append('file', blob, `voice_note.${ext}`);
+                        formData.append('type', mimeType);
                         const metaRes = await fetch(`https://graph.facebook.com/v19.0/${phoneNumberId}/media`, {
                             method: 'POST',
                             headers: { 'Authorization': `Bearer ${accessToken}` },
