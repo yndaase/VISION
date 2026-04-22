@@ -776,11 +776,12 @@ window.fbDeleteMaterial = async function(id) {
 
 window.fbGetSupportChats = async function() {
   try {
-    const q = query(collection(db, "support_chats"), orderBy("lastUpdated", "desc"));
+    const q = query(collection(db, "support_chats"));
     const snap = await getDocs(q);
     const chats = [];
     snap.forEach(doc => chats.push({ id: doc.id, ...doc.data() }));
-    return chats;
+    // Sort manually in case indices aren't ready
+    return chats.sort((a, b) => new Date(b.lastUpdated) - new Date(a.lastUpdated));
   } catch(err) {
     console.error('[Firebase] fbGetSupportChats failed:', err.message);
     return [];
