@@ -1457,6 +1457,11 @@
             <video id="selfieVideo" autoplay playsinline style="width:100%; height:100%; object-fit:cover;"></video>
             <canvas id="selfieCanvas" style="display:none;"></canvas>
             <div id="shutterOverlay" style="position:absolute; inset:0; background:white; opacity:0; pointer-events:none;"></div>
+            
+            <!-- Switch Camera Button -->
+            <button onclick="switchCamera()" style="position:absolute; bottom:20px; right:20px; width:44px; height:44px; border-radius:50%; background:rgba(0,0,0,0.5); border:1px solid rgba(255,255,255,0.2); color:white; display:flex; align-items:center; justify-content:center; cursor:pointer; backdrop-filter:blur(4px); transition:all 0.2s; z-index:20;">
+              <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99"/></svg>
+            </button>
           </div>
 
           <button id="captureBtn" onclick="captureSelfie()" class="btn btn-primary" style="width:100%; padding:16px; border-radius:16px; font-weight:800;">

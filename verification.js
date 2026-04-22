@@ -38,18 +38,32 @@ function handleIdSelect(input) {
     }
 }
 
+let currentFacingMode = 'user'; // 'user' is front, 'environment' is back
+
 async function showSelfieStep() {
     document.getElementById('verifyStep1').style.display = 'none';
     document.getElementById('verifyStep2').style.display = 'block';
     
+    await startCamera();
+}
+
+async function startCamera() {
+    stopCamera();
     try {
-        stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' } });
+        stream = await navigator.mediaDevices.getUserMedia({ 
+            video: { facingMode: currentFacingMode } 
+        });
         document.getElementById('selfieVideo').srcObject = stream;
     } catch (err) {
         console.error("Camera access denied", err);
         alert("Camera access is required for face verification.");
         closeVerifyModal();
     }
+}
+
+async function switchCamera() {
+    currentFacingMode = currentFacingMode === 'user' ? 'environment' : 'user';
+    await startCamera();
 }
 
 function stopCamera() {
