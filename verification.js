@@ -86,26 +86,27 @@ function captureSelfie() {
     canvas.height = video.videoHeight;
     canvas.getContext('2d').drawImage(video, 0, 0);
     
-    canvas.toBlob(blob => {
-        selfieBlob = blob;
-        processVerification();
-    }, 'image/jpeg', 0.9);
+    const selfieBase64 = canvas.toDataURL('image/jpeg', 0.8);
+    processVerification(selfieBase64);
 }
 
-async function processVerification() {
+async function processVerification(selfieBase64) {
     stopCamera();
     document.getElementById('verifyStep2').style.display = 'none';
     document.getElementById('verifyStep3').style.display = 'block';
     
     const statusText = document.getElementById('verifyStatusText');
-    const formData = new FormData();
-    formData.append('selfie', selfieBlob);
+    const session = JSON.parse(localStorage.getItem('waec_session'));
     
     try {
         statusText.innerText = "Analyzing Face Data...";
         const res = await fetch('/api/verify-face', {
             method: 'POST',
-            body: formData
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ 
+                selfieBase64,
+                email: session.email
+            })
         });
         
         const result = await res.json();
