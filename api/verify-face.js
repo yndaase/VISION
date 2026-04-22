@@ -1,112 +1,74 @@
-/**
- * VISION AI - Face Verification Endpoint
- * 
- * Uses Face++ Detect API to confirm a real human face is present.
- * Single selfie verification — no ID comparison needed.
- */
+import formidable from 'formidable';
+import fs from 'fs';
+
+export const config = {
+    api: { bodyParser: false },
+};
 
 export default async function handler(req, res) {
     if (req.method !== 'POST') {
         return res.status(405).json({ error: 'Method not allowed' });
     }
 
-    const { selfieBase64, email } = req.body;
-
-    if (!selfieBase64) {
-        return res.status(400).json({ error: 'Missing selfie image.' });
-    }
-
-    const apiKey = (process.env.FACEPP_API_KEY || "").trim();
-    const apiSecret = (process.env.FACEPP_API_SECRET || "").trim();
-
-    if (!apiKey || !apiSecret) {
-        return res.status(500).json({ error: 'Face verification service is not configured.' });
-    }
-
-    try {
-        const selfieData = selfieBase64.includes(',') ? selfieBase64.split(',')[1] : selfieBase64;
-
-        // Use Face++ Detect API to confirm a real face exists
-        const formBody = new URLSearchParams();
-        formBody.append('api_key', apiKey);
-        formBody.append('api_secret', apiSecret);
-        formBody.append('image_base64', selfieData);
-        formBody.append('return_attributes', 'headpose,blur,eyestatus');
-
-        console.log("[Face++] Detecting face...");
-
-        const response = await fetch('https://api-us.faceplusplus.com/facepp/v3/detect', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-            body: formBody.toString()
-        });
-
-        const data = await response.json();
-
-        if (data.error_message) {
-            console.error('[Face++] API Error:', data.error_message);
-            return res.status(400).json({ success: false, error: data.error_message });
-        }
-
-        if (!data.faces || data.faces.length === 0) {
-            return res.status(400).json({
-                success: false,
-                error: 'No face detected. Please ensure good lighting and look directly at the camera.'
-            });
-        }
-
-        // A real face was detected — verification passed
-        const face = data.faces[0];
-        const attrs = face.attributes || {};
-
-        // Optional quality checks
-        const blur = attrs.blur?.blurness?.value || 0;
-        if (blur > 50) {
-            return res.status(400).json({
-                success: false,
-                error: 'Image is too blurry. Please hold still and try again.'
-            });
-        }
-
-        // Initialize Firebase Admin securely
-        if (!global.adminApp) {
-            const admin = (await import('firebase-admin')).default;
-            if (!admin.apps.length) {
-                const serviceAccountStr = process.env.FIREBASE_SERVICE_ACCOUNT;
-                if (!serviceAccountStr) {
-                    throw new Error("Missing FIREBASE_SERVICE_ACCOUNT env var");
-                }
-                global.adminApp = admin.initializeApp({
-                    credential: admin.credential.cert(JSON.parse(serviceAccountStr))
-                });
-            } else {
-                global.adminApp = admin.app();
+    const form = formidable();
+    
+    return new Promise((resolve) => {
+        form.parse(req, async (err, fields, files) => {
+            if (err || !files.idCard || !files.selfie) {
+                res.status(400).json({ error: 'Both ID Card and Selfie are required.' });
+                return resolve();
             }
-        }
-        
-        const admin = (await import('firebase-admin')).default;
-        const db = admin.firestore();
 
-        // Ensure email was provided
-        if (!email) {
-            return res.status(400).json({ success: false, error: 'Email is required for verification.' });
-        }
+            const compreFaceUrl = (process.env.COMPREFACE_URL || "http://your-server-ip:8000").trim();
+            const apiKey = (process.env.COMPREFACE_API_KEY || "").trim();
 
-        // Securely update user in Firestore
-        await db.collection('users').doc(email).set({
-            isVerified: true,
-            verifiedAt: new Date().toISOString()
-        }, { merge: true });
+            if (!apiKey) {
+                res.status(500).json({ error: 'Verification service is not configured (Missing API Key).' });
+                return resolve();
+            }
 
-        return res.status(200).json({
-            success: true,
-            verified: true,
-            message: 'Face detected and verified successfully!',
-            faceToken: face.face_token
+            try {
+                console.log("[CompreFace] Starting verification matching...");
+
+                // 1. Prepare FormData for CompreFace Verification API
+                const formData = new FormData();
+                
+                const idBuffer = fs.readFileSync(files.idCard[0].filepath);
+                const selfieBuffer = fs.readFileSync(files.selfie[0].filepath);
+
+                formData.append('source_image', new Blob([idBuffer], { type: 'image/jpeg' }));
+                formData.append('target_image', new Blob([selfieBuffer], { type: 'image/jpeg' }));
+
+                // 2. Call CompreFace Verification Service
+                const response = await fetch(`${compreFaceUrl}/api/v1/verification/verify`, {
+                    method: 'POST',
+                    headers: { 'x-api-key': apiKey },
+                    body: formData
+                });
+
+                const data = await response.json();
+                console.log("[CompreFace] Result:", JSON.stringify(data));
+
+                if (data.result && data.result.length > 0) {
+                    const match = data.result[0];
+                    const similarity = match.face_matches?.[0]?.similarity || 0;
+
+                    // Standard threshold for identity matching is 0.8 (80%)
+                    if (similarity >= 0.8) {
+                        res.status(200).json({ match: true, similarity });
+                    } else {
+                        res.status(200).json({ match: false, error: "Identity mismatch. Please ensure you are holding your own ID." });
+                    }
+                } else {
+                    res.status(400).json({ match: false, error: "No faces detected in one or both images." });
+                }
+                resolve();
+
+            } catch (error) {
+                console.error('[CompreFace] Error:', error.message);
+                res.status(500).json({ error: 'Connection error to verification server.' });
+                resolve();
+            }
         });
-
-    } catch (error) {
-        console.error('[Face++] Error:', error.message);
-        return res.status(500).json({ success: false, error: 'Connection error: ' + error.message });
-    }
+    });
 }
