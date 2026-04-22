@@ -41,8 +41,10 @@ export default async function handler(req, res) {
                         const fileData = fs.readFileSync(files.audio[0].filepath);
                         const formData = new FormData();
                         formData.append('messaging_product', 'whatsapp');
+                        
+                        const blob = new Blob([fileData], { type: 'audio/ogg' });
+                        formData.append('file', blob, 'voice_note.ogg');
                         formData.append('type', 'audio/ogg');
-                        formData.append('file', new Blob([fileData], { type: 'audio/ogg' }), 'voice.ogg');
                         const metaRes = await fetch(`https://graph.facebook.com/v19.0/${phoneNumberId}/media`, {
                             method: 'POST',
                             headers: { 'Authorization': `Bearer ${accessToken}` },
