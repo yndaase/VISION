@@ -51,7 +51,11 @@ async function startCamera() {
     stopCamera();
     try {
         stream = await navigator.mediaDevices.getUserMedia({ 
-            video: { facingMode: currentFacingMode } 
+            video: { 
+                facingMode: currentFacingMode,
+                width: { ideal: 2560 },
+                height: { ideal: 1920 }
+            } 
         });
         document.getElementById('selfieVideo').srcObject = stream;
     } catch (err) {
