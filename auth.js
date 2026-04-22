@@ -825,15 +825,42 @@ function updateVerificationUI(isVerified) {
     const unverifiedState = document.getElementById("verifyUnverifiedState");
     const verifiedState = document.getElementById("verifyVerifiedState");
     const badge = document.getElementById("settingsVerifiedBadge");
+    const heroBadge = document.getElementById("heroVerifiedBadge");
+    const navBadge = document.getElementById("navVerifiedBadge");
     
     if (isVerified) {
         if (unverifiedState) unverifiedState.style.display = "none";
         if (verifiedState) verifiedState.style.display = "block";
         if (badge) badge.style.display = "inline-flex";
+        if (heroBadge) heroBadge.style.display = "inline-flex";
+        if (navBadge) navBadge.style.display = "inline-flex";
     } else {
         if (unverifiedState) unverifiedState.style.display = "block";
         if (verifiedState) verifiedState.style.display = "none";
         if (badge) badge.style.display = "none";
+        if (heroBadge) heroBadge.style.display = "none";
+        if (navBadge) navBadge.style.display = "none";
+    }
+}
+
+window.checkVerificationAndGo = function(url) {
+    const session = getSession();
+    if (!session) return;
+    
+    if (session.isVerified) {
+        window.location.href = url;
+    } else {
+        openSettings();
+        if (typeof switchSettingsTab === 'function') {
+            const tabs = document.querySelectorAll('.settings-nav-item');
+            for(let tab of tabs) {
+                if(tab.textContent.includes('Verification')) {
+                    switchSettingsTab('verification', tab);
+                    break;
+                }
+            }
+        }
+        alert("Verification Required: You must complete Face Verification to access this feature.");
     }
 }
 
