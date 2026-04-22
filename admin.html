@@ -811,7 +811,24 @@
         showToast("Identifying recipients...");
         try {
             if (typeof window.fbGetAllUsers !== 'function') return;
-            const users = await window.fbGetAllUsers();
+            
+            // 1. Fetch from Cloud
+            let users = await window.fbGetAllUsers('users');
+            
+            // 2. Hybrid Sync: If cloud is empty but local has data, push local to cloud
+            if (users.length === 0) {
+                const localUsers = getUsers(); // from local storage
+                if (localUsers.length > 0) {
+                    showToast("Syncing local users to cloud...");
+                    // Batch push local users to cloud so WhatsApp can find them
+                    for (const lu of localUsers) {
+                        if (typeof window.fbUpdateUser === 'function') {
+                            await window.fbUpdateUser(lu.email, lu);
+                        }
+                    }
+                    users = await window.fbGetAllUsers('users'); // Re-fetch
+                }
+            }
             
             // Smarter filter: handle strings, booleans, and various phone field names
             const recipients = users.filter(u => {

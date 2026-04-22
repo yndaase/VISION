@@ -771,14 +771,14 @@ window.fbDeleteMaterial = async function(id) {
  * USER MANAGEMENT (Firestore collection: "users")
  */
 
-window.fbGetAllUsers = async function() {
+window.fbGetAllUsers = async function(collectionName = 'users') {
   try {
-    const snap = await getDocs(collection(db, "users"));
+    const snap = await getDocs(collection(db, collectionName));
     const users = [];
     snap.forEach(doc => users.push({ id: doc.id, ...doc.data() }));
     return users;
   } catch(err) {
-    console.error('[Firebase] fbGetAllUsers failed:', err.message);
+    console.error(`[Firebase] fbGetAllUsers (${collectionName}) failed:`, err.message);
     return [];
   }
 };
