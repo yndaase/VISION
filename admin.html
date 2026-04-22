@@ -716,25 +716,33 @@
                     document.getElementById("uploadProgressBar").style.width = pct + "%";
                     document.getElementById("uploadStatus").innerText = `Uploading: ${Math.round(pct)}%`;
                 },
+                // Pass metadata to the server via headers
+                clientPayload: JSON.stringify({ title, subject: sub, type }),
+                headers: {
+                    'x-mat-title': encodeURIComponent(title),
+                    'x-mat-subject': sub,
+                    'x-mat-type': type
+                }
             });
             
             finalUrl = blob.url;
-            showToast("File uploaded to Vercel storage");
+            showToast("Asset secured and linked to Firebase");
+        } else {
+            // ONLY for manual links (non-file uploads)
+            const entry = { 
+                id: 'mat-' + Date.now(), 
+                subject: sub, 
+                title, 
+                type, 
+                url: finalUrl, 
+                uploadedAt: new Date().toISOString().split("T")[0], 
+                uploadedBy: "admin",
+                size: null
+            };
+            await upsertMaterial(entry); 
         }
 
-        const entry = { 
-            id: 'mat-' + Date.now(), 
-            subject: sub, 
-            title, 
-            type, 
-            url: finalUrl, 
-            uploadedAt: new Date().toISOString().split("T")[0], 
-            uploadedBy: "admin",
-            size: isFileUpload ? (fileInput.files[0].size / (1024*1024)).toFixed(2) + " MB" : null
-        };
-        
-        await upsertMaterial(entry); // Updates local + triggers firebase sync
-        logAction("MATERIAL_ADDED: " + title);
+        logAction("MATERIAL_SYNCED: " + title);
         
         // Automated WhatsApp Blast
         const notifyWA = document.getElementById("matNotifyWA")?.checked;
