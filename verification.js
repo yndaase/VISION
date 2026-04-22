@@ -47,8 +47,8 @@ async function showSelfieStep() {
         document.getElementById('selfieVideo').srcObject = stream;
     } catch (err) {
         console.error("Camera access denied", err);
-        alert("Camera access is required for identity verification.");
-        resetVerifySteps();
+        alert("Camera access is required for face verification.");
+        closeVerifyModal();
     }
 }
 
@@ -85,11 +85,10 @@ async function processVerification() {
     
     const statusText = document.getElementById('verifyStatusText');
     const formData = new FormData();
-    formData.append('idCard', idFile);
     formData.append('selfie', selfieBlob);
     
     try {
-        statusText.innerText = "Connecting to Vision Identity Server...";
+        statusText.innerText = "Analyzing Face Data...";
         const res = await fetch('/api/verify-face', {
             method: 'POST',
             body: formData
@@ -98,19 +97,18 @@ async function processVerification() {
         const result = await res.json();
         
         if (result.match) {
-            statusText.innerHTML = "<span style='color:#10b981; font-weight:800;'>IDENTITY MATCHED!</span><br>Profile verified successfully.";
-            // Update Firestore and Local Session
+            statusText.innerHTML = "<span style='color:#10b981; font-weight:800;'>FACE VERIFIED!</span><br>Profile authenticated successfully.";
             await finalizeVerification();
             setTimeout(() => {
                 window.location.reload();
             }, 2000);
         } else {
-            statusText.innerHTML = "<span style='color:#ef4444; font-weight:800;'>MATCH FAILED</span><br>" + (result.error || "ID and Selfie do not match. Please try again.");
+            statusText.innerHTML = "<span style='color:#ef4444; font-weight:800;'>SCAN FAILED</span><br>" + (result.error || "No face detected. Please try again.");
             setTimeout(() => resetVerifySteps(), 3000);
         }
     } catch (err) {
         console.error("Verification error", err);
-        statusText.innerHTML = "<span style='color:#ef4444; font-weight:800;'>SYSTEM ERROR</span><br>Could not connect to verification server.";
+        statusText.innerHTML = "<span style='color:#ef4444; font-weight:800;'>SYSTEM ERROR</span><br>Verification server is currently busy.";
         setTimeout(() => resetVerifySteps(), 3000);
     }
 }

@@ -1435,21 +1435,17 @@
 
       <div class="modal-body" style="padding:40px;">
         <div id="verifyStep1">
-          <div style="width:64px; height:64px; background:var(--primary-dim); border-radius:20px; display:flex; align-items:center; justify-content:center; color:var(--primary); margin-bottom:24px;">
-            <svg width="32" height="32" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"/></svg>
-          </div>
-          <h2 style="font-size:1.75rem; font-weight:900; color:var(--text-primary); margin-bottom:12px; letter-spacing:-0.02em;">Verify Identity</h2>
-          <p style="color:var(--text-muted); line-height:1.6; margin-bottom:32px;">To unlock full platform features and show your verified badge, we need to match your ID card with a live selfie.</p>
+          <h2 style="font-size:1.75rem; font-weight:900; color:var(--text-primary); margin-bottom:12px; letter-spacing:-0.02em;">Face Verification</h2>
+          <p style="color:var(--text-muted); line-height:1.6; margin-bottom:32px;">To secure your account and get your verified badge, we need to perform a quick 3D face scan.</p>
           
-          <div style="background:rgba(255,255,255,0.03); border:1px dashed var(--border); border-radius:20px; padding:32px; text-align:center; cursor:pointer; transition:all 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.05)'" onclick="document.getElementById('idUploadInput').click()">
-            <input type="file" id="idUploadInput" accept="image/*" hidden onchange="handleIdSelect(this)">
-            <div id="idPreview" style="margin-bottom:12px; font-size:1.5rem;">📇</div>
-            <div style="font-weight:700; color:var(--text-primary); margin-bottom:4px;" id="idUploadLabel">Upload Student ID Card</div>
-            <div style="font-size:0.75rem; color:var(--text-muted);">Front side with clear face photo</div>
+          <div style="background:var(--primary-dim); border:1px solid var(--primary); border-radius:24px; padding:32px; text-align:center;">
+            <div style="font-size:3rem; margin-bottom:16px;">🤳</div>
+            <div style="font-weight:800; color:var(--text-primary); margin-bottom:4px;">Live Selfie Scan</div>
+            <div style="font-size:0.8rem; color:var(--text-muted);">Ensure your face is well-lit and clear</div>
           </div>
 
-          <button id="nextToSelfie" disabled onclick="showSelfieStep()" class="btn btn-primary" style="width:100%; margin-top:24px; padding:16px; border-radius:16px; font-weight:800; opacity:0.5;">
-            Continue to Selfie
+          <button onclick="showSelfieStep()" class="btn btn-primary" style="width:100%; margin-top:24px; padding:16px; border-radius:16px; font-weight:800;">
+            Start Face Scan
           </button>
         </div>
 
