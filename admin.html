@@ -704,32 +704,37 @@
             const pathname = `materials/${sub}/${timestamp}_${safeName}`;
             
             document.getElementById("uploadProgressContainer").style.display = "block";
+            document.getElementById("uploadStatus").innerText = "Uploading to server...";
+            document.getElementById("uploadProgressBar").style.width = "50%";
 
             try {
-                // Dynamically import specific version of Vercel Blob client for stability
-                const { upload } = await import('https://esm.sh/@vercel/blob@0.22.1/client');
-
-                const blob = await upload(pathname, file, {
-                    access: 'public',
-                    handleUploadUrl: '/api/upload',
-                    onUploadProgress: (progressEvent) => {
-                        const pct = (progressEvent.loaded / progressEvent.total) * 100;
-                        document.getElementById("uploadProgressBar").style.width = pct + "%";
-                        document.getElementById("uploadStatus").innerText = `Uploading: ${Math.round(pct)}%`;
-                    },
-                    clientPayload: JSON.stringify({ title, subject: sub, type }),
+                // Direct Binary Upload to our own API
+                const resp = await fetch('/api/upload', {
+                    method: 'POST',
+                    body: file, // Send binary file directly
                     headers: {
+                        'Content-Type': file.type,
                         'x-mat-title': encodeURIComponent(title),
                         'x-mat-subject': sub,
-                        'x-mat-type': type
+                        'x-mat-type': type,
+                        'x-filename': safeName
                     }
                 });
+
+                if (!resp.ok) {
+                    const errData = await resp.json();
+                    throw new Error(errData.error || "Server Upload Failed");
+                }
+
+                const data = await resp.json();
+                finalUrl = data.url;
                 
-                finalUrl = blob.url;
+                document.getElementById("uploadProgressBar").style.width = "100%";
+                document.getElementById("uploadStatus").innerText = "Successfully linked!";
                 showToast("Asset secured and linked to Firebase");
             } catch (uploadErr) {
                 console.error("[Upload Detail]:", uploadErr);
-                throw new Error("Upload Bridge Failed: " + (uploadErr.message || "Unknown Error"));
+                throw new Error("Upload Failed: " + (uploadErr.message || "Unknown Error"));
             }
         } else {
             // ONLY for manual links (non-file uploads)
