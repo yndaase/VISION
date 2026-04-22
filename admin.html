@@ -705,28 +705,32 @@
             
             document.getElementById("uploadProgressContainer").style.display = "block";
 
-            // Dynamically import Vercel Blob client
-            const { upload } = await import('https://esm.sh/@vercel/blob/client');
+            try {
+                // Dynamically import specific version of Vercel Blob client for stability
+                const { upload } = await import('https://esm.sh/@vercel/blob@0.22.1/client');
 
-            const blob = await upload(pathname, file, {
-                access: 'public',
-                handleUploadUrl: '/api/upload',
-                onUploadProgress: (progressEvent) => {
-                    const pct = (progressEvent.loaded / progressEvent.total) * 100;
-                    document.getElementById("uploadProgressBar").style.width = pct + "%";
-                    document.getElementById("uploadStatus").innerText = `Uploading: ${Math.round(pct)}%`;
-                },
-                // Pass metadata to the server via headers
-                clientPayload: JSON.stringify({ title, subject: sub, type }),
-                headers: {
-                    'x-mat-title': encodeURIComponent(title),
-                    'x-mat-subject': sub,
-                    'x-mat-type': type
-                }
-            });
-            
-            finalUrl = blob.url;
-            showToast("Asset secured and linked to Firebase");
+                const blob = await upload(pathname, file, {
+                    access: 'public',
+                    handleUploadUrl: '/api/upload',
+                    onUploadProgress: (progressEvent) => {
+                        const pct = (progressEvent.loaded / progressEvent.total) * 100;
+                        document.getElementById("uploadProgressBar").style.width = pct + "%";
+                        document.getElementById("uploadStatus").innerText = `Uploading: ${Math.round(pct)}%`;
+                    },
+                    clientPayload: JSON.stringify({ title, subject: sub, type }),
+                    headers: {
+                        'x-mat-title': encodeURIComponent(title),
+                        'x-mat-subject': sub,
+                        'x-mat-type': type
+                    }
+                });
+                
+                finalUrl = blob.url;
+                showToast("Asset secured and linked to Firebase");
+            } catch (uploadErr) {
+                console.error("[Upload Detail]:", uploadErr);
+                throw new Error("Upload Bridge Failed: " + (uploadErr.message || "Unknown Error"));
+            }
         } else {
             // ONLY for manual links (non-file uploads)
             const entry = { 

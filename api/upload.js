@@ -3,7 +3,12 @@ import admin from 'firebase-admin';
 
 // Initialize Firebase Admin
 if (!admin.apps.length) {
-  const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
+  let rawKey = process.env.FIREBASE_SERVICE_ACCOUNT;
+  // Clean up potential surrounding quotes from Vercel env UI
+  if (rawKey.startsWith("'") && rawKey.endsWith("'")) rawKey = rawKey.slice(1, -1);
+  if (rawKey.startsWith('"') && rawKey.endsWith('"')) rawKey = rawKey.slice(1, -1);
+  
+  const serviceAccount = JSON.parse(rawKey);
   admin.initializeApp({
     credential: admin.credential.cert(serviceAccount)
   });
