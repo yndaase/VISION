@@ -73,13 +73,17 @@ export default async function handler(req, res) {
         try {
             let payload;
             if (type === 'audio') {
+                const mimeType = body.mimeType || 'audio/mp4';
+                const isWebm = mimeType.includes('webm');
+                const ext = isWebm ? 'webm' : 'm4a';
+                
                 payload = { 
                     messaging_product: "whatsapp", 
                     to: recipient, 
                     type: "document", 
                     document: { 
                         id: mediaId,
-                        filename: "Voice_Note.m4a"
+                        filename: `Voice_Note.${ext}`
                     } 
                 };
             } else if (templateName) {

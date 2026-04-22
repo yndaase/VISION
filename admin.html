@@ -1713,7 +1713,8 @@
                             body: JSON.stringify({ 
                                 phone: activeChatPhone, 
                                 mediaId,
-                                type: "audio"
+                                type: "audio",
+                                mimeType: audioBlob.type
                             })
                         });
 
