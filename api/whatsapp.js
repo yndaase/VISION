@@ -136,8 +136,26 @@ export default async function handler(req, res) {
         const templateErrMsg = templateData?.error?.message || "";
         console.warn(`[Meta WA] Template failed (code ${templateErrCode}): ${templateErrMsg}`);
 
-        // ── Attempt 2: Free-form Text Message ──
+        // ── Attempt 2: Free-form Text/Audio Message ──
         // Only works if user has messaged the business within 24hrs
+        if (type === 'audio' && req.body.mediaId) {
+            const audioPayload = {
+                messaging_product: "whatsapp",
+                to: recipientPhone,
+                type: "audio",
+                audio: { id: req.body.mediaId }
+            };
+            console.log(`[Meta WA] Sending Audio ID: ${req.body.mediaId} to ${recipientPhone}`);
+            const audioRes = await fetch(fbUrl, {
+                method: 'POST',
+                headers: { 'Authorization': `Bearer ${accessToken}`, 'Content-Type': 'application/json' },
+                body: JSON.stringify(audioPayload)
+            });
+            const audioData = await audioRes.json();
+            if (audioRes.ok) return res.status(200).json({ success: true, messageId: audioData.messages?.[0]?.id, method: "audio" });
+            console.error("[Meta WA] Audio send failed:", audioData.error?.message);
+        }
+
         let messageText = message || "";
         if (!messageText) {
             switch(type) {

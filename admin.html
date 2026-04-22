@@ -230,6 +230,8 @@
     .modal-header { margin-bottom: 2rem; }
     .modal-header h3 { font-size: 1.5rem; font-weight: 800; letter-spacing: -0.02em; }
     @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+    @keyframes pulse { 0% { opacity: 1; transform: scale(1); } 50% { opacity: 0.5; transform: scale(1.2); } 100% { opacity: 1; transform: scale(1); } }
+    .pulse { animation: pulse 1s infinite ease-in-out; }
   </style>
 </head>
 <body>
@@ -455,17 +457,28 @@
           <!-- Chat Window -->
           <div class="support-window-card" style="background: var(--admin-card-bg); border-radius: 20px; border: 1px solid var(--admin-border); display: flex; flex-direction: column; overflow: hidden;">
             <div id="activeChatHeader" style="padding: 15px 25px; border-bottom: 1px solid var(--admin-border); background: rgba(255,255,255,0.02);">
-              <span style="color: var(--admin-text-muted);">Select a conversation to start messaging</span>
-            </div>
             <div id="chatMessagesContainer" style="flex: 1; overflow-y: auto; padding: 25px; display: flex; flex-direction: column; gap: 15px;">
               <!-- Messages rendered here -->
             </div>
-            <div id="chatInputArea" style="padding: 20px; border-top: 1px solid var(--admin-border); display: none;">
-              <div style="display: flex; gap: 12px;">
-                <input type="text" id="replyInput" placeholder="Type a message..." style="flex: 1; background: rgba(255,255,255,0.05); border: 1px solid var(--admin-border); padding: 14px 20px; border-radius: 100px; color: white;">
-                <button onclick="sendReply()" class="btn btn-primary" style="border-radius: 100px; padding: 0 25px;">Send</button>
+              <div id="chatInputArea" style="display: none; padding: 20px; border-top: 1px solid var(--admin-border); background: rgba(255,255,255,0.02);">
+                <div style="display: flex; gap: 12px; align-items: center; position: relative;">
+                  <button id="voiceRecordBtn" class="btn" style="padding: 10px; border-radius: 50%; min-width: 44px; height: 44px; background: rgba(255,255,255,0.05); border: 1px solid var(--admin-border);">
+                    <svg id="micIcon" style="width: 20px; height: 20px;" fill="currentColor" viewBox="0 0 24 24"><path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z"/><path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/></svg>
+                  </button>
+                  <input type="text" id="replyInput" placeholder="Type a message..." 
+                         style="flex: 1; background: rgba(255,255,255,0.05); border: 1px solid var(--admin-border); border-radius: 100px; padding: 12px 24px; color: white; outline: none; transition: all 0.2s;">
+                  <button onclick="sendReply()" class="btn btn-primary" style="padding: 10px 20px; border-radius: 100px; font-weight: 800; display: flex; align-items: center; gap: 8px;">
+                    <span>Send</span>
+                    <svg style="width: 16px; height: 16px;" fill="currentColor" viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+                  </button>
+                  <!-- Recording Status Overlay -->
+                  <div id="recordingStatus" style="display:none; position:absolute; left:0; right:0; top:0; bottom:0; background:var(--admin-bg); border-radius:100px; align-items:center; padding:0 24px; color:var(--admin-danger); font-weight:800; font-size:0.85rem; gap:12px; z-index:10;">
+                    <div class="pulse" style="width:10px; height:10px; background:var(--admin-danger); border-radius:50%;"></div>
+                    <span>RECORDING VOICE...</span>
+                    <span id="recordingTimer" style="margin-left:auto; font-family:monospace;">00:00</span>
+                  </div>
+                </div>
               </div>
-            </div>
           </div>
         </div>
       </section>
@@ -1627,7 +1640,90 @@
     };
 
     // --- EVENT LISTENERS ---
+    // --- VOICE RECORDER LOGIC ---
+    let mediaRecorder;
+    let audioChunks = [];
+    let recordTimer;
+    let seconds = 0;
+
+    async function toggleRecording() {
+        const status = document.getElementById("recordingStatus");
+        const timer = document.getElementById("recordingTimer");
+        const mic = document.getElementById("voiceRecordBtn");
+
+        if (mediaRecorder && mediaRecorder.state === "recording") {
+            mediaRecorder.stop();
+            status.style.display = "none";
+            clearInterval(recordTimer);
+            mic.style.background = "rgba(255,255,255,0.05)";
+            return;
+        }
+
+        try {
+            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            mediaRecorder = new MediaRecorder(stream);
+            audioChunks = [];
+            seconds = 0;
+            
+            status.style.display = "flex";
+            timer.innerText = "00:00";
+            mic.style.background = "var(--admin-danger)";
+
+            recordTimer = setInterval(() => {
+                seconds++;
+                const m = Math.floor(seconds / 60).toString().padStart(2, '0');
+                const s = (seconds % 60).toString().padStart(2, '0');
+                timer.innerText = `${m}:${s}`;
+            }, 1000);
+
+            mediaRecorder.ondataavailable = (event) => audioChunks.push(event.data);
+            mediaRecorder.onstop = async () => {
+                const audioBlob = new Blob(audioChunks, { type: 'audio/ogg' });
+                const formData = new FormData();
+                formData.append('audio', audioBlob);
+
+                try {
+                    showToast("Uploading voice note...");
+                    const uploadRes = await fetch("/api/whatsapp-media-upload", { method: "POST", body: formData });
+                    const { mediaId } = await uploadRes.json();
+                    
+                    if (mediaId) {
+                        await fetch("/api/whatsapp", {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({ 
+                                phone: activeChatPhone, 
+                                mediaId,
+                                type: "audio"
+                            })
+                        });
+
+                        if (typeof window.fbSaveChatMessage === 'function') {
+                            await window.fbSaveChatMessage(activeChatPhone, {
+                                text: "🎤 Voice Message (Admin)",
+                                type: "audio",
+                                mediaId,
+                                from: 'admin',
+                                timestamp: new Date().toISOString()
+                            });
+                        }
+                        loadChat(activeChatPhone, document.getElementById("activeChatHeader").querySelector('div div div').innerText);
+                    }
+                } catch (err) {
+                    console.error("Voice send failed:", err);
+                    showToast("Failed to send voice note");
+                }
+            };
+
+            mediaRecorder.start();
+        } catch (err) {
+            console.error("Mic access denied:", err);
+            showToast("Microphone access denied");
+        }
+    }
+
     function initEvents() {
+        document.getElementById("voiceRecordBtn")?.addEventListener("click", toggleRecording);
       const btnMap = {
         "openMatModalBtn": openMatModal,
         "closeMatModalBtn": closeMatModal,
