@@ -35,12 +35,16 @@ export default async function handler(req, res) {
                 });
 
                 const data = await response.json();
+                console.log(`[CompreFace Debug] Status: ${response.status}`, data);
                 
                 if (data.result && data.result.length > 0) {
-                    // Face detected!
+                    console.log("[CompreFace] Face detected with confidence:", data.result[0].face_probability);
                     res.status(200).json({ match: true });
+                } else if (data.message) {
+                    console.error("[CompreFace API Error]:", data.message);
+                    res.status(400).json({ match: false, error: data.message });
                 } else {
-                    res.status(400).json({ match: false, error: "No face detected. Please look directly at the camera." });
+                    res.status(400).json({ match: false, error: "No face detected. Please ensure your face is clear and well-lit." });
                 }
                 resolve();
             } catch (error) {
