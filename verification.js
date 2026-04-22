@@ -77,7 +77,13 @@ function captureSelfie() {
     const video = document.getElementById('selfieVideo');
     const canvas = document.getElementById('selfieCanvas');
     const overlay = document.getElementById('shutterOverlay');
+    const preview = document.getElementById('capturedPhotoPreview');
     
+    if (!video.videoWidth) {
+        alert("Camera is still warming up. Please wait 1 second.");
+        return;
+    }
+
     // Shutter effect
     overlay.style.opacity = '1';
     setTimeout(() => overlay.style.opacity = '0', 100);
@@ -87,6 +93,9 @@ function captureSelfie() {
     canvas.getContext('2d').drawImage(video, 0, 0);
     
     const selfieBase64 = canvas.toDataURL('image/jpeg', 0.8);
+    if (preview) preview.src = selfieBase64;
+    
+    console.log("[Verification] Captured image size:", Math.round(selfieBase64.length / 1024), "KB");
     processVerification(selfieBase64);
 }
 
