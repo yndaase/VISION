@@ -73,7 +73,15 @@ export default async function handler(req, res) {
         try {
             let payload;
             if (type === 'audio') {
-                payload = { messaging_product: "whatsapp", to: recipient, type: "audio", audio: { id: mediaId } };
+                payload = { 
+                    messaging_product: "whatsapp", 
+                    to: recipient, 
+                    type: "document", 
+                    document: { 
+                        id: mediaId,
+                        filename: "Voice_Note.m4a"
+                    } 
+                };
             } else if (templateName) {
                 payload = { 
                     messaging_product: "whatsapp", 
