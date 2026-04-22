@@ -1,9 +1,8 @@
 /**
  * VISION AI - Face Verification Endpoint
  * 
- * Uses Face++ (Megvii) Compare API.
- * Free tier, no credit card, works immediately.
- * Endpoint: https://api-us.faceplusplus.com/facepp/v3/compare
+ * Uses Face++ Detect API to confirm a real human face is present.
+ * Single selfie verification — no ID comparison needed.
  */
 
 export default async function handler(req, res) {
@@ -11,10 +10,10 @@ export default async function handler(req, res) {
         return res.status(405).json({ error: 'Method not allowed' });
     }
 
-    const { selfieBase64, idBase64 } = req.body;
+    const { selfieBase64 } = req.body;
 
-    if (!selfieBase64 || !idBase64) {
-        return res.status(400).json({ error: 'Missing images. Please capture both ID and Selfie.' });
+    if (!selfieBase64) {
+        return res.status(400).json({ error: 'Missing selfie image.' });
     }
 
     const apiKey = (process.env.FACEPP_API_KEY || "").trim();
@@ -25,24 +24,20 @@ export default async function handler(req, res) {
     }
 
     try {
-        // Extract raw base64 data (remove the "data:image/jpeg;base64," prefix)
-        const idData = idBase64.includes(',') ? idBase64.split(',')[1] : idBase64;
         const selfieData = selfieBase64.includes(',') ? selfieBase64.split(',')[1] : selfieBase64;
 
-        // Face++ Compare API accepts base64 images directly via form data
+        // Use Face++ Detect API to confirm a real face exists
         const formBody = new URLSearchParams();
         formBody.append('api_key', apiKey);
         formBody.append('api_secret', apiSecret);
-        formBody.append('image_base64_1', idData);
-        formBody.append('image_base64_2', selfieData);
+        formBody.append('image_base64', selfieData);
+        formBody.append('return_attributes', 'headpose,blur,eyestatus');
 
-        console.log("[Face++] Comparing faces...");
+        console.log("[Face++] Detecting face...");
 
-        const response = await fetch('https://api-us.faceplusplus.com/facepp/v3/compare', {
+        const response = await fetch('https://api-us.faceplusplus.com/facepp/v3/detect', {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded'
-            },
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
             body: formBody.toString()
         });
 
@@ -50,27 +45,34 @@ export default async function handler(req, res) {
 
         if (data.error_message) {
             console.error('[Face++] API Error:', data.error_message);
-
-            let userMsg = data.error_message;
-            if (data.error_message.includes('NO_FACE_FOUND')) {
-                userMsg = 'No face detected. Please ensure good lighting and a clear photo.';
-            }
-
-            return res.status(400).json({ success: false, error: userMsg });
+            return res.status(400).json({ success: false, error: data.error_message });
         }
 
-        // Face++ returns a confidence score (0-100)
-        const confidence = data.confidence || 0;
-        const threshold = data.thresholds?.["1e-5"] || 73; // Use the strictest threshold
-        const isMatch = confidence >= threshold;
+        if (!data.faces || data.faces.length === 0) {
+            return res.status(400).json({
+                success: false,
+                error: 'No face detected. Please ensure good lighting and look directly at the camera.'
+            });
+        }
+
+        // A real face was detected — verification passed
+        const face = data.faces[0];
+        const attrs = face.attributes || {};
+
+        // Optional quality checks
+        const blur = attrs.blur?.blurness?.value || 0;
+        if (blur > 50) {
+            return res.status(400).json({
+                success: false,
+                error: 'Image is too blurry. Please hold still and try again.'
+            });
+        }
 
         return res.status(200).json({
             success: true,
-            match: isMatch,
-            confidence: Math.round(confidence * 100) / 100,
-            message: isMatch
-                ? `Identity Verified (${Math.round(confidence)}% confidence)`
-                : `Faces do not match (${Math.round(confidence)}% confidence)`
+            verified: true,
+            message: 'Face detected and verified successfully!',
+            faceToken: face.face_token
         });
 
     } catch (error) {

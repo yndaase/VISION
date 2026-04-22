@@ -1324,28 +1324,28 @@
             }
         }
     </script>
-    <!-- BIOMETRIC VERIFICATION MODAL -->
+    <!-- FACE VERIFICATION MODAL -->
     <div id="biometricModal" style="display:none; position:fixed; inset:0; background:rgba(15,23,42,0.95); backdrop-filter:blur(20px); z-index:10000; align-items:center; justify-content:center; padding:2rem;">
         <div style="background:var(--bg-card); border:1px solid var(--border-accent); border-radius:32px; max-width:500px; width:100%; padding:2.5rem; text-align:center; position:relative; overflow:hidden;">
             <!-- Scanning Animation Overlay -->
-            <div id="scannerLine" style="display:none; position:absolute; top:0; left:0; width:100%; height:4px; background:linear-gradient(to right, transparent, var(--primary), transparent); box-shadow:0 0 15px var(--primary); z-index:10; animation:scan 2s linear infinite;"></div>
+            <div id="scannerLine" style="position:absolute; top:0; left:0; width:100%; height:4px; background:linear-gradient(to right, transparent, var(--primary), transparent); box-shadow:0 0 15px var(--primary); z-index:10; animation:scan 2s linear infinite;"></div>
             
-            <h2 id="bioModalTitle" style="font-size:1.5rem; font-weight:800; margin-bottom:0.5rem;">Biometric Scan</h2>
-            <p id="bioModalDesc" style="color:var(--text-secondary); font-size:0.9rem; margin-bottom:1.5rem;">Align your ID card within the frame.</p>
+            <h2 id="bioModalTitle" style="font-size:1.5rem; font-weight:800; margin-bottom:0.5rem;">Face Verification</h2>
+            <p id="bioModalDesc" style="color:var(--text-secondary); font-size:0.9rem; margin-bottom:1.5rem;">Look directly at the camera. Ensure good lighting.</p>
             
             <div style="position:relative; width:100%; aspect-ratio:4/3; background:#000; border-radius:20px; overflow:hidden; border:2px solid var(--border-accent); margin-bottom:1.5rem;">
                 <video id="bioVideo" autoplay playsinline style="width:100%; height:100%; object-fit:cover;"></video>
                 <canvas id="bioCanvas" style="display:none;"></canvas>
                 
-                <!-- ID/Face Guides -->
-                <div id="idGuide" style="position:absolute; inset:20%; border:2px dashed rgba(255,255,255,0.5); border-radius:12px;"></div>
-                <div id="faceGuide" style="display:none; position:absolute; top:15%; left:25%; width:50%; height:70%; border:2px dashed var(--primary); border-radius:100px;"></div>
+                <!-- Face Guide -->
+                <div id="idGuide" style="display:none;"></div>
+                <div id="faceGuide" style="position:absolute; top:15%; left:25%; width:50%; height:70%; border:2px dashed var(--primary); border-radius:100px;"></div>
             </div>
             
             <div style="display:flex; gap:12px;">
                 <button id="captureBtn" onclick="captureBiometric()" style="flex:2; background:var(--primary); color:white; border:none; padding:14px; border-radius:14px; font-weight:800; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px;">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
-                    Capture Image
+                    Capture Selfie
                 </button>
                 <button onclick="closeBiometricModal()" style="flex:1; background:rgba(255,255,255,0.05); color:#fff; border:none; padding:14px; border-radius:14px; font-weight:700; cursor:pointer;">Cancel</button>
             </div>

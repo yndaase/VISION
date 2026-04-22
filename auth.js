@@ -729,55 +729,33 @@ function handleModalOutsideClick(event) {
 }
 
 /**
- * Handle Face Verification using CompreFace
+ * Handle Face Verification — Single Selfie Flow
  */
 let bioStream = null;
-let bioStep = 'id'; // 'id' or 'selfie'
-let idData = null;
-let selfieData = null;
 
 window.handleFaceVerification = async function() {
     const session = getSession();
     if (!session) return;
 
-    // Open Modal
     const modal = document.getElementById("biometricModal");
     modal.style.display = "flex";
-    
-    bioStep = 'id';
-    updateBioUI();
-    
+
+    // Update UI for selfie-only mode
+    document.getElementById("bioModalTitle").innerText = "Face Verification";
+    document.getElementById("bioModalDesc").innerText = "Look directly at the camera. Ensure good lighting.";
+    if (document.getElementById("idGuide")) document.getElementById("idGuide").style.display = "none";
+    if (document.getElementById("faceGuide")) document.getElementById("faceGuide").style.display = "block";
+    if (document.getElementById("scannerLine")) document.getElementById("scannerLine").style.display = "block";
+
     try {
-        bioStream = await navigator.mediaDevices.getUserMedia({ 
-            video: { facingMode: "user", width: { ideal: 1280 }, height: { ideal: 720 } } 
+        bioStream = await navigator.mediaDevices.getUserMedia({
+            video: { facingMode: "user", width: { ideal: 1280 }, height: { ideal: 720 } }
         });
         document.getElementById("bioVideo").srcObject = bioStream;
     } catch (err) {
         console.error("Camera Error:", err);
-        alert("Tactical Error: Camera access denied. Verification requires biometric input.");
+        alert("Camera access denied. Verification requires camera permission.");
         closeBiometricModal();
-    }
-}
-
-function updateBioUI() {
-    const title = document.getElementById("bioModalTitle");
-    const desc = document.getElementById("bioModalDesc");
-    const idGuide = document.getElementById("idGuide");
-    const faceGuide = document.getElementById("faceGuide");
-    const scanner = document.getElementById("scannerLine");
-
-    if (bioStep === 'id') {
-        title.innerText = "Step 1: ID Verification";
-        desc.innerText = "Align your Student ID or National ID within the frame.";
-        idGuide.style.display = "block";
-        faceGuide.style.display = "none";
-        scanner.style.display = "none";
-    } else if (bioStep === 'selfie') {
-        title.innerText = "Step 2: Live Selfie";
-        desc.innerText = "Look directly into the camera. Ensure good lighting.";
-        idGuide.style.display = "none";
-        faceGuide.style.display = "block";
-        scanner.style.display = "block";
     }
 }
 
@@ -785,65 +763,53 @@ window.captureBiometric = async function() {
     const video = document.getElementById("bioVideo");
     const canvas = document.getElementById("bioCanvas");
     const ctx = canvas.getContext("2d");
+    const btn = document.getElementById("captureBtn");
 
     canvas.width = video.videoWidth;
     canvas.height = video.videoHeight;
     ctx.drawImage(video, 0, 0);
-    
-    const base64 = canvas.toDataURL("image/jpeg", 0.8);
 
-    if (bioStep === 'id') {
-        idData = base64;
-        bioStep = 'selfie';
-        updateBioUI();
-    } else {
-        selfieData = base64;
-        await runFinalVerification();
-    }
-}
+    const base64 = canvas.toDataURL("image/jpeg", 0.85);
 
-async function runFinalVerification() {
-    const btn = document.getElementById("captureBtn");
-    const session = getSession();
-    
     btn.disabled = true;
-    btn.innerText = "ANALYZING BIOMETRICS...";
+    btn.innerText = "VERIFYING FACE...";
 
     try {
         const res = await fetch('/api/verify-face', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                selfieBase64: selfieData,
-                idBase64: idData
-            })
+            body: JSON.stringify({ selfieBase64: base64 })
         });
 
         const data = await res.json();
 
-        if (data.success && data.match) {
+        if (data.success && data.verified) {
+            const session = getSession();
+
             // Update Local State
             session.isVerified = true;
             setSession(session);
 
             // Update Firebase
             if (typeof window.fbUpdateUser === 'function') {
-                await window.fbUpdateUser(session.email, { isVerified: true });
+                await window.fbUpdateUser(session.email, {
+                    isVerified: true,
+                    verifiedAt: new Date().toISOString()
+                });
             }
 
-            alert("Biometric Match Confirmed! Identity Verified.");
+            closeBiometricModal();
+            alert("✅ Face Verified! Your verified badge is now active.");
             location.reload();
         } else {
-            alert("Verification Failed: " + (data.error || "Faces do not match. Please ensure both photos are clear."));
-            bioStep = 'id';
-            updateBioUI();
+            alert("Verification Failed: " + (data.error || "Could not detect a clear face. Try again."));
         }
     } catch (err) {
         console.error("Verification error:", err);
-        alert("Internal Error: Could not connect to verification server.");
+        alert("Connection error. Please check your internet and try again.");
     } finally {
         btn.disabled = false;
-        btn.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg> Capture Image`;
+        btn.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg> Capture Selfie`;
     }
 }
 
