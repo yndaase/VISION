@@ -248,6 +248,7 @@ async function handleSyncUsers(data, res) {
 
   // Push to Cloud
   await put(USERS_PATH, JSON.stringify(finalUsers), { 
+    access: 'private',
     addRandomSuffix: false,
     contentType: 'application/json'
   });
