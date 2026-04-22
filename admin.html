@@ -229,6 +229,7 @@
     .modal-card { background: var(--admin-card); border: 1px solid var(--admin-border); border-radius: 32px; width: 100%; max-width: 540px; padding: 3rem; }
     .modal-header { margin-bottom: 2rem; }
     .modal-header h3 { font-size: 1.5rem; font-weight: 800; letter-spacing: -0.02em; }
+    @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
   </style>
 </head>
 <body>
@@ -1465,14 +1466,28 @@
         const listContainer = document.getElementById("chatListContainer");
         if (!listContainer) return;
         
-        listContainer.innerHTML = `<div style="padding: 20px; text-align: center; color: var(--admin-text-muted);">Syncing cloud chats...</div>`;
+        listContainer.innerHTML = `<div style="padding: 20px; text-align: center; color: var(--admin-text-muted); font-size: 0.8rem;">
+            <div class="spinner" style="width:20px; height:20px; border:2px solid var(--admin-primary); border-top-color:transparent; border-radius:50%; animation:spin 1s linear infinite; margin: 0 auto 10px;"></div>
+            Syncing Cloud Conversations...
+        </div>`;
         
         try {
-            if (typeof window.fbGetSupportChats !== 'function') return;
+            if (typeof window.fbGetSupportChats !== 'function') {
+                console.warn("[Support] Firebase Support Module not yet loaded.");
+                listContainer.innerHTML = `<div style="padding: 20px; text-align: center; color: var(--admin-danger);">Database Link Initializing...</div>`;
+                return;
+            }
+
             const chats = await window.fbGetSupportChats();
+            console.log("[Support] Chats Fetched:", chats.length);
             
             if (!chats || chats.length === 0) {
-                listContainer.innerHTML = `<div style="padding: 40px 20px; text-align: center; color: var(--admin-text-muted); font-size: 0.85rem;">No incoming messages yet.</div>`;
+                listContainer.innerHTML = `
+                    <div style="padding: 40px 20px; text-align: center; color: var(--admin-text-muted); font-size: 0.85rem;">
+                        <svg style="width:40px; height:40px; opacity:0.2; margin-bottom:15px;" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M8.625 12a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H8.25m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H12.375m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0h-.375M21 12c0 4.556-4.03 8.25-9 8.25a9.764 9.764 0 01-2.555-.337A5.972 5.972 0 015.41 20.97a5.969 5.969 0 01-.474-.065 4.48 4.48 0 00.978-2.025c.09-.457-.133-.901-.467-1.226C3.93 16.178 3 14.189 3 12c0-4.556 4.03-8.25 9-8.25s9 3.694 9 8.25z" /></svg>
+                        <p>No messages received yet.</p>
+                        <p style="font-size:0.7rem; margin-top:10px; opacity:0.5;">Incoming WhatsApp messages will appear here automatically.</p>
+                    </div>`;
                 return;
             }
 
@@ -1481,7 +1496,7 @@
                      onclick="loadChat('${c.phone}', '${c.studentName}')"
                      style="padding: 15px; border-radius: 12px; cursor: pointer; margin-bottom: 8px; transition: all 0.2s; border: 1px solid transparent; ${activeChatPhone === c.phone ? 'background: rgba(255,255,255,0.05); border-color: var(--admin-primary);' : ''}">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-                        <span style="font-weight: 800; font-size: 0.9rem;">${c.studentName}</span>
+                        <span style="font-weight: 800; font-size: 0.9rem;">${c.studentName || 'Student'}</span>
                         <span style="font-size: 0.7rem; color: var(--admin-text-muted);">${new Date(c.lastUpdated).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}</span>
                     </div>
                     <div style="font-size: 0.75rem; color: var(--admin-text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
@@ -1491,7 +1506,7 @@
             `).join("");
         } catch (err) {
             console.error("[Support] Fetch error:", err);
-            listContainer.innerHTML = `<div style="padding: 20px; text-align: center; color: var(--admin-danger);">Failed to sync chats</div>`;
+            listContainer.innerHTML = `<div style="padding: 20px; text-align: center; color: var(--admin-danger);">Cloud Sync Error</div>`;
         }
     };
 
