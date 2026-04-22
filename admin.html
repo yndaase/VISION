@@ -415,7 +415,7 @@
           </div>
           <div class="card-body" style="padding: 0;">
             <table class="table">
-              <thead><tr><th>User</th><th>Email Address</th><th>UID</th><th>Role</th><th style="text-align: center;">WhatsApp</th><th style="text-align: right;">Control</th></tr></thead>
+              <thead><tr><th>User</th><th>Identity</th><th>Email Address</th><th>UID</th><th>Role</th><th style="text-align: center;">WhatsApp</th><th style="text-align: right;">Control</th></tr></thead>
               <tbody id="allUsersTbody"></tbody>
             </table>
           </div>
@@ -989,10 +989,15 @@
       tbody.innerHTML = filtered.map(u => {
         const displayName = u.name || (u.email ? u.email.split('@')[0] : 'Unknown');
         const role = u.role || 'user';
-        const verifiedBadge = u.isVerified ? `<span style="color: #10b981; font-size: 0.8rem; margin-left: 6px;" title="Face Verified">✓</span>` : '';
+        
+        const identityBadge = u.isVerified 
+            ? `<span style="background: rgba(16, 185, 129, 0.15); color: #10b981; padding: 4px 10px; border-radius: 8px; font-size: 0.7rem; font-weight: 800; border: 1px solid rgba(16, 185, 129, 0.3);">Verified ✓</span>` 
+            : `<span style="background: rgba(239, 68, 68, 0.1); color: #ef4444; padding: 4px 10px; border-radius: 8px; font-size: 0.7rem; font-weight: 800; border: 1px solid rgba(239, 68, 68, 0.2);">Unverified</span>`;
+
         return `
         <tr>
-          <td><div style="font-weight: 700;">${displayName}${verifiedBadge}</div><div style="font-size: 0.7rem; color: var(--admin-text-muted);">${u.createdAt ? new Date(u.createdAt).toLocaleDateString() : 'N/A'}</div></td>
+          <td><div style="font-weight: 700;">${displayName}</div><div style="font-size: 0.7rem; color: var(--admin-text-muted);">${u.createdAt ? new Date(u.createdAt).toLocaleDateString() : 'N/A'}</div></td>
+          <td>${identityBadge}</td>
           <td style="font-family: 'JetBrains Mono'; font-size: 0.8rem;">${u.email}</td>
           <td style="width: 260px;">
             <input class="input" style="padding: 6px 12px; font-size: 0.75rem; font-family: 'JetBrains Mono';" value="${u.uid || ""}" placeholder="Firebase UID" onchange="updateUid('${u.email}', this.value, '${currentViewCollection}')" />
