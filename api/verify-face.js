@@ -37,7 +37,10 @@ export default async function handler(req, res) {
         
         // Final check: Exactly one face must be detected
         if (data.faces && data.faces.length > 0) {
-            console.log("[Face++] SUCCESS for", email);
+            console.log("------------------------------------------");
+            console.log("!!! AI MATCH SUCCESS: VERIFYING USER !!!");
+            console.log("Email:", email);
+            console.log("------------------------------------------");
             
             // This is the ONLY place where Firestore is updated
             await finalizeVerificationInCloud(email);

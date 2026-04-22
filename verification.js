@@ -127,6 +127,14 @@ async function processVerification(selfieBase64) {
             }, 1500);
         } else {
             statusText.innerHTML = "<span style='color:#ef4444; font-weight:800;'>FAILED</span><br>" + (result.error || "No face detected.");
+            
+            // KILL THE GHOST: If the scan fails, ensure the session reflects it
+            const session = JSON.parse(localStorage.getItem('waec_session'));
+            if (session) {
+                session.isVerified = false;
+                localStorage.setItem('waec_session', JSON.stringify(session));
+            }
+            
             setTimeout(() => resetVerifySteps(), 3000);
         }
     } catch (err) {
