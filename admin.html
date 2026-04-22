@@ -1512,7 +1512,15 @@
             `).join("");
         } catch (err) {
             console.error("[Support] Fetch error:", err);
-            listContainer.innerHTML = `<div style="padding: 20px; text-align: center; color: var(--admin-danger);">Cloud Sync Error</div>`;
+            let errMsg = "Cloud Sync Error";
+            if (err.code === 'permission-denied') errMsg = "Security Error: Access Denied (Check Rules)";
+            if (err.message.includes('offline')) errMsg = "Network Error: You are offline";
+            
+            listContainer.innerHTML = `
+                <div style="padding: 20px; text-align: center; color: var(--admin-danger); font-size: 0.8rem;">
+                    <p>❌ ${errMsg}</p>
+                    <button onclick="renderSupport()" class="btn" style="margin-top:10px; font-size:0.6rem; background: rgba(244, 63, 94, 0.1);">Retry Sync</button>
+                </div>`;
         }
     };
 
