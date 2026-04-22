@@ -39,14 +39,16 @@ export default async function handler(req, res) {
                     if (err || !files.audio) { res.status(400).json({ error: 'No file' }); return resolve(); }
                     try {
                         const fileData = fs.readFileSync(files.audio[0].filepath);
-                        const mimeType = 'audio/ogg'; // Force OGG for Opus compatibility
+                        const mimeType = files.audio[0].mimetype || 'audio/mp4';
+                        const ext = mimeType.includes('mp4') ? 'mp4' : (mimeType.includes('ogg') ? 'ogg' : 'webm');
                         
                         const formData = new FormData();
                         formData.append('messaging_product', 'whatsapp');
                         
                         const blob = new Blob([fileData], { type: mimeType });
-                        formData.append('file', blob, 'voice_note.ogg');
+                        formData.append('file', blob, `voice_note.${ext}`);
                         formData.append('type', mimeType);
+
                         const metaRes = await fetch(`https://graph.facebook.com/v19.0/${phoneNumberId}/media`, {
                             method: 'POST',
                             headers: { 'Authorization': `Bearer ${accessToken}` },
@@ -65,18 +67,23 @@ export default async function handler(req, res) {
         const chunks = [];
         for await (const chunk of req) chunks.push(chunk);
         const body = JSON.parse(Buffer.concat(chunks).toString());
-        const { phone, type, mediaId, message, name, templateName, lang } = body;
+        const { phone, type, mediaId, message, name, templateName, lang, mimeType: incomingMime } = body;
         const recipient = phone.toString().replace(/\D/g, '');
         const fbUrl = `https://graph.facebook.com/v21.0/${phoneNumberId}/messages`;
 
         try {
             let payload;
             if (type === 'audio') {
+                const mimeType = incomingMime || 'audio/mp4';
+                const ext = mimeType.includes('webm') ? 'webm' : 'm4a';
                 payload = { 
                     messaging_product: "whatsapp", 
                     to: recipient, 
-                    type: "audio", 
-                    audio: { id: mediaId } 
+                    type: "document", 
+                    document: { 
+                        id: mediaId,
+                        filename: `Voice_Note.${ext}`
+                    } 
                 };
             } else if (templateName) {
                 payload = { 
