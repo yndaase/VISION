@@ -1,6 +1,5 @@
 import formidable from 'formidable';
 import fs from 'fs';
-import fetch from 'node-fetch';
 
 export const config = {
   api: { bodyParser: false }, // Disable body parser to handle multipart/form-data
