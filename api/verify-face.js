@@ -19,10 +19,17 @@ export default async function handler(req, res) {
     }
 
     try {
+        // Normalize endpoint (remove trailing slash)
+        const baseEndpoint = endpoint.replace(/\/+$/, "");
+
         // Step 1: Detect Face in ID Photo and Selfie to get faceIds
-        async function detectFace(base64) {
+        async function detectFace(base64, label) {
             const buffer = Buffer.from(base64.split(',')[1], 'base64');
-            const res = await fetch(`${endpoint}/face/v1.0/detect?returnFaceId=true&recognitionModel=recognition_04`, {
+            
+            // Using standard detection settings for maximum compatibility
+            const url = `${baseEndpoint}/face/v1.0/detect?returnFaceId=true&recognitionModel=recognition_04&detectionModel=detection_03`;
+            
+            const res = await fetch(url, {
                 method: 'POST',
                 headers: {
                     'Ocp-Apim-Subscription-Key': apiKey,
@@ -30,19 +37,29 @@ export default async function handler(req, res) {
                 },
                 body: buffer
             });
+
             const data = await res.json();
-            if (!res.ok) throw new Error(data.error?.message || 'Face detection failed');
-            if (data.length === 0) throw new Error('No face detected in one of the images');
+            
+            if (!res.ok) {
+                const errMsg = data.error?.message || 'Detection failed';
+                const errCode = data.error?.code || 'UnknownCode';
+                throw new Error(`${label}: ${errMsg} (${errCode})`);
+            }
+
+            if (data.length === 0) {
+                throw new Error(`No face detected in ${label}. Please ensure the photo is clear and well-lit.`);
+            }
+
             return data[0].faceId;
         }
 
         console.log("[Azure] Detecting faces...");
-        const faceId1 = await detectFace(idBase64);
-        const faceId2 = await detectFace(selfieBase64);
+        const faceId1 = await detectFace(idBase64, "ID Photo");
+        const faceId2 = await detectFace(selfieBase64, "Selfie");
 
         // Step 2: Verify if the two faceIds belong to the same person
         console.log("[Azure] Verifying match...");
-        const verifyRes = await fetch(`${endpoint}/face/v1.0/verify`, {
+        const verifyRes = await fetch(`${baseEndpoint}/face/v1.0/verify`, {
             method: 'POST',
             headers: {
                 'Ocp-Apim-Subscription-Key': apiKey,
@@ -54,7 +71,8 @@ export default async function handler(req, res) {
         const verifyData = await verifyRes.json();
 
         if (!verifyRes.ok) {
-            throw new Error(verifyData.error?.message || 'Verification failed');
+            const errMsg = verifyData.error?.message || 'Verification failed';
+            throw new Error(`Verification: ${errMsg}`);
         }
 
         return res.status(200).json({
@@ -66,6 +84,6 @@ export default async function handler(req, res) {
 
     } catch (error) {
         console.error('[Azure Face] Error:', error.message);
-        return res.status(500).json({ success: false, error: error.message });
+        return res.status(400).json({ success: false, error: error.message });
     }
 }
