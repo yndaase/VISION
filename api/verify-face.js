@@ -1,8 +1,9 @@
 /**
  * VISION AI - Face Verification Endpoint
  * 
- * This endpoint proxies requests to the self-hosted CompreFace server.
- * It compares a "selfie" with a "verification photo" (ID).
+ * Uses Face++ (Megvii) Compare API.
+ * Free tier, no credit card, works immediately.
+ * Endpoint: https://api-us.faceplusplus.com/facepp/v3/compare
  */
 
 export default async function handler(req, res) {
@@ -11,79 +12,69 @@ export default async function handler(req, res) {
     }
 
     const { selfieBase64, idBase64 } = req.body;
-    const apiKey = process.env.AZURE_FACE_KEY;
-    const endpoint = process.env.AZURE_FACE_ENDPOINT;
 
     if (!selfieBase64 || !idBase64) {
-        return res.status(400).json({ error: 'Missing images. Please ensure you captured both ID and Selfie.' });
+        return res.status(400).json({ error: 'Missing images. Please capture both ID and Selfie.' });
+    }
+
+    const apiKey = (process.env.FACEPP_API_KEY || "").trim();
+    const apiSecret = (process.env.FACEPP_API_SECRET || "").trim();
+
+    if (!apiKey || !apiSecret) {
+        return res.status(500).json({ error: 'Face verification service is not configured.' });
     }
 
     try {
-        // Normalize endpoint (remove trailing slash)
-        const baseEndpoint = endpoint.replace(/\/+$/, "");
+        // Extract raw base64 data (remove the "data:image/jpeg;base64," prefix)
+        const idData = idBase64.includes(',') ? idBase64.split(',')[1] : idBase64;
+        const selfieData = selfieBase64.includes(',') ? selfieBase64.split(',')[1] : selfieBase64;
 
-        // Step 1: Detect Face in ID Photo and Selfie to get faceIds
-        async function detectFace(base64, label) {
-            const buffer = Buffer.from(base64.split(',')[1], 'base64');
-            
-            // Using standard detection settings for maximum compatibility
-            const url = `${baseEndpoint}/face/v1.0/detect?returnFaceId=true&recognitionModel=recognition_04&detectionModel=detection_03`;
-            
-            const res = await fetch(url, {
-                method: 'POST',
-                headers: {
-                    'Ocp-Apim-Subscription-Key': apiKey,
-                    'Content-Type': 'application/octet-stream'
-                },
-                body: buffer
-            });
+        // Face++ Compare API accepts base64 images directly via form data
+        const formBody = new URLSearchParams();
+        formBody.append('api_key', apiKey);
+        formBody.append('api_secret', apiSecret);
+        formBody.append('image_base64_1', idData);
+        formBody.append('image_base64_2', selfieData);
 
-            const data = await res.json();
-            
-            if (!res.ok) {
-                const errMsg = data.error?.message || 'Detection failed';
-                const errCode = data.error?.code || 'UnknownCode';
-                throw new Error(`${label}: ${errMsg} (${errCode})`);
-            }
+        console.log("[Face++] Comparing faces...");
 
-            if (data.length === 0) {
-                throw new Error(`No face detected in ${label}. Please ensure the photo is clear and well-lit.`);
-            }
-
-            return data[0].faceId;
-        }
-
-        console.log("[Azure] Detecting faces...");
-        const faceId1 = await detectFace(idBase64, "ID Photo");
-        const faceId2 = await detectFace(selfieBase64, "Selfie");
-
-        // Step 2: Verify if the two faceIds belong to the same person
-        console.log("[Azure] Verifying match...");
-        const verifyRes = await fetch(`${baseEndpoint}/face/v1.0/verify`, {
+        const response = await fetch('https://api-us.faceplusplus.com/facepp/v3/compare', {
             method: 'POST',
             headers: {
-                'Ocp-Apim-Subscription-Key': apiKey,
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/x-www-form-urlencoded'
             },
-            body: JSON.stringify({ faceId1, faceId2 })
+            body: formBody.toString()
         });
 
-        const verifyData = await verifyRes.json();
+        const data = await response.json();
 
-        if (!verifyRes.ok) {
-            const errMsg = verifyData.error?.message || 'Verification failed';
-            throw new Error(`Verification: ${errMsg}`);
+        if (data.error_message) {
+            console.error('[Face++] API Error:', data.error_message);
+
+            let userMsg = data.error_message;
+            if (data.error_message.includes('NO_FACE_FOUND')) {
+                userMsg = 'No face detected. Please ensure good lighting and a clear photo.';
+            }
+
+            return res.status(400).json({ success: false, error: userMsg });
         }
+
+        // Face++ returns a confidence score (0-100)
+        const confidence = data.confidence || 0;
+        const threshold = data.thresholds?.["1e-5"] || 73; // Use the strictest threshold
+        const isMatch = confidence >= threshold;
 
         return res.status(200).json({
             success: true,
-            match: verifyData.isIdentical,
-            confidence: verifyData.confidence,
-            message: verifyData.isIdentical ? 'Identity Verified' : 'Faces do not match'
+            match: isMatch,
+            confidence: Math.round(confidence * 100) / 100,
+            message: isMatch
+                ? `Identity Verified (${Math.round(confidence)}% confidence)`
+                : `Faces do not match (${Math.round(confidence)}% confidence)`
         });
 
     } catch (error) {
-        console.error('[Azure Face] Error:', error.message);
-        return res.status(400).json({ success: false, error: error.message });
+        console.error('[Face++] Error:', error.message);
+        return res.status(500).json({ success: false, error: 'Connection error: ' + error.message });
     }
 }
