@@ -91,15 +91,11 @@ function captureSelfie() {
     canvas.width = video.videoWidth;
     canvas.height = video.videoHeight;
     const ctx = canvas.getContext('2d');
-    
-    // DIGITAL FLASH: Boost brightness and contrast for the AI
-    ctx.filter = 'brightness(1.1) contrast(1.1) saturate(1.1)';
     ctx.drawImage(video, 0, 0);
     
     const selfieBase64 = canvas.toDataURL('image/jpeg', 0.7);
     if (preview) preview.src = selfieBase64;
     
-    console.log("[Verification] Captured image size:", Math.round(selfieBase64.length / 1024), "KB");
     processVerification(selfieBase64);
 }
 
@@ -112,7 +108,7 @@ async function processVerification(selfieBase64) {
     const session = JSON.parse(localStorage.getItem('waec_session'));
     
     try {
-        statusText.innerText = "Analyzing Face Data...";
+        statusText.innerText = "Analyzing...";
         const res = await fetch('/api/verify-face', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -125,34 +121,18 @@ async function processVerification(selfieBase64) {
         const result = await res.json();
         
         if (result.match) {
-            statusText.innerHTML = "<span style='color:#10b981; font-weight:800;'>FACE VERIFIED!</span><br>Profile authenticated successfully.";
-            await finalizeVerification();
+            statusText.innerHTML = "<span style='color:#10b981; font-weight:800;'>VERIFIED!</span>";
             setTimeout(() => {
                 window.location.reload();
-            }, 2000);
+            }, 1500);
         } else {
-            statusText.innerHTML = "<span style='color:#ef4444; font-weight:800;'>SCAN FAILED</span><br>" + (result.error || "No face detected. Please try again.");
+            statusText.innerHTML = "<span style='color:#ef4444; font-weight:800;'>FAILED</span><br>" + (result.error || "No face detected.");
             setTimeout(() => resetVerifySteps(), 3000);
         }
     } catch (err) {
-        console.error("Verification error", err);
-        statusText.innerHTML = "<span style='color:#ef4444; font-weight:800;'>SYSTEM ERROR</span><br>Verification server is currently busy.";
+        statusText.innerHTML = "System Error. Try again.";
         setTimeout(() => resetVerifySteps(), 3000);
     }
-}
-
-async function finalizeVerification() {
-    const session = JSON.parse(localStorage.getItem('waec_session'));
-    if (!session || !session.email) return;
-
-    // Update Firebase
-    if (typeof window.fbUpdateUser === 'function') {
-        await window.fbUpdateUser(session.email, { isVerified: true });
-    }
-    
-    // Update Local Session
-    session.isVerified = true;
-    localStorage.setItem('waec_session', JSON.stringify(session));
 }
 
 // Global UI Updater
