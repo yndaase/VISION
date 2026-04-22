@@ -1474,7 +1474,11 @@
         try {
             if (typeof window.fbGetSupportChats !== 'function') {
                 console.warn("[Support] Firebase Support Module not yet loaded.");
-                listContainer.innerHTML = `<div style="padding: 20px; text-align: center; color: var(--admin-danger);">Database Link Initializing...</div>`;
+                listContainer.innerHTML = `
+                    <div style="padding: 20px; text-align: center; color: var(--admin-danger); font-size: 0.8rem;">
+                        <p>⚠️ Database Bridge Offline</p>
+                        <p style="font-size: 0.65rem; opacity: 0.6; margin-top: 5px;">The Firebase connection is not yet active. Refreshing...</p>
+                    </div>`;
                 return;
             }
 
@@ -1483,10 +1487,12 @@
             
             if (!chats || chats.length === 0) {
                 listContainer.innerHTML = `
-                    <div style="padding: 40px 20px; text-align: center; color: var(--admin-text-muted); font-size: 0.85rem;">
-                        <svg style="width:40px; height:40px; opacity:0.2; margin-bottom:15px;" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M8.625 12a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H8.25m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H12.375m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0h-.375M21 12c0 4.556-4.03 8.25-9 8.25a9.764 9.764 0 01-2.555-.337A5.972 5.972 0 015.41 20.97a5.969 5.969 0 01-.474-.065 4.48 4.48 0 00.978-2.025c.09-.457-.133-.901-.467-1.226C3.93 16.178 3 14.189 3 12c0-4.556 4.03-8.25 9-8.25s9 3.694 9 8.25z" /></svg>
+                    <div style="padding: 30px 20px; text-align: center; color: var(--admin-text-muted); font-size: 0.8rem;">
+                        <div style="background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.2); padding: 10px; border-radius: 12px; margin-bottom: 20px; color: var(--admin-success); font-weight: 700;">
+                           ✅ SYSTEM READY
+                        </div>
                         <p>No messages received yet.</p>
-                        <p style="font-size:0.7rem; margin-top:10px; opacity:0.5;">Incoming WhatsApp messages will appear here automatically.</p>
+                        <p style="font-size:0.65rem; margin-top:10px; opacity:0.5;">Waiting for Meta to send a POST event...</p>
                     </div>`;
                 return;
             }
