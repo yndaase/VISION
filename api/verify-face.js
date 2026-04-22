@@ -11,8 +11,8 @@ export default async function handler(req, res) {
     }
 
     const { selfieBase64, idBase64 } = req.body;
-    const apiKey = process.env.AZURE_FACE_KEY || "YOUR_AZURE_KEY";
-    const endpoint = process.env.AZURE_FACE_ENDPOINT || "YOUR_AZURE_ENDPOINT";
+    const apiKey = process.env.AZURE_FACE_KEY;
+    const endpoint = process.env.AZURE_FACE_ENDPOINT;
 
     if (!selfieBase64 || !idBase64) {
         return res.status(400).json({ error: 'Missing images. Please ensure you captured both ID and Selfie.' });
