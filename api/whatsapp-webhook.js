@@ -7,10 +7,18 @@ export default async function handler(req, res) {
     const challenge = req.query['hub.challenge'];
 
     if (mode && token) {
-      if (mode === 'subscribe' && token === process.env.WHATSAPP_VERIFY_TOKEN) {
+      let expectedToken = process.env.WHATSAPP_VERIFY_TOKEN;
+      // Clean up potential quotes
+      if (expectedToken) {
+        if (expectedToken.startsWith("'") && expectedToken.endsWith("'")) expectedToken = expectedToken.slice(1, -1);
+        if (expectedToken.startsWith('"') && expectedToken.endsWith('"')) expectedToken = expectedToken.slice(1, -1);
+      }
+
+      if (mode === 'subscribe' && token === expectedToken) {
         console.log('[Webhook] Verified successfully');
         return res.status(200).send(challenge);
       } else {
+        console.warn(`[Webhook] Token mismatch. Expected: ${expectedToken}, Got: ${token}`);
         return res.status(403).send('Forbidden');
       }
     }
