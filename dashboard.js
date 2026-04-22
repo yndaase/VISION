@@ -11,6 +11,10 @@ document.addEventListener("DOMContentLoaded", () => {
   //  Populate user chip
   const navAvatar = document.getElementById("navAvatar");
   const navUsername = document.getElementById("navUsername");
+  
+  if (typeof updateVerificationUI === 'function') {
+      updateVerificationUI(session.isVerified);
+  }
 
   const initial = session.name ? session.name.charAt(0).toUpperCase() : "?";
   if (navAvatar) navAvatar.textContent = initial;
@@ -116,6 +120,23 @@ document.addEventListener("DOMContentLoaded", () => {
   // Initial render
   if (typeof renderDashMaterials === 'function') renderDashMaterials();
 
+  // Background Sync for User Profile (Verification, Role, etc.)
+  if (session.email && typeof fbGetUserWithFallback === 'function') {
+      fbGetUserWithFallback(session.email).then(cloudUser => {
+          if (cloudUser) {
+              const updatedSession = typeof verifyUserSchema === 'function' ? verifyUserSchema({ ...session, ...cloudUser }) : { ...session, ...cloudUser };
+              setSession(updatedSession);
+              if (typeof updateVerificationUI === 'function') {
+                  updateVerificationUI(updatedSession.isVerified);
+              }
+              // Also update pro badges if needed
+              if (updatedSession.role === "pro" && !document.querySelector('.pro-badge')) {
+                  // This is a naive way, but reloading is safer if role changed significantly
+                  if (session.role !== 'pro') window.location.reload(); 
+              }
+          }
+      }).catch(e => console.warn("Failed to sync user profile in background", e));
+  }
 
 });
 
