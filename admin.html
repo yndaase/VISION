@@ -856,7 +856,14 @@
                         phone: u.phone || u.phoneNumber || u.waPhone, 
                         name: u.name,
                         type: "NEW_MATERIAL",
-                        message: `Hi ${u.name}, new study material "${title}" is now available in your ${subject} module! 📚 Log in to Vision to view.`
+                        templateName: "vision_new_material", // This must match your Meta template name
+                        components: [
+                            { type: "body", parameters: [
+                                { type: "text", text: u.name || "Student" },
+                                { type: "text", text: title },
+                                { type: "text", text: subject }
+                            ]}
+                        ]
                     })
                 })
             ));
