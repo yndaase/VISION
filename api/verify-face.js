@@ -23,12 +23,10 @@ export default async function handler(req, res) {
         
         const base64Data = selfieBase64.includes(',') ? selfieBase64.split(',')[1] : selfieBase64;
 
-        // Face++ Detect API expects application/x-www-form-urlencoded
         const formBody = new URLSearchParams();
         formBody.append('api_key', apiKey);
         formBody.append('api_secret', apiSecret);
         formBody.append('image_base64', base64Data);
-        formBody.append('return_attributes', 'headpose,blur');
 
         const response = await fetch('https://api-us.faceplusplus.com/facepp/v3/detect', {
             method: 'POST',

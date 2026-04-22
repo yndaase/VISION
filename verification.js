@@ -92,7 +92,8 @@ function captureSelfie() {
     canvas.height = video.videoHeight;
     canvas.getContext('2d').drawImage(video, 0, 0);
     
-    const selfieBase64 = canvas.toDataURL('image/jpeg', 0.8);
+    // Quality reduced to 0.5 for stability
+    const selfieBase64 = canvas.toDataURL('image/jpeg', 0.5);
     if (preview) preview.src = selfieBase64;
     
     console.log("[Verification] Captured image size:", Math.round(selfieBase64.length / 1024), "KB");
