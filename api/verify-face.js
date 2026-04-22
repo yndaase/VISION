@@ -11,48 +11,54 @@ export default async function handler(req, res) {
         return res.status(400).json({ error: 'Selfie data is required.' });
     }
 
-    const compreFaceUrl = (process.env.COMPREFACE_URL || "http://your-server-ip:8000").trim();
-    const apiKey = (process.env.COMPREFACE_DETECTION_API_KEY || process.env.COMPREFACE_API_KEY || "").trim();
+    const apiKey = (process.env.FACEPP_API_KEY || "").trim();
+    const apiSecret = (process.env.FACEPP_API_SECRET || "").trim();
+
+    if (!apiKey || !apiSecret) {
+        return res.status(500).json({ error: 'Face++ credentials not configured.' });
+    }
 
     try {
-        console.log("[CompreFace] Detecting face via Base64...");
+        console.log("[Face++] Detecting face via Base64...");
         
-        // Remove the data:image/jpeg;base64, prefix
-        const base64Data = selfieBase64.split(',')[1] || selfieBase64;
-        const buffer = Buffer.from(base64Data, 'base64');
+        const base64Data = selfieBase64.includes(',') ? selfieBase64.split(',')[1] : selfieBase64;
 
-        const formData = new FormData();
-        formData.append('file', new Blob([buffer], { type: 'image/jpeg' }));
+        // Face++ Detect API expects application/x-www-form-urlencoded
+        const formBody = new URLSearchParams();
+        formBody.append('api_key', apiKey);
+        formBody.append('api_secret', apiSecret);
+        formBody.append('image_base64', base64Data);
+        formBody.append('return_attributes', 'headpose,blur');
 
-        const response = await fetch(`${compreFaceUrl}/api/v1/detection/detect`, {
+        const response = await fetch('https://api-us.faceplusplus.com/facepp/v3/detect', {
             method: 'POST',
-            headers: { 'x-api-key': apiKey },
-            body: formData
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: formBody.toString()
         });
 
         const data = await response.json();
-        console.log(`[CompreFace Debug] Status: ${response.status}`, data);
+        console.log(`[Face++ Debug] Status: ${response.status}`);
         
-        if (data.result && data.result.length > 0) {
-            console.log("[CompreFace] Face detected with confidence:", data.result[0].face_probability);
+        if (data.faces && data.faces.length > 0) {
+            console.log("[Face++] Face detected! Token:", data.faces[0].face_token);
             
             // SUCCESS: Update user in Firestore
             await finalizeVerificationInCloud(email);
             
             return res.status(200).json({ match: true });
         } else {
-            return res.status(400).json({ match: false, error: data.message || "No face detected. Please ensure your face is clear and well-lit." });
+            const errorMsg = data.error_message || "No face detected. Please ensure good lighting.";
+            return res.status(400).json({ match: false, error: errorMsg });
         }
 
     } catch (error) {
-        console.error('[CompreFace] Error:', error.message);
-        return res.status(500).json({ error: 'Verification server is currently unavailable.' });
+        console.error('[Face++] Error:', error.message);
+        return res.status(500).json({ error: 'Face++ connection error.' });
     }
 }
 
 async function finalizeVerificationInCloud(email) {
     if (!email) return;
-    
     try {
         if (!global.adminApp) {
             const admin = (await import('firebase-admin')).default;
