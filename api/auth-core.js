@@ -250,6 +250,7 @@ async function handleSyncUsers(data, res) {
   await put(USERS_PATH, JSON.stringify(finalUsers), { 
     access: 'private',
     addRandomSuffix: false,
+    allowOverwrite: true,
     contentType: 'application/json'
   });
   
