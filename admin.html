@@ -808,18 +808,26 @@
      * Automated WhatsApp Broadcast to all opted-in students
      */
     async function triggerMaterialBroadcast(title, subject) {
-        showToast("Initializing WhatsApp broadcast...");
+        showToast("Identifying recipients...");
         try {
             if (typeof window.fbGetAllUsers !== 'function') return;
             const users = await window.fbGetAllUsers();
-            const recipients = users.filter(u => u.waOptIn && u.phone);
+            
+            // Smarter filter: handle strings, booleans, and various phone field names
+            const recipients = users.filter(u => {
+                const hasOptedIn = u.waOptIn === true || u.waOptIn === 'true' || u.waOptIn === 'on';
+                const hasPhone = u.phone || u.phoneNumber || u.waPhone;
+                return hasOptedIn && hasPhone;
+            });
             
             if (recipients.length === 0) {
-                console.info("[Admin] No students have opted-in for WhatsApp notifications.");
+                console.info("[Admin] Broadcast aborted: No students match criteria.");
+                alert(`Broadcast Alert: Found ${users.length} total students, but 0 have both WhatsApp Opt-in AND a phone number recorded. Check the User Management table.`);
                 return;
             }
 
             console.info(`[Admin] Broadcasting to ${recipients.length} students...`);
+            showToast(`Broadcasting to ${recipients.length} students...`);
             
             // Limit to concurrent batches if necessary, but for now we'll do simple async triggers
             await Promise.all(recipients.map(u => 
@@ -828,7 +836,7 @@
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({ 
                         email: u.email, 
-                        phone: u.phone, 
+                        phone: u.phone || u.phoneNumber || u.waPhone, 
                         name: u.name,
                         type: "NEW_MATERIAL",
                         message: `Hi ${u.name}, new study material "${title}" is now available in your ${subject} module! 📚 Log in to Vision to view.`
