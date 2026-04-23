@@ -1,11 +1,10 @@
 /**
  * VISION Identity Verification System
- * Uses face-api.js (client-side) for face comparison
- * ID Card face vs Live Selfie — runs entirely in the browser
+ * Uses face-api.js (client-side) for face detection
+ * Detects a real human face in a live selfie — runs entirely in the browser
  */
 
 let stream = null;
-let idImageBase64 = null;
 let currentFacingMode = 'user';
 let modelsLoaded = false;
 
@@ -39,17 +38,6 @@ if (typeof faceapi !== 'undefined') {
     });
 }
 
-// ─── Utility: Load image from base64 ────────────────────────
-function loadImage(dataUrl) {
-    return new Promise((resolve, reject) => {
-        const img = new Image();
-        img.crossOrigin = 'anonymous';
-        img.onload = () => resolve(img);
-        img.onerror = () => reject(new Error('Failed to load image'));
-        img.src = dataUrl;
-    });
-}
-
 // ─── Modal Controls ─────────────────────────────────────────
 
 function openVerifyModal() {
@@ -57,28 +45,22 @@ function openVerifyModal() {
     resetVerifySteps();
     // Ensure models are loading
     if (!modelsLoaded && typeof faceapi !== 'undefined') loadFaceModels();
+
+    // Go straight to the camera step (no ID upload needed)
+    document.getElementById('verifyStep1').style.display = 'block';
+    startCamera();
 }
 
 function closeVerifyModal() {
     document.getElementById('verifyModal').style.display = 'none';
     stopCamera();
-    idImageBase64 = null;
 }
 
 function resetVerifySteps() {
     document.getElementById('verifyStep1').style.display = 'block';
     document.getElementById('verifyStep2').style.display = 'none';
-    document.getElementById('verifyStep3').style.display = 'none';
     
-    idImageBase64 = null;
-    const preview = document.getElementById('idCardPreview');
-    const placeholder = document.getElementById('idUploadPlaceholder');
-    const nextBtn = document.getElementById('idNextBtn');
-    if (preview) { preview.style.display = 'none'; preview.src = ''; }
-    if (placeholder) placeholder.style.display = 'flex';
-    if (nextBtn) { nextBtn.disabled = true; nextBtn.style.opacity = '0.4'; }
-    
-    // Reset step 3
+    // Reset step 2 (processing)
     const spinner = document.getElementById('verifySpinner');
     const resultIcon = document.getElementById('verifyResultIcon');
     if (spinner) spinner.style.display = 'flex';
@@ -87,44 +69,7 @@ function resetVerifySteps() {
     if (statusTitle) { statusTitle.textContent = 'Verifying Identity'; statusTitle.style.color = 'var(--text-primary)'; }
 }
 
-// ─── STEP 1: National ID Upload ──────────────────────────────
-
-function handleIdUpload(input) {
-    if (!input.files || !input.files[0]) return;
-    
-    const file = input.files[0];
-    const reader = new FileReader();
-    
-    reader.onload = function(e) {
-        idImageBase64 = e.target.result;
-        
-        const preview = document.getElementById('idCardPreview');
-        const placeholder = document.getElementById('idUploadPlaceholder');
-        const nextBtn = document.getElementById('idNextBtn');
-        const fileName = document.getElementById('idFileName');
-        
-        if (preview) { preview.src = idImageBase64; preview.style.display = 'block'; }
-        if (placeholder) placeholder.style.display = 'none';
-        if (fileName) fileName.textContent = file.name;
-        if (nextBtn) { nextBtn.disabled = false; nextBtn.style.opacity = '1'; }
-    };
-    
-    reader.readAsDataURL(file);
-}
-
-// ─── STEP 2: Selfie Camera ──────────────────────────────────
-
-async function showSelfieStep() {
-    if (!idImageBase64) {
-        alert("Please upload your National ID card first.");
-        return;
-    }
-    
-    document.getElementById('verifyStep1').style.display = 'none';
-    document.getElementById('verifyStep2').style.display = 'block';
-    
-    await startCamera();
-}
+// ─── STEP 1: Selfie Camera ──────────────────────────────────
 
 async function startCamera() {
     stopCamera();
@@ -183,12 +128,12 @@ function captureSelfie() {
     processVerification(selfieBase64);
 }
 
-// ─── STEP 3: Client-Side Face Comparison ─────────────────────
+// ─── STEP 2: Client-Side Face Detection ──────────────────────
 
 async function processVerification(selfieBase64) {
     stopCamera();
-    document.getElementById('verifyStep2').style.display = 'none';
-    document.getElementById('verifyStep3').style.display = 'block';
+    document.getElementById('verifyStep1').style.display = 'none';
+    document.getElementById('verifyStep2').style.display = 'block';
     
     const statusText = document.getElementById('verifyStatusText');
     const statusTitle = document.getElementById('verifyStatusTitle');
@@ -213,81 +158,64 @@ async function processVerification(selfieBase64) {
             }
         }
 
-        // Step 2: Detect face on ID card
-        if (statusText) statusText.innerHTML = "Scanning face on ID card...";
+        // Step 2: Detect face in selfie
+        if (statusText) statusText.innerHTML = "Scanning your face...";
         
-        const idImg = await loadImage(idImageBase64);
-        const idDetection = await faceapi
-            .detectSingleFace(idImg)
-            .withFaceLandmarks()
-            .withFaceDescriptor();
-        
-        if (!idDetection) {
-            showVerifyResult('error', 'No Face on ID', 'Could not detect a face on your ID card. Please upload a clearer photo.');
-            setTimeout(() => resetVerifySteps(), 4000);
-            return;
-        }
+        const selfieImg = new Image();
+        selfieImg.crossOrigin = 'anonymous';
+        await new Promise((resolve, reject) => {
+            selfieImg.onload = resolve;
+            selfieImg.onerror = reject;
+            selfieImg.src = selfieBase64;
+        });
 
-        // Step 3: Detect face in selfie
-        if (statusText) statusText.innerHTML = "Analyzing your selfie...";
-        
-        const selfieImg = await loadImage(selfieBase64);
         const selfieDetection = await faceapi
             .detectSingleFace(selfieImg)
             .withFaceLandmarks()
             .withFaceDescriptor();
         
         if (!selfieDetection) {
-            showVerifyResult('error', 'No Face in Selfie', 'Could not detect your face. Ensure good lighting and try again.');
+            showVerifyResult('error', 'No Face Detected', 'Could not detect your face. Ensure good lighting and a clear view, then try again.');
             setTimeout(() => resetVerifySteps(), 4000);
             return;
         }
 
-        // Step 4: Compare faces
-        if (statusText) statusText.innerHTML = "Comparing faces...";
+        // Step 3: Face detected — check quality (confidence score from detection)
+        if (statusText) statusText.innerHTML = "Face detected! Updating your profile...";
         
-        const distance = faceapi.euclideanDistance(
-            idDetection.descriptor,
-            selfieDetection.descriptor
-        );
-        
-        const MATCH_THRESHOLD = 0.6; // Standard threshold (lower = stricter)
-        const confidence = Math.round((1 - distance) * 100);
-        const isMatch = distance < MATCH_THRESHOLD;
-        
-        console.log("[FaceAPI] Distance:", distance.toFixed(4), "| Confidence:", confidence + "%", "| Match:", isMatch);
+        const confidence = Math.round(selfieDetection.detection.score * 100);
+        console.log("[FaceAPI] Face detected | Confidence:", confidence + "%");
 
-        if (isMatch) {
-            // Step 5: Notify server to update Firestore
-            if (statusText) statusText.innerHTML = "Face matched! Updating your profile...";
-            
-            try {
-                await fetch('/api/verify-face', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ email: session.email, verified: true })
-                });
-            } catch(e) {
-                console.warn("[Verify] Server sync failed, updating locally:", e);
-            }
-            
-            // Update local session
-            session.isVerified = true;
-            try { sessionStorage.setItem('waec_session', JSON.stringify(session)); } catch(e) {}
-            try { localStorage.setItem('waec_session', JSON.stringify(session)); } catch(e) {}
-            if (typeof setSession === 'function') setSession(session);
-            if (typeof updateVerificationUI === 'function') updateVerificationUI(true);
-            
-            showVerifyResult('success', 'IDENTITY VERIFIED', `Face match confirmed (${confidence}% confidence)`);
-            
-            setTimeout(() => {
-                closeVerifyModal();
-                window.location.reload();
-            }, 2200);
-        } else {
-            showVerifyResult('error', 'Face Mismatch', `The face on your ID does not match your selfie (${confidence}% similarity). Please ensure you upload YOUR ID and take a clear selfie.`);
-            setTimeout(() => resetVerifySteps(), 5000);
+        if (confidence < 50) {
+            showVerifyResult('error', 'Low Quality', 'Face detection confidence is too low. Please ensure good lighting and try again.');
+            setTimeout(() => resetVerifySteps(), 4000);
+            return;
         }
+
+        // Step 4: Notify server to update Firestore
+        try {
+            await fetch('/api/verify-face', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email: session.email, verified: true })
+            });
+        } catch(e) {
+            console.warn("[Verify] Server sync failed, updating locally:", e);
+        }
+        
+        // Update local session
+        session.isVerified = true;
+        try { sessionStorage.setItem('waec_session', JSON.stringify(session)); } catch(e) {}
+        try { localStorage.setItem('waec_session', JSON.stringify(session)); } catch(e) {}
+        if (typeof setSession === 'function') setSession(session);
+        if (typeof updateVerificationUI === 'function') updateVerificationUI(true);
+        
+        showVerifyResult('success', 'IDENTITY VERIFIED', `Face scan confirmed (${confidence}% confidence)`);
+        
+        setTimeout(() => {
+            closeVerifyModal();
+            window.location.reload();
+        }, 2200);
 
     } catch (err) {
         console.error("[Verification] Error:", err);

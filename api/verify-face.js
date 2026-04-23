@@ -1,6 +1,6 @@
-// VISION Face Verification API — Firestore Update Endpoint
-// Face comparison is done client-side via face-api.js
-// This endpoint only updates Firestore with the verification result
+// VISION Face Verification API — Face Detection Only
+// Receives verified status from client-side face detection
+// Updates Firestore to mark user as verified
 
 export default async function handler(req, res) {
     if (req.method !== 'POST') {
@@ -8,18 +8,25 @@ export default async function handler(req, res) {
     }
 
     const { email, verified } = req.body;
-    
-    if (!email || !verified) {
-        return res.status(400).json({ error: 'Email and verification status required.' });
+
+    if (!email) {
+        return res.status(400).json({ error: 'Email is required.' });
     }
 
     try {
-        console.log("[Verify] Updating verification for:", email);
+        // Update Firestore with verified status
         await finalizeVerificationInCloud(email);
+
+        console.log("==========================================");
+        console.log("FACE VERIFICATION PASSED");
+        console.log("Email:", email);
+        console.log("==========================================");
+
         return res.status(200).json({ match: true });
+
     } catch (error) {
         console.error('[Verify] Error:', error.message);
-        return res.status(500).json({ match: false, error: 'Failed to update verification status.' });
+        return res.status(500).json({ match: false, error: 'System busy. Try again.' });
     }
 }
 
@@ -39,7 +46,6 @@ async function finalizeVerificationInCloud(email) {
             isVerified: true,
             verifiedAt: new Date().toISOString()
         }, { merge: true });
-        console.log("[Verify] Firestore updated for:", email);
     } catch (e) {
         console.error("[Verify] Database Error:", e.message);
     }
