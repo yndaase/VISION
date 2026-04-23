@@ -236,7 +236,43 @@
 
     // Init — wait for Firebase to load then populate
     document.addEventListener('DOMContentLoaded', () => {
-      // Give Firebase module a moment to initialize
+      // Check verification status before showing certificate
+      const SESSION_KEY = 'waec_session';
+      let session = null;
+      try {
+        session = JSON.parse(sessionStorage.getItem(SESSION_KEY) || localStorage.getItem(SESSION_KEY) || 'null');
+      } catch(e) {}
+
+      if (!session || !session.isVerified) {
+        // Block certificate access for unverified users
+        const frame = document.getElementById('certFrame');
+        const actions = document.querySelector('.cert-actions');
+        if (frame) {
+          frame.innerHTML = `
+            <div style="text-align:center; padding:4rem 2rem;">
+              <div style="width:80px; height:80px; background:rgba(239,68,68,0.1); border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 1.5rem; border:2px solid rgba(239,68,68,0.2);">
+                <svg width="36" height="36" fill="none" stroke="#ef4444" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+              </div>
+              <h2 style="font-size:1.5rem; font-weight:800; color:#f1f5f9; margin-bottom:0.5rem;">Verification Required</h2>
+              <p style="color:#94a3b8; font-size:0.95rem; max-width:400px; margin:0 auto 2rem; line-height:1.6;">
+                You must complete face verification before downloading certificates. This ensures certificate authenticity.
+              </p>
+              <a href="/dashboard" onclick="sessionStorage.setItem('vision_open_verify','true')" style="display:inline-flex; align-items:center; gap:8px; background:linear-gradient(135deg, #6366f1, #3b82f6); color:#fff; padding:14px 32px; border-radius:14px; text-decoration:none; font-weight:800; font-size:0.95rem; transition:transform 0.2s;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='none'">
+                <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M9 12l2 2 4-4"/><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/></svg>
+                Verify My Identity
+              </a>
+            </div>
+          `;
+          frame.style.display = 'flex';
+          frame.style.alignItems = 'center';
+          frame.style.justifyContent = 'center';
+          frame.style.minHeight = '500px';
+        }
+        if (actions) actions.style.display = 'none';
+        return; // Don't load certificate data
+      }
+
+      // User is verified — load certificate normally
       setTimeout(() => loadCertificateData(), 300);
     });
   </script>

@@ -1389,6 +1389,18 @@
                 }, 2000);
             }
         }
+
+        // Auto-open verification if redirected from certificate page
+        if (sessionStorage.getItem('vision_open_verify')) {
+            sessionStorage.removeItem('vision_open_verify');
+            setTimeout(() => {
+                if (typeof handleFaceVerification === 'function') {
+                    handleFaceVerification();
+                } else if (typeof openVerifyModal === 'function') {
+                    openVerifyModal();
+                }
+            }, 1000);
+        }
       });
     </script>
   <!-- --- IDENTITY VERIFICATION MODAL (Real-Time Liveness) --- -->

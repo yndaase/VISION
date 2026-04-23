@@ -893,9 +893,29 @@ function submitExam() {
 
   const certBtn = document.getElementById("certBtn");
   if (certBtn) {
-    certBtn.href = `/certificate?${certParams.toString()}`;
-    certBtn.style.display = "block";
-    certBtn.classList.remove("hidden");
+    // Gate certificate behind face verification
+    const isVerified = session?.isVerified === true;
+    if (isVerified) {
+      certBtn.href = `/certificate?${certParams.toString()}`;
+      certBtn.style.display = "block";
+      certBtn.classList.remove("hidden");
+    } else {
+      // Show locked certificate button for unverified users
+      certBtn.href = "#";
+      certBtn.style.display = "block";
+      certBtn.classList.remove("hidden");
+      certBtn.style.background = "rgba(100, 116, 139, 0.3)";
+      certBtn.style.border = "1px solid rgba(100, 116, 139, 0.3)";
+      certBtn.innerHTML = `🔒 Verify Identity to Unlock Certificate`;
+      certBtn.onclick = function(e) {
+        e.preventDefault();
+        if (confirm("Face verification is required to download certificates.\n\nWould you like to verify your identity now?")) {
+          window.location.href = "/dashboard";
+          // After redirect, the user can open settings → verification
+          sessionStorage.setItem('vision_open_verify', 'true');
+        }
+      };
+    }
   }
 
   modal.style.display = "block";
