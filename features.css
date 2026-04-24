@@ -104,3 +104,8 @@
 .hp-prog-track { height: 4px; background: var(--border); border-radius: 100px; }
 .hp-prog-fill { height: 100%; border-radius: 100px; }
 .hp-prog-pct { font-size: 0.7rem; color: var(--text-muted); font-weight: 700; text-align: right; }
+
+/* Social Buttons */
+.hp-social-links { display: flex; gap: 10px; margin-top: 20px; }
+.hp-social-btn { display: inline-flex; align-items: center; justify-content: center; width: 44px; height: 44px; border-radius: 50%; background: var(--bg-card); border: 1px solid var(--border); color: var(--text-secondary); transition: all 0.2s; }
+.hp-social-btn:hover { background: var(--primary-dim); color: var(--primary); border-color: var(--primary); transform: translateY(-2px); }
