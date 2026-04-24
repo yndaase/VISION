@@ -99,31 +99,56 @@
   </head>
   <body>
 
-    <!-- ═══════════════════════════════════════════
-         TOP NAVIGATION BAR
-    ═══════════════════════════════════════════ -->
+    <!-- ═══════════════════════════
+         TOP INFO BAR
+    ═══════════════════════════ -->
+    <div class="hp-topbar" role="banner">
+      <div class="hp-topbar-left">
+        <span class="hp-topbar-item">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.07 12 19.79 19.79 0 0 1 1 3.18 2 2 0 0 1 2.96 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.09 8.91a16 16 0 0 0 5.61 5.61l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 21 16.92z"/></svg>
+          +233 55 123 4567
+        </span>
+        <span class="hp-topbar-item">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          Cape Coast, Ghana
+        </span>
+      </div>
+      <div class="hp-topbar-right">
+        <span class="hp-topbar-item">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          Mon – Fri 8:00 – 20:00
+        </span>
+        <a href="/login.html" id="topbarLoginLink">Login</a>
+        <a href="/dashboard.html" id="topbarRegisterLink">Get Started</a>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════
+         STICKY NAV
+    ═══════════════════════════ -->
     <nav class="hp-nav" id="hpNav" role="navigation" aria-label="Main navigation">
       <a class="hp-nav-brand" href="/" aria-label="Vision Education Home">
-        <img src="assets/logo.png" alt="Vision Education Logo" width="34" height="34" loading="eager" />
+        <img src="assets/logo.png" alt="Vision Education Logo" width="36" height="36" loading="eager" />
         <span class="hp-nav-brand-text">Vision <span>Education</span></span>
       </a>
 
       <div class="hp-nav-links" role="menubar">
-        <a href="javascript:void(0)" onclick="goToSlide(1)" class="hp-nav-link" role="menuitem">Subjects</a>
+        <a href="/" class="hp-nav-link active" role="menuitem">Home</a>
+        <a href="/mocks.html" class="hp-nav-link" role="menuitem">Mock Exams</a>
         <a href="/features.html" class="hp-nav-link" role="menuitem">Features</a>
-        <a href="javascript:void(0)" onclick="goToSlide(2)" class="hp-nav-link" role="menuitem">Process</a>
         <a href="https://visionedu.site" target="_blank" class="hp-nav-link" role="menuitem">Blog</a>
-        <a href="pricing.html" class="hp-nav-link" role="menuitem">Pricing</a>
+        <a href="/pricing.html" class="hp-nav-link" role="menuitem">Pricing</a>
         <a href="/about.html" class="hp-nav-link" role="menuitem">About</a>
       </div>
 
       <div class="hp-nav-cta">
-        <a href="/about.html" class="hp-btn-outline" id="navAboutBtn">About</a>
-        <a href="/parent-portal.html" class="hp-btn-outline" style="border-color: #10b981; color: #10b981;" id="navParentPortalBtn">Parent Portal</a>
         <a href="/login.html" class="hp-btn-outline" id="navLoginBtn">Login</a>
         <a href="/dashboard.html" class="hp-btn-primary" id="navStartBtn">Start Free
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
         </a>
+        <button class="hp-nav-search" id="navSearchBtn" aria-label="Search">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        </button>
       </div>
 
       <button class="hp-nav-hamburger" id="hpHamburger" aria-label="Open menu" aria-expanded="false">
@@ -133,144 +158,73 @@
       </button>
     </nav>
 
-    <!-- ═══════════════════════════════════════════
-         HERO SLIDER (Gateway)
-    ═══════════════════════════════════════════ -->
-    <header class="hp-slider-wrap" id="top" role="banner">
-      <!-- Animated background orbs -->
-      <div class="hp-hero-orbs" aria-hidden="true">
-        <div class="hp-orb hp-orb-1"></div>
-        <div class="hp-orb hp-orb-2"></div>
-        <div class="hp-orb hp-orb-3"></div>
-      </div>
+    <!-- ═══════════════════════════
+         HERO (Photo Background)
+    ═══════════════════════════ -->
+    <header class="hp-hero" id="top" role="banner">
+      <div class="hp-hero-bg" aria-hidden="true"></div>
+      <div class="hp-hero-overlay" aria-hidden="true"></div>
 
-      <div class="hp-slider" id="hpSlider">
-        <!-- Slide 1: Welcome & Setup -->
-        <div class="hp-slide active-slide">
-          <div class="hp-hero-inner">
-            <div class="hp-badge" role="status">
-              <span class="hp-badge-dot" aria-hidden="true"></span>
-              WAEC Ghana · 2026 WASSCE · Expert-Reviewed
-            </div>
-            <h1 class="hp-hero-h1">
-              Official 2026<br />
-              <span class="hp-gradient-text">WASSCE Prep Hub</span>
-            </h1>
-            <p class="hp-hero-sub">
-              Ghana's most advanced exam preparation platform. Practice 1000+ WAEC past questions,
-              get AI-powered theory marking, and master Core Mathematics, Integrated Science &amp; Computer Science.
-            </p>
-            <div class="hp-mode-row" id="hp-mode-row">
-              <button class="hp-mode-btn" id="mode-subj" onclick="switchMode('subjective')" aria-label="Switch to Subjective mode">
-                <span class="hp-mode-btn-icon" aria-hidden="true">
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
-                </span>
-                <span class="hp-mode-btn-label">
-                  <strong>Subjective</strong><span>Theory with AI Marking</span>
-                </span>
-              </button>
-              <button class="hp-mode-btn" onclick="switchMode('objective')" aria-label="Switch to Objective mode">
-                <span class="hp-mode-btn-icon" aria-hidden="true">
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
-                </span>
-                <span class="hp-mode-btn-label">
-                  <strong>Objective</strong><span>Multiple Choice Practice</span>
-                </span>
-              </button>
-            </div>
-            <div class="hp-cta-row">
-              <a href="/login.html" class="hp-cta-primary" id="heroBeginBtn" data-guest-href="/login" data-auth-href="#quiz-section">
-                Begin Session <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
-              </a>
-              <a href="/dashboard.html" class="hp-cta-secondary" id="heroDashBtn">
-                Go to Dashboard <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-              </a>
-              <a href="/parent-portal.html" class="hp-cta-secondary" style="border-color: #10b981; color: #10b981;" id="heroParentBtn">
-                Parent Portal
-              </a>
-            </div>
-            <div class="hp-stats-strip" role="list" aria-label="Platform statistics">
-              <div class="hp-stat" role="listitem"><span class="hp-stat-num">30+</span><span class="hp-stat-lbl">Premium Units</span></div>
-              <div class="hp-stat" role="listitem"><span class="hp-stat-num">AI</span><span class="hp-stat-lbl">Feedback</span></div>
-              <div class="hp-stat" role="listitem"><span class="hp-stat-num">2026</span><span class="hp-stat-lbl">Standards</span></div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Slide 2: Curriculum Structure -->
-        <div class="hp-slide">
-          <div class="hp-hero-inner">
-            <span class="hp-section-label">Curriculum</span>
-            <h2 class="hp-slide-h2">All subjects. One platform.</h2>
-            <p class="hp-slide-sub">
-              Comprehensive coverage of the 2026 WASSCE syllabus across three core disciplines,
-              aligned directly with WAEC Chief Examiner guidelines.
-            </p>
-            <div class="hp-subjects-grid">
-              <!-- Core Maths -->
-              <a href="/" class="hp-subject-card" id="subjectCoreMaths" style="--card-accent:#6366f1;--card-icon-bg:rgba(99,102,241,0.12);--card-icon-border:rgba(99,102,241,0.25);" aria-label="Practice Core Mathematics">
-                <span class="hp-card-icon" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="2" y1="20" x2="22" y2="20"/><line x1="22" y1="20" x2="12" y2="4"/><line x1="12" y1="4" x2="2" y2="20"/><line x1="7" y1="12" x2="17" y2="12"/></svg></span>
-                <div>
-                  <div class="hp-card-title">Core Mathematics</div>
-                  <p class="hp-card-desc">Numbers, algebra, geometry, statistics and calculus. 1000+ past questions mapped to WAEC's 2026 marking scheme with step-by-step workings.</p>
-                </div>
-                <div class="hp-card-footer"><span class="hp-card-tag">WAEC Aligned</span><span class="hp-card-arrow">→</span></div>
-              </a>
-              <!-- Integrated Science -->
-              <a href="/mocks" class="hp-subject-card" id="subjectIntScience" style="--card-accent:#10b981;--card-icon-bg:rgba(16,185,129,0.12);--card-icon-border:rgba(16,185,129,0.25);" aria-label="Practice Integrated Science">
-                <span class="hp-card-icon" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3H5a2 2 0 0 0-2 2v4m6-6h10a2 2 0 0 1 2 2v4M9 3v18m0 0h10a2 2 0 0 0 2-2V9M9 21H5a2 2 0 0 1-2-2V9m0 0h18"/></svg></span>
-                <div>
-                  <div class="hp-card-title">Integrated Science</div>
-                  <p class="hp-card-desc">Physics, Chemistry, and Biology in one unified syllabus. AI-assisted objective and theory questions for 2026 WASSCE mastery.</p>
-                </div>
-                <div class="hp-card-footer"><span class="hp-card-tag" style="background:rgba(16,185,129,0.12);color:#34d399;">WASSCE 2026</span><span class="hp-card-arrow">→</span></div>
-              </a>
-              <!-- Computer Science -->
-              <a href="/mocks" class="hp-subject-card" id="subjectCompSci" style="--card-accent:#fbbf24;--card-icon-bg:rgba(251,191,36,0.12);--card-icon-border:rgba(251,191,36,0.25);" aria-label="Practice Computer Science">
-                <span class="hp-card-icon" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></span>
-                <div>
-                  <div class="hp-card-title">Computer Science</div>
-                  <p class="hp-card-desc">Programming fundamentals, data structures, networks and systems. 60 AI-generated questions targeting Ghana SHS Computer Science objectives.</p>
-                </div>
-                <div class="hp-card-footer"><span class="hp-card-tag" style="background:rgba(251,191,36,0.12);color:#fbbf24;">60 Questions</span><span class="hp-card-arrow">→</span></div>
-              </a>
-            </div>
-          </div>
-        </div>
-
-        <!-- Slide 3: Process -->
-        <div class="hp-slide">
-          <div class="hp-hero-inner">
-            <span class="hp-section-label">Process</span>
-            <h2 class="hp-slide-h2">How it works</h2>
-            <p class="hp-slide-sub">Three steps from sign-up to WASSCE confidence.</p>
-            <div class="hp-steps-grid">
-              <div class="hp-step-card">
-                <div class="hp-step-num">01</div>
-                <div class="hp-step-title">Choose your subject</div>
-                <p class="hp-step-desc">Select Core Mathematics, Integrated Science or Computer Science. Switch between Subjective (Theory with AI Marking) and Objective (multiple choice) modes.</p>
-              </div>
-              <div class="hp-step-card">
-                <div class="hp-step-num">02</div>
-                <div class="hp-step-title">Practice &amp; get AI feedback</div>
-                <p class="hp-step-desc">Work through WAEC-aligned questions. Filter by difficulty — Easy, Medium or Hard. On theory questions, type your full workings and let our AI mark your logic step by step.</p>
-              </div>
-              <div class="hp-step-card">
-                <div class="hp-step-num">03</div>
-                <div class="hp-step-title">Track, improve, repeat</div>
-                <p class="hp-step-desc">Review your results breakdown after every session. Automatically sync the latest AI-curated exam questions daily. Walk into your WASSCE exam ready.</p>
-              </div>
-            </div>
-          </div>
+      <div class="hp-hero-content">
+        <span class="hp-hero-eyebrow">2026 WASSCE Prep · Ghana</span>
+        <h1 class="hp-hero-h1">
+          Master Your Exams<br />
+          <span class="accent">Study Smarter</span> With AI
+        </h1>
+        <p class="hp-hero-sub">
+          Ghana's most advanced WASSCE prep platform. Practice 1000+ WAEC past questions with AI-powered marking across Core Maths, Integrated Science &amp; Computer Science.
+        </p>
+        <div class="hp-hero-actions">
+          <a href="/login.html" class="hp-hero-cta-primary" id="heroBeginBtn">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+            Start Practising Free
+          </a>
+          <a href="/mocks.html" class="hp-hero-cta-secondary" id="heroMocksBtn">
+            View Mock Exams
+          </a>
         </div>
       </div>
 
-      <div class="hp-slider-nav">
-        <button onclick="goToSlide(0)" class="hp-slider-dot active" aria-label="View slide 1"></button>
-        <button onclick="goToSlide(1)" class="hp-slider-dot" aria-label="View slide 2"></button>
-        <button onclick="goToSlide(2)" class="hp-slider-dot" aria-label="View slide 3"></button>
+      <!-- mode-row hidden input kept for app.js compatibility -->
+      <div id="hp-mode-row" style="display:none">
+        <button id="mode-subj" onclick="switchMode('subjective')"></button>
+        <button onclick="switchMode('objective')"></button>
       </div>
     </header>
+
+    <!-- ═══════════════════════════
+         4-COLUMN FEATURE STRIP
+    ═══════════════════════════ -->
+    <section class="hp-feature-strip" aria-label="Platform highlights">
+      <a href="/" class="hp-feat-card" id="featPastQuestions">
+        <div class="hp-feat-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+        </div>
+        <div class="hp-feat-title">Past Questions</div>
+        <p class="hp-feat-desc">1000+ WAEC past questions covering every topic in the 2026 WASSCE syllabus with full solutions.</p>
+      </a>
+      <a href="/mocks.html" class="hp-feat-card" id="featMockExams">
+        <div class="hp-feat-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+        </div>
+        <div class="hp-feat-title">Mock Exams</div>
+        <p class="hp-feat-desc">Timed full-length WASSCE mock exams that simulate the real exam environment to build your confidence.</p>
+      </a>
+      <a href="/features.html" class="hp-feat-card" id="featAIMarking">
+        <div class="hp-feat-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm0 0v10l4.5 4.5"/></svg>
+        </div>
+        <div class="hp-feat-title">AI Marking</div>
+        <p class="hp-feat-desc">Our AI marks your theory answers step-by-step, just like a real WAEC examiner with detailed feedback.</p>
+      </a>
+      <a href="/pricing.html" class="hp-feat-card" id="featCertification">
+        <div class="hp-feat-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"/></svg>
+        </div>
+        <div class="hp-feat-title">Certificates</div>
+        <p class="hp-feat-desc">Earn performance certificates upon completing practice modules to track and showcase your progress.</p>
+      </a>
+    </section>
 
     <!-- ═══════════════════════════════════════════
          QUIZ SECTION (existing engine — preserved)
@@ -500,43 +454,14 @@
         hpNav.classList.toggle('scrolled', window.scrollY > 60);
       }, { passive: true });
 
-      // Slider logic
-      let currentSlide = 0;
-      const slides = document.querySelectorAll('.hp-slide');
-      const dots = document.querySelectorAll('.hp-slider-dot');
-      const slider = document.getElementById('hpSlider');
-      let slideInterval;
+      // Stub — goToSlide kept for backward compat with app.js
+      function goToSlide() {}
 
-      function goToSlide(index) {
-        currentSlide = index;
-        if(slider) {
-          slider.style.transform = `translateX(-${index * 100}%)`;
-          slides.forEach((s) => s.classList.remove('active-slide'));
-          slides[index].classList.add('active-slide');
-        }
-        dots.forEach(d => d.classList.remove('active'));
-        if(dots[index]) dots[index].classList.add('active');
-        resetInterval();
-      }
-
-      function nextSlide() {
-        if(slides.length > 0) goToSlide((currentSlide + 1) % slides.length);
-      }
-
-      function resetInterval() {
-        clearInterval(slideInterval);
-        slideInterval = setInterval(nextSlide, 8000);
-      }
-      resetInterval();
-
-      // Smooth scroll for nav links
+      // Smooth scroll
       document.querySelectorAll('a[href^="#"]').forEach(a => {
         a.addEventListener('click', e => {
           const target = document.querySelector(a.getAttribute('href'));
-          if (target) {
-            e.preventDefault();
-            target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-          }
+          if (target) { e.preventDefault(); target.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
         });
       });
     </script>
