@@ -1,11 +1,8 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dark">
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <script>
-      // Persistent Theme Enforcer
-      document.documentElement.setAttribute("data-theme", "dark");
-    </script>
+
     <meta
       http-equiv="Content-Security-Policy"
       content="upgrade-insecure-requests"
@@ -147,87 +144,75 @@
       </div>
 
 
-      <!--  LEFT PANEL (branding)  -->
+      <!--  LEFT PANEL (branding + illustration)  -->
       <aside class="login-left" aria-hidden="true">
         <div class="left-content">
           <div class="brand-logo-lg">
-            <img src="assets/logo.png" alt="Vision Education Astronaut Logo - Official 2026 WASSCE Prep" loading="lazy">
+            <img src="assets/logo.png" alt="Vision Education Logo" loading="lazy">
           </div>
           <h2 class="brand-name-lg">Official 2026<br /><span class="brand-accent">WASSCE Prep Hub</span></h2>
           <p class="brand-tagline">
-            Authorized curriculum standards, expert-reviewed logic, and
-            high-performance exam simulations for Ghana SHS candidates.
+            Ghana's most advanced exam prep platform — powered by AI, built for SHS students.
           </p>
           <div class="left-subjects">
             <div class="subject-pill">Core Mathematics</div>
             <div class="subject-pill">Integrated Science</div>
             <div class="subject-pill">Social Studies</div>
             <div class="subject-pill">English Language</div>
-            <div class="subject-pill" style="border-color:rgba(99,102,241,0.35);color:#818cf8;">STEM Robotics</div>
-          </div>
-          <div class="left-stats">
-            <div class="left-stat">
-              <span class="left-stat-lbl">Platform</span>
-            </div>
-            <div class="left-stat">
-              <span class="left-stat-num">AI</span>
-              <span class="left-stat-lbl">Feedback</span>
-            </div>
-            <div class="left-stat">
-              <span class="left-stat-num"></span>
-              <span class="left-stat-lbl">Synced</span>
-            </div>
           </div>
 
-          <!-- Visionary Info Card -->
-          <div
-            class="about-card"
-            style="
-              padding: 1.5rem;
-              border-radius: var(--radius-lg);
-              background: rgba(99, 102, 241, 0.05);
-              border: 1px solid rgba(99, 102, 241, 0.1);
-              margin-top: 2rem;
-              backdrop-filter: blur(10px);
-            "
-          >
-            <div
-              class="about-header"
-              style="
-                display: flex;
-                align-items: center;
-                gap: 12px;
-                margin-bottom: 1rem;
-              "
-            >
-              <div
-                class="about-avatar"
-                style="background: var(--indigo); color: white"
-              >
-                YN
-              </div>
+          <!-- Inline SVG illustration -->
+          <div class="left-illustration">
+            <svg viewBox="0 0 320 220" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <!-- ground line -->
+              <line x1="40" y1="185" x2="280" y2="185" stroke="#3d4faa" stroke-width="1.5" stroke-linecap="round"/>
+              <!-- bar chart blocks -->
+              <rect x="90" y="140" width="32" height="45" rx="4" fill="#b8c8f8" opacity="0.5"/>
+              <rect x="90" y="155" width="32" height="30" rx="4" fill="#9ab2f2"/>
+              <!-- dotted block -->
+              <rect x="90" y="158" width="32" height="27" rx="4" fill="none" stroke="white" stroke-width="1" stroke-dasharray="3 2"/>
+              <!-- taller block -->
+              <rect x="130" y="120" width="38" height="65" rx="4" fill="#8ba0e8"/>
+              <!-- student: body -->
+              <ellipse cx="190" cy="118" rx="14" ry="18" fill="#1a1a2e"/>
+              <!-- student: head -->
+              <circle cx="190" cy="90" r="15" fill="#f5c5a3"/>
+              <!-- hair bun -->
+              <circle cx="190" cy="76" r="8" fill="#1a1a2e"/>
+              <circle cx="196" cy="70" r="5" fill="#1a1a2e"/>
+              <!-- laptop -->
+              <rect x="166" y="118" width="46" height="28" rx="4" fill="#6c7ae0"/>
+              <rect x="170" y="121" width="38" height="22" rx="2" fill="#dde8ff"/>
+              <rect x="158" y="146" width="62" height="4" rx="2" fill="#5566d4"/>
+              <!-- legs -->
+              <path d="M180 136 Q175 162 165 175" stroke="#f5c5a3" stroke-width="7" stroke-linecap="round" fill="none"/>
+              <path d="M200 136 Q205 162 215 175" stroke="#f5c5a3" stroke-width="7" stroke-linecap="round" fill="none"/>
+              <!-- shoes -->
+              <ellipse cx="163" cy="178" rx="10" ry="5" fill="#1a1a2e"/>
+              <ellipse cx="217" cy="178" rx="10" ry="5" fill="#1a1a2e"/>
+              <!-- clock -->
+              <circle cx="248" cy="72" r="18" fill="white" stroke="#6c7ae0" stroke-width="1.5"/>
+              <line x1="248" y1="72" x2="248" y2="60" stroke="#3d4faa" stroke-width="2" stroke-linecap="round"/>
+              <line x1="248" y1="72" x2="256" y2="77" stroke="#3d4faa" stroke-width="2" stroke-linecap="round"/>
+              <!-- squiggles -->
+              <path d="M60 95 Q70 88 80 95 Q90 102 100 95" stroke="#3d4faa" stroke-width="2" stroke-linecap="round" fill="none" opacity="0.5"/>
+              <path d="M60 148 Q72 140 84 148 Q96 156 108 148" stroke="#3d4faa" stroke-width="2" stroke-linecap="round" fill="none" opacity="0.4"/>
+              <!-- dots -->
+              <circle cx="130" cy="80" r="4" fill="#6c7ae0" opacity="0.4"/>
+              <circle cx="240" cy="140" r="5" fill="#6c7ae0" opacity="0.3"/>
+            </svg>
+          </div>
+
+          <div class="about-card">
+            <div class="about-header" style="display:flex;align-items:center;gap:10px;margin-bottom:0.6rem;">
+              <div class="about-avatar" style="background:#6c7ae0;color:white;width:32px;height:32px;font-size:0.7rem;">YN</div>
               <div>
-                <h3 style="margin: 0; font-size: 1rem">Yaw Ndaase Mensuoh</h3>
-                <p
-                  style="
-                    margin: 0;
-                    font-size: 0.75rem;
-                    color: var(--text-secondary);
-                  "
-                >
-                  Founder · St. Augustine's College
-                </p>
+                <h3 style="margin:0;font-size:0.88rem;color:#1e2a6e;">Yaw Ndaase Mensuoh</h3>
+                <p style="margin:0;font-size:0.72rem;color:#6b7280;">Founder · Vision Education</p>
               </div>
             </div>
-            <p
-              style="
-                font-size: 0.82rem;
-                line-height: 1.6;
-                color: var(--text-secondary);
-              "
-            >
-              "Our mission is to democratize high-quality academic prep using
-              modern technology and rigorous curriculum standards."
+            <p style="font-size:0.78rem;line-height:1.55;color:#4a5496;">
+              "Democratizing high-quality exam prep for every Ghanaian SHS student."
             </p>
           </div>
         </div>
@@ -241,12 +226,12 @@
           <!-- Heading -->
           <div class="auth-header">
             <!-- Live status pill -->
-            <div style="display:inline-flex;align-items:center;gap:8px;background:rgba(34,197,94,0.08);border:1px solid rgba(34,197,94,0.2);padding:5px 14px;border-radius:100px;margin-bottom:1rem;">
+            <div style="display:inline-flex;align-items:center;gap:8px;background:rgba(108,122,224,0.08);border:1px solid rgba(108,122,224,0.2);padding:5px 14px;border-radius:100px;margin-bottom:1rem;">
               <span style="width:7px;height:7px;border-radius:50%;background:#22c55e;box-shadow:0 0 8px #22c55e;animation:blink 1.5s ease-in-out infinite;display:inline-block;"></span>
-              <span style="font-size:0.7rem;font-weight:700;color:#4ade80;letter-spacing:0.08em;text-transform:uppercase;">WASSCE 2026 — Portal Active</span>
+              <span style="font-size:0.7rem;font-weight:700;color:#6c7ae0;letter-spacing:0.08em;text-transform:uppercase;">WASSCE 2026 — Portal Active</span>
             </div>
-            <h1>2026 WASSCE <span class="brand-accent">Prep Access</span></h1>
-            <p>Login to continue your examination roadmap.</p>
+            <h1>Student <span class="brand-accent">Login</span></h1>
+            <p>Hey, enter your details to sign in to your account.</p>
           </div>
 
 
