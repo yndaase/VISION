@@ -108,10 +108,6 @@
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.07 12 19.79 19.79 0 0 1 1 3.18 2 2 0 0 1 2.96 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.09 8.91a16 16 0 0 0 5.61 5.61l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 21 16.92z"/></svg>
           +233 55 123 4567
         </span>
-        <span class="hp-topbar-item">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-          Cape Coast, Ghana
-        </span>
       </div>
       <div class="hp-topbar-right">
         <span class="hp-topbar-item">
@@ -226,77 +222,10 @@
       </a>
     </section>
 
-    <!-- ═══════════════════════════════════════════
-         QUIZ SECTION (existing engine — preserved)
-    ═══════════════════════════════════════════ -->
-    <div class="progress-bar-wrapper" id="progressBarWrapper" role="status" aria-label="Quiz progress">
-      <div class="progress-meta">
-        <span id="progressLabel">Question <span id="currentQ">1</span> of 15</span>
-        <span id="scoreLabel">Score: <span id="liveScore">0</span> / <span id="attempted">0</span></span>
-      </div>
-      <div class="progress-track" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
-        <div class="progress-fill" id="progressFill" style="width: 0%"></div>
-      </div>
-      <div class="difficulty-legend" aria-label="Difficulty legend">
-        <span class="legend-dot" style="background: var(--success)"></span>Level 1 (Easy)
-        <span class="legend-dot" style="background: var(--primary)"></span>Level 2 (Medium)
-        <span class="legend-dot" style="background: var(--error)"></span>Level 3 (Hard)
-      </div>
-    </div>
-
-    <section id="quiz-section" aria-label="Quiz practice section">
-      <div class="filter-bar" id="objective-filters" role="group" aria-label="Filter questions by difficulty">
-        <button class="filter-btn active" data-filter="all"    onclick="filterQuestions('all', this)">All Practice</button>
-        <button class="filter-btn"        data-filter="easy"   onclick="filterQuestions('easy', this)">Easy</button>
-        <button class="filter-btn"        data-filter="medium" onclick="filterQuestions('medium', this)">Medium</button>
-        <button class="filter-btn"        data-filter="hard"   onclick="filterQuestions('hard', this)">Hard</button>
-      </div>
-      <div class="theory-header" id="subjective-header" style="display: none" role="heading" aria-level="2">
-        <div class="theory-title-wrap">
-          <h2>Section B: Theory &amp; Operations</h2>
-          <p>Type your full workings. Our Specialist AI will mark your logic, steps, and final accuracy.</p>
-        </div>
-      </div>
-      <div class="questions-grid" id="questionsGrid" role="list" aria-label="Practice questions"></div>
-    </section>
-
-    <section class="results-section" id="resultsSection" style="display: none" aria-label="Quiz results">
-      <div class="results-card">
-        <div class="results-emoji" id="resultsEmoji" aria-hidden="true"></div>
-        <h2 id="resultsTitle">Quiz Complete!</h2>
-        <p id="resultsMsg"></p>
-        <div class="results-breakdown" id="resultsBreakdown"></div>
-        <div class="results-actions">
-          <button class="cta-btn" onclick="resetQuiz()" id="retryBtn">Retry All →</button>
-          <a class="hp-btn-outline" href="/dashboard" id="dashboardLink" style="padding:15px 28px;border-radius:8px;text-decoration:none;font-weight:700;font-size:0.88rem;">
-            Dashboard →
-          </a>
-        </div>
-      </div>
-    </section>
-
-    <!-- ═══════════════════════════════════════════
-            </div>
-          </div>
-          <div class="hp-social-links">
-             <a href="https://www.instagram.com/officialmryaw/" target="_blank" class="hp-social-btn">Connect on Instagram</a>
-             <a href="https://x.com/yndaase" target="_blank" class="hp-social-btn">Follow on X</a>
-          </div>
-        </div>
-
-      </div>
-
-    <!-- ═══════════════════════════════════════════
-         WAEC ACADEMIC NOTE BAND
-    ═══════════════════════════════════════════ -->
+    <!-- WAEC NOTE BAND -->
     <div class="hp-note-band" role="note" aria-label="Academic disclaimer">
-      <p>
-        Built for Ghana SHS Students · 2026 WASSCE Core Mathematics · Questions
-        align with the WAEC Chief Examiner's 2025 Report
-      </p>
-      <p style="margin-top:6px">
-        Practice tool only. Consult official syllabuses at <strong><a href="https://waecgh.org" target="_blank" rel="noopener noreferrer">waecgh.org</a></strong>.
-      </p>
+      <p>Built for Ghana SHS Students · 2026 WASSCE · Questions align with the WAEC Chief Examiner's 2025 Report</p>
+      <p style="margin-top:6px">Practice tool only. Consult official syllabuses at <strong><a href="https://waecgh.org" target="_blank" rel="noopener noreferrer">waecgh.org</a></strong>.</p>
     </div>
 
     <!-- ═══════════════════════════════════════════
@@ -350,112 +279,13 @@
       </div>
     </footer>
 
-    <!-- ══════════════════════════════════════════
-         SETTINGS MODAL (preserved)
-    ══════════════════════════════════════════ -->
-    <div class="modal-overlay" id="settingsModal" role="dialog" aria-modal="true" aria-label="Settings and Security">
-      <div class="settings-modal shadow-2xl">
-        <div class="modal-header">
-          <h3 class="modal-title">Settings &amp; Security</h3>
-          <button class="close-modal-btn" onclick="closeSettings()" aria-label="Close settings">&times;</button>
-        </div>
-        <div class="modal-content">
-          <div class="settings-user-card">
-            <div class="settings-avatar" id="settingsAvatar">S</div>
-            <div class="settings-info">
-              <h4 id="settingsName">Student Name</h4>
-              <p id="settingsEmail">student@visionedu.online</p>
-            </div>
-          </div>
-          <div class="security-status" id="securityStatus">
-            <span class="status-secure"> Level 1 Protected</span>
-          </div>
-          <div class="setting-row">
-            <div class="setting-label-wrap">
-              <span class="setting-label">Two-Factor Authentication</span>
-              <span class="setting-desc">Add an extra layer of security. A code will be required at every login.</span>
-            </div>
-            <div class="toggle-switch" id="tfaToggle" onclick="handle2FAToggle()" role="switch" aria-checked="false"></div>
-          </div>
-          <div class="setting-row" style="border-bottom: 1px solid rgba(255,255,255,0.05); margin-bottom: 1.5rem;">
-            <div class="setting-label-wrap">
-              <span class="setting-label">Sync Questions Daily</span>
-              <span class="setting-desc">Automatically fetch the latest AI-curated exam questions every 24h.</span>
-            </div>
-            <div class="toggle-switch active" style="pointer-events: none; opacity: 0.6" role="switch" aria-checked="true"></div>
-          </div>
-          <button class="auth-submit-btn" onclick="closeSettings()" style="margin-top: 1rem; background: var(--gold); color: #000">
-            <span>Save Changes</span>
-          </button>
-        </div>
-      </div>
-    </div>
 
-    <!-- AI TRANSPARENCY MODAL (preserved) -->
-    <div class="modal-overlay" id="aiModal" role="dialog" aria-modal="true" aria-label="AI Transparency Disclosure">
-      <div class="settings-modal shadow-2xl" style="max-width: 600px;">
-        <div class="modal-header">
-          <h3 class="modal-title">AI Transparency Disclosure</h3>
-          <button class="close-modal-btn" onclick="closeAISecondary()" aria-label="Close AI transparency">&times;</button>
-        </div>
-        <div class="modal-content">
-          <div class="settings-user-card" style="background: rgba(99,102,241,0.1); border: 1px solid rgba(99,102,241,0.2);">
-            <div class="settings-avatar" style="background: var(--primary); color: #fff;">AI</div>
-            <div class="settings-info">
-              <h4>Integrated AI services</h4>
-              <p>GPT-4.0 &amp; Gemini 2.5</p>
-            </div>
-          </div>
-          <div style="margin-top: 1.5rem; color: var(--text-secondary); font-size: 0.95rem; line-height: 1.6;">
-            <p style="margin-bottom: 1rem;">
-              Vision Education utilizes state-of-the-art Artificial Intelligence to provide students with a premium learning experience:
-            </p>
-            <ul style="list-style: none; padding: 0;">
-              <li style="margin-bottom: 0.75rem; display: flex; gap: 10px;">
-                <span style="color: var(--primary);">✦</span>
-                <span><strong>GPT-4.0:</strong> Powers our advanced theory marking engine, providing logical breakdown and step-by-step feedback on student workings.</span>
-              </li>
-              <li style="margin-bottom: 0.75rem; display: flex; gap: 10px;">
-                <span style="color: var(--primary);">✦</span>
-                <span><strong>Gemini 2.5:</strong> Assists in content curation and ensuring all practice questions align with the latest WAEC curriculum standards.</span>
-              </li>
-            </ul>
-            <p style="margin-top: 1rem; font-size: 0.85rem; color: var(--text-muted);">
-              Data sent to these services is anonymized and used solely for generating educational feedback.
-            </p>
-          </div>
-          <button class="auth-submit-btn" onclick="closeAISecondary()" style="margin-top: 2rem; background: var(--primary); color: #fff">
-            <span>I Understand</span>
-          </button>
-        </div>
-      </div>
-    </div>
-
-    <!-- ═══════════════════════════════════════════
-         INLINE SCRIPTS
-    ═══════════════════════════════════════════ -->
     <script>
-      // Modal helpers
-      function openAISecondary() {
-        const m = document.getElementById('aiModal');
-        if (m) { m.classList.add('active'); document.body.style.overflow = 'hidden'; }
-      }
-      function closeAISecondary() {
-        const m = document.getElementById('aiModal');
-        if (m) { m.classList.remove('active'); document.body.style.overflow = ''; }
-      }
-      window.addEventListener('click', (e) => {
-        if (e.target.id === 'aiModal') closeAISecondary();
-      });
-
       // Sticky nav scroll effect
       const hpNav = document.getElementById('hpNav');
       window.addEventListener('scroll', () => {
         hpNav.classList.toggle('scrolled', window.scrollY > 60);
       }, { passive: true });
-
-      // Stub — goToSlide kept for backward compat with app.js
-      function goToSlide() {}
 
       // Smooth scroll
       document.querySelectorAll('a[href^="#"]').forEach(a => {
@@ -467,8 +297,5 @@
     </script>
 
     <script type="module" src="firebase.js"></script>
-    <script defer src="questions.js"></script>
-    <script defer src="auth.js"></script>
-    <script defer src="app.js"></script>
   </body>
 </html>
