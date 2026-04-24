@@ -349,63 +349,229 @@ body.dashboard-page {
   color: #64748b;
 }
 
-/* ── Settings Modal override ── */
-.settings-modal, .modal-content-wrap {
+/* ═══════════════════════════════════════════
+   SETTINGS IMMERSIVE VIEW — LIGHT THEME
+   ═══════════════════════════════════════════ */
+
+/* Overlay background */
+html:not([data-theme="dark"]) .settings-immersive-view {
+  background: rgba(240,242,245,0.97);
+  backdrop-filter: blur(20px);
+}
+
+/* Sidebar */
+html:not([data-theme="dark"]) .settings-sidebar {
+  background: #ffffff;
+  border-right: 1px solid #e2e8f0;
+}
+
+/* Sidebar logo — remove dark filter in light mode */
+html:not([data-theme="dark"]) .settings-sidebar img {
+  filter: none !important;
+}
+
+/* Nav items */
+html:not([data-theme="dark"]) .settings-nav-item {
+  color: #64748b;
+}
+html:not([data-theme="dark"]) .settings-nav-item:hover {
+  background: rgba(251,191,36,0.08);
+  color: #1a1a2e;
+}
+html:not([data-theme="dark"]) .settings-nav-item.active {
+  background: #1a1a2e;
+  color: #fbbf24;
+  box-shadow: 0 4px 12px rgba(26,26,46,0.15);
+}
+
+/* Main content area */
+html:not([data-theme="dark"]) .settings-main {
+  background: #f0f2f5;
+}
+html:not([data-theme="dark"]) .settings-h1 {
+  color: #1a1a2e;
+}
+html:not([data-theme="dark"]) .settings-h2 {
+  color: #1a1a2e;
+}
+
+/* Section cards */
+html:not([data-theme="dark"]) .settings-section-card {
+  background: #ffffff;
+  border: 1.5px solid #e2e8f0;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+}
+
+/* Profile stat mini-boxes */
+html:not([data-theme="dark"]) .settings-section-card [style*="rgba(255,255,255,0.03)"] {
+  background: #f8fafc !important;
+  border: 1px solid #e2e8f0 !important;
+}
+
+/* Headings & text inside settings */
+html:not([data-theme="dark"]) .settings-section-card h2 { color: #1a1a2e; }
+html:not([data-theme="dark"]) .settings-section-card p  { color: #64748b; }
+
+/* WhatsApp card accent stays green */
+html:not([data-theme="dark"]) .settings-section-card[style*="25D366"] {
+  background: rgba(37,211,102,0.04) !important;
+  border-color: rgba(37,211,102,0.2) !important;
+}
+
+/* Profile avatar */
+html:not([data-theme="dark"]) #settingsAvatar {
+  background: #1a1a2e !important;
+  color: #fbbf24 !important;
+  border-radius: 20px;
+}
+
+/* Input field */
+html:not([data-theme="dark"]) #settingsPhone,
+html:not([data-theme="dark"]) .setting-input {
+  background: #f8fafc !important;
+  border: 1.5px solid #e2e8f0 !important;
+  color: #1a1a2e !important;
+  border-radius: 10px;
+}
+html:not([data-theme="dark"]) #settingsPhone:focus,
+html:not([data-theme="dark"]) .setting-input:focus {
+  border-color: #fbbf24 !important;
+  box-shadow: 0 0 0 3px rgba(251,191,36,0.12) !important;
+}
+html:not([data-theme="dark"]) #settingsPhone::placeholder,
+html:not([data-theme="dark"]) .setting-input::placeholder { color: #94a3b8 !important; }
+
+/* Save button */
+html:not([data-theme="dark"]) #saveProfileBtn,
+html:not([data-theme="dark"]) .hero-btn-primary {
+  background: #1a1a2e !important;
+  color: #fbbf24 !important;
+  border: none;
+}
+html:not([data-theme="dark"]) #saveProfileBtn:hover,
+html:not([data-theme="dark"]) .hero-btn-primary:hover {
+  background: #fbbf24 !important;
+  color: #1a1a2e !important;
+}
+
+/* Verify button */
+html:not([data-theme="dark"]) #verifyNowBtn {
+  background: linear-gradient(135deg, #1a1a2e, #2d2d4e) !important;
+  color: #fbbf24 !important;
+  box-shadow: 0 4px 20px rgba(26,26,46,0.25) !important;
+}
+
+/* Verify feature chips */
+html:not([data-theme="dark"]) #verifyUnverifiedState [style*="rgba(255,255,255,0.03)"] {
+  background: #f8fafc !important;
+  border: 1px solid #e2e8f0 !important;
+}
+html:not([data-theme="dark"]) #verifyUnverifiedState span[style*="var(--text-secondary)"] {
+  color: #374151 !important;
+}
+
+/* Toggle switch */
+html:not([data-theme="dark"]) .toggle-switch {
+  background: #e2e8f0;
+}
+html:not([data-theme="dark"]) .toggle-switch.active {
+  background: #fbbf24;
+}
+html:not([data-theme="dark"]) .toggle-switch::after {
+  background: #ffffff;
+}
+
+/* Security status badge */
+html:not([data-theme="dark"]) #securityStatus {
+  background: #f8fafc !important;
+  border: 1px solid #e2e8f0;
+}
+html:not([data-theme="dark"]) .status-warn { color: #92400e; }
+html:not([data-theme="dark"]) .status-secure { color: #059669; }
+
+/* Settings modal (old popup style) */
+html:not([data-theme="dark"]) .settings-modal,
+html:not([data-theme="dark"]) .modal-content-wrap {
   background: #fff;
   border: 1px solid #e2e8f0;
   color: #1a1a2e;
 }
-.modal-header { border-bottom: 1px solid #f1f5f9; }
-.modal-title  { color: #1a1a2e; }
-.close-modal-btn { color: #94a3b8; }
-.close-modal-btn:hover { color: #1a1a2e; }
-.settings-avatar {
-  background: #1a1a2e;
-  color: #fbbf24 !important;
-}
-.setting-label { color: #1a1a2e; }
-.setting-desc  { color: #64748b; }
-.security-status .status-secure {
-  background: rgba(16,185,129,0.1);
-  color: #059669;
-  border: 1px solid rgba(16,185,129,0.2);
-}
-.toggle-switch {
-  background: #e2e8f0;
-}
-.toggle-switch.active { background: #fbbf24; }
-
-/* Save / submit buttons inside modals */
-.modal-content .auth-submit-btn {
+html:not([data-theme="dark"]) .modal-header { border-bottom: 1px solid #f1f5f9; background: #fff; }
+html:not([data-theme="dark"]) .modal-title  { color: #1a1a2e; }
+html:not([data-theme="dark"]) .close-modal-btn { color: #94a3b8; background: #f8fafc; }
+html:not([data-theme="dark"]) .close-modal-btn:hover { color: #ef4444; background: rgba(239,68,68,0.06); }
+html:not([data-theme="dark"]) .settings-avatar { background: #1a1a2e; color: #fbbf24 !important; }
+html:not([data-theme="dark"]) .setting-label { color: #1a1a2e; }
+html:not([data-theme="dark"]) .setting-desc  { color: #64748b; }
+html:not([data-theme="dark"]) .setting-row   { border-top-color: #f1f5f9; }
+html:not([data-theme="dark"]) .setting-section-title { border-top-color: #f1f5f9; }
+html:not([data-theme="dark"]) .modal-btn-primary {
   background: #1a1a2e;
   color: #fbbf24;
-  box-shadow: 0 4px 14px rgba(26,26,46,0.18);
 }
-.modal-content .auth-submit-btn:hover {
-  background: #fbbf24;
-  color: #1a1a2e;
-}
-
-/* ── AI chatbot button ── */
-.ai-chat-fab {
-  background: #1a1a2e !important;
-  color: #fbbf24 !important;
-}
-
-/* ── Theme toggle ── */
-.theme-toggle-btn {
+html:not([data-theme="dark"]) .modal-btn-ghost {
   background: #f8fafc;
-  border: 1.5px solid #e2e8f0;
+  border-color: #e2e8f0;
+  color: #374151;
+}
+
+/* Nav settings button */
+html:not([data-theme="dark"]) .nav-settings-btn {
+  background: #f8fafc;
+  border-color: #e2e8f0;
   color: #64748b;
 }
-.theme-toggle-btn:hover {
+html:not([data-theme="dark"]) .nav-settings-btn:hover {
   background: #1a1a2e;
   color: #fbbf24;
-  border-color: #1a1a2e;
+}
+
+/* ═══════════════════════════════════════════
+   DARK THEME — Settings (original look preserved)
+   ═══════════════════════════════════════════ */
+[data-theme="dark"] .settings-immersive-view {
+  background: rgba(5,8,15,0.95);
+  backdrop-filter: blur(28px);
+}
+[data-theme="dark"] .settings-sidebar {
+  background: rgba(15,23,42,0.4);
+  border-right-color: rgba(255,255,255,0.06);
+}
+[data-theme="dark"] .settings-sidebar img { filter: grayscale(1) invert(1) brightness(2); }
+[data-theme="dark"] .settings-section-card {
+  background: rgba(255,255,255,0.03);
+  border-color: rgba(255,255,255,0.07);
+}
+[data-theme="dark"] .settings-main { background: transparent; }
+[data-theme="dark"] .settings-nav-item.active {
+  background: rgba(99,102,241,0.15);
+  color: #818cf8;
+}
+[data-theme="dark"] .toggle-switch { background: rgba(255,255,255,0.1); }
+[data-theme="dark"] .toggle-switch.active { background: #22c55e; }
+
+/* ── AI chatbot button ── */
+.ai-chat-fab { background: #1a1a2e !important; color: #fbbf24 !important; }
+[data-theme="dark"] .ai-chat-fab { background: #6366f1 !important; color: #fff !important; }
+
+/* ── Theme toggle ── */
+html:not([data-theme="dark"]) .theme-toggle-btn {
+  background: #f8fafc; border: 1.5px solid #e2e8f0; color: #64748b;
+}
+html:not([data-theme="dark"]) .theme-toggle-btn:hover {
+  background: #1a1a2e; color: #fbbf24; border-color: #1a1a2e;
+}
+[data-theme="dark"] .theme-toggle-btn {
+  background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.12); color: #94a3b8;
+}
+[data-theme="dark"] .theme-toggle-btn:hover {
+  background: #fbbf24; color: #1a1a2e; border-color: #fbbf24;
 }
 
 /* ── Scrollbar ── */
-::-webkit-scrollbar { width: 6px; }
-::-webkit-scrollbar-track { background: #f1f5f9; }
-::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 100px; }
-::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+html:not([data-theme="dark"]) ::-webkit-scrollbar-track { background: #f1f5f9; }
+html:not([data-theme="dark"]) ::-webkit-scrollbar-thumb { background: #cbd5e1; }
+html:not([data-theme="dark"]) ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+[data-theme="dark"] ::-webkit-scrollbar-track { background: #080b12; }
+[data-theme="dark"] ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); }
+
