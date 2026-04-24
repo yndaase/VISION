@@ -47,14 +47,26 @@ async function loadFaceModels() {
     }
 }
 
-// Start loading models as soon as possible
-if (typeof faceapi !== 'undefined') {
-    loadFaceModels();
-} else {
-    window.addEventListener('load', () => {
-        if (typeof faceapi !== 'undefined') loadFaceModels();
-    });
+// Start loading models as soon as possible — wait for face-api.js to be ready
+function tryLoadModels() {
+    if (typeof faceapi !== 'undefined') {
+        loadFaceModels();
+    } else {
+        // face-api.js is deferred — wait up to 10s for it
+        let attempts = 0;
+        const interval = setInterval(() => {
+            attempts++;
+            if (typeof faceapi !== 'undefined') {
+                clearInterval(interval);
+                loadFaceModels();
+            } else if (attempts > 100) {
+                clearInterval(interval);
+                console.warn('[FaceAPI] Script never loaded — check CDN.');
+            }
+        }, 100);
+    }
 }
+document.addEventListener('DOMContentLoaded', tryLoadModels);
 
 // ─── Eye Aspect Ratio (EAR) for blink detection ─────────────
 function getEAR(eye) {
@@ -71,13 +83,22 @@ function getEAR(eye) {
 // ─── Modal Controls ─────────────────────────────────────────
 
 function openVerifyModal() {
-    document.getElementById('verifyModal').style.display = 'flex';
+    const modal = document.getElementById('verifyModal');
+    if (!modal) return;
+    // Show modal FIRST so the video element has layout dimensions
+    modal.style.display = 'flex';
+    document.body.style.overflow = 'hidden';
     resetVerifySteps();
     if (!modelsLoaded && typeof faceapi !== 'undefined') loadFaceModels();
     document.getElementById('verifyStep1').style.display = 'block';
-    startCamera().then(() => {
-        startRealTimeTracking();
-    });
+    // Small delay lets the browser paint the modal before accessing camera
+    setTimeout(() => {
+        startCamera().then(() => {
+            startRealTimeTracking();
+        }).catch(err => {
+            console.error('[Camera] Failed to start:', err);
+        });
+    }, 120);
 }
 
 function closeVerifyModal() {
@@ -126,24 +147,56 @@ function resetVerifySteps() {
 
 async function startCamera() {
     stopCamera();
+    const video = document.getElementById('selfieVideo');
+    if (!video) return;
+
+    // Reset any stale state
+    video.srcObject = null;
+
     try {
         stream = await navigator.mediaDevices.getUserMedia({
             video: {
                 facingMode: currentFacingMode,
                 width: { ideal: 640 },
                 height: { ideal: 480 }
+            },
+            audio: false
+        });
+
+        video.srcObject = stream;
+        video.muted = true; // Required for autoplay policy in many browsers
+
+        // Wait for metadata AND play
+        await new Promise((resolve, reject) => {
+            const timeout = setTimeout(() => reject(new Error('Video metadata timeout')), 8000);
+            video.onloadedmetadata = async () => {
+                clearTimeout(timeout);
+                try {
+                    await video.play();
+                    resolve();
+                } catch (playErr) {
+                    // Autoplay blocked — try muted play
+                    video.muted = true;
+                    try { await video.play(); resolve(); }
+                    catch (e) { reject(e); }
+                }
+            };
+            // If metadata already loaded (cached)
+            if (video.readyState >= 2) {
+                clearTimeout(timeout);
+                video.play().then(resolve).catch(reject);
             }
         });
-        const video = document.getElementById('selfieVideo');
-        video.srcObject = stream;
-        // Wait for video to be ready
-        await new Promise(resolve => {
-            video.onloadedmetadata = resolve;
-        });
+
+        console.log('[Camera] Started — dimensions:', video.videoWidth, 'x', video.videoHeight);
+
     } catch (err) {
-        console.error("Camera access denied", err);
-        alert("Camera access is required for face verification.");
-        closeVerifyModal();
+        console.error('[Camera] Access denied or failed:', err);
+        const statusEl = document.getElementById('trackingStatus');
+        if (statusEl) statusEl.textContent = '❌ Camera access denied. Please allow camera and retry.';
+        const btn = document.getElementById('verifyCaptureBtn');
+        if (btn) { btn.textContent = 'Retry'; btn.onclick = () => startCamera().then(() => startRealTimeTracking()); btn.style.opacity = '1'; }
+        throw err;
     }
 }
 
