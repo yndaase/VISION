@@ -351,20 +351,37 @@
    NOTE BAND & FOOTER
 ══════════════════════════════════════════ */
 .hp-note-band {
-  background: #1a1a2e; padding: 20px; text-align: center;
-  font-size: 0.75rem; color: #94a3b8; border-top: 1px solid rgba(255,255,255,0.06);
-  line-height: 1.5;
+  background: #f1f5f9;
+  padding: 22px 2rem;
+  text-align: center;
+  font-size: 0.78rem;
+  color: #64748b;
+  border-top: 1px solid #e2e8f0;
+  border-bottom: 1px solid #e2e8f0;
+  line-height: 1.6;
 }
-.hp-note-band a { color: #fbbf24; text-decoration: none; }
+.hp-note-band a { color: #fbbf24; text-decoration: none; font-weight: 700; }
 .hp-note-band a:hover { text-decoration: underline; }
 
-.hp-footer { background: #111827; border-top: 1px solid rgba(255,255,255,0.06); padding: 4rem 2rem; text-align: center; }
-.hp-footer-inner { max-width: 1000px; margin: 0 auto; display: flex; flex-direction: column; align-items: center; gap: 1.5rem; }
-.hp-footer-brand { display: inline-flex; align-items: center; gap: 8px; text-decoration: none; }
-.hp-footer-brand-name { font-size: 1.1rem; font-weight: 800; color: #f1f5f9; }
+.hp-footer {
+  background: #1a1a2e;
+  border-top: 4px solid #fbbf24;
+  padding: 4rem 2rem 2.5rem;
+  text-align: center;
+}
+.hp-footer-inner {
+  max-width: 1000px; margin: 0 auto;
+  display: flex; flex-direction: column; align-items: center; gap: 1.5rem;
+}
+.hp-footer-brand { display: inline-flex; align-items: center; gap: 10px; text-decoration: none; }
+.hp-footer-brand img { border-radius: 8px; }
+.hp-footer-brand-name { font-size: 1.15rem; font-weight: 800; color: #f1f5f9; }
 .hp-footer-brand-name span { color: #fbbf24; }
-.hp-footer-meta { font-size: 0.75rem; color: #6b7280; max-width: 600px; line-height: 1.6; }
-.hp-footer-links { display: flex; gap: 20px; flex-wrap: wrap; justify-content: center; }
+.hp-footer-meta { font-size: 0.78rem; color: #94a3b8; max-width: 620px; line-height: 1.7; }
+.hp-footer-meta strong { color: #fbbf24; }
+.hp-footer-links {
+  display: flex; gap: 8px; flex-wrap: wrap; justify-content: center;
+}
 .hp-footer-link, .hp-footer-yt {
   display: inline-flex; align-items: center; gap: 6px;
   font-size: 0.75rem; font-weight: 600; color: #9ca3af;

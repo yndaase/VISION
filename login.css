@@ -11,69 +11,62 @@
 body.login-page {
   font-family: 'Outfit', sans-serif;
   min-height: 100vh;
-  background: #6c7ae0;
+  background: #f1f5f9;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 1.5rem;
+  padding: 5rem 1.5rem 2rem;
   position: relative;
   overflow-x: hidden;
 }
 
-/* subtle dot pattern on page bg */
+/* subtle pattern */
 body.login-page::before {
   content: '';
   position: fixed; inset: 0;
-  background-image: radial-gradient(circle, rgba(255,255,255,0.08) 1px, transparent 1px);
-  background-size: 28px 28px;
+  background-image: radial-gradient(circle, rgba(26,26,46,0.04) 1px, transparent 1px);
+  background-size: 24px 24px;
   pointer-events: none;
 }
 
 /* hide old bg orbs */
 .login-bg { display: none; }
 
-/* ── TOP NAV PILLS ── */
+/* ─ TOP NAV PILLS ─ */
 .login-nav-top {
-  position: fixed; top: 1rem; right: 1rem;
-  display: flex; gap: 8px; z-index: 100; flex-wrap: wrap;
-  justify-content: flex-end;
-}
-.about-brand-btn {
-  display: inline-flex; align-items: center; gap: 7px;
-  padding: 7px 14px; border-radius: 100px;
-  background: rgba(255,255,255,0.18); backdrop-filter: blur(12px);
-  border: 1px solid rgba(255,255,255,0.3);
-  font-size: 0.75rem; font-weight: 700; color: #fff;
-  text-decoration: none; transition: all 0.2s;
-}
-.about-brand-btn:hover { background: rgba(255,255,255,0.28); transform: translateY(-1px); }
-.about-icon {
-  width: 20px; height: 20px; border-radius: 50%;
-  background: rgba(255,255,255,0.2);
-  display: inline-flex; align-items: center; justify-content: center;
-  font-size: 0.65rem; font-weight: 800; color: #fff; flex-shrink: 0;
-}
-.theme-toggle-btn {
-  display: inline-flex; align-items: center; justify-content: center;
-  width: 34px; height: 34px; border-radius: 50%;
-  background: rgba(255,255,255,0.18); backdrop-filter: blur(12px);
-  border: 1px solid rgba(255,255,255,0.3); color: #fff; cursor: pointer;
-  transition: all 0.2s;
-}
-.theme-toggle-btn:hover { background: rgba(255,255,255,0.28); }
-
-/* ── MAIN CARD ── */
-.login-layout {
+  display: flex; gap: 8px; margin-bottom: 1.25rem;
+  justify-content: center; flex-wrap: wrap;
   width: 100%; max-width: 900px;
+}
+.login-nav-pill {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 8px 18px; border-radius: 100px;
+  background: #fff; border: 1.5px solid #e2e8f0;
+  font-size: 0.78rem; font-weight: 700; color: #1a1a2e;
+  text-decoration: none; transition: all 0.2s;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+}
+.login-nav-pill svg { color: #fbbf24; flex-shrink: 0; }
+.login-nav-pill:hover {
+  background: #1a1a2e; color: #fbbf24; border-color: #1a1a2e;
+  transform: translateY(-1px); box-shadow: 0 4px 12px rgba(26,26,46,0.15);
+}
+/* keep old classes for backwards compat */
+.about-brand-btn, .theme-toggle-btn { display: none !important; }
+
+/* ─ MAIN CARD ─ */
+.login-layout {
+  width: 100%; max-width: 920px;
   background: #fff;
   border-radius: 20px;
-  box-shadow: 0 24px 80px rgba(60,60,140,0.25), 0 4px 16px rgba(0,0,0,0.1);
+  box-shadow: 0 12px 60px rgba(26,26,46,0.12), 0 2px 8px rgba(0,0,0,0.06);
   display: grid;
   grid-template-columns: 1fr 1fr;
-  grid-template-rows: 1fr;
   overflow: hidden;
-  min-height: 580px;
+  min-height: 600px;
   position: relative;
+  border: 1px solid #e2e8f0;
 }
 
 /* ── LEFT PANEL ── */
@@ -291,21 +284,23 @@ body.login-page::before {
 }
 .strength-label { font-size: 0.68rem; color: #6b7280; margin-top: 3px; display: block; }
 
-/* Submit button */
+/* Submit button — yellow to match homepage */
 .auth-submit-btn {
-  width: 100%; padding: 13px 20px;
-  background: #6c7ae0; color: #fff;
+  width: 100%; padding: 14px 20px;
+  background: #1a1a2e; color: #fbbf24;
   border: none; border-radius: 10px;
-  font-size: 0.92rem; font-weight: 800;
+  font-size: 0.95rem; font-weight: 800;
   font-family: 'Outfit', sans-serif;
   cursor: pointer; transition: all 0.25s;
   display: flex; align-items: center; justify-content: center; gap: 8px;
-  box-shadow: 0 4px 16px rgba(108,122,224,0.35);
+  box-shadow: 0 4px 16px rgba(26,26,46,0.2);
   margin-top: 0.25rem;
+  letter-spacing: 0.02em;
 }
 .auth-submit-btn:hover {
-  background: #5566d4; transform: translateY(-1px);
-  box-shadow: 0 8px 24px rgba(108,122,224,0.45);
+  background: #fbbf24; color: #1a1a2e;
+  transform: translateY(-1px);
+  box-shadow: 0 8px 24px rgba(251,191,36,0.35);
 }
 .auth-submit-btn:active { transform: translateY(0); }
 .btn-arrow { display: flex; align-items: center; }
@@ -351,14 +346,14 @@ body.login-page::before {
 }
 .portal-pill {
   flex: 1; display: inline-flex; align-items: center; justify-content: center; gap: 6px;
-  padding: 8px 12px; border-radius: 8px;
-  background: #f1f5f9; border: 1px solid #e5e7eb;
-  font-size: 0.72rem; font-weight: 700; color: #64748b;
+  padding: 9px 12px; border-radius: 8px;
+  background: #f8fafc; border: 1.5px solid #e2e8f0;
+  font-size: 0.75rem; font-weight: 700; color: #64748b;
   text-decoration: none; transition: all 0.2s;
 }
-.portal-pill:hover { background: #e2e8f0; color: #1e2a6e; }
-.portal-robotics { color: #6c7ae0; background: rgba(108,122,224,0.06); border-color: rgba(108,122,224,0.18); }
-.portal-robotics:hover { background: rgba(108,122,224,0.12); }
+.portal-pill:hover { background: #1a1a2e; color: #fbbf24; border-color: #1a1a2e; }
+.portal-robotics { color: #1a1a2e; background: rgba(251,191,36,0.08); border-color: rgba(251,191,36,0.3); }
+.portal-robotics:hover { background: #fbbf24; color: #1a1a2e; border-color: #fbbf24; }
 
 /* Success toast */
 .auth-success-toast {
@@ -372,18 +367,18 @@ body.login-page::before {
 /* Legal footer */
 .legal-footer {
   display: flex; flex-wrap: wrap; gap: 6px;
-  justify-content: center; margin-top: 0.5rem;
+  justify-content: center; margin-top: 0.75rem;
 }
 .legal-btn {
   display: inline-flex; align-items: center; gap: 5px;
-  padding: 5px 10px; border-radius: 6px;
-  background: #f1f5f9; border: 1px solid #e5e7eb;
-  font-size: 0.68rem; font-weight: 600; color: #64748b;
+  padding: 6px 12px; border-radius: 100px;
+  background: transparent; border: 1.5px solid #e2e8f0;
+  font-size: 0.7rem; font-weight: 700; color: #64748b;
   text-decoration: none; transition: all 0.2s;
 }
-.legal-btn:hover { background: #e2e8f0; color: #1e2a6e; }
-.social-youtube { color: #ef4444; }
-.social-youtube:hover { background: rgba(239,68,68,0.08); }
+.legal-btn:hover { background: #1a1a2e; color: #fbbf24; border-color: #1a1a2e; }
+.social-youtube { color: #ef4444; border-color: rgba(239,68,68,0.2); }
+.social-youtube:hover { background: #ef4444; color: #fff; border-color: #ef4444; }
 
 /* Privacy notice */
 p[style*="color: var(--text-muted)"] {
@@ -415,22 +410,23 @@ p[style*="color: var(--text-muted)"] {
 .close-modal-btn:hover { color: #1e2a6e; }
 .modal-content { padding: 1.5rem; }
 
-/* ── RESPONSIVE ── */
+/* ─ RESPONSIVE ─ */
 @media (max-width: 700px) {
-  body.login-page { padding: 0; align-items: flex-start; background: #fff; }
-  body.login-page::before { display: none; }
+  body.login-page { padding: 1rem 0 2rem; align-items: flex-start; justify-content: flex-start; }
   .login-layout {
     grid-template-columns: 1fr;
-    border-radius: 0; min-height: 100vh;
-    box-shadow: none;
+    border-radius: 16px; min-height: auto;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+    margin: 0 0.75rem;
   }
   .login-left { display: none; }
-  .login-right { padding: 2rem 1.5rem; align-items: flex-start; padding-top: 5rem; }
-  .login-nav-top { top: 0.75rem; right: 0.75rem; }
-  .about-brand-btn span:last-child { display: none; }
+  .login-right { padding: 2rem 1.5rem; }
+  .login-nav-top { margin-bottom: 1rem; padding: 0 0.75rem; }
 }
 @media (max-width: 400px) {
-  .login-right { padding: 1.25rem; padding-top: 4.5rem; }
+  .login-right { padding: 1.5rem 1.25rem; }
+  .login-nav-top { gap: 6px; }
+  .login-nav-pill { padding: 7px 12px; font-size: 0.72rem; }
 }
 
 /* ── BLINK ANIMATION ── */
