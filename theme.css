@@ -1,77 +1,143 @@
-/* =========================================================
-   VISION EDUCATION — ABSOLUTE THEME ENGINE v3
-   Strict Dark Mode - Light Mode Purged
-   ========================================================= */
+/* =====================================================
+   VISION EDUCATION — GLOBAL THEME ENGINE v4
+   Light (default) + Dark mode via [data-theme="dark"]
+   ===================================================== */
 
-:root {
-  /* Core Backgrounds - Force Dark */
-  --bg: #05080f;
-  --bg-card: #0d1117;
-  --bg-card-hover: #111827;
-  --bg-sidebar: #080b12;
-  --bg-input: rgba(255, 255, 255, 0.05);
-  --bg-hero: #07090f;
-  --bg-header: rgba(5, 8, 15, 0.85);
+/* ── LIGHT MODE (default) ── */
+:root, [data-theme="light"] {
+  --bg:              #f0f2f5;
+  --bg-card:         #ffffff;
+  --bg-card-hover:   #f8fafc;
+  --bg-sidebar:      #ffffff;
+  --bg-input:        #f8fafc;
+  --bg-hero:         #f0f2f5;
+  --bg-header:       rgba(255,255,255,0.92);
 
-  /* Brand Colors */
-  --primary: #6366f1;
-  --primary-hover: #818cf8;
-  --primary-dim: rgba(99, 102, 241, 0.12);
-  --gold: #fbbf24;
-  --indigo: #6366f1;
-  --emerald: #10b981;
-  --red: #f87171;
+  --primary:         #1a1a2e;
+  --primary-hover:   #2d2d4e;
+  --primary-dim:     rgba(251,191,36,0.10);
+  --gold:            #fbbf24;
+  --indigo:          #6366f1;
+  --emerald:         #10b981;
+  --red:             #ef4444;
 
-  /* Text - High Contrast for Dark */
-  --text-primary: #f1f5f9;
-  --text-secondary: #94a3b8;
-  --text-muted: #64748b;
+  --text-primary:    #1a1a2e;
+  --text-secondary:  #374151;
+  --text-muted:      #64748b;
 
-  /* Borders & Interactive */
-  --border: rgba(255, 255, 255, 0.07);
-  --border-bright: rgba(255, 255, 255, 0.15);
-  --border-accent: rgba(99, 102, 241, 0.35);
-  --border-input: rgba(255, 255, 255, 0.12);
+  --border:          #e2e8f0;
+  --border-bright:   #94a3b8;
+  --border-accent:   rgba(251,191,36,0.35);
+  --border-input:    #e2e8f0;
 
-  /* Status */
-  --success: #22c55e;
-  --error: #f87171;
-  --warning: #f59e0b;
+  --success:         #10b981;
+  --error:           #ef4444;
+  --warning:         #f59e0b;
 
-  /* Spacing & Radius */
-  --radius-sm: 8px;
-  --radius-md: 14px;
-  --radius-lg: 20px;
-  --font-main: "Outfit", sans-serif;
+  --radius-sm:       8px;
+  --radius-md:       14px;
+  --radius-lg:       20px;
+  --font-main:       'Outfit', sans-serif;
+  --font-mono:       'JetBrains Mono', monospace;
 
-  /* Shadows - Deep Depth */
-  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.4);
-  --shadow-md: 0 4px 20px rgba(0, 0, 0, 0.6);
-  --shadow-lg: 0 8px 40px rgba(0, 0, 0, 0.7);
-  --shadow-premium: 0 20px 60px rgba(0, 0, 0, 0.8);
+  --shadow-sm:       0 1px 4px rgba(0,0,0,0.06);
+  --shadow-md:       0 4px 20px rgba(0,0,0,0.08);
+  --shadow-lg:       0 8px 40px rgba(0,0,0,0.10);
+  --shadow-premium:  0 20px 60px rgba(0,0,0,0.12);
 
-  --brand-accent: #818cf8;
+  --brand-accent:    #fbbf24;
+  color-scheme: light;
 }
 
-/* Global Reset to Force Dark */
+/* ── DARK MODE ── */
+[data-theme="dark"] {
+  --bg:              #05080f;
+  --bg-card:         #0d1117;
+  --bg-card-hover:   #111827;
+  --bg-sidebar:      #080b12;
+  --bg-input:        rgba(255,255,255,0.05);
+  --bg-hero:         #07090f;
+  --bg-header:       rgba(5,8,15,0.88);
+
+  --primary:         #6366f1;
+  --primary-hover:   #818cf8;
+  --primary-dim:     rgba(99,102,241,0.12);
+  --gold:            #fbbf24;
+  --indigo:          #6366f1;
+  --emerald:         #10b981;
+  --red:             #f87171;
+
+  --text-primary:    #f1f5f9;
+  --text-secondary:  #94a3b8;
+  --text-muted:      #64748b;
+
+  --border:          rgba(255,255,255,0.07);
+  --border-bright:   rgba(255,255,255,0.15);
+  --border-accent:   rgba(99,102,241,0.35);
+  --border-input:    rgba(255,255,255,0.12);
+
+  --success:         #22c55e;
+  --error:           #f87171;
+  --warning:         #f59e0b;
+
+  --shadow-sm:       0 2px 8px rgba(0,0,0,0.4);
+  --shadow-md:       0 4px 20px rgba(0,0,0,0.6);
+  --shadow-lg:       0 8px 40px rgba(0,0,0,0.7);
+  --shadow-premium:  0 20px 60px rgba(0,0,0,0.8);
+
+  --brand-accent:    #818cf8;
+  color-scheme: dark;
+}
+
+/* ── Global base ── */
+*, *::before, *::after { box-sizing: border-box; }
+
 html, body {
-  background-color: var(--bg) !important;
-  color: var(--text-primary) !important;
+  background-color: var(--bg);
+  color: var(--text-primary);
+  transition: background-color 0.25s ease, color 0.2s ease;
 }
 
-/* YouTube Brand Utility */
-.social-youtube {
-  color: var(--text-secondary);
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+/* ── Theme toggle button (universal) ── */
+.theme-toggle-btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  background: var(--bg-input);
+  border: 1.5px solid var(--border);
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 0; /* hide text */
+  padding: 0;
+}
+.theme-toggle-btn:hover {
+  background: var(--primary);
+  color: var(--gold);
+  border-color: var(--primary);
 }
 
+/* light icon shown in dark mode, dark icon shown in light mode */
+.theme-icon-dark  { display: block; }
+.theme-icon-light { display: none;  }
+[data-theme="dark"] .theme-icon-dark  { display: none;  }
+[data-theme="dark"] .theme-icon-light { display: block; }
+
+/* ── Shared utility ── */
+.social-youtube {
+  color: var(--text-secondary);
+  transition: all 0.2s;
+  display: inline-flex; align-items: center; justify-content: center;
+}
 .social-youtube:hover {
-  color: #ff0000 !important; /* Official YouTube Red */
-  transform: translateY(-1px);
-  filter: drop-shadow(0 0 8px rgba(255, 0, 0, 0.3));
+  color: #ff0000 !important;
+  filter: drop-shadow(0 0 6px rgba(255,0,0,0.3));
 }
 
-/* Light Mode Purged - No Overrides Allowed */
+/* scrollbar */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--border-bright); border-radius: 100px; }
+::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }

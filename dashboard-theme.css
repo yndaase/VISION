@@ -1,11 +1,60 @@
 /* =====================================================
-   DASHBOARD LIGHT THEME OVERRIDE
-   Matches homepage white / navy #1a1a2e / yellow #fbbf24
-   Applies on top of dashboard.css
+   DASHBOARD THEME OVERRIDE
+   Light (default) + Dark toggle
    ===================================================== */
 
-/* ── Force light CSS variables ── */
-html, html[data-theme="dark"], body.dashboard-page {
+/* ── LIGHT theme variables (default) ── */
+html:not([data-theme="dark"]), [data-theme="light"] {
+  /* page */
+  --bg:           #f0f2f5;
+  --bg-card:      #ffffff;
+  --bg-sidebar:   #ffffff;
+  --bg-input:     #f8fafc;
+  --bg-hero:      #f0f2f5;
+  --bg-header:    rgba(255,255,255,0.92);
+  /* text */
+  --text-primary:   #1a1a2e;
+  --text-secondary: #374151;
+  --text-muted:     #64748b;
+  /* borders */
+  --border:         #e2e8f0;
+  --border-bright:  #94a3b8;
+  --border-accent:  rgba(251,191,36,0.35);
+  /* brand */
+  --primary:        #1a1a2e;
+  --primary-dim:    rgba(251,191,36,0.10);
+  --gold:           #fbbf24;
+  /* shadows */
+  --shadow-sm:      0 1px 4px rgba(0,0,0,0.06);
+  --shadow-premium: 0 8px 32px rgba(0,0,0,0.10);
+}
+
+/* ── DARK theme variables ── */
+[data-theme="dark"] {
+  --bg:           #05080f;
+  --bg-card:      #0d1117;
+  --bg-sidebar:   #080b12;
+  --bg-input:     rgba(255,255,255,0.05);
+  --bg-hero:      #07090f;
+  --bg-header:    rgba(5,8,15,0.88);
+  --text-primary:   #f1f5f9;
+  --text-secondary: #94a3b8;
+  --text-muted:     #64748b;
+  --border:         rgba(255,255,255,0.07);
+  --border-bright:  rgba(255,255,255,0.15);
+  --border-accent:  rgba(99,102,241,0.35);
+  --primary:        #6366f1;
+  --primary-dim:    rgba(99,102,241,0.12);
+  --gold:           #fbbf24;
+  --shadow-sm:      0 2px 8px rgba(0,0,0,0.4);
+  --shadow-premium: 0 20px 60px rgba(0,0,0,0.8);
+}
+
+/* ──────────────────────────────────────────
+   LIGHT-SPECIFIC overrides (active when NOT dark)
+   ────────────────────────────────────────── */
+html:not([data-theme="dark"]) body.dashboard-page,
+[data-theme="light"] body.dashboard-page {
   --bg-page:       #f0f2f5;
   --bg-sidebar:    #ffffff;
   --bg-card:       #ffffff;

@@ -1,169 +1,126 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Terms of Service | Vision Education</title>
-    <meta name="description" content="Official Terms of Service for Vision Education. Read the guidelines for using our 2026 WASSCE and WAEC preparation suite and AI academic tools." />
-    <link rel="canonical" href="https://www.visionedu.online/terms" />
-    
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
-    
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-      tailwind.config = {
-        theme: {
-          extend: {
-            fontFamily: {
-              sans: ['Outfit', 'sans-serif'],
-            },
-            colors: {
-              navy: {
-                DEFAULT: '#05080f',
-                light: '#0a101f',
-                accent: '#1e293b'
-              },
-              emerald: {
-                DEFAULT: '#10b981',
-                light: '#34d399',
-                dark: '#059669'
-              },
-              indigo: {
-                DEFAULT: '#6366f1',
-                light: '#818cf8',
-                dark: '#4f46e5'
-              }
-            },
-          }
-        }
-      }
-    </script>
-    <style>
-      .glass { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.1); }
-      .legal-card { background: rgba(255, 255, 255, 0.02); backdrop-filter: blur(24px); border: 1px solid rgba(255, 255, 255, 0.05); }
-      
-      .hp-nav { transition: all 0.4s; }
-      .hp-nav.scrolled { background: rgba(5, 8, 15, 0.8); backdrop-filter: blur(20px); border-bottom: 1px solid rgba(255, 255, 255, 0.05); padding: 0.75rem 0.5rem; }
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Terms of Service | Vision Education</title>
+  <meta name="description" content="Official Terms of Service for Vision Education. Guidelines for using our 2026 WASSCE preparation suite and AI academic tools." />
+  <link rel="canonical" href="https://www.visionedu.online/terms" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <script src="theme.js"></script>
+  <link rel="stylesheet" href="theme.css" />
+  <link rel="stylesheet" href="global-site.css" />
+</head>
+<body class="site-page">
 
-      .hp-btn-glass { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); color: #fff; border-radius: 12px; transition: all 0.3s; }
-      .hp-btn-glass:hover { background: rgba(255, 255, 255, 0.1); border-color: rgba(255, 255, 255, 0.2); }
-      
-      .hp-btn-primary { background: linear-gradient(135deg, #10b981, #6366f1); color: #fff; border-radius: 12px; box-shadow: 0 10px 20px rgba(99, 102, 241, 0.3); transition: all 0.3s; }
+  <!-- NAV -->
+  <nav class="site-nav" id="siteNav">
+    <a href="/" class="site-nav-brand">
+      <img src="assets/logo.png" alt="Vision Education Logo" width="34" height="34">
+      <span class="site-nav-brand-name">Vision <span>Education</span></span>
+    </a>
+    <div class="site-nav-actions">
+      <button class="theme-toggle-btn" onclick="toggleTheme()" aria-label="Toggle theme">
+        <svg class="theme-icon-dark" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        <svg class="theme-icon-light" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+      </button>
+      <a href="/login" class="site-nav-btn-outline">Log In</a>
+      <a href="/dashboard" class="site-nav-btn-primary">Dashboard</a>
+    </div>
+  </nav>
 
-      .hero-gradient { background: radial-gradient(circle at top right, rgba(16, 185, 129, 0.05), transparent), radial-gradient(circle at bottom left, rgba(99, 102, 241, 0.05), transparent); }
-    </style>
-  </head>
-  <body class="bg-navy text-white font-sans selection:bg-indigo-500/30">
-    <!-- Background Decor -->
-    <div class="fixed inset-0 z-0 hero-gradient pointer-events-none"></div>
+  <!-- MAIN -->
+  <main class="site-main">
+    <div class="legal-page">
 
-    <!-- Navigation (Unified) -->
-    <nav class="fixed top-0 left-0 right-0 z-50 px-6 py-6 hp-nav" id="hpNav">
-      <div class="max-w-7xl mx-auto flex justify-between items-center text-sm">
-        <a href="/" class="flex items-center gap-3">
-          <div class="w-8 h-8 bg-gradient-to-br from-emerald-500 to-indigo-600 rounded-lg flex items-center justify-center text-white font-bold text-sm">V</div>
-          <span class="font-bold tracking-tight text-white uppercase italic">Vision Education</span>
-        </a>
-
-        <div class="flex items-center gap-6">
-          <a href="/login.html" class="hp-btn-glass px-4 py-2 font-bold">Log In</a>
-          <a href="/dashboard.html" class="hp-btn-primary px-4 py-2 font-bold">Get Started</a>
+      <div class="legal-header">
+        <div style="display:inline-flex;align-items:center;gap:8px;margin-bottom:0.75rem;">
+          <span style="font-size:0.68rem;font-weight:800;letter-spacing:0.14em;text-transform:uppercase;color:var(--gold);">Legal</span>
         </div>
+        <h1>Terms of Service</h1>
+        <p class="legal-updated">Effective Date: April 13, 2026</p>
       </div>
-    </nav>
 
-    <!-- Main Content -->
-    <main class="relative z-10 pt-40 pb-24">
-      
-      <div class="max-w-4xl mx-auto px-6">
-        <div class="legal-card rounded-[3rem] p-10 md:p-16 shadow-2xl">
-          
-          <div class="mb-16 border-b border-white/5 pb-12">
-            <h1 class="text-4xl md:text-5xl font-black mb-4">Terms of Service</h1>
-            <p class="text-gray-500 font-bold uppercase tracking-[0.2em] text-xs">Effective Date: April 13, 2026</p>
-          </div>
+      <div class="legal-section">
+        <h2>1. Acceptance of Terms</h2>
+        <p>By accessing or using the Vision Education platform, you agree to be bound by these Terms of Service. These terms apply to all students, educators, and visitors who access our resources.</p>
+      </div>
 
-          <div class="prose prose-invert max-w-none space-y-12">
-            
-            <section class="space-y-4">
-              <h2 class="text-2xl font-black text-emerald-400">1. Acceptance of Terms</h2>
-              <p class="text-gray-400 leading-relaxed">
-                By accessing or using the Vision Education platform, you agree to be bound by these Terms of Service. These terms apply to all students, educators, and visitors who access our resources.
-              </p>
-            </section>
+      <div class="legal-section">
+        <h2>2. Educational Limitations</h2>
+        <p>Vision Education is a supplementary educational tool designed for Ghanaian Senior High School students. While our mock examinations and AI-powered feedback are strictly aligned with 2026 WAEC curriculum standards, they do not guarantee specific results on official WASSCE examinations. This platform is intended to complement, not replace, official classroom instruction.</p>
+      </div>
 
-            <section class="space-y-4">
-              <h2 class="text-2xl font-black text-indigo-400">2. Educational Limitations</h2>
-              <p class="text-gray-400 leading-relaxed">
-                Vision Education is a supplementary educational tool designed for Ghanaian Senior High School students. While our mock examinations and AI-powered feedback are strictly aligned with 2026 WAEC curriculum standards, they do not guarantee specific results on official WASSCE examinations. Use of this platform is intended to complement, not replace, official classroom instruction.
-              </p>
-            </section>
-
-            <section class="space-y-4">
-              <h2 class="text-2xl font-black text-white">3. User Roles, Data, and Verification</h2>
-              <p class="text-gray-400 leading-relaxed">
-                Our platform supports Google Authentication for student personalization. You are responsible for maintaining the confidentiality of your account credentials. Access to certain premium capabilities (such as the AI Learning Hub and specific diagnostic features) requires <strong>Identity Verification</strong>. By using our Face Verification tool, you agree to submit a clear selfie for a real liveness check to detect a live human presence and ensure authenticity. Failure or refusal to verify may limit your access to specific features.
-              </p>
-            </section>
-
-            <section class="space-y-4">
-              <h2 class="text-2xl font-black text-red-400">4. Prohibited Activities</h2>
-              <p class="text-gray-400 leading-relaxed mb-4">
-                Users are strictly prohibited from attempting to:
-              </p>
-              <ul class="text-sm text-gray-500 space-y-2 list-disc ml-4">
-                <li>Reverse engineer or disrupt the platform's examination logic.</li>
-                <li>Scrape automated content or question databases without authorization.</li>
-                <li>Access non-public administrative panels.</li>
-              </ul>
-            </section>
-
-            <section class="space-y-4">
-              <h2 class="text-2xl font-black text-white">5. Intellectual Property</h2>
-              <p class="text-gray-400 leading-relaxed">
-                All examination questions, AI diagnostic logic, and branding (Vision Education) are the intellectual property of Yaw Ndaase Mensuoh, unless otherwise noted for public domain WAEC past questions.
-              </p>
-            </section>
-
-            <section class="space-y-4">
-              <h2 class="text-2xl font-black text-white">6. Limitation of Liability</h2>
-              <p class="text-gray-400 leading-relaxed italic text-sm">
-                To the maximum extent permitted by law, Vision Education shall not be liable for any indirect, incidental, or consequential damages resulting from your use or inability to use the service.
-              </p>
-            </section>
-
-            <section class="space-y-4 pt-12 border-t border-white/5">
-              <h2 class="text-xl font-black text-white">7. Governing Law</h2>
-              <p class="text-gray-500 text-sm leading-relaxed">
-                These terms are governed by the laws of the Republic of Ghana. For inquiry or support, contact:<br/>
-                <strong class="text-white">Yaw Ndaase Mensuoh</strong><br/>
-                Vision Education Initiative<br/>
-                Email: <a href="mailto:support@visionedu.site" class="text-emerald-400 hover:underline">support@visionedu.site</a>
-              </p>
-            </section>
-
-          </div>
-        </div>
-
-        <div class="mt-12 text-center">
-           <a href="/" class="text-xs font-bold text-gray-600 uppercase tracking-widest hover:text-white transition-colors">Return to Home</a>
+      <div class="legal-section">
+        <h2>3. User Roles, Data &amp; Verification</h2>
+        <p>Our platform supports Google Authentication for student personalization. You are responsible for maintaining the confidentiality of your account credentials. Access to certain premium capabilities (AI Learning Hub, diagnostic features) requires <strong>Identity Verification</strong>. By using our Face Verification tool, you agree to submit a clear selfie for a real liveness check.</p>
+        <div class="legal-highlight">
+          <h3>Identity Verification Notice</h3>
+          <p>Failure or refusal to verify may limit access to specific platform features. Verification data is handled in accordance with our Privacy Policy.</p>
         </div>
       </div>
 
-    </main>
+      <div class="legal-section">
+        <h2>4. Prohibited Activities</h2>
+        <p>Users are strictly prohibited from attempting to:</p>
+        <ul>
+          <li>Reverse engineer or disrupt the platform's examination logic.</li>
+          <li>Scrape automated content or question databases without authorisation.</li>
+          <li>Access non-public administrative panels.</li>
+          <li>Impersonate other students or staff members.</li>
+        </ul>
+      </div>
 
-    <!-- Footer (Short) -->
-    <footer class="relative z-10 py-12 text-center">
-      <p class="text-[10px] font-black text-gray-700 uppercase tracking-[0.4em]">© 2026 Vision Education Initiative</p>
-    </footer>
+      <div class="legal-section">
+        <h2>5. Intellectual Property</h2>
+        <p>All examination questions, AI diagnostic logic, and branding (Vision Education) are the intellectual property of Yaw Ndaase Mensuoh, unless otherwise noted for public domain WAEC past questions.</p>
+      </div>
 
-    <script>
-      const hpNav = document.getElementById('hpNav');
-      window.addEventListener('scroll', () => {
-        hpNav.classList.toggle('scrolled', window.scrollY > 40);
-      }, { passive: true });
-    </script>
-  </body>
+      <div class="legal-section">
+        <h2>6. Limitation of Liability</h2>
+        <p><em>To the maximum extent permitted by law, Vision Education shall not be liable for any indirect, incidental, or consequential damages resulting from your use or inability to use the service.</em></p>
+      </div>
+
+      <div class="legal-section">
+        <h2>7. Governing Law</h2>
+        <p>These terms are governed by the laws of the Republic of Ghana.</p>
+        <p>
+          <strong>Yaw Ndaase Mensuoh</strong><br>
+          Vision Education Initiative<br>
+          Email: <a href="mailto:support@visionedu.site">support@visionedu.site</a>
+        </p>
+      </div>
+
+      <div style="text-align:center;margin-top:3rem;">
+        <a href="/" style="font-size:0.78rem;font-weight:700;color:var(--text-muted);text-decoration:none;border:1.5px solid var(--border);padding:9px 22px;border-radius:100px;transition:all 0.2s;display:inline-block;" onmouseover="this.style.borderColor='var(--gold)';this.style.color='var(--text-primary)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--text-muted)'">← Return to Home</a>
+      </div>
+    </div>
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="site-footer">
+    <div class="site-footer-inner">
+      <a href="/" class="site-footer-brand">
+        <img src="assets/logo.png" alt="Logo" width="28" height="28" style="border-radius:6px;">
+        <span class="site-footer-brand-name">Vision <span>Education</span></span>
+      </a>
+      <p class="site-footer-meta">Built for Ghana SHS Students · 2026 WASSCE</p>
+      <div class="site-footer-links">
+        <a href="/privacy" class="site-footer-link">Privacy Policy</a>
+        <a href="/terms" class="site-footer-link">Terms of Service</a>
+        <a href="/pricing" class="site-footer-link">Pricing</a>
+        <a href="mailto:support@visionedu.site" class="site-footer-link">Contact</a>
+      </div>
+      <div class="site-footer-divider"></div>
+      <p class="site-footer-bottom">© 2026 Vision Education Initiative · Made with ♥ in Ghana</p>
+    </div>
+  </footer>
+
+  <script>
+    const nav = document.getElementById('siteNav');
+    window.addEventListener('scroll', () => nav.classList.toggle('scrolled', scrollY > 40), { passive: true });
+  </script>
+</body>
 </html>

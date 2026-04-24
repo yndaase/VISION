@@ -1,0 +1,207 @@
+/* =====================================================
+   VISION EDUCATION — GLOBAL SITE CSS
+   Shared navbar + footer + page shell for all public
+   pages (pricing, privacy, terms, about, features…)
+   ===================================================== */
+
+/* ── Page shell ── */
+.site-page {
+  font-family: 'Outfit', sans-serif;
+  background: var(--bg);
+  color: var(--text-primary);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ── NAVBAR ── */
+.site-nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 900;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 2rem; height: 64px;
+  background: var(--bg-header);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+  transition: background 0.3s;
+}
+.site-nav.scrolled {
+  background: var(--bg-header);
+  box-shadow: 0 2px 16px rgba(0,0,0,0.08);
+}
+
+.site-nav-brand {
+  display: flex; align-items: center; gap: 10px;
+  text-decoration: none;
+}
+.site-nav-brand img {
+  width: 34px; height: 34px; object-fit: contain; border-radius: 8px;
+}
+.site-nav-brand-name {
+  font-size: 1rem; font-weight: 800; color: var(--text-primary); letter-spacing: -0.02em;
+}
+.site-nav-brand-name span { color: var(--gold); }
+
+.site-nav-links {
+  display: flex; align-items: center; gap: 4px;
+}
+.site-nav-link {
+  font-size: 0.82rem; font-weight: 600; color: var(--text-muted);
+  text-decoration: none; padding: 7px 14px; border-radius: 8px;
+  transition: all 0.2s;
+}
+.site-nav-link:hover { background: var(--primary-dim); color: var(--text-primary); }
+.site-nav-link.active { color: var(--text-primary); font-weight: 700; }
+
+.site-nav-actions {
+  display: flex; align-items: center; gap: 8px;
+}
+.site-nav-btn-outline {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 0.82rem; font-weight: 700; color: var(--text-primary);
+  text-decoration: none; padding: 8px 18px;
+  border: 1.5px solid var(--border); border-radius: 10px;
+  transition: all 0.2s; background: transparent;
+}
+.site-nav-btn-outline:hover {
+  border-color: var(--primary); background: var(--primary-dim);
+  color: var(--text-primary);
+}
+.site-nav-btn-primary {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 0.82rem; font-weight: 800; color: var(--gold);
+  text-decoration: none; padding: 8px 18px;
+  border: none; border-radius: 10px;
+  background: var(--primary); cursor: pointer;
+  transition: all 0.2s; font-family: 'Outfit', sans-serif;
+}
+.site-nav-btn-primary:hover {
+  filter: brightness(1.1); transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgba(26,26,46,0.2);
+}
+[data-theme="dark"] .site-nav-btn-primary {
+  background: #6366f1; color: #fff;
+}
+
+@media (max-width: 700px) {
+  .site-nav-links { display: none; }
+  .site-nav { padding: 0 1.25rem; }
+}
+
+/* ── MAIN CONTENT AREA ── */
+.site-main {
+  padding-top: 80px; /* below fixed nav */
+  min-height: calc(100vh - 64px - 180px);
+}
+
+/* ── PAGE HERO STRIP ── */
+.site-hero {
+  padding: 5rem 2rem 4rem;
+  text-align: center;
+  background: var(--bg);
+  border-bottom: 1px solid var(--border);
+}
+.site-hero-eyebrow {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-size: 0.68rem; font-weight: 800; letter-spacing: 0.14em;
+  text-transform: uppercase; color: var(--gold);
+  margin-bottom: 1rem;
+}
+.site-hero-eyebrow::before {
+  content: ''; width: 24px; height: 2px;
+  background: var(--gold); border-radius: 2px;
+}
+.site-hero h1 {
+  font-size: clamp(2rem, 5vw, 3.4rem);
+  font-weight: 900; letter-spacing: -0.04em;
+  line-height: 1.1; color: var(--text-primary); margin-bottom: 1rem;
+}
+.site-hero h1 span { color: var(--gold); }
+.site-hero-sub {
+  font-size: 1rem; color: var(--text-muted);
+  max-width: 520px; margin: 0 auto; line-height: 1.7;
+}
+
+/* ── SHARED CARD ── */
+.site-card {
+  background: var(--bg-card);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  transition: all 0.25s;
+}
+.site-card:hover {
+  border-color: var(--border-accent);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+
+/* ── LEGAL / CONTENT PAGE ── */
+.legal-page {
+  max-width: 800px; margin: 0 auto; padding: 3rem 2rem 5rem;
+}
+.legal-header {
+  padding-bottom: 2rem; margin-bottom: 2.5rem;
+  border-bottom: 1px solid var(--border);
+}
+.legal-header h1 {
+  font-size: clamp(1.8rem, 4vw, 2.8rem);
+  font-weight: 900; letter-spacing: -0.03em;
+  color: var(--text-primary); margin-bottom: 0.5rem;
+}
+.legal-updated {
+  font-size: 0.72rem; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.1em; color: var(--text-muted);
+}
+.legal-section { margin-bottom: 2.5rem; }
+.legal-section h2 {
+  font-size: 1.1rem; font-weight: 800; color: var(--text-primary);
+  margin-bottom: 0.75rem; padding-bottom: 0.5rem;
+  border-left: 3px solid var(--gold); padding-left: 12px;
+}
+.legal-section p, .legal-section li {
+  font-size: 0.9rem; color: var(--text-muted); line-height: 1.8;
+  margin-bottom: 0.5rem;
+}
+.legal-section ul { padding-left: 1.25rem; }
+.legal-section strong { color: var(--text-primary); }
+.legal-section a { color: var(--gold); text-decoration: none; font-weight: 600; }
+.legal-section a:hover { text-decoration: underline; }
+.legal-highlight {
+  background: var(--primary-dim);
+  border: 1px solid var(--border-accent);
+  border-radius: 12px; padding: 1.25rem 1.5rem; margin: 1rem 0;
+}
+.legal-highlight h3 {
+  font-size: 0.88rem; font-weight: 800; color: var(--text-primary); margin-bottom: 0.5rem;
+}
+
+/* ── FOOTER ── */
+.site-footer {
+  background: #1a1a2e;
+  border-top: 4px solid var(--gold);
+  padding: 3rem 2rem 2rem;
+  text-align: center;
+}
+.site-footer-inner {
+  max-width: 900px; margin: 0 auto;
+  display: flex; flex-direction: column; align-items: center; gap: 1.25rem;
+}
+.site-footer-brand {
+  display: inline-flex; align-items: center; gap: 10px; text-decoration: none;
+}
+.site-footer-brand-name { font-size: 1rem; font-weight: 800; color: #f1f5f9; }
+.site-footer-brand-name span { color: var(--gold); }
+.site-footer-meta { font-size: 0.75rem; color: #94a3b8; max-width: 560px; line-height: 1.7; }
+.site-footer-links {
+  display: flex; gap: 6px; flex-wrap: wrap; justify-content: center;
+}
+.site-footer-link {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-size: 0.72rem; font-weight: 600; color: #94a3b8;
+  text-decoration: none; padding: 5px 12px; border-radius: 100px;
+  border: 1px solid rgba(255,255,255,0.08); transition: all 0.2s;
+}
+.site-footer-link:hover { color: var(--gold); border-color: rgba(251,191,36,0.3); }
+.site-footer-divider { width: 100%; height: 1px; background: rgba(255,255,255,0.06); }
+.site-footer-bottom { font-size: 0.7rem; color: #475569; }
+
+/* Dark mode adjustments for shared footer (footer stays dark always) */

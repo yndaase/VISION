@@ -9,84 +9,66 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <script src="theme.js"></script>
   <link rel="stylesheet" href="theme.css" />
-  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="global-site.css" />
   <style>
-    /* ── Reset & Base ─────────────────────────────── */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     body {
       font-family: 'Outfit', sans-serif;
-      background: #05080f;
-      color: #f1f5f9;
+      background: var(--bg);
+      color: var(--text-primary);
       min-height: 100vh;
       overflow-x: hidden;
     }
 
-    /* ── Topbar ───────────────────────────────────── */
     .pr-nav {
       position: fixed; top: 0; left: 0; right: 0; z-index: 900;
       display: flex; align-items: center; justify-content: space-between;
       padding: 0 2rem; height: 64px;
-      background: rgba(5,8,15,0.85);
+      background: var(--bg-header);
       backdrop-filter: blur(20px);
-      border-bottom: 1px solid rgba(255,255,255,0.06);
+      border-bottom: 1px solid var(--border);
     }
     .pr-nav-brand {
       display: flex; align-items: center; gap: 10px;
       text-decoration: none;
     }
     .pr-nav-brand-name {
-      font-size: 1rem; font-weight: 800; color: #f1f5f9;
+      font-size: 1rem; font-weight: 800; color: var(--text-primary);
     }
-    .pr-nav-brand-name span { color: #fbbf24; }
+    .pr-nav-brand-name span { color: var(--gold); }
     .pr-nav-back {
       display: inline-flex; align-items: center; gap: 8px;
-      font-size: 0.82rem; font-weight: 600; color: #64748b;
+      font-size: 0.82rem; font-weight: 600; color: var(--text-muted);
       text-decoration: none; padding: 7px 14px;
-      border: 1px solid rgba(255,255,255,0.08);
-      border-radius: 8px; transition: all 0.2s;
+      border: 1px solid var(--border);
+      border-radius: 8px; transition: all 0.2s; background: transparent;
     }
-    .pr-nav-back:hover { color: #f1f5f9; border-color: rgba(255,255,255,0.15); }
+    .pr-nav-back:hover { color: var(--text-primary); border-color: var(--border-bright); }
 
-    /* ── Hero ─────────────────────────────────────── */
     .pr-hero {
-      padding: 140px 2rem 80px;
-      text-align: center;
-      position: relative;
-      overflow: hidden;
+      padding: 110px 2rem 70px;
+      text-align: center; position: relative; overflow: hidden;
     }
     .pr-hero::before {
-      content: '';
-      position: absolute; inset: 0; pointer-events: none;
+      content: ''; position: absolute; inset: 0; pointer-events: none;
       background:
-        radial-gradient(ellipse 70% 50% at 50% 0%, rgba(99,102,241,0.14), transparent),
-        radial-gradient(ellipse 40% 30% at 80% 60%, rgba(251,191,36,0.06), transparent);
+        radial-gradient(ellipse 60% 40% at 50% 0%, var(--primary-dim), transparent);
     }
     .pr-hero-label {
       display: inline-flex; align-items: center; gap: 8px;
       font-size: 0.68rem; font-weight: 800; letter-spacing: 0.14em;
-      text-transform: uppercase; color: #6366f1;
-      margin-bottom: 1.25rem;
+      text-transform: uppercase; color: var(--gold); margin-bottom: 1.25rem;
     }
-    .pr-hero-label::before {
-      content: ''; width: 24px; height: 2px;
-      background: #6366f1; border-radius: 2px;
-    }
+    .pr-hero-label::before { content:''; width:24px; height:2px; background:var(--gold); border-radius:2px; }
     .pr-hero h1 {
-      font-size: clamp(2.4rem, 6vw, 4rem);
-      font-weight: 900; letter-spacing: -0.04em;
-      line-height: 1.1; color: #f1f5f9;
-      margin-bottom: 1rem;
+      font-size: clamp(2.4rem, 6vw, 4rem); font-weight: 900;
+      letter-spacing: -0.04em; line-height: 1.1;
+      color: var(--text-primary); margin-bottom: 1rem;
     }
-    .pr-hero h1 span {
-      background: linear-gradient(135deg, #a5b4fc, #818cf8 40%, #fbbf24);
-      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-    .pr-hero-sub {
-      font-size: 1.05rem; color: #64748b;
-      max-width: 520px; margin: 0 auto; line-height: 1.75;
-    }
+    .pr-hero h1 span { color: var(--gold); }
+    .pr-hero-sub { font-size: 1.05rem; color: var(--text-muted); max-width: 520px; margin: 0 auto; line-height: 1.75; }
 
     /* ── Toggle (Monthly / Annual placeholder) ──── */
     .pr-toggle-row {
@@ -122,32 +104,22 @@
       align-items: start;
     }
 
-    /* ── Cards ────────────────────────────────────── */
     .pr-card {
-      background: #0d1117;
-      border: 1px solid rgba(255,255,255,0.07);
-      border-radius: 20px;
-      padding: 2.25rem;
-      display: flex;
-      flex-direction: column;
-      gap: 0;
-      position: relative;
-      transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
-      overflow: hidden;
+      background: var(--bg-card);
+      border: 1.5px solid var(--border);
+      border-radius: 20px; padding: 2.25rem;
+      display: flex; flex-direction: column; gap: 0;
+      position: relative; transition: all 0.3s; overflow: hidden;
     }
     .pr-card:hover {
-      border-color: rgba(255,255,255,0.13);
+      border-color: var(--border-accent);
       transform: translateY(-4px);
-      box-shadow: 0 24px 60px rgba(0,0,0,0.5);
+      box-shadow: var(--shadow-lg);
     }
     .pr-card.featured {
-      border-color: rgba(99,102,241,0.4);
-      background: linear-gradient(135deg, rgba(99,102,241,0.05) 0%, #0d1117 60%);
+      border-color: var(--border-accent);
     }
-    .pr-card.featured:hover {
-      border-color: rgba(99,102,241,0.6);
-      box-shadow: 0 24px 60px rgba(99,102,241,0.15);
-    }
+    .pr-card.featured:hover { box-shadow: var(--shadow-premium); }
     /* Gradient top border */
     .pr-card::before {
       content: '';
@@ -232,19 +204,9 @@
       display: flex; flex-direction: column; gap: 12px;
       margin-bottom: 2rem; flex: 1;
     }
-    .pr-feature {
-      display: flex; align-items: flex-start; gap: 10px;
-      font-size: 0.86rem; color: #94a3b8; line-height: 1.5;
-    }
-    .pr-feature-check {
-      width: 18px; height: 18px; border-radius: 50%;
-      display: flex; align-items: center; justify-content: center;
-      flex-shrink: 0; margin-top: 1px;
-    }
-    .pr-feature-check.on  { background: rgba(34,197,94,0.12);  color: #22c55e; }
-    .pr-feature-check.off { background: rgba(255,255,255,0.04); color: #334155; }
-    .pr-feature.dim { color: #334155; }
-    .pr-feature strong { color: #f1f5f9; font-weight: 600; }
+    .pr-feature { display: flex; align-items: flex-start; gap: 10px; font-size: 0.86rem; color: var(--text-muted); line-height: 1.5; }
+    .pr-feature strong { color: var(--text-primary); font-weight: 600; }
+    .pr-feature.dim { color: var(--border-bright); }
 
     /* CTA */
     .pr-cta {
@@ -296,33 +258,20 @@
       gap: 1rem;
     }
     .pr-trust-item {
-      background: #0d1117;
-      border: 1px solid rgba(255,255,255,0.06);
-      border-radius: 14px;
-      padding: 1.5rem;
-      display: flex;
-      gap: 1rem;
-      align-items: flex-start;
-      transition: all 0.2s;
+      background: var(--bg-card);
+      border: 1.5px solid var(--border);
+      border-radius: 14px; padding: 1.5rem;
+      display: flex; gap: 1rem; align-items: flex-start; transition: all 0.2s;
     }
-    .pr-trust-item:hover {
-      border-color: rgba(255,255,255,0.1);
-      transform: translateY(-2px);
-    }
+    .pr-trust-item:hover { border-color: var(--gold); transform: translateY(-2px); }
     .pr-trust-icon {
       width: 38px; height: 38px; border-radius: 10px;
-      background: rgba(99,102,241,0.1);
-      border: 1px solid rgba(99,102,241,0.2);
+      background: var(--primary-dim); border: 1px solid var(--border-accent);
       display: flex; align-items: center; justify-content: center;
-      flex-shrink: 0; color: #818cf8;
+      flex-shrink: 0; color: var(--gold);
     }
-    .pr-trust-title {
-      font-size: 0.86rem; font-weight: 700;
-      color: #f1f5f9; margin-bottom: 4px;
-    }
-    .pr-trust-desc {
-      font-size: 0.78rem; color: #475569; line-height: 1.55;
-    }
+    .pr-trust-title { font-size: 0.86rem; font-weight: 700; color: var(--text-primary); margin-bottom: 4px; }
+    .pr-trust-desc { font-size: 0.78rem; color: var(--text-muted); line-height: 1.55; }
 
     /* ── FAQ ──────────────────────────────────────── */
     .pr-faq-section {
@@ -334,39 +283,21 @@
       color: #f1f5f9; margin-bottom: 1.5rem; text-align: center;
     }
     .pr-faq-item {
-      background: #0d1117;
-      border: 1px solid rgba(255,255,255,0.06);
-      border-radius: 12px;
-      padding: 1.25rem 1.5rem;
-      margin-bottom: 0.75rem;
-      cursor: pointer;
-      transition: border-color 0.2s;
+      background: var(--bg-card); border: 1.5px solid var(--border);
+      border-radius: 12px; padding: 1.25rem 1.5rem;
+      margin-bottom: 0.75rem; cursor: pointer; transition: border-color 0.2s;
     }
-    .pr-faq-item:hover { border-color: rgba(255,255,255,0.12); }
-    .pr-faq-q {
-      font-size: 0.9rem; font-weight: 700;
-      color: #f1f5f9; display: flex;
-      justify-content: space-between; align-items: center; gap: 1rem;
-    }
-    .pr-faq-a {
-      font-size: 0.85rem; color: #64748b; line-height: 1.7;
-      margin-top: 0.75rem; display: none;
-    }
+    .pr-faq-item:hover { border-color: var(--gold); }
+    .pr-faq-q { font-size: 0.9rem; font-weight: 700; color: var(--text-primary); display: flex; justify-content: space-between; align-items: center; gap: 1rem; }
+    .pr-faq-a { font-size: 0.85rem; color: var(--text-muted); line-height: 1.7; margin-top: 0.75rem; display: none; }
     .pr-faq-item.open .pr-faq-a { display: block; }
-    .pr-faq-chevron {
-      flex-shrink: 0; transition: transform 0.2s; color: #475569;
-    }
+    .pr-faq-chevron { flex-shrink: 0; transition: transform 0.2s; color: var(--text-muted); }
     .pr-faq-item.open .pr-faq-chevron { transform: rotate(180deg); }
 
-    /* ── Footer ───────────────────────────────────── */
-    .pr-footer {
-      border-top: 1px solid rgba(255,255,255,0.05);
-      padding: 2.5rem 2rem;
-      text-align: center;
-    }
-    .pr-footer p { font-size: 0.78rem; color: #334155; line-height: 1.8; }
-    .pr-footer a { color: #475569; text-decoration: none; }
-    .pr-footer a:hover { color: #94a3b8; }
+    .pr-footer { border-top: 1px solid var(--border); padding: 2.5rem 2rem; text-align: center; background: var(--bg); }
+    .pr-footer p { font-size: 0.78rem; color: var(--text-muted); line-height: 1.8; }
+    .pr-footer a { color: var(--text-muted); text-decoration: none; }
+    .pr-footer a:hover { color: var(--gold); }
 
     @media (max-width: 768px) {
       .pr-grid { grid-template-columns: 1fr; margin: 2.5rem auto; }
@@ -377,15 +308,21 @@
 
 <body>
 
-  <!-- Nav -->
   <nav class="pr-nav" role="navigation" aria-label="Pricing navigation">
     <a href="/" class="pr-nav-brand" aria-label="Vision Education Home">
+      <img src="assets/logo.png" alt="Logo" width="32" height="32" style="border-radius:8px;">
       <span class="pr-nav-brand-name">Vision <span>Education</span></span>
     </a>
-    <a href="/" class="pr-nav-back" id="pricingBackBtn">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
-      Back
-    </a>
+    <div style="display:flex;align-items:center;gap:8px;">
+      <button class="theme-toggle-btn" onclick="toggleTheme()" aria-label="Toggle theme">
+        <svg class="theme-icon-dark" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        <svg class="theme-icon-light" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+      </button>
+      <a href="/" class="pr-nav-back" id="pricingBackBtn">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+        Back
+      </a>
+    </div>
   </nav>
 
   <!-- Hero -->
