@@ -1448,16 +1448,22 @@
 
           <!-- Liveness Check Indicators -->
           <div style="display:flex; gap:8px; margin-bottom:20px; justify-content:center; flex-wrap:wrap;">
-            <div id="checkFace" class="liveness-check" style="display:flex; align-items:center; gap:6px; padding:8px 14px; border-radius:10px; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); transition:all 0.4s;">
-              <span class="check-icon" style="width:18px; height:18px; border-radius:50%; border:2px solid rgba(255,255,255,0.15); display:flex; align-items:center; justify-content:center; font-size:0.6rem; transition:all 0.3s;">⬜</span>
+            <div id="checkFace" class="liveness-check" style="display:flex; align-items:center; gap:6px; padding:8px 14px; border-radius:10px; background:var(--bg-input); border:1px solid var(--border); transition:all 0.4s;">
+              <span class="check-icon" style="width:18px; height:18px; border-radius:50%; border:2px solid var(--border-bright); display:flex; align-items:center; justify-content:center; transition:all 0.3s;">
+                <svg class="check-svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" style="display:none;"><polyline points="20 6 9 17 4 12"/></svg>
+              </span>
               <span style="font-size:0.72rem; font-weight:700; color:var(--text-secondary);">Face Found</span>
             </div>
-            <div id="checkMovement" class="liveness-check" style="display:flex; align-items:center; gap:6px; padding:8px 14px; border-radius:10px; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); transition:all 0.4s;">
-              <span class="check-icon" style="width:18px; height:18px; border-radius:50%; border:2px solid rgba(255,255,255,0.15); display:flex; align-items:center; justify-content:center; font-size:0.6rem; transition:all 0.3s;">⬜</span>
+            <div id="checkMovement" class="liveness-check" style="display:flex; align-items:center; gap:6px; padding:8px 14px; border-radius:10px; background:var(--bg-input); border:1px solid var(--border); transition:all 0.4s;">
+              <span class="check-icon" style="width:18px; height:18px; border-radius:50%; border:2px solid var(--border-bright); display:flex; align-items:center; justify-content:center; transition:all 0.3s;">
+                <svg class="check-svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" style="display:none;"><polyline points="20 6 9 17 4 12"/></svg>
+              </span>
               <span style="font-size:0.72rem; font-weight:700; color:var(--text-secondary);">Movement</span>
             </div>
-            <div id="checkBlink" class="liveness-check" style="display:flex; align-items:center; gap:6px; padding:8px 14px; border-radius:10px; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); transition:all 0.4s;">
-              <span class="check-icon" style="width:18px; height:18px; border-radius:50%; border:2px solid rgba(255,255,255,0.15); display:flex; align-items:center; justify-content:center; font-size:0.6rem; transition:all 0.3s;">⬜</span>
+            <div id="checkBlink" class="liveness-check" style="display:flex; align-items:center; gap:6px; padding:8px 14px; border-radius:10px; background:var(--bg-input); border:1px solid var(--border); transition:all 0.4s;">
+              <span class="check-icon" style="width:18px; height:18px; border-radius:50%; border:2px solid var(--border-bright); display:flex; align-items:center; justify-content:center; transition:all 0.3s;">
+                <svg class="check-svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" style="display:none;"><polyline points="20 6 9 17 4 12"/></svg>
+              </span>
               <span style="font-size:0.72rem; font-weight:700; color:var(--text-secondary);">Blink</span>
             </div>
           </div>
@@ -1515,20 +1521,17 @@
 
     /* Liveness check indicators */
     .liveness-check.done {
-      background: rgba(16, 185, 129, 0.08) !important;
-      border-color: rgba(16, 185, 129, 0.25) !important;
+      background: rgba(16, 185, 129, 0.10) !important;
+      border-color: rgba(16, 185, 129, 0.30) !important;
     }
     .liveness-check.done .check-icon {
       background: #10b981 !important;
       border-color: #10b981 !important;
       color: #fff !important;
-      font-size: 0.55rem !important;
     }
-    .liveness-check.done .check-icon::after {
-      content: '✓';
-    }
-    .liveness-check .check-icon {
-      font-size: 0 !important; /* Hide the placeholder square */
+    .liveness-check.done .check-icon .check-svg {
+      display: block !important;
+      stroke: #fff;
     }
   </style>
 

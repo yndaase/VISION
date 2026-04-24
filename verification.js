@@ -102,14 +102,18 @@ function openVerifyModal() {
 }
 
 function closeVerifyModal() {
-    document.getElementById('verifyModal').style.display = 'none';
+    const modal = document.getElementById('verifyModal');
+    if (modal) modal.style.display = 'none';
+    document.body.style.overflow = '';
     stopTracking();
     stopCamera();
 }
 
 function resetVerifySteps() {
-    document.getElementById('verifyStep1').style.display = 'block';
-    document.getElementById('verifyStep2').style.display = 'none';
+    const step1 = document.getElementById('verifyStep1');
+    const step2 = document.getElementById('verifyStep2');
+    if (step1) step1.style.display = 'block';
+    if (step2) step2.style.display = 'none';
 
     // Reset liveness state
     livenessState = {
@@ -134,6 +138,14 @@ function resetVerifySteps() {
     if (resultIcon) resultIcon.style.display = 'none';
     const statusTitle = document.getElementById('verifyStatusTitle');
     if (statusTitle) { statusTitle.textContent = 'Verifying Identity'; statusTitle.style.color = 'var(--text-primary)'; }
+
+    // Reset check SVG icons back to hidden
+    document.querySelectorAll('.liveness-check').forEach(el => el.className = 'liveness-check');
+    document.querySelectorAll('.check-svg').forEach(svg => svg.style.display = 'none');
+
+    // Reset capture button
+    const btn = document.getElementById('verifyCaptureBtn');
+    if (btn) { btn.style.opacity = '0.5'; btn.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg> Verifying automatically...'; }
 
     // Reset tracking overlay
     const overlay = document.getElementById('trackingOverlay');
@@ -237,6 +249,9 @@ function startRealTimeTracking() {
         ctx.clearRect(0, 0, overlay.width, overlay.height);
 
         if (!modelsLoaded || !video.videoWidth) {
+            // Show loading status if models aren't ready yet
+            const statusEl = document.getElementById('trackingStatus');
+            if (statusEl && !modelsLoaded) statusEl.textContent = '⏳ Loading face detection models...';
             trackingInterval = requestAnimationFrame(trackFrame);
             return;
         }
