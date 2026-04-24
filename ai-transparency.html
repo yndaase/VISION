@@ -1,159 +1,114 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>AI Transparency | Vision Education</title>
-    <meta name="description" content="Learn how Vision Education uses AI (GPT-4.0 & Gemini 2.5) to enhance academic preparation." />
-    
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
-    
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-      tailwind.config = {
-        theme: {
-          extend: {
-            fontFamily: {
-              sans: ['Outfit', 'sans-serif'],
-            },
-            colors: {
-              navy: {
-                DEFAULT: '#05080f',
-                light: '#0a101f',
-                accent: '#1e293b'
-              },
-              emerald: {
-                DEFAULT: '#10b981',
-                light: '#34d399',
-                dark: '#059669'
-              },
-              indigo: {
-                DEFAULT: '#6366f1',
-                light: '#818cf8',
-                dark: '#4f46e5'
-              }
-            },
-          }
-        }
-      }
-    </script>
-    <style>
-      .glass { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.1); }
-      .legal-card { background: rgba(255, 255, 255, 0.02); backdrop-filter: blur(24px); border: 1px solid rgba(255, 255, 255, 0.05); }
-      
-      .hp-nav { transition: all 0.4s; }
-      .hp-nav.scrolled { background: rgba(5, 8, 15, 0.8); backdrop-filter: blur(20px); border-bottom: 1px solid rgba(255, 255, 255, 0.05); padding: 0.75rem 0.5rem; }
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Transparency | Vision Education</title>
+  <meta name="description" content="Learn how Vision Education uses AI (GPT-4.0 & Gemini 2.5) to enhance academic preparation." />
+  <link rel="canonical" href="https://www.visionedu.online/ai-transparency" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <script src="theme.js"></script>
+  <link rel="stylesheet" href="theme.css" />
+  <link rel="stylesheet" href="global-site.css" />
+</head>
+<body class="site-page">
 
-      .hp-btn-glass { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); color: #fff; border-radius: 12px; transition: all 0.3s; }
-      .hp-btn-glass:hover { background: rgba(255, 255, 255, 0.1); border-color: rgba(255, 255, 255, 0.2); }
-      
-      .hp-btn-primary { background: linear-gradient(135deg, #10b981, #6366f1); color: #fff; border-radius: 12px; box-shadow: 0 10px 20px rgba(99, 102, 241, 0.3); transition: all 0.3s; }
+  <!-- NAV -->
+  <nav class="site-nav" id="siteNav">
+    <a href="/" class="site-nav-brand">
+      <img src="assets/logo.png" alt="Vision Education Logo" width="34" height="34">
+      <span class="site-nav-brand-name">Vision <span>Education</span></span>
+    </a>
+    <div class="site-nav-actions">
+      <button class="theme-toggle-btn" onclick="toggleTheme()" aria-label="Toggle theme">
+        <svg class="theme-icon-dark" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        <svg class="theme-icon-light" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+      </button>
+      <a href="/login.html" class="site-nav-btn-outline">Log In</a>
+      <a href="/dashboard.html" class="site-nav-btn-primary">Dashboard</a>
+      <button class="site-nav-hamburger" id="siteHamburger" aria-label="Open menu" aria-expanded="false">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+      </button>
+    </div>
+  </nav>
 
-      .hero-gradient { background: radial-gradient(circle at top right, rgba(16, 185, 129, 0.05), transparent), radial-gradient(circle at bottom left, rgba(99, 102, 241, 0.05), transparent); }
-    </style>
-  </head>
-  <body class="bg-navy text-white font-sans selection:bg-indigo-500/30">
-    <!-- Background Decor -->
-    <div class="fixed inset-0 z-0 hero-gradient pointer-events-none"></div>
+  <!-- MAIN -->
+  <main class="site-main">
+    <div class="legal-page">
 
-    <!-- Navigation (Unified) -->
-    <nav class="fixed top-0 left-0 right-0 z-50 px-6 py-6 hp-nav" id="hpNav">
-      <div class="max-w-7xl mx-auto flex justify-between items-center text-sm">
-        <a href="/" class="flex items-center gap-3">
-          <div class="w-8 h-8 bg-gradient-to-br from-emerald-500 to-indigo-600 rounded-lg flex items-center justify-center text-white font-bold text-sm">V</div>
-          <span class="font-bold tracking-tight text-white uppercase italic">Vision Education</span>
-        </a>
-
-        <div class="flex items-center gap-6">
-          <a href="/login.html" class="hp-btn-glass px-4 py-2 font-bold">Log In</a>
-          <a href="/dashboard.html" class="hp-btn-primary px-4 py-2 font-bold">Get Started</a>
+      <div class="legal-header">
+        <div style="display:inline-flex;align-items:center;gap:8px;margin-bottom:0.75rem;">
+          <span style="font-size:0.68rem;font-weight:800;letter-spacing:0.14em;text-transform:uppercase;color:var(--gold);">Technology</span>
         </div>
+        <h1>AI Transparency</h1>
+        <p class="legal-updated">Integrated AI Services Disclosure</p>
       </div>
-    </nav>
 
-    <!-- Main Content -->
-    <main class="relative z-10 pt-40 pb-24">
-      
-      <div class="max-w-4xl mx-auto px-6">
-        <div class="legal-card rounded-[3rem] p-10 md:p-16 shadow-2xl">
-          
-          <div class="mb-16 border-b border-white/5 pb-12">
-            <h1 class="text-4xl md:text-5xl font-black mb-4">AI Transparency</h1>
-            <p class="text-gray-500 font-bold uppercase tracking-[0.2em] text-xs">Integrated AI Services Disclosure</p>
-          </div>
+      <div class="legal-section">
+        <h2>1. Our Philosophy</h2>
+        <p>Vision Education utilizes state-of-the-art Artificial Intelligence to provide students with a premium learning experience. We believe in transparency regarding how AI is used, ensuring that our students and educators understand the technology powering our platform.</p>
+      </div>
 
-          <div class="prose prose-invert max-w-none space-y-12">
-            
-            <section class="space-y-4">
-              <h2 class="text-2xl font-black text-emerald-400">1. Our Philosophy</h2>
-              <p class="text-gray-400 leading-relaxed">
-                Vision Education utilizes state-of-the-art Artificial Intelligence to provide students with a premium learning experience. We believe in transparency regarding how AI is used, ensuring that our students and educators understand the technology powering our platform.
-              </p>
-            </section>
-
-            <section class="space-y-4">
-              <h2 class="text-2xl font-black text-indigo-400">2. Integrated AI Services</h2>
-              <p class="text-gray-400 leading-relaxed">
-                We have integrated powerful AI models to enhance your academic preparation. Specifically, we use:
-              </p>
-              
-              <div class="glass p-8 rounded-3xl border-white/5 my-8">
-                <h3 class="text-white font-bold mb-4 flex items-center gap-3">
-                  <div class="w-2 h-2 rounded-full bg-indigo-500"></div>
-                  GPT-4.0
-                </h3>
-                <p class="text-sm text-gray-400 leading-relaxed">
-                  Powers our advanced theory marking engine, providing logical breakdown, step-by-step feedback, and scoring on student workings, simulating a real examiner's assessment.
-                </p>
-              </div>
-
-              <div class="glass p-8 rounded-3xl border-white/5 my-8">
-                <h3 class="text-white font-bold mb-4 flex items-center gap-3">
-                  <div class="w-2 h-2 rounded-full bg-emerald-500"></div>
-                  Gemini 2.5
-                </h3>
-                <p class="text-sm text-gray-400 leading-relaxed">
-                  Assists in content curation, intelligent question generation, and ensuring all practice materials and feedback align accurately with the latest WAEC curriculum standards.
-                </p>
-              </div>
-            </section>
-
-            <section class="space-y-4">
-              <h2 class="text-2xl font-black text-white">3. Data Privacy and AI</h2>
-              <p class="text-gray-400 leading-relaxed">
-                Your privacy is paramount. Data sent to these AI services is completely anonymized and used solely for the purpose of generating educational feedback in real-time. No personally identifiable information (PII) is transmitted to these AI models, and your data is never used to train external public models.
-              </p>
-            </section>
-
-            <section class="space-y-4">
-              <h2 class="text-2xl font-black text-white">4. Limitations and Guarantees</h2>
-              <p class="text-gray-400 leading-relaxed">
-                While our AI models provide highly accurate feedback and grading, they are designed as supplementary educational tools. They emulate WAEC marking schemes to the best of their capabilities but do not replace official WAEC examiners. Always consult with your teachers and official syllabuses.
-              </p>
-            </section>
-
-          </div>
+      <div class="legal-section">
+        <h2>2. Integrated AI Services</h2>
+        <p>We have integrated powerful AI models to enhance your academic preparation. Specifically, we use:</p>
+        
+        <div class="legal-highlight" style="margin-top:1.5rem; border-color:var(--indigo);">
+          <h3 style="color:var(--indigo); display:flex; align-items:center; gap:8px;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 2v4m0 12v4m-7.07-3.93l2.83-2.83m8.48-8.48l2.83-2.83M2 12h4m12 0h4M4.93 4.93l2.83 2.83m8.48 8.48l2.83 2.83"/></svg>
+            GPT-4.0
+          </h3>
+          <p>Powers our advanced theory marking engine, providing logical breakdown, step-by-step feedback, and scoring on student workings, simulating a real examiner's assessment.</p>
         </div>
 
-        <div class="mt-12 text-center">
-           <a href="/" class="text-xs font-bold text-gray-600 uppercase tracking-widest hover:text-white transition-colors">Return to Home</a>
+        <div class="legal-highlight" style="margin-top:1.5rem; border-color:var(--emerald);">
+          <h3 style="color:var(--emerald); display:flex; align-items:center; gap:8px;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+            Gemini 2.5
+          </h3>
+          <p>Assists in content curation, intelligent question generation, and ensuring all practice materials and feedback align accurately with the latest WAEC curriculum standards.</p>
         </div>
       </div>
 
-    </main>
+      <div class="legal-section">
+        <h2>3. Data Privacy and AI</h2>
+        <p>Your privacy is paramount. Data sent to these AI services is completely anonymized and used solely for the purpose of generating educational feedback in real-time. No personally identifiable information (PII) is transmitted to these AI models, and your data is never used to train external public models.</p>
+      </div>
 
-    <!-- Footer (Short) -->
-    <footer class="relative z-10 py-12 text-center">
-      <p class="text-[10px] font-black text-gray-700 uppercase tracking-[0.4em]">© 2026 Vision Education Initiative</p>
-    </footer>
+      <div class="legal-section">
+        <h2>4. Limitations and Guarantees</h2>
+        <p>While our AI models provide highly accurate feedback and grading, they are designed as supplementary educational tools. They emulate WAEC marking schemes to the best of their capabilities but do not replace official WAEC examiners. Always consult with your teachers and official syllabuses.</p>
+      </div>
 
-    <script>
-      const hpNav = document.getElementById('hpNav');
-      window.addEventListener('scroll', () => {
-        hpNav.classList.toggle('scrolled', window.scrollY > 40);
-      }, { passive: true });
-    </script>
-  </body>
+      <div style="text-align:center;margin-top:3rem;">
+        <a href="/" style="font-size:0.78rem;font-weight:700;color:var(--text-muted);text-decoration:none;border:1.5px solid var(--border);padding:9px 22px;border-radius:100px;transition:all 0.2s;display:inline-block;" onmouseover="this.style.borderColor='var(--gold)';this.style.color='var(--text-primary)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--text-muted)'">← Return to Home</a>
+      </div>
+    </div>
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="site-footer">
+    <div class="site-footer-inner">
+      <div class="site-footer-links">
+        <a href="/privacy.html">Privacy Policy</a>
+        <a href="/terms.html">Terms of Service</a>
+        <a href="/ai-transparency.html">AI Transparency</a>
+      </div>
+      <div class="site-footer-copy">
+        &copy; 2026 Vision Education &middot; All rights reserved.
+      </div>
+    </div>
+  </footer>
+
+  <script src="site-nav.js"></script>
+  <script>
+    // Sticky nav scroll effect
+    const siteNav = document.getElementById('siteNav');
+    window.addEventListener('scroll', () => {
+      siteNav.classList.toggle('scrolled', window.scrollY > 40);
+    }, { passive: true });
+  </script>
+</body>
 </html>
