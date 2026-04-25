@@ -1,437 +1,253 @@
-<!DOCTYPE html>
-<html lang="en-GH" class="scroll-smooth">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Page Not Found | Vision Education Blog</title>
-  <meta name="description" content="The page you're looking for doesn't exist. Return to Vision Education and continue your WASSCE preparation journey.">
-  <meta name="robots" content="noindex, nofollow">
-  <meta name="theme-color" content="#05080f">
-  <link rel="canonical" href="https://www.visionedu.online/">
-  <link rel="manifest" href="manifest.json">
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script src="nav.js" defer></script>
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests" />
+    <script defer src="/_vercel/insights/script.js"></script>
+    <script>
+      window.si = window.si || function () { (window.siq = window.siq || []).push(arguments); };
+    </script>
+    <script defer src="/_vercel/speed-insights/script.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>404 - Page Not Found | Vision Education</title>
+    <meta name="description" content="The page you are looking for doesn't exist. Let's get you back on track for your WASSCE prep." />
+    <link rel="manifest" href="manifest.json" />
+    <meta name="theme-color" content="#6366f1" />
+    <link rel="apple-touch-icon" href="assets/logo.png" />
+    <script src="register-sw.js"></script>
+    <meta name="robots" content="noindex, nofollow" />
 
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          fontFamily: {
-            sans: ['Outfit', 'sans-serif'],
-            mono: ['JetBrains Mono', 'monospace'],
-          },
-          colors: {
-            navy: { DEFAULT: '#05080f', light: '#0a101f', accent: '#1e293b' },
-            vibrantBlue: '#6366f1',
-            emerald: { DEFAULT: '#10b981', light: '#34d399', dark: '#059669' },
-            indigo:  { DEFAULT: '#6366f1', light: '#818cf8', dark: '#4f46e5' }
-          },
-          animation: {
-            'fade-in-up':  'fadeInUp 0.8s ease-out forwards',
-            'fade-in-up-delay': 'fadeInUp 0.8s 0.3s ease-out forwards',
-            'float':       'float 6s ease-in-out infinite',
-            'pulse-slow':  'pulse 3s ease-in-out infinite',
-            'spin-slow':   'spin 20s linear infinite',
-            'glitch':      'glitch 2.5s steps(1) infinite',
-          },
-          keyframes: {
-            fadeInUp: {
-              '0%':   { opacity: '0', transform: 'translateY(24px)' },
-              '100%': { opacity: '1', transform: 'translateY(0)' },
-            },
-            float: {
-              '0%, 100%': { transform: 'translateY(0)' },
-              '50%':      { transform: 'translateY(-20px)' },
-            },
-            glitch: {
-              '0%,100%': { 'clip-path': 'inset(0 0 100% 0)' },
-              '10%':     { 'clip-path': 'inset(20% 0 60% 0)', transform: 'translateX(-4px)' },
-              '20%':     { 'clip-path': 'inset(50% 0 30% 0)', transform: 'translateX(4px)' },
-              '30%':     { 'clip-path': 'inset(10% 0 80% 0)', transform: 'translateX(-2px)' },
-              '40%':     { 'clip-path': 'inset(70% 0 10% 0)', transform: 'translateX(2px)' },
-              '50%':     { 'clip-path': 'inset(0 0 100% 0)' },
-            }
-          }
-        }
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+    <script src="theme.js"></script>
+    <link rel="stylesheet" href="theme.css" />
+    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="homepage.css" />
+    
+    <style>
+      .error-glyph {
+        font-size: clamp(8rem, 20vw, 15rem);
+        font-weight: 900;
+        line-height: 1;
+        letter-spacing: -0.06em;
+        background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 50%, var(--primary) 100%);
+        background-size: 200% auto;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        animation: gradientShift 5s ease-in-out infinite alternate;
+        user-select: none;
+        margin-bottom: 20px;
       }
-    }
-  </script>
+      @keyframes gradientShift {
+        0%   { background-position: 0% center; }
+        100% { background-position: 100% center; }
+      }
+      .error-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        min-height: 80vh;
+        padding: 40px 20px;
+      }
+      .error-text {
+        color: var(--text-secondary);
+        font-size: 1.25rem;
+        max-width: 600px;
+        margin-bottom: 40px;
+        line-height: 1.6;
+      }
+      .error-buttons {
+        display: flex;
+        gap: 20px;
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+    </style>
+  </head>
+  <body>
 
-  <style>
-    /* ── Core utilities ── */
-    .glass {
-      background: rgba(255,255,255,0.03);
-      backdrop-filter: blur(12px);
-      border: 1px solid rgba(255,255,255,0.1);
-    }
-    .hero-gradient {
-      background:
-        radial-gradient(circle at top right,   rgba(16,185,129,0.12), transparent 60%),
-        radial-gradient(circle at bottom left, rgba(99,102,241,0.12),  transparent 60%);
-    }
-    .safe-bottom { padding-bottom: calc(env(safe-area-inset-bottom) + 80px); }
-    @media (min-width:768px) { .safe-bottom { padding-bottom: 0; } }
+    <!-- STICKY NAV -->
+    <nav class="hp-nav" id="hpNav" role="navigation" aria-label="Main navigation">
+      <a class="hp-nav-brand" href="/" aria-label="Vision Education Home">
+        <img src="assets/logo.png" alt="Vision Education Logo" width="36" height="36" loading="eager" />
+        <span class="hp-nav-brand-text">Vision <span>Education</span></span>
+      </a>
 
-    /* ── Dot-grid background ── */
-    .dot-grid {
-      background-image: radial-gradient(rgba(255,255,255,0.07) 1px, transparent 1px);
-      background-size: 28px 28px;
-    }
+      <div class="hp-nav-links" role="menubar">
+        <a href="/" class="hp-nav-link" role="menuitem">Home</a>
+        <a href="/mocks.html" class="hp-nav-link" role="menuitem">Mock Exams</a>
+        <a href="/features.html" class="hp-nav-link" role="menuitem">Features</a>
+        <a href="https://visionedu.site" target="_blank" class="hp-nav-link" role="menuitem">Blog</a>
+        <a href="/pricing.html" class="hp-nav-link" role="menuitem">Pricing</a>
+        <a href="/about.html" class="hp-nav-link" role="menuitem">About</a>
+      </div>
 
-    /* ── Giant 404 glyph ── */
-    .error-glyph {
-      font-size: clamp(7rem, 22vw, 17rem);
-      font-weight: 900;
-      line-height: 1;
-      letter-spacing: -0.06em;
-      background: linear-gradient(135deg, #34d399 0%, #818cf8 50%, #34d399 100%);
-      background-size: 200% auto;
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      animation: gradientShift 5s ease-in-out infinite alternate;
-      user-select: none;
-    }
-    @keyframes gradientShift {
-      0%   { background-position: 0% center; }
-      100% { background-position: 100% center; }
-    }
-
-    /* ── Glitch overlay layer ── */
-    .error-glyph-glitch {
-      font-size: clamp(7rem, 22vw, 17rem);
-      font-weight: 900;
-      line-height: 1;
-      letter-spacing: -0.06em;
-      position: absolute;
-      top: 0; left: 0; right: 0;
-      color: #6366f1;
-      opacity: 0.18;
-      pointer-events: none;
-      animation: glitch 2.5s steps(1) 2s infinite;
-    }
-
-    /* ── Progress / countdown bar ── */
-    #redirect-bar {
-      transition: width 1s linear;
-    }
-
-    /* ── Article card hover lift ── */
-    .article-card {
-      transition: transform 0.35s cubic-bezier(.22,.68,0,1.2), box-shadow 0.35s ease;
-    }
-    .article-card:hover {
-      transform: translateY(-6px);
-      box-shadow: 0 24px 60px -12px rgba(0,0,0,0.35);
-    }
-
-    /* ── Animated backdrop orbs ── */
-    .orb { position: absolute; border-radius: 9999px; filter: blur(100px); pointer-events: none; }
-
-    /* ── Animated code lines decoration ── */
-    .code-line {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.7rem;
-      color: rgba(99,102,241,0.25);
-      white-space: nowrap;
-      overflow: hidden;
-    }
-    .code-line span { animation: type-in 4s steps(40,end) infinite alternate; display: inline-block; }
-    @keyframes type-in {
-      from { width: 0; }
-      to   { width: 100%; }
-    }
-  </style>
-</head>
-
-<body class="bg-navy font-sans text-white antialiased safe-bottom">
-
-  <!-- ════════════════════ HEADER ════════════════════ -->
-  <header class="sticky top-0 z-50 bg-navy/80 backdrop-blur-xl border-b border-white/5 transition-all duration-300">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="flex justify-between items-center h-20">
-
-        <!-- Logo -->
-        <a href="/" class="flex items-center gap-3 group" aria-label="Vision Education Home">
-          <div class="w-10 h-10 bg-gradient-to-br from-emerald-500 to-indigo-600 rounded-xl flex items-center justify-center text-white font-bold text-lg shadow-lg group-hover:scale-110 transition-transform">V</div>
-          <span class="font-bold text-xl tracking-tight text-white group-hover:text-emerald-400 transition-colors">Vision Education</span>
+      <div class="hp-nav-cta">
+        <button class="theme-toggle-btn" onclick="toggleTheme()" aria-label="Toggle theme">
+          <svg class="theme-icon-dark" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+          <svg class="theme-icon-light" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+        </button>
+        <a href="/login.html" class="hp-btn-outline" id="navLoginBtn">Login</a>
+        <a href="/dashboard.html" class="hp-btn-primary" id="navStartBtn">Start Free
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
         </a>
+      </div>
 
-        <!-- Desktop nav -->
-        <nav class="hidden md:flex items-center gap-8" aria-label="Primary navigation">
-          <a href="https://visionedu.online" target="_blank" rel="noopener" class="text-sm font-semibold text-gray-400 hover:text-white transition-colors">Platform</a>
-          <a href="about" class="text-sm font-semibold text-gray-400 hover:text-white transition-colors">About</a>
-          <a href="articles" class="text-sm font-semibold text-gray-400 hover:text-white transition-colors">Articles</a>
-          <a href="https://visionedu.online" target="_blank" rel="noopener" class="px-5 py-2.5 bg-emerald-500 text-navy text-sm font-extrabold rounded-xl hover:bg-emerald-400 transition-all shadow-lg shadow-emerald-500/20 active:scale-95">
-            Get Started
-          </a>
-        </nav>
+      <button class="hp-nav-hamburger" id="hpHamburger" aria-label="Open menu" aria-expanded="false">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+          <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
+        </svg>
+      </button>
+    </nav>
 
-        <!-- Mobile menu button -->
-        <button id="mobile-menu-btn" class="md:hidden p-2 text-gray-400 hover:bg-white/5 rounded-lg transition-colors" aria-label="Open menu">
-          <svg id="menu-icon"  class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
-          <svg id="close-icon" class="w-6 h-6 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+    <!-- MOBILE DRAWER -->
+    <div class="hp-mobile-overlay" id="hpOverlay" onclick="closeDrawer()"></div>
+    <div class="hp-mobile-drawer" id="hpDrawer" role="dialog" aria-modal="true" aria-label="Navigation menu">
+      <div class="drawer-header">
+        <a href="/" class="drawer-brand">
+          <img src="assets/logo.png" alt="Logo" width="28" height="28" style="border-radius:6px;">
+          <span>Vision <em>Education</em></span>
+        </a>
+        <button class="drawer-close" onclick="closeDrawer()" aria-label="Close menu">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
         </button>
       </div>
-    </div>
-
-    <!-- Mobile dropdown -->
-    <div id="mobile-menu" class="hidden md:hidden bg-navy border-b border-white/5 py-4 px-4 space-y-2">
-      <a href="https://visionedu.online" target="_blank" rel="noopener" class="block py-3 px-4 text-gray-400 font-semibold hover:bg-white/5 rounded-xl">Platform</a>
-      <a href="about"     class="block py-3 px-4 text-gray-400 font-semibold hover:bg-white/5 rounded-xl">About</a>
-      <a href="articles"  class="block py-3 px-4 text-gray-400 font-semibold hover:bg-white/5 rounded-xl">Articles</a>
-      <div class="pt-4">
-        <a href="https://visionedu.online" class="block w-full py-4 bg-gradient-to-r from-emerald-500 to-indigo-600 text-white text-center font-extrabold rounded-xl shadow-lg">
-          Visit VisionEdu
+      <div class="drawer-links">
+        <a href="/" class="drawer-link">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+          Home
+        </a>
+        <a href="/mocks.html" class="drawer-link">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          Mock Exams
+        </a>
+        <a href="/features.html" class="drawer-link">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          Features
+        </a>
+        <a href="https://visionedu.site" target="_blank" class="drawer-link">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          Blog
+        </a>
+        <a href="/pricing.html" class="drawer-link">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+          Pricing
+        </a>
+        <a href="/about.html" class="drawer-link">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+          About
         </a>
       </div>
-    </div>
-  </header>
-
-  <!-- ════════════════════ MOBILE BOTTOM NAV ════════════════════ -->
-  <div class="md:hidden fixed bottom-0 left-0 right-0 z-[60] bg-navy/90 backdrop-blur-xl border-t border-white/5 pb-[env(safe-area-inset-bottom)]">
-    <div class="flex justify-around items-center h-16">
-      <a href="/" class="flex flex-col items-center gap-1 text-gray-500 hover:text-emerald-400 transition-colors" aria-label="Home">
-        <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
-        <span class="text-[10px] font-bold uppercase tracking-widest">Home</span>
-      </a>
-      <a href="about" class="flex flex-col items-center gap-1 text-gray-500 hover:text-emerald-400 transition-colors" aria-label="About">
-        <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-        <span class="text-[10px] font-bold uppercase tracking-widest">About</span>
-      </a>
-      <a href="articles" class="flex flex-col items-center gap-1 text-gray-500 hover:text-emerald-400 transition-colors" aria-label="Articles">
-        <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10l4 4v10a2 2 0 01-2 2z"/><path d="M14 4v4h4"/><path d="M7 8h1"/><path d="M7 12h6"/><path d="M7 16h8"/></svg>
-        <span class="text-[10px] font-bold uppercase tracking-widest">Articles</span>
-      </a>
-    </div>
-  </div>
-
-  <!-- ════════════════════ HERO — 404 ERROR ════════════════════ -->
-  <section class="relative min-h-[92vh] flex items-center justify-center overflow-hidden hero-gradient bg-navy" aria-labelledby="error-heading">
-
-    <!-- Background texture -->
-    <div class="absolute inset-0 dot-grid opacity-100"></div>
-
-    <!-- Ambient orbs -->
-    <div class="orb w-[600px] h-[600px] bg-emerald-500/10 top-[-10%] right-[-15%] animate-float"></div>
-    <div class="orb w-[500px] h-[500px] bg-indigo-500/10  bottom-[-10%] left-[-12%] animate-float" style="animation-delay:2.5s;"></div>
-    <div class="orb w-[300px] h-[300px] bg-emerald-500/5  top-[40%] left-[30%]  animate-float" style="animation-delay:1.2s;"></div>
-
-    <!-- Decorative code lines — left edge -->
-    <div class="absolute left-6 top-1/4 hidden xl:flex flex-col gap-3 opacity-60 select-none" aria-hidden="true">
-      <div class="code-line"><span>if (page.exists) { render() }</span></div>
-      <div class="code-line" style="animation-delay:.8s"><span>else { throw new Error('404') }</span></div>
-      <div class="code-line" style="animation-delay:1.6s"><span>// Redirecting to safety...</span></div>
-    </div>
-    <!-- Decorative code lines — right edge -->
-    <div class="absolute right-6 bottom-1/3 hidden xl:flex flex-col gap-3 opacity-60 select-none text-right" aria-hidden="true">
-      <div class="code-line"><span>const route = '/home'</span></div>
-      <div class="code-line" style="animation-delay:.5s"><span>navigate(route, { replace: true })</span></div>
-    </div>
-
-    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center py-24 w-full animate-fade-in-up">
-
-      <!-- Status badge -->
-      <div class="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-full glass text-emerald-400 font-bold text-xs tracking-widest uppercase mb-12 border border-emerald-500/20">
-        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-        <span class="font-mono">HTTP / 404 — Not Found</span>
+      <div class="drawer-footer">
+        <a href="/login.html" class="drawer-btn-login">Log In</a>
+        <a href="/dashboard.html" class="drawer-btn-start">Start Free &rarr;</a>
       </div>
+    </div>
 
-      <!-- Giant "404" with glitch -->
-      <div class="relative inline-block mb-6" aria-hidden="true">
+    <!-- 404 SECTION -->
+    <header class="hp-hero" role="banner" style="min-height: 85vh; display: flex; align-items: center; justify-content: center; text-align: center;">
+      <div class="hp-hero-bg" aria-hidden="true"></div>
+      <div class="hp-hero-overlay" aria-hidden="true"></div>
+
+      <div class="error-container z-10 relative">
+        <div class="hp-hero-eyebrow" style="margin-bottom: 20px;">HTTP / 404 &mdash; Not Found</div>
         <div class="error-glyph">404</div>
-        <div class="error-glyph-glitch">404</div>
-      </div>
+        <h1 class="hp-hero-h1">
+          Looks Like You're<br />
+          <span class="accent">Lost in Cyberspace</span>
+        </h1>
+        <p class="error-text">
+          You've followed a broken link or mistyped a URL. Your WASSCE preparation stops for nobody, so let's get you back on track.
+        </p>
 
-      <!-- Heading -->
-      <h1 id="error-heading" class="text-4xl md:text-6xl font-black text-white mb-6 tracking-tighter leading-[1.1]">
-        This Page Doesn't Exist
-      </h1>
-
-      <!-- Sub-copy -->
-      <p class="text-xl md:text-2xl text-gray-400 mb-10 max-w-2xl mx-auto font-medium leading-relaxed">
-        You've followed a broken link or mistyped a URL — it happens. Your WASSCE preparation stops for nobody, so let's get you back on track.
-      </p>
-
-      <!-- Redirect countdown -->
-      <div class="flex items-center justify-center gap-3 mb-12" id="countdown-wrapper">
-        <span class="text-gray-500 text-sm font-bold font-mono">Redirecting to home in</span>
-        <span id="countdown-num" class="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-emerald-400 font-black text-lg font-mono">10</span>
-        <span class="text-gray-500 text-sm font-bold font-mono">seconds</span>
-      </div>
-
-      <!-- Countdown progress bar -->
-      <div class="max-w-xs mx-auto h-1 bg-white/5 rounded-full overflow-hidden mb-14">
-        <div id="redirect-bar" class="h-full bg-gradient-to-r from-emerald-500 to-indigo-500 rounded-full w-full"></div>
-      </div>
-
-      <!-- CTA Buttons -->
-      <div class="flex flex-col sm:flex-row gap-4 justify-center">
-        <a href="/" id="go-home-btn" class="px-10 py-5 bg-emerald-500 hover:bg-emerald-400 text-navy font-extrabold rounded-2xl transition-all shadow-2xl shadow-emerald-500/20 hover:-translate-y-1 text-center text-lg active:scale-95">
-          Take Me Home
-        </a>
-        <a href="articles" class="px-10 py-5 bg-white/5 hover:bg-white/10 text-white font-bold rounded-2xl transition-all border border-white/10 backdrop-blur-sm hover:-translate-y-1 text-center text-lg active:scale-95">
-          Browse Articles
-        </a>
-        <a href="https://visionedu.online" target="_blank" rel="noopener" class="px-10 py-5 bg-indigo-600/30 hover:bg-indigo-600/50 text-indigo-300 hover:text-white font-bold rounded-2xl transition-all border border-indigo-500/30 hover:-translate-y-1 text-center text-lg active:scale-95">
-          Visit Platform
-        </a>
-      </div>
-    </div>
-  </section>
-
-  <!-- ════════════════════ SUGGESTED ARTICLES ════════════════════ -->
-  <section class="py-24 bg-navy relative overflow-hidden" aria-labelledby="suggested-heading">
-    <div class="absolute inset-0 bg-gradient-to-b from-transparent via-indigo-500/3 to-transparent pointer-events-none"></div>
-
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-
-      <!-- Section label -->
-      <div class="text-center mb-16 animate-fade-in-up">
-        <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full glass text-indigo-400 font-bold text-xs tracking-widest uppercase mb-6 border border-indigo-500/20">
-          <span class="w-2 h-2 rounded-full bg-indigo-500"></span>
-          While You're Here
+        <div class="error-buttons">
+          <a href="/" class="hp-hero-cta-primary">
+            Take Me Home
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </a>
+          <a href="/dashboard.html" class="hp-hero-cta-secondary">
+            Go to Dashboard
+          </a>
         </div>
-        <h2 id="suggested-heading" class="text-3xl md:text-5xl font-black text-white tracking-tighter">
-          Continue Your Preparation
-        </h2>
-        <p class="text-gray-500 font-medium mt-4 text-lg">Hand-picked insights from the Vision Education blog</p>
       </div>
+    </header>
 
-      <!-- Article cards grid -->
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-
-        <!-- Card 1 -->
-        <a href="parent-guide.html" class="article-card glass rounded-[2rem] p-8 flex flex-col gap-5 group hover:border-emerald-500/30 cursor-pointer" aria-label="Read: Visionary Parent's Guide to 2026">
-          <div class="flex items-start gap-4">
-            <div class="w-14 h-14 shrink-0 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400">
-              <!-- Parenting icon -->
-              <svg class="w-7 h-7" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-            </div>
-            <span class="px-3 py-1 text-[10px] font-black uppercase tracking-widest rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 self-start">Leadership</span>
-          </div>
-          <div>
-            <h3 class="text-xl font-black text-white mb-2 group-hover:text-emerald-400 transition-colors leading-snug">Visionary Parent's Guide to 2026</h3>
-            <p class="text-gray-500 font-medium text-sm leading-relaxed">Empowering your child's academic journey with AI-driven monitoring and strategic oversight.</p>
-          </div>
-          <div class="mt-auto flex items-center gap-2 text-emerald-400 font-bold text-sm">
-            Read Article
-            <svg class="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M14 5l7 7-7 7"/></svg>
-          </div>
+    <!-- FOOTER -->
+    <footer class="hp-footer" role="contentinfo">
+      <div class="hp-footer-inner">
+        <a class="hp-footer-brand" href="/" aria-label="Vision Education">
+          <img src="assets/logo.png" alt="Vision Education Footer Logo" width="34" height="34" loading="lazy" />
+          <span class="hp-footer-brand-name">Vision <span>Education</span></span>
         </a>
 
-        <!-- Card 2 -->
-        <a href="core-math-2026.html" class="article-card glass rounded-[2rem] p-8 flex flex-col gap-5 group hover:border-indigo-500/30 cursor-pointer" aria-label="Read: Decoding the Math Syllabus">
-          <div class="flex items-start gap-4">
-            <div class="w-14 h-14 shrink-0 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-400">
-              <!-- Math icon -->
-              <svg class="w-7 h-7" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M4 7h16M4 11h16M4 15h8M4 19h8"/><path d="M17 16l2 2 4-4"/></svg>
-            </div>
-            <span class="px-3 py-1 text-[10px] font-black uppercase tracking-widest rounded-full bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 self-start">Mathematics</span>
-          </div>
-          <div>
-            <h3 class="text-xl font-black text-white mb-2 group-hover:text-indigo-400 transition-colors leading-snug">Decoding the 2026 Math Syllabus</h3>
-            <p class="text-gray-500 font-medium text-sm leading-relaxed">An in-depth breakdown of what the Chief Examiner expects this year — from Paper 1 to Paper 2.</p>
-          </div>
-          <div class="mt-auto flex items-center gap-2 text-indigo-400 font-bold text-sm">
-            Read Article
-            <svg class="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M14 5l7 7-7 7"/></svg>
-          </div>
-        </a>
+        <p class="hp-footer-meta">
+          Built for Ghana SHS Students · 2026 WASSCE Core Mathematics ·
+          <strong>AI Transparency:</strong> This application integrates <strong>GPT-4.0</strong> and <strong>Gemini 2.5</strong>
+          to provide intelligent feedback, marking, and educational assistance. We are committed to transparency in AI usage.
+        </p>
 
-        <!-- Card 3 -->
-        <a href="ai-test-prep.html" class="article-card glass rounded-[2rem] p-8 flex flex-col gap-5 group hover:border-vibrantBlue/30 cursor-pointer" aria-label="Read: AI Flipping the Script on Prep">
-          <div class="flex items-start gap-4">
-            <div class="w-14 h-14 shrink-0 rounded-2xl bg-violet-500/10 border border-violet-500/20 flex items-center justify-center text-violet-400">
-              <!-- AI chip icon -->
-              <svg class="w-7 h-7" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M9 9h6v6H9z"/><path d="M9 1v3M15 1v3M9 20v3M15 20v3M1 9h3M1 15h3M20 9h3M20 15h3"/></svg>
-            </div>
-            <span class="px-3 py-1 text-[10px] font-black uppercase tracking-widest rounded-full bg-violet-500/10 text-violet-400 border border-violet-500/20 self-start">EdTech</span>
-          </div>
-          <div>
-            <h3 class="text-xl font-black text-white mb-2 group-hover:text-violet-400 transition-colors leading-snug">AI Flipping the Script on Prep</h3>
-            <p class="text-gray-500 font-medium text-sm leading-relaxed">How Vision's AI models provide objective, instant grading and personalised feedback for WASSCE.</p>
-          </div>
-          <div class="mt-auto flex items-center gap-2 text-violet-400 font-bold text-sm">
-            Read Article
-            <svg class="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M14 5l7 7-7 7"/></svg>
-          </div>
-        </a>
+        <div class="hp-footer-links" role="navigation" aria-label="Footer navigation">
+          <a href="https://www.youtube.com/channel/UCo4k-_8Q92hXOcUdbAtwabg" target="_blank" rel="noopener" class="hp-footer-yt" title="Watch on YouTube" aria-label="YouTube channel">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+            </svg>
+          </a>
+          <a href="https://x.com/yndaase" target="_blank" rel="noopener" class="hp-footer-yt" id="xFooterLink" title="Follow on X" aria-label="Follow on X"
+             style="color:#475569;transition:all 0.2s;" onmouseover="this.style.color='#f1f5f9';this.style.filter='drop-shadow(0 0 8px rgba(255,255,255,0.2))'" onmouseout="this.style.color='#475569';this.style.filter=''">
+            <svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18" aria-hidden="true">
+              <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.747l7.73-8.835L1.254 2.25H8.08l4.253 5.622 5.911-5.622zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+            </svg>
+          </a>
+          <a href="/privacy" class="hp-footer-link" id="footerPrivacyLink">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            Privacy Policy
+          </a>
+          <a href="/terms.html" class="hp-footer-link" id="footerTermsLink">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            Terms of Service
+          </a>
+          <a href="/parent-portal.html" class="hp-footer-link" style="color: #10b981;" id="footerParentLink">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            Parent Portal
+          </a>
+          <a href="/ai-transparency.html" class="hp-footer-link ai-link" id="footerAIBtn">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+            AI Transparency
+          </a>
+        </div>
 
+        <div class="hp-footer-divider" role="separator"></div>
+        <p class="hp-footer-bottom">© 2026 Vision Education · Made with ♥ in Ghana</p>
       </div>
+    </footer>
 
-      <!-- View all link -->
-      <div class="text-center mt-12">
-        <a href="articles" class="inline-flex items-center gap-3 text-gray-400 hover:text-white font-bold text-base transition-colors group">
-          View all articles
-          <div class="w-9 h-9 rounded-full border border-white/10 flex items-center justify-center group-hover:bg-emerald-500 group-hover:border-emerald-500 group-hover:text-navy transition-all">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 12h14M12 5l7 7-7 7"/></svg>
-          </div>
-        </a>
-      </div>
-    </div>
-  </section>
+    <script>
+      // Sticky nav scroll effect
+      const hpNav = document.getElementById('hpNav');
+      window.addEventListener('scroll', () => {
+        hpNav.classList.toggle('scrolled', window.scrollY > 60);
+      }, { passive: true });
 
-  <!-- ════════════════════ FOOTER ════════════════════ -->
-  <footer class="bg-navy py-16 border-t border-white/5">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-
-      <!-- Logo -->
-      <div class="flex items-center justify-center gap-3 mb-10">
-        <div class="w-10 h-10 bg-gradient-to-br from-emerald-500 to-indigo-600 rounded-xl flex items-center justify-center text-white font-bold text-lg">V</div>
-        <span class="font-bold text-2xl text-white tracking-tight">Vision Education</span>
-      </div>
-
-      <!-- Footer nav -->
-      <nav class="flex flex-wrap justify-center gap-x-12 gap-y-6 mb-12" aria-label="Footer navigation">
-        <a href="https://visionedu.online" target="_blank" rel="noopener" class="text-gray-500 hover:text-white font-semibold transition-colors">Platform</a>
-        <a href="about"    class="text-gray-500 hover:text-white font-semibold transition-colors">About</a>
-        <a href="articles" class="text-gray-500 hover:text-white font-semibold transition-colors">Articles</a>
-        <a href="mailto:mensuohyaw@gmail.com" class="text-gray-500 hover:text-white font-semibold transition-colors">Contact</a>
-      </nav>
-
-      <div class="pt-12 border-t border-white/5">
-        <p class="text-gray-600 font-medium">&copy; 2026 Yaw Ndaase Mensuoh. All Rights Reserved. Crafted for Ghana.</p>
-      </div>
-    </div>
-  </footer>
-
-  <!-- ════════════════════ COUNTDOWN SCRIPT ════════════════════ -->
-  <script>
-    (function () {
-      const SECONDS = 10;
-      const countEl = document.getElementById('countdown-num');
-      const barEl   = document.getElementById('redirect-bar');
-      const homeBtn = document.getElementById('go-home-btn');
-
-      let remaining = SECONDS;
-
-      // Start bar at full width → shrink to 0
-      barEl.style.width = '100%';
-
-      const tick = setInterval(() => {
-        remaining--;
-        if (countEl) countEl.textContent = remaining;
-        if (barEl)   barEl.style.width   = ((remaining / SECONDS) * 100) + '%';
-
-        if (remaining <= 0) {
-          clearInterval(tick);
-          window.location.href = '/';
-        }
-      }, 1000);
-
-      // Cancel redirect if user clicks a CTA
-      document.querySelectorAll('a[href], button').forEach(el => {
-        el.addEventListener('click', () => {
-          clearInterval(tick);
-          const wrapper = document.getElementById('countdown-wrapper');
-          if (wrapper) wrapper.style.display = 'none';
-          if (barEl)   barEl.closest('div').style.display = 'none';
-        });
-      });
-    })();
-  </script>
-
-</body>
+      // Hamburger drawer
+      function openDrawer() {
+        document.getElementById('hpDrawer').classList.add('open');
+        document.getElementById('hpOverlay').classList.add('open');
+        document.getElementById('hpHamburger').setAttribute('aria-expanded','true');
+        document.body.style.overflow = 'hidden';
+      }
+      function closeDrawer() {
+        document.getElementById('hpDrawer').classList.remove('open');
+        document.getElementById('hpOverlay').classList.remove('open');
+        document.getElementById('hpHamburger').setAttribute('aria-expanded','false');
+        document.body.style.overflow = '';
+      }
+      document.getElementById('hpHamburger').addEventListener('click', openDrawer);
+      // Close on Escape
+      document.addEventListener('keydown', e => { if (e.key === 'Escape') closeDrawer(); });
+    </script>
+  </body>
 </html>
