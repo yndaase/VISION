@@ -783,8 +783,7 @@ document.addEventListener("DOMContentLoaded", () => {
   if (!isHomepage) {
     // Strict auth guard for all other pages
     if (!session) {
-      const isRobotics = window.location.pathname.includes("robotics");
-      window.location.href = isRobotics ? "/robotics-login" : "/login";
+      window.location.href = "/login";
       return;
     }
   }

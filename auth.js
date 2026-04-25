@@ -255,8 +255,7 @@ function simpleHash(str) {
 function checkAuth() {
   const session = getSession();
   if (!session) {
-    const isRobotics = window.location.pathname.includes("robotics");
-    window.location.href = isRobotics ? "/robotics-login" : "/login";
+    window.location.href = "/login";
     return null;
   }
   
@@ -291,12 +290,6 @@ async function validateRevocationStatus(session) {
 //  Redirect helpers
 function goToDashboard() {
   const session = getSession();
-  const isRobotics = window.location.pathname.includes("robotics");
-  
-  if (isRobotics) {
-    window.location.href = "/robotics-dashboard";
-    return;
-  }
 
   if (session && session.role === 'teacher') {
     window.location.href = "/teacher-dashboard.html";
@@ -313,8 +306,7 @@ function goToLogin() {
 //  Logout
 function handleLogout() {
   clearSession();
-  const isRobotics = window.location.pathname.includes("robotics");
-  window.location.href = isRobotics ? "/robotics-login" : "/login";
+  window.location.href = "/login";
 }
 // REDO: Guarantee global availability for all HTML event handlers
 window.handleLogout = handleLogout;
@@ -1147,38 +1139,26 @@ function switchTab(tab) {
   const sub = document.getElementById("authSubtitle");
   if (!title || !sub) return;
 
-  const isRobotics = window.location.pathname.includes("robotics");
-
   if (tab === "login") {
-    title.textContent = isRobotics ? "Team Access" : "Welcome back";
-    sub.textContent = isRobotics
-      ? "Hardware credentials required."
-      : "Sign in to continue your WASSCE prep journey.";
+    title.textContent = "Welcome back";
+    sub.textContent = "Sign in to continue your WASSCE prep journey.";
   } else if (tab === "signup") {
-    title.textContent = isRobotics ? "Enroll Member" : "Create your account";
-    sub.textContent = isRobotics
-      ? "Register for the Augusco Robotics team."
-      : "Join thousands of Ghana SHS students preparing for 2026.";
+    title.textContent = "Create your account";
+    sub.textContent = "Join thousands of Ghana SHS students preparing for 2026.";
   } else if (tab === "forgot") {
-    title.textContent = isRobotics ? "Security Recovery" : "Reset Password";
-    sub.textContent = isRobotics
-      ? "Authorize access code for your team ID."
-      : "Don't worry, we'll get you back on track.";
+    title.textContent = "Reset Password";
+    sub.textContent = "Don't worry, we'll get you back on track.";
     const eForgot = document.getElementById("forgotEmail");
     if (eForgot && !eForgot.value) {
       const eLogin = document.getElementById("loginEmail");
       if (eLogin && eLogin.value) eForgot.value = eLogin.value;
     }
   } else if (tab === "reset") {
-    title.textContent = isRobotics ? "Verify Code" : "Check Your Email";
-    sub.textContent = isRobotics
-      ? "Enter the secondary authentication code."
-      : "You're almost there! Set a new password below.";
+    title.textContent = "Check Your Email";
+    sub.textContent = "You're almost there! Set a new password below.";
   } else if (tab === "2fa") {
-    title.textContent = isRobotics ? "Security Check" : "Identity Verifier";
-    sub.textContent = isRobotics
-      ? "Hardware key required for override."
-      : "Multi-factor authentication is active on your account.";
+    title.textContent = "Identity Verifier";
+    sub.textContent = "Multi-factor authentication is active on your account.";
   }
 }
 
