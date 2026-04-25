@@ -44,7 +44,11 @@ function getDeviceFingerprint() {
   else if (ua.includes("Android")) os = "Android";
   else if (ua.includes("like Mac")) os = "iOS";
 
-  return `${browser} on ${os}`;
+  let deviceType = "Desktop";
+  if (/Mobi|Android|iPhone|iPad|iPod/i.test(ua)) deviceType = "Mobile";
+  if (/Tablet|iPad/i.test(ua)) deviceType = "Tablet";
+
+  return `${deviceType} • ${browser} on ${os}`;
 }
 
 function getSessionUser() {
@@ -121,7 +125,7 @@ window.loadActiveSessions = async function() {
         <div style="display: flex; align-items: center; gap: 12px;">
           <div style="width: 40px; height: 40px; border-radius: 50%; background: rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center;">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: ${isCurrent ? '#10b981' : '#94a3b8'};">
-              ${data.deviceInfo.includes('iOS') || data.deviceInfo.includes('Android') ? 
+              ${data.deviceInfo.includes('Mobile') || data.deviceInfo.includes('Tablet') ? 
                 '<rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line>' : 
                 '<rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line>'
               }
