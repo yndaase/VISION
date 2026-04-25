@@ -706,76 +706,37 @@
           <p class="auth-disclaimer" style="margin-bottom: 0.5rem;">
             Your data stays in your browser only. No server, no tracking.
           </p>
-          <p class="auth-disclaimer" style="margin-bottom: 1.5rem; font-size: 0.7rem; opacity: 0.7; max-width: 400px; margin-left: auto; margin-right: auto;">
+          <p class="auth-disclaimer" style="margin-bottom: 1.25rem; font-size: 0.7rem; opacity: 0.7; max-width: 400px; margin-left: auto; margin-right: auto;">
             <strong>AI Transparency:</strong> This application integrates <strong>GPT-4.0</strong> and <strong>Gemini 2.5</strong> for intelligent educational assistance.
           </p>
 
+          <!-- Success toast -->
+          <div class="auth-success-toast" id="authSuccessToast"></div>
 
-          <!-- Parent / Guardian Portal CTA -->
-          <a href="/parent-portal" id="parentPortalBtn" style="
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 12px;
-            width: 100%;
-            padding: 16px 24px;
-            margin-bottom: 14px;
-            background: linear-gradient(135deg, rgba(16,185,129,0.12), rgba(52,211,153,0.08));
-            border: 1.5px solid rgba(16,185,129,0.25);
-            border-radius: 14px;
-            color: #4ade80;
-            font-family: 'Outfit', sans-serif;
-            font-size: 0.92rem;
-            font-weight: 700;
-            text-decoration: none;
-            transition: all 0.25s cubic-bezier(0.22,1,0.36,1);
-            cursor: pointer;
-            backdrop-filter: blur(8px);
-          " onmouseover="this.style.background='linear-gradient(135deg, rgba(16,185,129,0.2), rgba(52,211,153,0.14))'; this.style.borderColor='rgba(16,185,129,0.4)'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 8px 28px rgba(16,185,129,0.2)';"
-             onmouseout="this.style.background='linear-gradient(135deg, rgba(16,185,129,0.12), rgba(52,211,153,0.08))'; this.style.borderColor='rgba(16,185,129,0.25)'; this.style.transform='translateY(0)'; this.style.boxShadow='none';">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
-              <circle cx="9" cy="7" r="4"/>
-              <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
-              <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
-            </svg>
-            <span>Parent / Guardian Portal</span>
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" style="margin-left: auto; opacity: 0.5;"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-          </a>
-
-          <!-- Professional Portals Access -->
+          <!-- Portal Access Row -->
           <div class="portal-pills-row">
+            <a href="/parent-portal" class="portal-pill">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/></svg>
+              <span>Parent Portal</span>
+            </a>
             <a href="/robotics-login" class="portal-pill portal-robotics">
               <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="10" rx="2"/><circle cx="12" cy="5" r="2"/><path d="M12 7v4"/></svg>
               <span>Robotics Team</span>
             </a>
             <a href="/admin" class="portal-pill">
               <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-              <span>Admin Portal</span>
+              <span>Admin</span>
             </a>
           </div>
-
-          <!-- Success toast -->
-          <div class="auth-success-toast" id="authSuccessToast"></div>
           
           <!-- Legal Footer -->
           <div class="legal-footer">
             <a href="https://www.youtube.com/channel/UCo4k-_8Q92hXOcUdbAtwabg" target="_blank" rel="noopener" class="legal-btn social-youtube" title="Watch on YouTube">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
-                YouTube
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
             </a>
-            <a href="/privacy" class="legal-btn">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-              Privacy Policy
-            </a>
-            <a href="/terms" class="legal-btn">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-              Terms of Service
-            </a>
-            <a href="/ai-transparency.html" class="legal-btn" style="background: rgba(99, 102, 241, 0.08); color: var(--primary);">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
-              AI Transparency
-            </a>
+            <a href="/privacy" class="legal-btn">Privacy</a>
+            <a href="/terms" class="legal-btn">Terms</a>
+            <a href="/ai-transparency.html" class="legal-btn">AI Disclosure</a>
           </div>
         </div>
         <!-- /auth-card-page -->
