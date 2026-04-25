@@ -28,7 +28,7 @@ function isPurchased(itemId) {
 /**
  * Marks an item as purchased and handles PRO upgrades.
  */
-function markAsPurchased(itemId) {
+async function markAsPurchased(itemId) {
   const session = getSession();
   if (!session || !session.email) return;
 
@@ -43,41 +43,45 @@ function markAsPurchased(itemId) {
   // 2. Monthly Subscription Activation
   if (itemId === 'vision_pro_access') {
     const users = getUsers();
-    const idx = users.findIndex(u => u.email === session.email);
-    if (idx !== -1) {
-      const now = Date.now();
-      const MONTH_MS = 30 * 24 * 60 * 60 * 1000;
-      
-      // Calculate Expiry: Add to existing if active, otherwise start from now
-      const currentExpiry = users[idx].subscriptionExpiry || 0;
-      const startPoint = currentExpiry > now ? currentExpiry : now;
-      const newExpiry = startPoint + MONTH_MS;
-      
-      users[idx].subscriptionExpiry = newExpiry;
-      users[idx].role = 'pro';
-      
-      session.subscriptionExpiry = newExpiry;
-      session.role = 'pro';
-      setSession(session);
-      
-      saveUsers(users); // Triggers local/blob sync
+    let idx = users.findIndex(u => u.email === session.email);
+    if (idx === -1) {
+      users.push(session);
+      idx = users.length - 1;
+    }
+    
+    const now = Date.now();
+    const MONTH_MS = 30 * 24 * 60 * 60 * 1000;
+    
+    // Calculate Expiry: Add to existing if active, otherwise start from now
+    const currentExpiry = users[idx].subscriptionExpiry || 0;
+    const startPoint = currentExpiry > now ? currentExpiry : now;
+    const newExpiry = startPoint + MONTH_MS;
+    
+    users[idx].subscriptionExpiry = newExpiry;
+    users[idx].role = 'pro';
+    
+    session.subscriptionExpiry = newExpiry;
+    session.role = 'pro';
+    setSession(session);
+    
+    saveUsers(users); // Triggers local/blob sync
 
-      // 3. SECURE FIREBASE CLOUD SYNC
-      if (typeof window.fbUpdateUser === 'function') {
-        window.fbUpdateUser(session.email, {
+    // 3. SECURE FIREBASE CLOUD SYNC
+    if (typeof window.fbUpdateUser === 'function') {
+      try {
+        await window.fbUpdateUser(session.email, {
           role: 'pro',
           subscriptionExpiry: newExpiry
-        }).then(() => {
-          console.log("[Payment] ☁️ Firebase global subscription state updated.");
-        }).catch(err => {
-          console.error("[Payment] Firebase sync failed against Pro upgrade:", err);
         });
-      } else {
-        console.warn("[Payment] Firebase SDK not loaded. Subscription is local-only.");
+        console.log("[Payment] ☁️ Firebase global subscription state updated.");
+      } catch (err) {
+        console.error("[Payment] Firebase sync failed against Pro upgrade:", err);
       }
-      
-      console.log("[Payment] Subscription Activated/Extended. New Expiry:", new Date(newExpiry).toLocaleDateString());
+    } else {
+      console.warn("[Payment] Firebase SDK not loaded. Subscription is local-only.");
     }
+    
+    console.log("[Payment] Subscription Activated/Extended. New Expiry:", new Date(newExpiry).toLocaleDateString());
   }
 }
 
@@ -151,7 +155,7 @@ async function constructVerificationFlow() {
         const verifyData = await verifyRes.json();
         
         if (verifyData.success) {
-            if (pendingItemId) markAsPurchased(pendingItemId);
+            if (pendingItemId) await markAsPurchased(pendingItemId);
             alert("Payment successful! " + (pendingItemName || "Item") + " unlocked.");
         } else {
             alert("Payment failed or was cancelled.");
