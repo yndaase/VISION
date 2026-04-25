@@ -8,8 +8,9 @@ import {
   updateDoc,
   onSnapshot
 } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
-// Minimal configuration to match the platform (reusing the same project)
+// Minimal configuration to match the platform
 const firebaseConfig = {
   apiKey: "AIzaSyCCLvmFR4NU6aIbDc-75EsBL-K9pqlNa5E",
   authDomain: "vision-education-8a794.firebaseapp.com",
@@ -20,9 +21,10 @@ const firebaseConfig = {
   measurementId: "G-CCQSKNZKKW"
 };
 
-// Use the default app initialized by firebase.js so that we share the Auth state
+// Use the default app
 const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApp();
 const db = getFirestore(app);
+const auth = getAuth(app);
 
 const SESSION_KEY = "waec_session";
 const DEVICE_ID_KEY = "vision_device_id";
@@ -63,7 +65,6 @@ async function registerAndListenToSession() {
   if (!user || !user.email) return;
   const emailLower = user.email.toLowerCase();
 
-  // Generate or retrieve Device ID
   let deviceId = localStorage.getItem(DEVICE_ID_KEY);
   if (!deviceId) {
     deviceId = "dev_" + Math.random().toString(36).substring(2, 15);
@@ -72,33 +73,43 @@ async function registerAndListenToSession() {
 
   const sessionRef = doc(db, "users", emailLower, "sessions", deviceId);
   
-  // Register session
-  await setDoc(sessionRef, {
-    deviceId,
-    deviceInfo: getDeviceFingerprint(),
-    lastActive: new Date().toISOString(),
-    status: 'active'
-  }, { merge: true });
+  try {
+    await setDoc(sessionRef, {
+      deviceId,
+      deviceInfo: getDeviceFingerprint(),
+      lastActive: new Date().toISOString(),
+      status: 'active'
+    }, { merge: true });
 
-  // Listen for revocation (Kill Switch)
-  onSnapshot(sessionRef, (docSnap) => {
-    if (docSnap.exists() && docSnap.data().status === 'revoked') {
-      alert("Your session has been revoked from another device. You will be logged out.");
-      if (typeof window.handleLogout === 'function') {
-        window.handleLogout();
-      } else {
-        localStorage.clear();
-        sessionStorage.clear();
-        window.location.href = '/login.html';
+    onSnapshot(sessionRef, (docSnap) => {
+      if (docSnap.exists() && docSnap.data().status === 'revoked') {
+        alert("Your session has been revoked from another device. You will be logged out.");
+        if (typeof window.handleLogout === 'function') {
+          window.handleLogout();
+        } else {
+          localStorage.clear();
+          sessionStorage.clear();
+          window.location.href = '/login.html';
+        }
       }
-    }
-  });
+    });
+  } catch(e) {
+    console.error("Firebase Session Registration blocked:", e.message);
+  }
 }
 
 // 2. Load UI
 window.loadActiveSessions = async function() {
   const user = getSessionUser();
   if (!user || !user.email) return;
+  
+  // Wait for auth context to be ready
+  if (!auth.currentUser) {
+    const listEl = document.getElementById("deviceSessionsList");
+    if (listEl) listEl.innerHTML = "<div style='color: var(--text-muted); font-size: 0.9rem;'>Waiting for secure connection...</div>";
+    return; // The auth listener will call this again once ready
+  }
+
   const emailLower = user.email.toLowerCase();
   const currentDeviceId = localStorage.getItem(DEVICE_ID_KEY);
 
@@ -155,13 +166,14 @@ window.loadActiveSessions = async function() {
     }
   } catch (err) {
     console.warn("Error loading sessions:", err);
-    listEl.innerHTML = "<div style='color: #ef4444; font-size: 0.9rem;'>Failed to load sessions.</div>";
+    listEl.innerHTML = "<div style='color: #ef4444; font-size: 0.9rem;'>Failed to load sessions. Try refreshing the page.</div>";
   }
 };
 
 // 3. Revoke Logic
 window.revokeSpecificSession = async function(deviceIdToRevoke) {
   if (!confirm("Are you sure you want to log out of this device?")) return;
+  if (!auth.currentUser) return alert("Security Context Missing: Please refresh the page.");
   
   const user = getSessionUser();
   if (!user || !user.email) return;
@@ -169,7 +181,7 @@ window.revokeSpecificSession = async function(deviceIdToRevoke) {
   try {
     const sessionRef = doc(db, "users", user.email.toLowerCase(), "sessions", deviceIdToRevoke);
     await updateDoc(sessionRef, { status: 'revoked' });
-    window.loadActiveSessions(); // refresh
+    window.loadActiveSessions();
   } catch (err) {
     console.error("Failed to revoke:", err);
     alert("Could not revoke the session. Please try again.");
@@ -179,6 +191,11 @@ window.revokeSpecificSession = async function(deviceIdToRevoke) {
 window.promptRevokeAllSessions = async function() {
   const user = getSessionUser();
   if (!user || !user.email) return;
+
+  if (!auth.currentUser) {
+    alert("Security Context Missing: Please refresh the page or log out and log back in.");
+    return;
+  }
 
   const currentDeviceId = localStorage.getItem(DEVICE_ID_KEY);
 
@@ -212,14 +229,18 @@ window.promptRevokeAllSessions = async function() {
   }
 };
 
-// Start listening immediately
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', registerAndListenToSession);
-} else {
-  registerAndListenToSession();
-}
+// Hook into Firebase Auth State
+onAuthStateChanged(auth, (firebaseUser) => {
+  if (firebaseUser) {
+    registerAndListenToSession();
+    const pane = document.getElementById('pane-security');
+    if (pane && pane.classList.contains('active')) {
+      window.loadActiveSessions();
+    }
+  }
+});
 
-// Hook into the Settings UI so it reloads when the tab is opened
+// Hook into the Settings UI
 const originalSwitch = window.switchSettingsTab;
 if (typeof originalSwitch === 'function') {
   window.switchSettingsTab = function(tabId, el) {
@@ -229,7 +250,6 @@ if (typeof originalSwitch === 'function') {
     }
   };
 } else {
-  // Fallback observer
   const observer = new MutationObserver((mutations) => {
     mutations.forEach((m) => {
       if (m.target.id === 'pane-security' && m.target.classList.contains('active')) {
