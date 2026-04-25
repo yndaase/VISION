@@ -1,4 +1,4 @@
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+import { initializeApp, getApp, getApps } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
 import {
   getFirestore,
   doc,
@@ -20,7 +20,8 @@ const firebaseConfig = {
   measurementId: "G-CCQSKNZKKW"
 };
 
-const app = initializeApp(firebaseConfig, "SessionManager"); // Unique name to avoid conflicts if firebase.js initializes
+// Use the default app initialized by firebase.js so that we share the Auth state
+const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApp();
 const db = getFirestore(app);
 
 const SESSION_KEY = "waec_session";
@@ -185,17 +186,29 @@ window.promptRevokeAllSessions = async function() {
 
   try {
     const snap = await getDocs(collection(db, "users", user.email.toLowerCase(), "sessions"));
-    snap.forEach(async (docSnap) => {
+    const revokePromises = [];
+    snap.forEach((docSnap) => {
       const data = docSnap.data();
       if (data.deviceId !== currentDeviceId && data.status === 'active') {
-        await updateDoc(docSnap.ref, { status: 'revoked' });
+        revokePromises.push(updateDoc(docSnap.ref, { status: 'revoked' }));
       }
     });
+
+    if (revokePromises.length === 0) {
+      alert("There are no other active devices to log out.");
+      return;
+    }
+
+    await Promise.all(revokePromises);
     alert("Successfully logged out of all other devices.");
     window.loadActiveSessions();
   } catch (err) {
     console.error("Error revoking all:", err);
-    alert("Failed to log out of all devices.");
+    if (err.message.includes("permission") || err.code === "permission-denied") {
+      alert("Access Denied: Please refresh the page and ensure you are fully logged in.");
+    } else {
+      alert("Failed to log out of all devices. " + err.message);
+    }
   }
 };
 
