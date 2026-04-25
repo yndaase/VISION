@@ -149,22 +149,30 @@
     </div>
 
     <!-- 404 SECTION -->
-    <header class="hp-hero" role="banner" style="min-height: 85vh; display: flex; align-items: center; justify-content: center; text-align: center;">
-      <div class="hp-hero-bg" aria-hidden="true"></div>
-      <div class="hp-hero-overlay" aria-hidden="true"></div>
+    <header class="hp-hero" role="banner" style="min-height: 100vh;">
+      <!-- Use a generic gradient background instead of the classroom image to signify an error page -->
+      <div class="hp-hero-bg" aria-hidden="true" style="background-image: none; background: radial-gradient(circle at center, #2d2d4e 0%, #1a1a2e 100%);"></div>
+      <div class="hp-hero-overlay" aria-hidden="true" style="background: rgba(0,0,0,0.3);"></div>
 
-      <div class="error-container z-10 relative">
+      <div class="hp-hero-content" style="margin-left: auto; margin-right: auto; text-align: center; max-width: 800px;">
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#fbbf24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin: 0 auto 24px; filter: drop-shadow(0 0 10px rgba(251,191,36,0.3));">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="12" y1="8" x2="12" y2="12"></line>
+          <line x1="12" y1="16" x2="12.01" y2="16"></line>
+        </svg>
+        
         <div class="hp-hero-eyebrow" style="margin-bottom: 20px;">Development In Progress</div>
-        <div class="error-glyph">WIP</div>
+        
         <h1 class="hp-hero-h1">
           Page Under<br />
           <span class="accent">Construction</span>
         </h1>
-        <p class="error-text">
+        
+        <p class="hp-hero-sub" style="margin-left: auto; margin-right: auto;">
           We are currently building this section to bring you an even better WASSCE preparation experience. Please check back later or return to the main dashboard.
         </p>
 
-        <div class="error-buttons">
+        <div class="hp-hero-actions" style="justify-content: center; margin-top: 2rem;">
           <a href="/" class="hp-hero-cta-primary">
             Take Me Home
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
