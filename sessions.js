@@ -142,6 +142,11 @@ window.loadActiveSessions = async function() {
 
     if (activeCount === 0) {
       listEl.innerHTML = "<div style='color: var(--text-muted); font-size: 0.9rem;'>No active sessions found.</div>";
+    } else {
+      const summary = document.createElement("div");
+      summary.style.cssText = "font-size: 0.85rem; color: #10b981; margin-bottom: 5px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em;";
+      summary.textContent = `${activeCount} Device${activeCount > 1 ? 's' : ''} Logged In`;
+      listEl.insertBefore(summary, listEl.firstChild);
     }
   } catch (err) {
     console.warn("Error loading sessions:", err);
@@ -172,36 +177,7 @@ window.promptRevokeAllSessions = async function() {
 
   const currentDeviceId = localStorage.getItem(DEVICE_ID_KEY);
 
-  // Step-Up Auth
-  const enteredPass = prompt("Security check: Please enter your password to log out of all other devices.");
-  if (!enteredPass) return;
-
-  // Local fallback validation (since we use local auth state)
-  // In a real Firebase Auth environment, we'd use signInWithEmailAndPassword to verify.
-  const storedHash = user.hash;
-  let isVerified = false;
-  
-  // Quick hash function matching auth.js
-  async function hashString(str) {
-    const msgUint8 = new TextEncoder().encode(str);
-    const hashBuffer = await crypto.subtle.digest('SHA-256', msgUint8);
-    const hashArray = Array.from(new Uint8Array(hashBuffer));
-    return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-  }
-  
-  if (storedHash) {
-    const currentHash = await hashString(enteredPass);
-    if (currentHash === storedHash) isVerified = true;
-  } else {
-    // If no hash in session (legacy), we must trust or deny. We'll deny for safety unless they type something.
-    // Ideally we query firebase, but we'll accept basic matching.
-    if (enteredPass.length >= 6) isVerified = true; // basic fallback
-  }
-
-  if (!isVerified) {
-    alert("Incorrect password. Access denied.");
-    return;
-  }
+  if (!confirm("Are you sure you want to log out of all other devices?")) return;
 
   try {
     const snap = await getDocs(collection(db, "users", user.email.toLowerCase(), "sessions"));
