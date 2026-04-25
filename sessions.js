@@ -221,11 +221,7 @@ window.promptRevokeAllSessions = async function() {
     window.loadActiveSessions();
   } catch (err) {
     console.error("Error revoking all:", err);
-    if (err.message.includes("permission") || err.code === "permission-denied") {
-      alert("Access Denied: Please refresh the page and ensure you are fully logged in.");
-    } else {
-      alert("Failed to log out of all devices. " + err.message);
-    }
+    alert("DEBUG ERROR: " + err.message + "\n\nPlease copy this error and tell me what it says so I can fix it!");
   }
 };
 
