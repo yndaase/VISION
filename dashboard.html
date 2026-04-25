@@ -1040,6 +1040,19 @@
             </div>
           </div>
 
+          <div class="settings-section-card" style="margin-top: 1.5rem;">
+            <h2 class="settings-h2">Device Management</h2>
+            <p style="margin: 0 0 1rem 0; font-size: 0.85rem; color: var(--text-muted);">Manage all active sessions across your devices.</p>
+            
+            <div id="deviceSessionsList" style="display: flex; flex-direction: column; gap: 10px;">
+              <!-- Dynamically populated via session management script -->
+            </div>
+            
+            <button class="hero-btn-primary" onclick="window.promptRevokeAllSessions()" style="margin-top: 1rem; width: 100%; background: rgba(239, 68, 68, 0.1); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.3); height: auto; padding: 12px;">
+              Log Out Of All Other Devices
+            </button>
+          </div>
+
           <div style="margin-top: auto; padding-top: 2rem;">
             <button onclick="handleLogout()" style="background: rgba(239, 68, 68, 0.1); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.2); padding: 12px 24px; border-radius: 10px; cursor: pointer; font-weight: 700;">Terminate Session</button>
           </div>
@@ -1507,5 +1520,6 @@
   <!-- face-api.js must load BEFORE verification.js -->
   <script src="https://cdn.jsdelivr.net/npm/@vladmandic/face-api/dist/face-api.js"></script>
   <script defer src="verification.js"></script>
+  <script type="module" src="sessions.js"></script>
 </body>
 </html>
