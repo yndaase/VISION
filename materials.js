@@ -17,133 +17,19 @@ const SUBJECTS_META = [
   { id: "science", name: "Integrated Science", icon: "", color: "#10b981" },
 ];
 
-// Default materials  Admin updates these via the portal.
-// URL should be a Google Drive direct-download link or any public file link.
-// Google Drive format: https://drive.google.com/uc?export=download&id=FILE_ID
-const SEED_MATERIALS = [
-  {
-    id: "s1",
-    subject: "core-maths",
-    title: "Core Maths Study Guide 2026",
-    type: "PDF",
-    size: "",
-    url: "#",
-    uploadedBy: "admin",
-    uploadedAt: "2026-04-01",
-  },
-  {
-    id: "s2",
-    subject: "core-maths",
-    title: "Core Maths Past Questions 2020-2025",
-    type: "PDF",
-    size: "",
-    url: "#",
-    uploadedBy: "admin",
-    uploadedAt: "2026-04-01",
-  },
-  {
-    id: "s3",
-    subject: "english",
-    title: "English Language Comprehension Pack",
-    type: "PDF",
-    size: "",
-    url: "#",
-    uploadedBy: "admin",
-    uploadedAt: "2026-04-01",
-  },
-  {
-    id: "s4",
-    subject: "english",
-    title: "Essay Writing & Summary Guide",
-    type: "PDF",
-    size: "",
-    url: "#",
-    uploadedBy: "admin",
-    uploadedAt: "2026-04-01",
-  },
-  {
-    id: "s5",
-    subject: "social",
-    title: "Social Studies Complete Notes",
-    type: "PDF",
-    size: "",
-    url: "#",
-    uploadedBy: "admin",
-    uploadedAt: "2026-04-01",
-  },
-  {
-    id: "s6",
-    subject: "physics",
-    title: "Physics Formula Sheet & Guide",
-    type: "PDF",
-    size: "",
-    url: "#",
-    uploadedBy: "admin",
-    uploadedAt: "2026-04-01",
-  },
-  {
-    id: "s7",
-    subject: "physics",
-    title: "Physics Past Questions 2020-2025",
-    type: "PDF",
-    size: "",
-    url: "#",
-    uploadedBy: "admin",
-    uploadedAt: "2026-04-01",
-  },
-  {
-    id: "s8",
-    subject: "chemistry",
-    title: "Chemistry Notes & Equations",
-    type: "PDF",
-    size: "",
-    url: "#",
-    uploadedBy: "admin",
-    uploadedAt: "2026-04-01",
-  },
-  {
-    id: "s9",
-    subject: "biology",
-    title: "Biology Complete Revision Notes",
-    type: "PDF",
-    size: "",
-    url: "#",
-    uploadedBy: "admin",
-    uploadedAt: "2026-04-01",
-  },
-  {
-    id: "s10",
-    subject: "economics",
-    title: "Economics Study Pack 2026",
-    type: "PDF",
-    size: "",
-    url: "#",
-    uploadedBy: "admin",
-    uploadedAt: "2026-04-01",
-  },
-  {
-    id: "s11",
-    subject: "cs",
-    title: "Computer Science Study Guide",
-    type: "PDF",
-    size: "",
-    url: "#",
-    uploadedBy: "admin",
-    uploadedAt: "2026-04-01",
-  },
-];
+// Removed SEED_MATERIALS as we now rely on Firebase.
 
 /**
- * Get all materials (from localStorage, falling back to seeds)
+ * Get all materials (from localStorage)
  */
 function getMaterials() {
   try {
     const stored = JSON.parse(
       localStorage.getItem("vision_materials") || "null",
     );
-    if (stored && Array.isArray(stored) && stored.length > 0) return stored;
+    if (stored && Array.isArray(stored)) return stored;
   } catch (e) {}
-  return SEED_MATERIALS;
+  return [];
 }
 
 /**
@@ -153,13 +39,10 @@ async function syncMaterials() {
   if (typeof window.fbGetMaterials === 'function') {
     try {
       const cloud = await window.fbGetMaterials();
-      if (cloud && cloud.length > 0) {
-        saveMaterials(cloud);
-        console.log('[Materials] Synced', cloud.length, 'materials from Firebase');
-        return cloud;
-      } else {
-        console.log('[Materials] No materials in Firebase, using local cache');
-      }
+      const newMaterials = cloud || [];
+      saveMaterials(newMaterials);
+      console.log('[Materials] Synced', newMaterials.length, 'materials from Firebase');
+      return newMaterials;
     } catch(err) {
       console.error('[Materials] Firebase sync failed:', err.message);
     }
