@@ -51,7 +51,8 @@ function getDeviceFingerprint() {
   if (/Mobi|Android|iPhone|iPad|iPod/i.test(ua)) deviceType = "Mobile";
   if (/Tablet|iPad/i.test(ua)) deviceType = "Tablet";
 
-  return `${deviceType} • ${browser} on ${os}`;
+  // The user requested to say the name of the device like windows.
+  return `${deviceType} • ${os} (${browser})`;
 }
 
 function getSessionUser() {
@@ -63,7 +64,7 @@ function getSessionUser() {
 async function registerAndListenToSession() {
   const user = getSessionUser();
   if (!user || !user.email) return;
-  const emailLower = user.email.toLowerCase();
+  const emailLower = user.email.trim().toLowerCase();
 
   let deviceId = localStorage.getItem(DEVICE_ID_KEY);
   if (!deviceId) {
@@ -110,7 +111,7 @@ window.loadActiveSessions = async function() {
     return; // The auth listener will call this again once ready
   }
 
-  const emailLower = user.email.toLowerCase();
+  const emailLower = user.email.trim().toLowerCase();
   const currentDeviceId = localStorage.getItem(DEVICE_ID_KEY);
 
   const listEl = document.getElementById("deviceSessionsList");
@@ -179,7 +180,7 @@ window.revokeSpecificSession = async function(deviceIdToRevoke) {
   if (!user || !user.email) return;
   
   try {
-    const sessionRef = doc(db, "users", user.email.toLowerCase(), "sessions", deviceIdToRevoke);
+    const sessionRef = doc(db, "users", user.email.trim().toLowerCase(), "sessions", deviceIdToRevoke);
     await updateDoc(sessionRef, { status: 'revoked' });
     window.loadActiveSessions();
   } catch (err) {
@@ -202,7 +203,7 @@ window.promptRevokeAllSessions = async function() {
   if (!confirm("Are you sure you want to log out of all other devices?")) return;
 
   try {
-    const snap = await getDocs(collection(db, "users", user.email.toLowerCase(), "sessions"));
+    const snap = await getDocs(collection(db, "users", user.email.trim().toLowerCase(), "sessions"));
     const revokePromises = [];
     snap.forEach((docSnap) => {
       const data = docSnap.data();
