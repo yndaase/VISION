@@ -61,10 +61,9 @@ function getSessionUser() {
 }
 
 // 1. Register Session on Load
-async function registerAndListenToSession() {
-  const user = getSessionUser();
-  if (!user || !user.email) return;
-  const emailLower = user.email.trim().toLowerCase();
+async function registerAndListenToSession(firebaseUser) {
+  if (!firebaseUser || !firebaseUser.email) return;
+  const emailLower = firebaseUser.email.trim().toLowerCase();
 
   let deviceId = localStorage.getItem(DEVICE_ID_KEY);
   if (!deviceId) {
@@ -101,17 +100,13 @@ async function registerAndListenToSession() {
 
 // 2. Load UI
 window.loadActiveSessions = async function() {
-  const user = getSessionUser();
-  if (!user || !user.email) return;
-  
-  // Wait for auth context to be ready
-  if (!auth.currentUser) {
+  if (!auth.currentUser || !auth.currentUser.email) {
     const listEl = document.getElementById("deviceSessionsList");
     if (listEl) listEl.innerHTML = "<div style='color: var(--text-muted); font-size: 0.9rem;'>Waiting for secure connection...</div>";
-    return; // The auth listener will call this again once ready
+    return;
   }
 
-  const emailLower = user.email.trim().toLowerCase();
+  const emailLower = auth.currentUser.email.trim().toLowerCase();
   const currentDeviceId = localStorage.getItem(DEVICE_ID_KEY);
 
   const listEl = document.getElementById("deviceSessionsList");
@@ -174,13 +169,10 @@ window.loadActiveSessions = async function() {
 // 3. Revoke Logic
 window.revokeSpecificSession = async function(deviceIdToRevoke) {
   if (!confirm("Are you sure you want to log out of this device?")) return;
-  if (!auth.currentUser) return alert("Security Context Missing: Please refresh the page.");
-  
-  const user = getSessionUser();
-  if (!user || !user.email) return;
+  if (!auth.currentUser || !auth.currentUser.email) return alert("Security Context Missing: Please refresh the page.");
   
   try {
-    const sessionRef = doc(db, "users", user.email.trim().toLowerCase(), "sessions", deviceIdToRevoke);
+    const sessionRef = doc(db, "users", auth.currentUser.email.trim().toLowerCase(), "sessions", deviceIdToRevoke);
     await updateDoc(sessionRef, { status: 'revoked' });
     window.loadActiveSessions();
   } catch (err) {
@@ -190,10 +182,7 @@ window.revokeSpecificSession = async function(deviceIdToRevoke) {
 };
 
 window.promptRevokeAllSessions = async function() {
-  const user = getSessionUser();
-  if (!user || !user.email) return;
-
-  if (!auth.currentUser) {
+  if (!auth.currentUser || !auth.currentUser.email) {
     alert("Security Context Missing: Please refresh the page or log out and log back in.");
     return;
   }
@@ -203,7 +192,7 @@ window.promptRevokeAllSessions = async function() {
   if (!confirm("Are you sure you want to log out of all other devices?")) return;
 
   try {
-    const snap = await getDocs(collection(db, "users", user.email.trim().toLowerCase(), "sessions"));
+    const snap = await getDocs(collection(db, "users", auth.currentUser.email.trim().toLowerCase(), "sessions"));
     const revokePromises = [];
     snap.forEach((docSnap) => {
       const data = docSnap.data();
@@ -229,7 +218,7 @@ window.promptRevokeAllSessions = async function() {
 // Hook into Firebase Auth State
 onAuthStateChanged(auth, (firebaseUser) => {
   if (firebaseUser) {
-    registerAndListenToSession();
+    registerAndListenToSession(firebaseUser);
     const pane = document.getElementById('pane-security');
     if (pane && pane.classList.contains('active')) {
       window.loadActiveSessions();
