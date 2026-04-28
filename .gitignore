@@ -6,3 +6,7 @@ service-account.json
 service-account.json.json
 .claude/settings.local.json
 
+# SAML certificates — store in Vercel env vars, never commit
+saml.pem
+saml.crt
+generate_keys.js
