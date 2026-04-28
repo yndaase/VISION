@@ -18,7 +18,7 @@ export default async function handler(request, response) {
     const jsonResponse = await handleUpload({
       body: request.body,
       request,
-      token: process.env.PUBLIC_BLOB_READ_WRITE_TOKEN, // Use your new public token!
+      token: process.env.BLOB_READ_WRITE_TOKEN || process.env.PUBLIC_BLOB_READ_WRITE_TOKEN,
       onBeforeGenerateToken: async (pathname) => {
         return {
           tokenPayload: JSON.stringify({
