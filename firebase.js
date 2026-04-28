@@ -734,43 +734,6 @@ window.fbGetUserCertificates = async function(email) {
 };
 
 /**
- * MATERIALS ENGINE (Firestore collection: "learning_materials")
- */
-
-window.fbGetMaterials = async function() {
-  try {
-    const q = query(collection(db, "learning_materials"), orderBy("uploadedAt", "desc"));
-    const snap = await getDocs(q);
-    const mats = [];
-    snap.forEach(doc => mats.push({ id: doc.id, ...doc.data() }));
-    return mats;
-  } catch(err) {
-    console.error('[Firebase] fbGetMaterials failed:', err.message);
-    return [];
-  }
-};
-
-window.fbSaveMaterial = async function(mat) {
-  if (!mat || !mat.id) return;
-  try {
-    await setDoc(doc(db, "learning_materials", mat.id), mat, { merge: true });
-    console.log('[Firebase] Material record synced:', mat.title);
-  } catch(err) {
-    console.error('[Firebase] fbSaveMaterial failed:', err.message);
-  }
-};
-
-window.fbDeleteMaterial = async function(id) {
-  if (!id) return;
-  try {
-    await deleteDoc(doc(db, "learning_materials", id));
-    console.log('[Firebase] Material record deleted:', id);
-  } catch(err) {
-    console.error('[Firebase] fbDeleteMaterial failed:', err.message);
-  }
-};
-
-/**
  * SUPPORT CHATS (Firestore collection: "support_chats")
  */
 
@@ -820,50 +783,6 @@ window.fbSaveChatMessage = async function(phone, msgData) {
   }
 };
 
-window.fbGetAllUsers = async function(collectionName = 'users') {
-  try {
-    const snap = await getDocs(collection(db, collectionName));
-    const users = [];
-    snap.forEach(doc => users.push({ id: doc.id, ...doc.data() }));
-    return users;
-  } catch(err) {
-    console.error(`[Firebase] fbGetAllUsers (${collectionName}) failed:`, err.message);
-    return [];
-  }
-};
-
-window.fbGetUser = async function(email) {
-  if (!email) return null;
-  try {
-    const snap = await getDoc(doc(db, "users", email.toLowerCase()));
-    return snap.exists() ? snap.data() : null;
-  } catch(err) {
-    console.error('[Firebase] fbGetUser failed:', err.message);
-    return null;
-  }
-};
-
-window.fbUpdateUser = async function(email, data) {
-  if (!email) return;
-  try {
-    await setDoc(doc(db, "users", email.toLowerCase()), data, { merge: true });
-    console.log('[Firebase] User updated:', email);
-  } catch(err) {
-    console.error('[Firebase] fbUpdateUser failed:', err.message);
-  }
-};
-
-window.fbDeleteUser = async function(email) {
-  if (!email) return { success: false };
-  try {
-    await deleteDoc(doc(db, "users", email.toLowerCase()));
-    console.log('[Firebase] User purged:', email);
-    return { success: true };
-  } catch(err) {
-    console.error('[Firebase] fbDeleteUser failed:', err.message);
-    return { success: false, error: err.message };
-  }
-};
 
 /* ─────────────────────────────────────────────────────────────
    AUTO-SYNC on import (non-parent pages)
