@@ -63,8 +63,8 @@ async function fbGetUserWithFallback(email) {
       console.warn('[Auth] Firestore lookup failed, using local cache.');
     }
   }
-  // Fall back to localStorage
-  return getUsers().find(u => u.email === email && u.provider === 'email') || null;
+  // Fall back to localStorage — search by email regardless of provider
+  return getUsers().find(u => u.email === email || u.email === email.toLowerCase()) || null;
 }
 
 /**
@@ -810,9 +810,12 @@ async function handleGoogleCredential(response) {
     setSession(user);
     showAuthSuccess("Welcome, " + user.name + "! ");
     
-    // Pull latest role/subscription from Firestore
+    // Pull latest role/subscription/verification from Firestore
     const cloudUser = await fbGetUserWithFallback(user.email);
-    if (cloudUser) setSession(verifyUserSchema({ ...user, ...cloudUser }));
+    // Also merge from local cache to preserve isVerified if Firestore read fails
+    const localUser = getUsers().find(u => u.email === user.email) || {};
+    const finalUser = verifyUserSchema({ ...localUser, ...user, ...(cloudUser || {}) });
+    setSession(finalUser);
     
     setTimeout(goToDashboard, 900);
   } catch (e) {
