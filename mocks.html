@@ -478,12 +478,24 @@
         const card = document.getElementById("bertinaMockCard");
         if (card && (isBertina || isAdmin)) card.style.display = "flex";
 
-        // Populate user chip with real session data
-        const navAvatar   = document.getElementById("navAvatar");
-        const navUsername = document.getElementById("navUsername");
-        const displayName = session.name || session.email?.split("@")[0] || "Student";
-        if (navAvatar)   navAvatar.textContent   = displayName.charAt(0).toUpperCase();
-        if (navUsername) navUsername.textContent  = displayName.split(" ")[0]; // First name only
+        // Populate user chip — try session first, then Firebase
+        function setChip(name) {
+          const navAvatar   = document.getElementById("navAvatar");
+          const navUsername = document.getElementById("navUsername");
+          if (!name) return;
+          if (navAvatar)   navAvatar.textContent   = name.charAt(0).toUpperCase();
+          if (navUsername) navUsername.textContent  = name.split(" ")[0];
+        }
+
+        const sessionName = session.name || session.email?.split("@")[0];
+        if (sessionName) {
+          setChip(sessionName);
+        } else if (email && typeof window.fbGetUser === "function") {
+          // Firebase fallback — runs after firebase.js loads
+          window.fbGetUser(email).then(user => {
+            if (user && user.name) setChip(user.name);
+          }).catch(() => {});
+        }
       });
     </script>
 
