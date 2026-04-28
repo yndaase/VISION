@@ -1,5 +1,3 @@
-import fs from 'fs';
-import path from 'path';
 import zlib from 'zlib';
 import crypto from 'crypto';
 import { create } from 'xmlbuilder';
@@ -110,9 +108,13 @@ export default async function handler(req, res) {
             .up()
             .end();
             
-        // Sign the Assertion
-        const privateKey = fs.readFileSync(path.join(process.cwd(), 'saml.pem'), 'utf8');
-        const cert = fs.readFileSync(path.join(process.cwd(), 'saml.crt'), 'utf8');
+        // Sign the Assertion — load certs from env vars (Vercel safe)
+        const privateKey = (process.env.SAML_PRIVATE_KEY || '').replace(/\\n/g, '\n');
+        const cert = (process.env.SAML_CERT || '').replace(/\\n/g, '\n');
+        if (!privateKey || !cert) {
+            console.error('[SAML] Missing SAML_PRIVATE_KEY or SAML_CERT env vars');
+            return res.status(500).json({ error: 'SAML certificates not configured on server.' });
+        }
         const cleanCert = cert.replace(/-----BEGIN CERTIFICATE-----|-----END CERTIFICATE-----|\r|\n/g, '');
         
         const sig = new SignedXml();

@@ -5,80 +5,266 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Enterprise SSO | Vision Education</title>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800;900&display=swap" rel="stylesheet">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: { sans: ['Outfit', 'sans-serif'] },
-                    colors: { navy: '#05080f', emerald: '#10b981' }
-                }
-            }
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: #05080f;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+            position: relative;
+            overflow: hidden;
         }
-    </script>
+
+        /* Background glows */
+        body::before, body::after {
+            content: '';
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(100px);
+            pointer-events: none;
+        }
+        body::before {
+            width: 500px; height: 500px;
+            background: rgba(16, 185, 129, 0.12);
+            top: -10%; right: -10%;
+        }
+        body::after {
+            width: 400px; height: 400px;
+            background: rgba(99, 102, 241, 0.12);
+            bottom: -10%; left: -10%;
+        }
+
+        .card {
+            background: rgba(255,255,255,0.04);
+            backdrop-filter: blur(24px);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 2.5rem;
+            padding: 2.5rem;
+            max-width: 420px;
+            width: 100%;
+            position: relative;
+            z-index: 10;
+            box-shadow: 0 32px 80px -16px rgba(0,0,0,0.5);
+        }
+
+        .logo {
+            width: 56px; height: 56px;
+            background: linear-gradient(135deg, #10b981, #6366f1);
+            border-radius: 1.25rem;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.5rem; font-weight: 900; color: white;
+            margin-bottom: 2rem;
+            box-shadow: 0 12px 32px -8px rgba(16,185,129,0.4);
+        }
+
+        h1 {
+            font-size: 2rem; font-weight: 900;
+            color: #fff;
+            letter-spacing: -0.02em;
+            margin-bottom: 0.5rem;
+        }
+
+        .subtitle {
+            color: rgba(255,255,255,0.45);
+            font-size: 0.95rem;
+            font-weight: 500;
+            margin-bottom: 2.5rem;
+            line-height: 1.5;
+        }
+
+        .label {
+            display: block;
+            font-size: 0.65rem;
+            font-weight: 800;
+            color: rgba(255,255,255,0.35);
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            margin-bottom: 0.6rem;
+        }
+
+        input[type="email"] {
+            width: 100%;
+            padding: 1rem 1.25rem;
+            background: rgba(255,255,255,0.05);
+            border: 1.5px solid rgba(255,255,255,0.1);
+            border-radius: 1rem;
+            color: #fff;
+            font-family: 'Outfit', sans-serif;
+            font-size: 1rem;
+            font-weight: 500;
+            outline: none;
+            transition: border-color 0.2s;
+            margin-bottom: 1.25rem;
+        }
+        input[type="email"]:focus {
+            border-color: #10b981;
+        }
+        input[type="email"]::placeholder {
+            color: rgba(255,255,255,0.2);
+        }
+
+        button {
+            width: 100%;
+            padding: 1rem 1.5rem;
+            background: #10b981;
+            color: #05080f;
+            font-family: 'Outfit', sans-serif;
+            font-size: 1rem;
+            font-weight: 900;
+            border: none;
+            border-radius: 1rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+            box-shadow: 0 8px 24px -6px rgba(16,185,129,0.5);
+            letter-spacing: -0.01em;
+        }
+        button:hover:not(:disabled) {
+            background: #34d399;
+            transform: translateY(-2px);
+            box-shadow: 0 16px 40px -8px rgba(16,185,129,0.5);
+        }
+        button:active:not(:disabled) {
+            transform: translateY(0);
+        }
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .error-box {
+            display: none;
+            margin-top: 1rem;
+            padding: 0.9rem 1.25rem;
+            background: rgba(239,68,68,0.1);
+            border: 1px solid rgba(239,68,68,0.3);
+            border-radius: 1rem;
+            color: #fca5a5;
+            font-size: 0.875rem;
+            font-weight: 600;
+            line-height: 1.5;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            margin-top: 2rem;
+            font-size: 0.7rem;
+            font-weight: 700;
+            color: rgba(255,255,255,0.2);
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+        }
+        .badge-dot {
+            width: 6px; height: 6px;
+            border-radius: 50%;
+            background: #10b981;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        .spinner {
+            width: 18px; height: 18px;
+            border: 2.5px solid rgba(5,8,15,0.3);
+            border-top-color: #05080f;
+            border-radius: 50%;
+            animation: spin 0.7s linear infinite;
+            display: none;
+        }
+    </style>
 </head>
-<body class="bg-navy font-sans flex items-center justify-center min-h-screen relative overflow-hidden">
-    <!-- Background Decor -->
-    <div class="absolute w-[500px] h-[500px] bg-emerald-500/10 rounded-full blur-[100px] top-[-10%] right-[-10%]"></div>
-    <div class="absolute w-[400px] h-[400px] bg-indigo-500/10 rounded-full blur-[100px] bottom-[-10%] left-[-10%]"></div>
+<body>
+    <div class="card">
+        <div class="logo">V</div>
+        <h1>Enterprise SSO</h1>
+        <p class="subtitle">Single Sign-On portal for Vision Education staff and administrators.</p>
 
-    <div class="bg-white/5 backdrop-blur-xl border border-white/10 p-10 rounded-[3rem] shadow-2xl max-w-md w-full relative z-10 m-4">
-        <div class="w-14 h-14 bg-gradient-to-br from-emerald-500 to-indigo-600 rounded-2xl flex items-center justify-center text-white font-black text-2xl mb-8 shadow-lg shadow-emerald-500/20">V</div>
-        <h1 class="text-3xl font-black text-white mb-2">Enterprise SSO</h1>
-        <p class="text-gray-400 mb-8 font-medium">Single Sign-On portal for Vision Education staff and administrators.</p>
-
-        <form id="ssoForm" class="space-y-5">
-            <div>
-                <label class="block text-xs font-black text-gray-500 uppercase tracking-widest mb-2">Corporate Email</label>
-                <input type="email" id="email" class="w-full p-4 bg-navy rounded-2xl border border-white/10 focus:border-emerald-500 outline-none text-white font-medium transition-all" required placeholder="admin@visionedu.site">
-            </div>
-            <button type="submit" id="authBtn" class="w-full py-4 bg-emerald-500 hover:bg-emerald-400 text-navy font-black rounded-2xl transition-all shadow-xl shadow-emerald-500/20 mt-4 flex items-center justify-center gap-2">
-                <span>Secure Authentication</span>
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        <form id="ssoForm">
+            <label class="label" for="email">Corporate Email</label>
+            <input type="email" id="email" placeholder="admin@visionedu.site" required autocomplete="email">
+            <button type="submit" id="authBtn">
+                <span id="btnLabel">Secure Authentication</span>
+                <div class="spinner" id="spinner"></div>
+                <svg id="arrowIcon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
             </button>
+            <div class="error-box" id="errorBox"></div>
         </form>
+
+        <div class="badge"><div class="badge-dot"></div>Secured by Vision Education · SAML 2.0</div>
     </div>
 
     <script>
-        document.getElementById('ssoForm').addEventListener('submit', async (e) => {
+        const form      = document.getElementById('ssoForm');
+        const btn       = document.getElementById('authBtn');
+        const btnLabel  = document.getElementById('btnLabel');
+        const spinner   = document.getElementById('spinner');
+        const arrowIcon = document.getElementById('arrowIcon');
+        const errorBox  = document.getElementById('errorBox');
+
+        function setLoading(loading) {
+            btn.disabled = loading;
+            spinner.style.display  = loading ? 'block' : 'none';
+            arrowIcon.style.display = loading ? 'none' : 'block';
+            btnLabel.textContent = loading ? 'Authenticating...' : 'Secure Authentication';
+        }
+
+        function showError(msg) {
+            errorBox.textContent = msg;
+            errorBox.style.display = 'block';
+        }
+
+        function clearError() {
+            errorBox.style.display = 'none';
+            errorBox.textContent = '';
+        }
+
+        form.addEventListener('submit', async (e) => {
             e.preventDefault();
-            const btn = document.getElementById('authBtn');
-            const email = document.getElementById('email').value;
+            clearError();
+
+            const email = document.getElementById('email').value.trim();
             const params = new URLSearchParams(window.location.search);
             const SAMLRequest = params.get('SAMLRequest');
-            const RelayState = params.get('RelayState');
+            const RelayState  = params.get('RelayState') || '';
 
             if (!SAMLRequest) {
-                alert("Missing SAML Request. Please start from the service provider (e.g., Zoho Mail).");
+                showError('Missing SAML Request. Please initiate login from Zoho Mail — do not open this page directly.');
                 return;
             }
 
-            btn.innerHTML = 'Authenticating... <span class="animate-pulse">●●●</span>';
-            btn.classList.add('opacity-80', 'cursor-not-allowed');
+            setLoading(true);
 
             try {
-                // Submit to custom Vercel SAML IdP
                 const response = await fetch('/api/saml-idp', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ SAMLRequest, RelayState, email })
                 });
 
-                if (response.ok) {
+                const contentType = response.headers.get('content-type') || '';
+
+                if (response.ok && contentType.includes('text/html')) {
                     const html = await response.text();
                     document.open();
                     document.write(html);
                     document.close();
                 } else {
-                    const err = await response.json();
-                    alert("Authentication Error: " + err.error);
-                    btn.innerHTML = 'Secure Authentication';
-                    btn.classList.remove('opacity-80', 'cursor-not-allowed');
+                    const data = contentType.includes('json') ? await response.json() : { error: 'Server returned an unexpected response.' };
+                    showError('Authentication failed: ' + (data.error || 'Unknown error. Please try again.'));
+                    setLoading(false);
                 }
             } catch (err) {
-                alert("Network error.");
-                btn.innerHTML = 'Secure Authentication';
-                btn.classList.remove('opacity-80', 'cursor-not-allowed');
+                showError('Could not reach the authentication server. Check your internet connection and try again. (' + err.message + ')');
+                setLoading(false);
             }
         });
     </script>
