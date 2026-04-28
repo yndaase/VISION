@@ -80,10 +80,14 @@ html:not([data-theme="dark"]) body.dashboard-page,
   --radius-lg:     18px;
 }
 
-/* ── Page background ── */
-body.dashboard-page {
+/* ── Page background — theme-aware ── */
+html:not([data-theme="dark"]) body.dashboard-page {
   background: #f0f2f5;
   color: #1a1a2e;
+}
+[data-theme="dark"] body.dashboard-page {
+  background: #05080f;
+  color: #f1f5f9;
 }
 
 /* ── Side nav: white card with left border accent ── */
