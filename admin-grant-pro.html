@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Grant Pro — Vision Admin</title>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;700;800&display=swap" rel="stylesheet">
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body { font-family:'Outfit',sans-serif; background:#05080f; color:#f1f5f9; min-height:100vh; display:flex; align-items:center; justify-content:center; padding:2rem; }
+    .card { background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:2rem; padding:3rem; max-width:480px; width:100%; text-align:center; }
+    h1 { font-size:1.6rem; font-weight:800; margin-bottom:0.5rem; }
+    .target { background:rgba(99,102,241,0.1); border:1px solid rgba(99,102,241,0.3); border-radius:0.75rem; padding:1rem 1.5rem; margin:1.5rem 0; font-weight:700; color:#818cf8; font-size:0.95rem; }
+    button { width:100%; padding:1rem; background:linear-gradient(135deg,#6366f1,#8b5cf6); border:none; border-radius:1rem; color:#fff; font-family:'Outfit',sans-serif; font-size:1rem; font-weight:800; cursor:pointer; transition:opacity 0.2s; }
+    button:disabled { opacity:0.5; cursor:not-allowed; }
+    #log { margin-top:1.5rem; text-align:left; font-size:0.82rem; background:rgba(0,0,0,0.3); border-radius:0.75rem; padding:1rem; min-height:80px; border:1px solid rgba(255,255,255,0.06); white-space:pre-wrap; font-family:monospace; color:#94a3b8; }
+    .success { color:#4ade80 !important; }
+    .error   { color:#f87171 !important; }
+  </style>
+</head>
+<body>
+<div class="card">
+  <h1>🔐 Grant Pro Access</h1>
+  <p style="color:#64748b;font-size:0.9rem;margin-top:0.5rem;">One-time Firestore role upgrade tool</p>
+
+  <div class="target">
+    Target: <strong>gisgreat308@gmail.com</strong><br>
+    Role: <strong>student → pro</strong>
+  </div>
+
+  <button id="grantBtn" onclick="grantPro()">Grant Pro Now</button>
+  <div id="log">Waiting...</div>
+</div>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+  import { getFirestore, doc, getDoc, setDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+  const config = {
+    apiKey: "AIzaSyCCLvmFR4NU6aIbDc-75EsBL-K9pqlNa5E",
+    authDomain: "vision-education-8a794.firebaseapp.com",
+    projectId: "vision-education-8a794",
+    storageBucket: "vision-education-8a794.appspot.com",
+    messagingSenderId: "324420775871",
+    appId: "1:324420775871:web:b0371a1561be77b085fb0a"
+  };
+
+  const app = initializeApp(config);
+  const db  = getFirestore(app);
+
+  const TARGET = "gisgreat308@gmail.com";
+  const log = document.getElementById("log");
+
+  function print(msg, cls) {
+    log.textContent += "\n" + msg;
+    if (cls) log.className = cls;
+  }
+
+  window.grantPro = async function() {
+    const btn = document.getElementById("grantBtn");
+    btn.disabled = true;
+    log.textContent = "";
+
+    print("→ Connecting to Firestore...");
+
+    try {
+      // Try exact email key first, then lowercase
+      const keys = [TARGET, TARGET.toLowerCase()];
+      let found = false;
+
+      for (const key of keys) {
+        print(`→ Checking document key: "${key}"`);
+        const ref = doc(db, "users", key);
+        const snap = await getDoc(ref);
+
+        if (snap.exists()) {
+          const data = snap.data();
+          print(`✓ Found user: ${data.name || data.email || key}`);
+          print(`  Current role: ${data.role || "none"}`);
+
+          await updateDoc(ref, { role: "pro" });
+          print(`✅ Role updated to "pro" successfully!`, "success");
+          found = true;
+          break;
+        }
+      }
+
+      if (!found) {
+        // Create the document if it doesn't exist yet
+        print("⚠ User document not found — creating with pro role...");
+        const ref = doc(db, "users", TARGET.toLowerCase());
+        await setDoc(ref, {
+          email: TARGET,
+          role: "pro",
+          createdAt: new Date().toISOString()
+        }, { merge: true });
+        print("✅ Pro document created successfully!", "success");
+      }
+
+    } catch (err) {
+      print("❌ Error: " + err.message, "error");
+      btn.disabled = false;
+    }
+  };
+
+  log.textContent = "Ready. Click the button to grant Pro.";
+</script>
+</body>
+</html>
