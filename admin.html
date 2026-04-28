@@ -1087,7 +1087,17 @@
         try {
           users = await window.fbGetAllUsers(currentViewCollection);
           if (users && users.length > 0) {
-            if (currentViewCollection === 'users') localStorage.setItem('waec_users', JSON.stringify(users));
+            if (currentViewCollection === 'users') {
+                const localUsers = getUsers();
+                const merged = [...localUsers];
+                users.forEach(cu => {
+                    const idx = merged.findIndex(lu => lu.email === cu.email);
+                    if (idx >= 0) merged[idx] = { ...merged[idx], ...cu };
+                    else merged.push(cu);
+                });
+                users = merged;
+                localStorage.setItem('waec_users', JSON.stringify(users));
+            }
           } else {
             if (currentViewCollection === 'users') users = getUsers();
           }
