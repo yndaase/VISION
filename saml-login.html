@@ -18,8 +18,6 @@
             position: relative;
             overflow: hidden;
         }
-
-        /* Background glows */
         body::before, body::after {
             content: '';
             position: absolute;
@@ -27,16 +25,8 @@
             filter: blur(100px);
             pointer-events: none;
         }
-        body::before {
-            width: 500px; height: 500px;
-            background: rgba(16, 185, 129, 0.12);
-            top: -10%; right: -10%;
-        }
-        body::after {
-            width: 400px; height: 400px;
-            background: rgba(99, 102, 241, 0.12);
-            bottom: -10%; left: -10%;
-        }
+        body::before { width:500px; height:500px; background:rgba(16,185,129,0.12); top:-10%; right:-10%; }
+        body::after  { width:400px; height:400px; background:rgba(99,102,241,0.12); bottom:-10%; left:-10%; }
 
         .card {
             background: rgba(255,255,255,0.04);
@@ -50,7 +40,6 @@
             z-index: 10;
             box-shadow: 0 32px 80px -16px rgba(0,0,0,0.5);
         }
-
         .logo {
             width: 56px; height: 56px;
             background: linear-gradient(135deg, #10b981, #6366f1);
@@ -60,33 +49,11 @@
             margin-bottom: 2rem;
             box-shadow: 0 12px 32px -8px rgba(16,185,129,0.4);
         }
-
-        h1 {
-            font-size: 2rem; font-weight: 900;
-            color: #fff;
-            letter-spacing: -0.02em;
-            margin-bottom: 0.5rem;
-        }
-
-        .subtitle {
-            color: rgba(255,255,255,0.45);
-            font-size: 0.95rem;
-            font-weight: 500;
-            margin-bottom: 2.5rem;
-            line-height: 1.5;
-        }
-
-        .label {
-            display: block;
-            font-size: 0.65rem;
-            font-weight: 800;
-            color: rgba(255,255,255,0.35);
-            letter-spacing: 0.12em;
-            text-transform: uppercase;
-            margin-bottom: 0.6rem;
-        }
-
-        input[type="email"] {
+        h1 { font-size:2rem; font-weight:900; color:#fff; letter-spacing:-0.02em; margin-bottom:0.5rem; }
+        .subtitle { color:rgba(255,255,255,0.45); font-size:0.95rem; font-weight:500; margin-bottom:2rem; line-height:1.5; }
+        .label { display:block; font-size:0.65rem; font-weight:800; color:rgba(255,255,255,0.35); letter-spacing:0.12em; text-transform:uppercase; margin-bottom:0.6rem; }
+        .field { margin-bottom: 1rem; }
+        input[type="email"], input[type="password"] {
             width: 100%;
             padding: 1rem 1.25rem;
             background: rgba(255,255,255,0.05);
@@ -98,15 +65,9 @@
             font-weight: 500;
             outline: none;
             transition: border-color 0.2s;
-            margin-bottom: 1.25rem;
         }
-        input[type="email"]:focus {
-            border-color: #10b981;
-        }
-        input[type="email"]::placeholder {
-            color: rgba(255,255,255,0.2);
-        }
-
+        input:focus { border-color: #10b981; }
+        input::placeholder { color: rgba(255,255,255,0.2); }
         button {
             width: 100%;
             padding: 1rem 1.5rem;
@@ -124,21 +85,10 @@
             gap: 0.5rem;
             transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
             box-shadow: 0 8px 24px -6px rgba(16,185,129,0.5);
-            letter-spacing: -0.01em;
+            margin-top: 0.5rem;
         }
-        button:hover:not(:disabled) {
-            background: #34d399;
-            transform: translateY(-2px);
-            box-shadow: 0 16px 40px -8px rgba(16,185,129,0.5);
-        }
-        button:active:not(:disabled) {
-            transform: translateY(0);
-        }
-        button:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-        }
-
+        button:hover:not(:disabled) { background:#34d399; transform:translateY(-2px); }
+        button:disabled { opacity:0.6; cursor:not-allowed; }
         .error-box {
             display: none;
             margin-top: 1rem;
@@ -149,121 +99,140 @@
             color: #fca5a5;
             font-size: 0.875rem;
             font-weight: 600;
-            line-height: 1.5;
         }
-
-        .badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.4rem;
-            margin-top: 2rem;
-            font-size: 0.7rem;
-            font-weight: 700;
+        .shield {
+            display: flex; align-items: center; gap: 0.5rem;
+            margin-top: 1.5rem;
+            font-size: 0.7rem; font-weight: 700;
             color: rgba(255,255,255,0.2);
-            letter-spacing: 0.06em;
-            text-transform: uppercase;
+            letter-spacing: 0.06em; text-transform: uppercase;
         }
-        .badge-dot {
-            width: 6px; height: 6px;
-            border-radius: 50%;
-            background: #10b981;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
+        .shield-dot { width:6px; height:6px; border-radius:50%; background:#10b981; }
+        @keyframes spin { to { transform: rotate(360deg); } }
         .spinner {
-            width: 18px; height: 18px;
-            border: 2.5px solid rgba(5,8,15,0.3);
-            border-top-color: #05080f;
-            border-radius: 50%;
-            animation: spin 0.7s linear infinite;
-            display: none;
+            width:18px; height:18px;
+            border:2.5px solid rgba(5,8,15,0.3);
+            border-top-color:#05080f;
+            border-radius:50%;
+            animation:spin 0.7s linear infinite;
+            display:none;
         }
     </style>
 </head>
 <body>
+    <!-- Firebase SDK -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+
+        const app  = initializeApp({
+            apiKey:            "AIzaSyCCLvmFR4NU6aIbDc-75EsBL-K9pqlNa5E",
+            authDomain:        "vision-education-8a794.firebaseapp.com",
+            projectId:         "vision-education-8a794",
+            storageBucket:     "vision-education-8a794.appspot.com",
+            messagingSenderId: "324420775871",
+            appId:             "1:324420775871:web:b0371a1561be77b085fb0a"
+        });
+        const auth = getAuth(app);
+        window._fbAuth = auth;
+        window._fbSignIn = (email, password) => signInWithEmailAndPassword(auth, email, password);
+    </script>
+
     <div class="card">
         <div class="logo">V</div>
         <h1>Enterprise SSO</h1>
-        <p class="subtitle">Single Sign-On portal for Vision Education staff and administrators.</p>
+        <p class="subtitle">Sign in with your Vision Education credentials to access Zoho Mail.</p>
 
         <form id="ssoForm">
-            <label class="label" for="email">Corporate Email</label>
-            <input type="email" id="email" placeholder="admin@visionedu.site" required autocomplete="email">
+            <div class="field">
+                <label class="label" for="email">Corporate Email</label>
+                <input type="email" id="email" placeholder="admin@visionedu.site" required autocomplete="email">
+            </div>
+            <div class="field">
+                <label class="label" for="password">Password</label>
+                <input type="password" id="password" placeholder="••••••••" required autocomplete="current-password">
+            </div>
             <button type="submit" id="authBtn">
-                <span id="btnLabel">Secure Authentication</span>
+                <span id="btnLabel">Sign In Securely</span>
                 <div class="spinner" id="spinner"></div>
                 <svg id="arrowIcon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
             </button>
             <div class="error-box" id="errorBox"></div>
         </form>
 
-        <div class="badge"><div class="badge-dot"></div>Secured by Vision Education · SAML 2.0</div>
+        <div class="shield"><div class="shield-dot"></div>Secured by Firebase Auth · SAML 2.0</div>
     </div>
 
     <script>
-        const form      = document.getElementById('ssoForm');
-        const btn       = document.getElementById('authBtn');
-        const btnLabel  = document.getElementById('btnLabel');
-        const spinner   = document.getElementById('spinner');
-        const arrowIcon = document.getElementById('arrowIcon');
-        const errorBox  = document.getElementById('errorBox');
+        const form    = document.getElementById('ssoForm');
+        const btn     = document.getElementById('authBtn');
+        const label   = document.getElementById('btnLabel');
+        const spinner = document.getElementById('spinner');
+        const arrow   = document.getElementById('arrowIcon');
+        const errBox  = document.getElementById('errorBox');
 
-        function setLoading(loading) {
-            btn.disabled = loading;
-            spinner.style.display  = loading ? 'block' : 'none';
-            arrowIcon.style.display = loading ? 'none' : 'block';
-            btnLabel.textContent = loading ? 'Authenticating...' : 'Secure Authentication';
+        function setLoading(on) {
+            btn.disabled = on;
+            spinner.style.display = on ? 'block' : 'none';
+            arrow.style.display   = on ? 'none'  : 'block';
+            label.textContent     = on ? 'Verifying...' : 'Sign In Securely';
         }
-
-        function showError(msg) {
-            errorBox.textContent = msg;
-            errorBox.style.display = 'block';
-        }
-
-        function clearError() {
-            errorBox.style.display = 'none';
-            errorBox.textContent = '';
-        }
+        function showError(msg) { errBox.textContent = msg; errBox.style.display = 'block'; }
+        function clearError()   { errBox.style.display = 'none'; }
 
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
             clearError();
 
-            const email = document.getElementById('email').value.trim();
-            const params = new URLSearchParams(window.location.search);
+            const email    = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value;
+            const params   = new URLSearchParams(window.location.search);
             const SAMLRequest = params.get('SAMLRequest');
             const RelayState  = params.get('RelayState') || '';
 
             if (!SAMLRequest) {
-                showError('Missing SAML Request. Please initiate login from Zoho Mail — do not open this page directly.');
+                showError('Missing SAML Request. Please start the login from Zoho Mail — do not open this page directly.');
+                return;
+            }
+
+            // Wait for Firebase SDK to be ready
+            if (!window._fbSignIn) {
+                showError('Authentication service loading. Please try again in a moment.');
                 return;
             }
 
             setLoading(true);
 
             try {
+                // Step 1: Authenticate with Firebase
+                const credential = await window._fbSignIn(email, password);
+                const idToken    = await credential.user.getIdToken();
+
+                // Step 2: Send verified token to SAML IdP
                 const response = await fetch('/api/saml-idp', {
-                    method: 'POST',
+                    method:  'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ SAMLRequest, RelayState, email })
+                    body:    JSON.stringify({ SAMLRequest, RelayState, idToken })
                 });
 
                 const contentType = response.headers.get('content-type') || '';
 
                 if (response.ok && contentType.includes('text/html')) {
                     const html = await response.text();
-                    document.open();
-                    document.write(html);
-                    document.close();
+                    document.open(); document.write(html); document.close();
                 } else {
-                    const data = contentType.includes('json') ? await response.json() : { error: 'Server returned an unexpected response.' };
-                    showError('Authentication failed: ' + (data.error || 'Unknown error. Please try again.'));
+                    const data = contentType.includes('json') ? await response.json() : { error: 'Unexpected server response.' };
+                    showError('Authentication failed: ' + (data.error || 'Unknown error.'));
                     setLoading(false);
                 }
             } catch (err) {
-                showError('Could not reach the authentication server. Check your internet connection and try again. (' + err.message + ')');
+                // Firebase auth errors
+                const msg = err.code === 'auth/wrong-password'   ? 'Incorrect password. Please try again.' :
+                            err.code === 'auth/user-not-found'   ? 'No account found with that email address.' :
+                            err.code === 'auth/too-many-requests' ? 'Too many failed attempts. Please wait and try again.' :
+                            err.code === 'auth/invalid-credential' ? 'Invalid email or password.' :
+                            'Error: ' + (err.message || 'Authentication failed.');
+                showError(msg);
                 setLoading(false);
             }
         });

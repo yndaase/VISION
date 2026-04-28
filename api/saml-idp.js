@@ -2,6 +2,20 @@ import zlib from 'zlib';
 import crypto from 'crypto';
 import { SignedXml } from 'xml-crypto';
 
+// Lazy Firebase Admin initializer
+let _adminAuth = null;
+async function getAdminAuth() {
+    if (_adminAuth) return _adminAuth;
+    const admin = (await import('firebase-admin')).default;
+    if (!admin.apps.length) {
+        const sa = process.env.FIREBASE_SERVICE_ACCOUNT;
+        if (!sa) throw new Error('FIREBASE_SERVICE_ACCOUNT env var is missing.');
+        admin.initializeApp({ credential: admin.credential.cert(JSON.parse(sa)) });
+    }
+    _adminAuth = admin.auth();
+    return _adminAuth;
+}
+
 // Extract ACS URL and Request ID from decoded SAMLRequest XML
 function parseSAMLRequest(xml) {
     const idMatch  = xml.match(/ID=["']([^"']+)["']/);
@@ -44,10 +58,35 @@ export default async function handler(req, res) {
     if (req.method !== 'POST') return res.status(405).json({ error: 'Method Not Allowed' });
 
     try {
-        const { SAMLRequest, RelayState, email } = req.body;
+        const { SAMLRequest, RelayState, idToken } = req.body;
 
-        if (!email)       return res.status(400).json({ error: 'Email is required.' });
+        if (!idToken)     return res.status(401).json({ error: 'Authentication required. Please sign in first.' });
         if (!SAMLRequest) return res.status(400).json({ error: 'Missing SAMLRequest parameter.' });
+
+        // Step 1: Verify Firebase ID token — this proves the user is who they say they are
+        let verifiedEmail;
+        try {
+            const adminAuth = await getAdminAuth();
+            const decoded   = await adminAuth.verifyIdToken(idToken);
+            verifiedEmail   = decoded.email;
+            if (!verifiedEmail) return res.status(401).json({ error: 'Token does not contain an email address.' });
+        } catch (tokenErr) {
+            console.error('[SAML] Token verification failed:', tokenErr.message);
+            return res.status(401).json({ error: 'Invalid or expired login session. Please sign in again.' });
+        }
+
+        // Step 2: Allowlist check — only whitelisted emails can get a SAML assertion
+        const allowedRaw = process.env.SAML_ALLOWED_EMAILS || '';
+        if (allowedRaw.trim()) {
+            const allowed = allowedRaw.split(',').map(e => e.trim().toLowerCase());
+            if (!allowed.includes(verifiedEmail.toLowerCase())) {
+                console.warn(`[SAML] Blocked unauthorised SAML attempt by: ${verifiedEmail}`);
+                return res.status(403).json({ error: `Access denied. ${verifiedEmail} is not authorised for SSO.` });
+            }
+        }
+
+        const email = verifiedEmail;
+        console.log(`[SAML] Issuing assertion for verified user: ${email}`);
 
         // Load certs from env vars
         const privateKeyRaw = (process.env.SAML_PRIVATE_KEY || '').replace(/\\n/g, '\n');
@@ -55,7 +94,7 @@ export default async function handler(req, res) {
 
         if (!privateKeyRaw || !certRaw) {
             console.error('[SAML] Missing SAML_PRIVATE_KEY or SAML_CERT');
-            return res.status(500).json({ error: 'SAML certificates not configured on server. Add SAML_PRIVATE_KEY and SAML_CERT to Vercel env vars.' });
+            return res.status(500).json({ error: 'SAML certificates not configured on server.' });
         }
 
         // Decode the SAMLRequest
