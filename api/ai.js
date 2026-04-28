@@ -163,26 +163,63 @@ Provide a HINT or CONCEPT EXPLANATION only. Do NOT give the final answer. Keep i
 }
 
 async function handlePlanner(data, res) {
-  const { subject, accuracy, name } = data;
+  const {
+    subject, accuracy, name,
+    subjects = [],
+    studyStart = "8:00",
+    studyEnd   = "15:00",
+    breakMins  = 30,
+  } = data;
 
-  const systemPrompt = `You are an expert academic study planner. Return STRICT JSON ONLY. No prose, no markdown fences.`;
+  const subjectsList = subjects.length > 0
+    ? subjects.join(", ")
+    : (subject || "Core Mathematics");
 
-  const prompt = `Student: ${name}. Performance: ${accuracy}% in ${subject}.
-Generate a Strategic 7-Day Study Timetable in this exact JSON format:
+  const weakest = subject || subjects[0] || "Core Mathematics";
+
+  const systemPrompt = `You are an expert WASSCE 2026 study planner. Return ONLY valid JSON — no prose, no markdown fences, no text outside the JSON object.`;
+
+  const prompt = `Create a personalised weekly study timetable for ${name}, a WASSCE 2026 candidate.
+
+Context:
+- Subjects to cover: ${subjectsList}
+- Weakest subject (needs most time): ${weakest} (${accuracy}% accuracy)
+- Study window: ${studyStart} – ${studyEnd}, Monday to Friday
+- Short break every ~90 min, ~${breakMins} minutes long
+
+Return EXACTLY this JSON structure (no extra keys, no markdown):
 {
-  "topic": "Mastery Focus for the Week",
-  "timetable": "| Day | Session | Focus Topic | Goal |\\n|---|---|---|---|\\n| Monday | 4PM-6PM | Topic A | Goal A |",
-  "tasks": ["Critical Action 1", "Critical Action 2"],
-  "motivation": "A punchy motivational quote",
-  "difficulty": "Easy"
+  "weekFocus": "One-sentence focus goal for the week",
+  "slots": [
+    {
+      "time": "HH:MM – HH:MM",
+      "monday": "Subject name OR BREAK OR LUNCH BREAK OR END OF STUDY",
+      "tuesday": "...",
+      "wednesday": "...",
+      "thursday": "...",
+      "friday": "...",
+      "isBreak": false
+    }
+  ],
+  "tasks": ["Actionable task 1", "Actionable task 2", "Actionable task 3"],
+  "motivation": "A short punchy motivational quote",
+  "difficulty": "Medium"
 }
-STRICT JSON ONLY. No text outside the JSON object.`;
+
+Rules:
+- All slots from ${studyStart} to ${studyEnd}, continuous (no gaps)
+- isBreak must be true for BREAK, LUNCH BREAK, and END OF STUDY rows
+- Distribute all subjects; give ${weakest} the most sessions
+- Include Past Questions and Theory Practice sessions
+- STRICT JSON ONLY. Absolutely no text before or after the JSON object.`;
 
   const response = await safeGenerateContent(
     [{ role: "user", content: prompt }],
     systemPrompt
   );
-  return res.status(200).json(extractJSON(response));
+  const parsed = extractJSON(response);
+  if (!parsed.slots) throw new Error("AI returned invalid timetable structure.");
+  return res.status(200).json(parsed);
 }
 
 async function handleVision(data, res) {
