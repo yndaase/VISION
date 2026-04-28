@@ -9,9 +9,10 @@ let examState = {
   mockConfig: null,
   questions: [],
   currentIndex: 0,
-  answers: {}, // { qId: 'A' | 'B' | 'C' | 'D' }
-  flags: new Set(), // Set of flagged qIds
-  timeRemaining: 0, // seconds
+  answers: {},       // { qId: 'A' | 'B' | 'C' | 'D' | essayText }
+  essayScores: {},   // { qId: { score, maxPoints, passed } } — populated by AI marking
+  flags: new Set(),  // Set of flagged qIds
+  timeRemaining: 0,  // seconds
   startTime: null,
   timerInterval: null,
   submitted: false,
@@ -603,6 +604,15 @@ async function markEssayWithAI(qId) {
     const result = await response.json();
     
     if (result.success) {
+      const score    = result.score    || 0;
+      const maxPts   = result.maxPoints || 10;
+      const passed   = score / maxPts >= 0.7;  // 70% threshold = 7/10
+
+      // Sync to exam state so final score counts this essay
+      examState.essayScores[qId] = { score, maxPoints: maxPts, passed };
+      updatePalette();
+      updateSideStats();
+
       const verdictColor = {
         'Excellent': 'var(--success)',
         'Good': '#34d399',
@@ -613,7 +623,9 @@ async function markEssayWithAI(qId) {
 
       feedbackEl.innerHTML = `
         <div class="ai-score-row">
-          <div class="ai-score-badge">${result.score} / ${result.maxPoints} Marks</div>
+          <div class="ai-score-badge" style="background:${passed ? 'rgba(52,211,153,0.15)' : 'rgba(248,113,113,0.12)'}; color:${passed ? '#34d399' : '#f87171'}; border:1px solid ${passed ? 'rgba(52,211,153,0.3)' : 'rgba(248,113,113,0.3)'}">
+            ${score} / ${maxPts} marks &nbsp;${passed ? '✓ Passed' : '✗ Below pass'}
+          </div>
           <div class="ai-verdict" style="color: ${verdictColor}">${result.verdict}</div>
         </div>
         <div class="ai-feedback-text">${result.feedback}</div>
@@ -627,6 +639,10 @@ async function markEssayWithAI(qId) {
           ${result.modelAnswerSummary}
         </div>` : ''}
       `;
+
+      // Scroll feedback into view so user can read it
+      requestAnimationFrame(() => feedbackEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' }));
+
     } else {
       feedbackEl.innerHTML = `
         <div class="ai-error-card" style="border: 1px solid var(--error); padding: 1rem; border-radius: 8px; text-align:center;">
@@ -791,12 +807,20 @@ function submitExam() {
 
   examState.questions.forEach((q) => {
     const chosen = examState.answers[q.id];
-    if (!chosen) {
-      skipped++;
-    } else if (chosen === q.correct || chosen === q.correctFixed) {
-      correct++;
+    if (q.type === 'essay') {
+      // Essay: count as correct if AI marked it >= 70%
+      const es = examState.essayScores[q.id];
+      if (!es) { skipped++; }
+      else if (es.passed) { correct++; }
+      else { wrong++; }
     } else {
-      wrong++;
+      if (!chosen) {
+        skipped++;
+      } else if (chosen === q.correct || chosen === q.correctFixed) {
+        correct++;
+      } else {
+        wrong++;
+      }
     }
   });
 
