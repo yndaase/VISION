@@ -1,155 +1,129 @@
 import zlib from 'zlib';
 import crypto from 'crypto';
-import { create } from 'xmlbuilder';
 import { SignedXml } from 'xml-crypto';
 
-// Initialize Firebase Admin lazily if needed to verify token
-async function verifyFirebaseToken(token) {
-    if (!global.adminApp) {
-        const admin = (await import('firebase-admin')).default;
-        const serviceAccountStr = process.env.FIREBASE_SERVICE_ACCOUNT;
-        if (!serviceAccountStr) return null;
-        global.adminApp = admin.initializeApp({
-            credential: admin.credential.cert(JSON.parse(serviceAccountStr))
-        });
-    }
-    const admin = (await import('firebase-admin')).default;
-    return await admin.auth().verifyIdToken(token);
-}
-
-// Extract ACS URL and Request ID from SAMLRequest
-function parseSAMLRequest(samlReqBuffer) {
-    const xml = samlReqBuffer.toString();
-    const idMatch = xml.match(/ID="([^"]+)"/);
-    const acsMatch = xml.match(/AssertionConsumerServiceURL="([^"]+)"/);
+// Extract ACS URL and Request ID from decoded SAMLRequest XML
+function parseSAMLRequest(xml) {
+    const idMatch  = xml.match(/ID=["']([^"']+)["']/);
+    const acsMatch = xml.match(/AssertionConsumerServiceURL=["']([^"']+)["']/);
     return {
-        id: idMatch ? idMatch[1] : '',
+        id:     idMatch  ? idMatch[1]  : '_missing',
         acsUrl: acsMatch ? acsMatch[1] : ''
     };
 }
 
+// Decode SAMLRequest — handles both deflated (redirect binding) and plain (POST binding)
+function decodeSAMLRequest(encoded) {
+    try {
+        const buf = Buffer.from(encoded, 'base64');
+        return zlib.inflateRawSync(buf).toString('utf8');
+    } catch (_) {
+        return Buffer.from(encoded, 'base64').toString('utf8');
+    }
+}
+
+// Build unsigned SAML Response XML using template literals — no xmlbuilder needed
+function buildSAMLResponse({ responseId, assertionId, issueInstant, notBefore, notOnOrAfter, acsUrl, inResponseTo, issuer, email }) {
+    return `<samlp:Response xmlns:samlp="urn:oasis:names:tc:SAML:2.0:protocol" xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion" ID="${responseId}" Version="2.0" IssueInstant="${issueInstant}" Destination="${acsUrl}" InResponseTo="${inResponseTo}"><saml:Issuer>${issuer}</saml:Issuer><samlp:Status><samlp:StatusCode Value="urn:oasis:names:tc:SAML:2.0:status:Success"/></samlp:Status><saml:Assertion xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion" ID="${assertionId}" Version="2.0" IssueInstant="${issueInstant}"><saml:Issuer>${issuer}</saml:Issuer><saml:Subject><saml:NameID Format="urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress">${email}</saml:NameID><saml:SubjectConfirmation Method="urn:oasis:names:tc:SAML:2.0:cm:bearer"><saml:SubjectConfirmationData InResponseTo="${inResponseTo}" NotOnOrAfter="${notOnOrAfter}" Recipient="${acsUrl}"/></saml:SubjectConfirmation></saml:Subject><saml:Conditions NotBefore="${notBefore}" NotOnOrAfter="${notOnOrAfter}"><saml:AudienceRestriction><saml:Audience>zoho.com</saml:Audience></saml:AudienceRestriction></saml:Conditions><saml:AuthnStatement AuthnInstant="${issueInstant}" SessionIndex="${assertionId}"><saml:AuthnContext><saml:AuthnContextClassRef>urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport</saml:AuthnContextClassRef></saml:AuthnContext></saml:AuthnStatement></saml:Assertion></samlp:Response>`;
+}
+
 export default async function handler(req, res) {
-    res.setHeader("Access-Control-Allow-Origin", "*");
-    
+    // Always return JSON on errors so the frontend can display them
+    res.setHeader('Access-Control-Allow-Origin', '*');
+
+    // ── GET: redirect to login page ───────────────────────────────────────────
     if (req.method === 'GET') {
         const { SAMLRequest, RelayState } = req.query;
-        if (!SAMLRequest) return res.status(400).send('Missing SAMLRequest');
-        
-        // Redirect to login page on visionedu.online
-        return res.redirect(302, `/saml-login.html?SAMLRequest=${encodeURIComponent(SAMLRequest)}&RelayState=${encodeURIComponent(RelayState || '')}`);
+        if (!SAMLRequest) return res.status(400).json({ error: 'Missing SAMLRequest' });
+        return res.redirect(302,
+            `/saml-login.html?SAMLRequest=${encodeURIComponent(SAMLRequest)}&RelayState=${encodeURIComponent(RelayState || '')}`
+        );
     }
-    
-    if (req.method === 'POST') {
-        const { SAMLRequest, RelayState, idToken, email } = req.body;
-        
-        let userEmail = email;
-        if (idToken) {
-            try {
-                const decoded = await verifyFirebaseToken(idToken);
-                if (decoded) userEmail = decoded.email;
-            } catch(e) {
-                return res.status(401).json({ error: 'Invalid Firebase token' });
-            }
+
+    // ── POST: generate & sign SAML Response ───────────────────────────────────
+    if (req.method !== 'POST') return res.status(405).json({ error: 'Method Not Allowed' });
+
+    try {
+        const { SAMLRequest, RelayState, email } = req.body;
+
+        if (!email)       return res.status(400).json({ error: 'Email is required.' });
+        if (!SAMLRequest) return res.status(400).json({ error: 'Missing SAMLRequest parameter.' });
+
+        // Load certs from env vars
+        const privateKeyRaw = (process.env.SAML_PRIVATE_KEY || '').replace(/\\n/g, '\n');
+        const certRaw       = (process.env.SAML_CERT || '').replace(/\\n/g, '\n');
+
+        if (!privateKeyRaw || !certRaw) {
+            console.error('[SAML] Missing SAML_PRIVATE_KEY or SAML_CERT');
+            return res.status(500).json({ error: 'SAML certificates not configured on server. Add SAML_PRIVATE_KEY and SAML_CERT to Vercel env vars.' });
         }
-        
-        if (!userEmail) return res.status(401).json({ error: 'Email required' });
-        
-        // Decode SAMLRequest (Base64 + Inflate usually for redirect binding)
-        let xmlBuffer;
-        try {
-            const buf = Buffer.from(SAMLRequest, 'base64');
-            xmlBuffer = zlib.inflateRawSync(buf);
-        } catch(e) {
-            // If it wasn't deflated, just base64 decoded
-            xmlBuffer = Buffer.from(SAMLRequest, 'base64');
+
+        // Decode the SAMLRequest
+        const samlXml = decodeSAMLRequest(SAMLRequest);
+        const { id: inResponseTo, acsUrl } = parseSAMLRequest(samlXml);
+
+        if (!acsUrl) {
+            return res.status(400).json({ error: 'Could not find AssertionConsumerServiceURL in SAMLRequest. Make sure Zoho sent a valid SAML AuthnRequest.' });
         }
-        
-        const { id, acsUrl } = parseSAMLRequest(xmlBuffer);
-        if (!acsUrl) return res.status(400).json({ error: 'Could not find ACS URL in SAMLRequest' });
-        
-        // Generate SAML Response XML
-        const issueInstant = new Date().toISOString();
-        const notBefore = new Date(Date.now() - 5000).toISOString();
-        const notOnOrAfter = new Date(Date.now() + 5 * 60000).toISOString();
-        const responseId = '_' + crypto.randomBytes(16).toString('hex');
-        const assertionId = '_' + crypto.randomBytes(16).toString('hex');
-        const issuer = 'https://visionedu.online/api/saml-idp';
-        
-        const xml = create('samlp:Response', { headless: true })
-            .att('xmlns:samlp', 'urn:oasis:names:tc:SAML:2.0:protocol')
-            .att('xmlns:saml', 'urn:oasis:names:tc:SAML:2.0:assertion')
-            .att('ID', responseId)
-            .att('Version', '2.0')
-            .att('IssueInstant', issueInstant)
-            .att('Destination', acsUrl)
-            .att('InResponseTo', id)
-            .ele('saml:Issuer', issuer).up()
-            .ele('samlp:Status')
-                .ele('samlp:StatusCode', { Value: 'urn:oasis:names:tc:SAML:2.0:status:Success' }).up()
-            .up()
-            .ele('saml:Assertion', { ID: assertionId, Version: '2.0', IssueInstant: issueInstant })
-                .ele('saml:Issuer', issuer).up()
-                .ele('saml:Subject')
-                    .ele('saml:NameID', { Format: 'urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress' }, userEmail).up()
-                    .ele('saml:SubjectConfirmation', { Method: 'urn:oasis:names:tc:SAML:2.0:cm:bearer' })
-                        .ele('saml:SubjectConfirmationData', { InResponseTo: id, NotOnOrAfter: notOnOrAfter, Recipient: acsUrl }).up()
-                    .up()
-                .up()
-                .ele('saml:Conditions', { NotBefore: notBefore, NotOnOrAfter: notOnOrAfter })
-                    .ele('saml:AudienceRestriction')
-                        .ele('saml:Audience', 'zoho.com').up()
-                    .up()
-                .up()
-                .ele('saml:AuthnStatement', { AuthnInstant: issueInstant, SessionIndex: assertionId })
-                    .ele('saml:AuthnContext')
-                        .ele('saml:AuthnContextClassRef', 'urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport').up()
-                    .up()
-                .up()
-            .up()
-            .end();
-            
-        // Sign the Assertion — load certs from env vars (Vercel safe)
-        const privateKey = (process.env.SAML_PRIVATE_KEY || '').replace(/\\n/g, '\n');
-        const cert = (process.env.SAML_CERT || '').replace(/\\n/g, '\n');
-        if (!privateKey || !cert) {
-            console.error('[SAML] Missing SAML_PRIVATE_KEY or SAML_CERT env vars');
-            return res.status(500).json({ error: 'SAML certificates not configured on server.' });
-        }
-        const cleanCert = cert.replace(/-----BEGIN CERTIFICATE-----|-----END CERTIFICATE-----|\r|\n/g, '');
-        
-        const sig = new SignedXml();
-        sig.addReference(`//*[@ID="${assertionId}"]`, [
-            "http://www.w3.org/2000/09/xmldsig#enveloped-signature",
-            "http://www.w3.org/2001/10/xml-exc-c14n#"
-        ], "http://www.w3.org/2001/04/xmlenc#sha256");
-        sig.signingKey = privateKey;
-        sig.signatureAlgorithm = "http://www.w3.org/2001/04/xmldsig-more#rsa-sha256";
+
+        // Build XML
+        const now           = new Date();
+        const issueInstant  = now.toISOString();
+        const notBefore     = new Date(now.getTime() - 5000).toISOString();
+        const notOnOrAfter  = new Date(now.getTime() + 5 * 60000).toISOString();
+        const responseId    = '_' + crypto.randomBytes(16).toString('hex');
+        const assertionId   = '_' + crypto.randomBytes(16).toString('hex');
+        const issuer        = 'https://visionedu.online/api/saml-idp';
+
+        const unsignedXml = buildSAMLResponse({
+            responseId, assertionId, issueInstant, notBefore, notOnOrAfter,
+            acsUrl, inResponseTo, issuer, email
+        });
+
+        // Sign the Assertion node
+        const cleanCert = certRaw
+            .replace('-----BEGIN CERTIFICATE-----', '')
+            .replace('-----END CERTIFICATE-----', '')
+            .replace(/[\r\n\s]/g, '');
+
+        const sig = new SignedXml({ privateKey: privateKeyRaw });
+        sig.addReference({
+            xpath:              `//*[@ID="${assertionId}"]`,
+            transforms:         ['http://www.w3.org/2000/09/xmldsig#enveloped-signature', 'http://www.w3.org/2001/10/xml-exc-c14n#'],
+            digestAlgorithm:    'http://www.w3.org/2001/04/xmlenc#sha256'
+        });
+        sig.signatureAlgorithm = 'http://www.w3.org/2001/04/xmldsig-more#rsa-sha256';
         sig.keyInfoProvider = {
             getKeyInfo: () => `<X509Data><X509Certificate>${cleanCert}</X509Certificate></X509Data>`
         };
-        sig.computeSignature(xml, {
-            location: { reference: "//*[local-name(.)='Issuer']", action: "after" }
+        sig.computeSignature(unsignedXml, {
+            location: { reference: `//*[@ID="${assertionId}"]/saml:Issuer`, action: 'after' }
         });
-        
-        const signedXml = sig.getSignedXml();
+
+        const signedXml      = sig.getSignedXml();
         const base64Response = Buffer.from(signedXml).toString('base64');
-        
-        // Auto-submit form HTML
-        const formHtml = `
-            <!DOCTYPE html>
-            <html>
-            <head><title>Authenticating...</title></head>
-            <body onload="document.forms[0].submit()" style="font-family:sans-serif; background:#05080f; color:white; display:flex; align-items:center; justify-content:center; height:100vh;">
-                <h2>Authenticating Securely...</h2>
-                <form method="POST" action="${acsUrl}" style="display:none;">
-                    <input type="hidden" name="SAMLResponse" value="${base64Response}" />
-                    ${RelayState ? `<input type="hidden" name="RelayState" value="${RelayState}" />` : ''}
-                    <noscript><input type="submit" value="Continue" /></noscript>
-                </form>
-            </body>
-            </html>
-        `;
-        
-        return res.status(200).send(formHtml);
+
+        // Return auto-submitting HTML form to Zoho's ACS endpoint
+        const formHtml = `<!DOCTYPE html>
+<html>
+<head><title>Signing in...</title></head>
+<body onload="document.forms[0].submit()" style="font-family:sans-serif;background:#05080f;color:white;display:flex;align-items:center;justify-content:center;height:100vh;margin:0;">
+  <div style="text-align:center">
+    <div style="font-size:2rem;font-weight:900;margin-bottom:1rem;">✓ Authenticated</div>
+    <p style="color:#10b981;">Redirecting to your inbox...</p>
+  </div>
+  <form method="POST" action="${acsUrl}" style="display:none;">
+    <input type="hidden" name="SAMLResponse" value="${base64Response}" />
+    ${RelayState ? `<input type="hidden" name="RelayState" value="${RelayState}" />` : ''}
+    <noscript><input type="submit" value="Continue to Zoho Mail" /></noscript>
+  </form>
+</body>
+</html>`;
+
+        return res.status(200).setHeader('Content-Type', 'text/html').send(formHtml);
+
+    } catch (err) {
+        console.error('[SAML IdP Error]:', err);
+        return res.status(500).json({ error: `Server error: ${err.message}` });
     }
 }
