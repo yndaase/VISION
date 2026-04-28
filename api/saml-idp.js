@@ -80,27 +80,31 @@ export default async function handler(req, res) {
             acsUrl, inResponseTo, issuer, email
         });
 
-        // Sign the Assertion node
+        // Sign the whole Response element (simpler, avoids namespace context loss with Assertion-only signing)
         const cleanCert = certRaw
             .replace('-----BEGIN CERTIFICATE-----', '')
             .replace('-----END CERTIFICATE-----', '')
             .replace(/[\r\n\s]/g, '');
 
         const sig = new SignedXml({
-            privateKey: privateKeyRaw,
-            canonicalizationAlgorithm: 'http://www.w3.org/2001/10/xml-exc-c14n#'
+            privateKey:                privateKeyRaw,
+            canonicalizationAlgorithm: 'http://www.w3.org/TR/2001/REC-xml-c14n-20010315',
+            signatureAlgorithm:        'http://www.w3.org/2001/04/xmldsig-more#rsa-sha256',
+            idAttributes:              ['ID']
         });
         sig.addReference({
-            xpath:              `//*[@ID="${assertionId}"]`,
-            transforms:         ['http://www.w3.org/2000/09/xmldsig#enveloped-signature', 'http://www.w3.org/2001/10/xml-exc-c14n#'],
-            digestAlgorithm:    'http://www.w3.org/2001/04/xmlenc#sha256'
+            xpath:           `//*[@ID="${responseId}"]`,
+            transforms:      [
+                'http://www.w3.org/2000/09/xmldsig#enveloped-signature',
+                'http://www.w3.org/TR/2001/REC-xml-c14n-20010315'
+            ],
+            digestAlgorithm: 'http://www.w3.org/2001/04/xmlenc#sha256'
         });
-        sig.signatureAlgorithm = 'http://www.w3.org/2001/04/xmldsig-more#rsa-sha256';
         sig.keyInfoProvider = {
             getKeyInfo: () => `<X509Data><X509Certificate>${cleanCert}</X509Certificate></X509Data>`
         };
         sig.computeSignature(unsignedXml, {
-            location: { reference: `//*[@ID="${assertionId}"]/saml:Issuer`, action: 'after' }
+            location: { reference: `//*[@ID="${responseId}"]/*[local-name()='Issuer']`, action: 'after' }
         });
 
         const signedXml      = sig.getSignedXml();
