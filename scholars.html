@@ -158,6 +158,8 @@
   </footer>
 
   <script>
+    const LARK_WEBHOOK_URL = "https://open-jp.larksuite.com/anycross/trigger/callback/MDUxZWUwY2Q2OTBlYTljOTVhMTFmYzc4NDE0Mzc5M2Q1";
+
     function nextStep(step) {
       document.querySelectorAll('section').forEach(s => s.classList.add('hidden-step'));
       const nextSection = document.getElementById(step === 'success' ? 'step-success' : `step-${step}`);
@@ -167,23 +169,36 @@
     document.getElementById('application-form').onsubmit = async (e) => {
       e.preventDefault();
       const btn = document.getElementById('submit-btn');
-      btn.innerText = "Processing...";
+      const originalText = btn.innerText;
+      btn.innerText = "Transmitting to Vision HQ...";
       btn.disabled = true;
 
-      // FORM DATA
       const data = {
         name: document.getElementById('form-name').value,
         school: document.getElementById('form-school').value,
         prefix: document.getElementById('form-prefix').value,
-        statement: document.getElementById('form-statement').value
+        statement: document.getElementById('form-statement').value,
+        timestamp: new Date().toISOString()
       };
 
-      console.log("Application Submitted:", data);
-      
-      // MOCK DELAY
-      setTimeout(() => {
-        nextStep('success');
-      }, 1500);
+      try {
+        const response = await fetch(LARK_WEBHOOK_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data)
+        });
+
+        if (response.ok) {
+          nextStep('success');
+        } else {
+          throw new Error("Connection failed");
+        }
+      } catch (error) {
+        console.error("Submission Error:", error);
+        alert("System busy. Please try again in a moment.");
+        btn.innerText = originalText;
+        btn.disabled = false;
+      }
     };
   </script>
 </body>
