@@ -26,13 +26,12 @@
     .hero-gradient { background: radial-gradient(circle at top right, rgba(251, 191, 36, 0.1), transparent), radial-gradient(circle at bottom left, rgba(99, 102, 241, 0.08), transparent); }
     .shimmer { background: linear-gradient(90deg, transparent, rgba(255,255,255,0.05), transparent); background-size: 200% 100%; animation: shimmer 3s infinite; }
     @keyframes shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
-    .step-active { color: #fbbf24; border-color: #fbbf24; }
     .hidden-step { display: none; }
   </style>
 </head>
 <body class="bg-navy text-white font-sans antialiased overflow-x-hidden">
 
-  <!-- Header (Matching VISION Brand) -->
+  <!-- Header -->
   <header class="sticky top-0 z-50 bg-[#1a1a2e]/80 backdrop-blur-xl border-b border-white/5">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex justify-between items-center h-20">
@@ -55,29 +54,7 @@
 
     <div class="max-w-4xl mx-auto px-4 py-20 relative z-10">
       
-      <!-- Progress Bar -->
-      <div class="flex items-center justify-between mb-16 max-w-md mx-auto">
-        <div id="step-1-indicator" class="flex flex-col items-center gap-2 step-active transition-all">
-          <div class="w-10 h-10 rounded-full border-2 flex items-center justify-center font-bold text-sm">1</div>
-          <span class="text-[10px] font-bold uppercase tracking-widest">Eligibility</span>
-        </div>
-        <div class="flex-1 h-[2px] bg-white/10 mx-4 mb-6">
-          <div id="progress-bar-1" class="h-full bg-gold w-0 transition-all duration-500"></div>
-        </div>
-        <div id="step-2-indicator" class="flex flex-col items-center gap-2 text-white/30 border-white/10 transition-all">
-          <div class="w-10 h-10 rounded-full border-2 flex items-center justify-center font-bold text-sm">2</div>
-          <span class="text-[10px] font-bold uppercase tracking-widest">Challenge</span>
-        </div>
-        <div class="flex-1 h-[2px] bg-white/10 mx-4 mb-6">
-          <div id="progress-bar-2" class="h-full bg-gold w-0 transition-all duration-500"></div>
-        </div>
-        <div id="step-3-indicator" class="flex flex-col items-center gap-2 text-white/30 border-white/10 transition-all">
-          <div class="w-10 h-10 rounded-full border-2 flex items-center justify-center font-bold text-sm">3</div>
-          <span class="text-[10px] font-bold uppercase tracking-widest">Application</span>
-        </div>
-      </div>
-
-      <!-- Step 1: Welcome & Criteria -->
+      <!-- Step 1: Introduction -->
       <section id="step-1" class="animate-in fade-in slide-in-from-bottom-4 duration-700">
         <div class="text-center mb-12">
           <h1 class="text-5xl md:text-7xl font-black tracking-tighter mb-6 bg-gradient-to-r from-white to-white/60 bg-clip-text text-transparent">
@@ -114,74 +91,47 @@
         </div>
 
         <div class="flex justify-center">
-          <button onclick="nextStep(2)" class="px-12 py-5 bg-gold text-navy font-black rounded-2xl hover:bg-gold-dark transition-all shadow-2xl active:scale-95 text-lg flex items-center gap-3">
-            Start Eligibility Challenge
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M13 7l5 5-5 5M6 7l5 5-5 5" stroke-width="3"></path></svg>
+          <button onclick="nextStep(3)" class="px-12 py-5 bg-gold text-navy font-black rounded-2xl hover:bg-gold-dark transition-all shadow-2xl active:scale-95 text-lg flex items-center gap-3">
+            Open Application Form
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M14 5l7 7-7 7" stroke-width="3"></path></svg>
           </button>
         </div>
       </section>
 
-      <!-- Step 2: The Challenge (Quiz) -->
-      <section id="step-2" class="hidden-step animate-in fade-in slide-in-from-right-4 duration-500">
-        <div class="text-center mb-12">
-          <h2 class="text-4xl font-black tracking-tighter mb-4">Aptitude Challenge</h2>
-          <p class="text-gray-400">Score at least <span class="text-white font-bold">4/5</span> to unlock the application form.</p>
-        </div>
-
-        <div id="quiz-container" class="glass p-8 md:p-12 rounded-[3rem] border-white/10 relative">
-          <div id="question-box">
-            <div class="text-gold font-mono mb-4 text-sm tracking-widest uppercase" id="question-meta">Question 1 of 5</div>
-            <h3 class="text-2xl font-bold mb-8 leading-tight" id="question-text">Loading...</h3>
-            
-            <div class="space-y-4" id="options-container">
-            </div>
-          </div>
-
-          <div id="quiz-results" class="hidden text-center">
-            <div class="w-24 h-24 rounded-full bg-gold/20 flex items-center justify-center mx-auto mb-6">
-              <svg class="w-12 h-12 text-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7" stroke-width="4"></path></svg>
-            </div>
-            <h3 class="text-3xl font-black mb-2">Challenge Passed!</h3>
-            <p class="text-gray-400 mb-8">Your logic score: <span id="final-score" class="text-white font-bold">5/5</span>. You have unlocked the exclusive application.</p>
-            <button onclick="nextStep(3)" class="px-10 py-4 bg-gold text-navy font-black rounded-2xl hover:scale-105 transition-all">Proceed to Application</button>
-          </div>
-        </div>
-      </section>
-
-      <!-- Step 3: Application Form -->
+      <!-- Step 3: Application Form (Now Step 2) -->
       <section id="step-3" class="hidden-step animate-in fade-in zoom-in duration-500">
         <div class="text-center mb-12">
-          <h2 class="text-4xl font-black tracking-tighter mb-4">Final Submission</h2>
-          <p class="text-gray-400">Tell us why you deserve to be one of the final 15.</p>
+          <h2 class="text-4xl font-black tracking-tighter mb-4">Scholar Application</h2>
+          <p class="text-gray-400">Complete the form below to register your interest for the final 15 seats.</p>
         </div>
 
         <form id="application-form" class="space-y-6 bg-white/5 p-8 md:p-12 rounded-[3rem] border border-white/10">
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div class="space-y-2">
               <label class="text-[10px] font-bold uppercase tracking-widest text-gray-500 ml-2">Full Name</label>
-              <input type="text" required class="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 outline-none focus:border-gold transition-all text-white" placeholder="Yaw Ndaase">
+              <input type="text" id="form-name" required class="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 outline-none focus:border-gold transition-all text-white" placeholder="Yaw Ndaase">
             </div>
             <div class="space-y-2">
               <label class="text-[10px] font-bold uppercase tracking-widest text-gray-500 ml-2">Current School / Institution</label>
-              <input type="text" required class="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 outline-none focus:border-gold transition-all text-white" placeholder="St. Augustine's College">
+              <input type="text" id="form-school" required class="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 outline-none focus:border-gold transition-all text-white" placeholder="St. Augustine's College">
             </div>
           </div>
 
           <div class="space-y-2">
-            <label class="text-[10px] font-bold uppercase tracking-widest text-gray-500 ml-2">LinkedIn or Portfolio URL (Optional)</label>
-            <input type="url" class="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 outline-none focus:border-gold transition-all text-white" placeholder="https://linkedin.com/in/you">
+            <label class="text-[10px] font-bold uppercase tracking-widest text-gray-500 ml-2">Preferred Email Prefix (@edu.visionedu.online)</label>
+            <input type="text" id="form-prefix" required class="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 outline-none focus:border-gold transition-all text-white" placeholder="yourname">
           </div>
 
           <div class="space-y-2">
-            <label class="text-[10px] font-bold uppercase tracking-widest text-gray-500 ml-2">Scholar Statement (Min. 100 words)</label>
-            <textarea required rows="6" class="w-full bg-white/5 border border-white/10 rounded-[2rem] px-6 py-5 outline-none focus:border-gold transition-all resize-none text-white" placeholder="Describe your vision for how technology will transform education in your community..."></textarea>
+            <label class="text-[10px] font-bold uppercase tracking-widest text-gray-500 ml-2">Scholar Statement (Why should we pick you?)</label>
+            <textarea id="form-statement" required rows="6" class="w-full bg-white/5 border border-white/10 rounded-[2rem] px-6 py-5 outline-none focus:border-gold transition-all resize-none text-white" placeholder="Describe your vision for how technology will transform education in your community..."></textarea>
           </div>
 
           <div class="pt-6">
-            <button type="submit" class="w-full py-5 bg-gradient-to-r from-gold to-vibrantBlue text-navy font-black rounded-2xl hover:shadow-2xl hover:shadow-gold/20 transition-all active:scale-95 text-lg">
-              Submit Application for Review
+            <button type="submit" id="submit-btn" class="w-full py-5 bg-gradient-to-r from-gold to-vibrantBlue text-navy font-black rounded-2xl hover:shadow-2xl hover:shadow-gold/20 transition-all active:scale-95 text-lg">
+              Submit Application
             </button>
-            <p class="text-center text-[10px] text-gray-500 mt-4 uppercase tracking-widest font-bold">Strict manual review process • Response within 48 hours</p>
+            <p class="text-center text-[10px] text-gray-500 mt-4 uppercase tracking-widest font-bold">Manual Review Required for Seat Issuance</p>
           </div>
         </form>
       </section>
@@ -193,7 +143,7 @@
         </div>
         <h2 class="text-5xl font-black mb-4 tracking-tighter text-white">Application Logged.</h2>
         <p class="text-gray-400 text-xl max-w-lg mx-auto leading-relaxed">
-          Your credentials and logic score have been recorded. Our team will review your statement and contact you if you are selected for the <span class="text-gold font-bold">@edu.visionedu.online</span> cohort.
+          Your details have been recorded. Our team will review your statement and contact you if you are selected for the <span class="text-gold font-bold">@edu.visionedu.online</span> cohort.
         </p>
         <div class="mt-12">
           <a href="index.html" class="text-gold font-bold hover:underline">Return to Hub</a>
@@ -208,103 +158,32 @@
   </footer>
 
   <script>
-    const questions = [
-      {
-        q: "If all Vision Scholars are students, and some students are innovators, are all Vision Scholars innovators?",
-        options: ["Yes, absolutely", "No, not necessarily", "Only if they use AI", "None of the above"],
-        correct: 1
-      },
-      {
-        q: "Which protocol is primarily used to receive emails in a modern business suite?",
-        options: ["SMTP", "HTTP", "IMAP", "FTP"],
-        correct: 2
-      },
-      {
-        q: "Complete the sequence: 2, 6, 12, 20, 30, ...",
-        options: ["36", "40", "42", "48"],
-        correct: 2
-      },
-      {
-        q: "In computational thinking, what is the process of breaking a complex problem into smaller parts?",
-        options: ["Abstraction", "Decomposition", "Pattern Recognition", "Debugging"],
-        correct: 1
-      },
-      {
-        q: "A student wants to use SAML for SSO. What does SAML stand for?",
-        options: ["Secure Access Markup Language", "Security Assertion Markup Language", "Standard Authentication Modal Logic", "Systemized Access Management Link"],
-        correct: 1
-      }
-    ];
-
-    let currentQuestion = 0;
-    let score = 0;
-
     function nextStep(step) {
       document.querySelectorAll('section').forEach(s => s.classList.add('hidden-step'));
-      
       const nextSection = document.getElementById(step === 'success' ? 'step-success' : `step-${step}`);
       nextSection.classList.remove('hidden-step');
-      
-      if(step >= 2) {
-        document.getElementById('step-2-indicator').classList.add('step-active');
-        document.getElementById('progress-bar-1').style.width = '100%';
-      }
-      if(step >= 3 || step === 'success') {
-        document.getElementById('step-3-indicator').classList.add('step-active');
-        if(document.getElementById('progress-bar-2')) document.getElementById('progress-bar-2').style.width = '100%';
-      }
-
-      if(step === 2) loadQuestion();
     }
 
-    function loadQuestion() {
-      const q = questions[currentQuestion];
-      document.getElementById('question-meta').innerText = `Question ${currentQuestion + 1} of 5`;
-      document.getElementById('question-text').innerText = q.q;
-      
-      const container = document.getElementById('options-container');
-      container.innerHTML = '';
-      
-      q.options.forEach((opt, index) => {
-        const btn = document.createElement('button');
-        btn.className = "w-full p-6 bg-white/5 border border-white/10 rounded-2xl text-left hover:bg-white/10 hover:border-gold/50 transition-all font-bold group flex items-start gap-4";
-        btn.innerHTML = `<span class="w-8 h-8 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-[10px] font-black group-hover:bg-gold group-hover:text-navy transition-all">${String.fromCharCode(64 + (index + 1))}</span><span class="flex-1">${opt}</span>`;
-        btn.onclick = () => selectOption(index);
-        container.appendChild(btn);
-      });
-    }
-
-    function selectOption(index) {
-      if(index === questions[currentQuestion].correct) score++;
-      
-      if(currentQuestion < questions.length - 1) {
-        currentQuestion++;
-        loadQuestion();
-      } else {
-        showResults();
-      }
-    }
-
-    function showResults() {
-      document.getElementById('question-box').classList.add('hidden-step');
-      document.getElementById('quiz-results').classList.remove('hidden-step');
-      document.getElementById('final-score').innerText = `${score}/5`;
-      
-      if(score < 4) {
-        document.getElementById('quiz-results').innerHTML = `
-          <div class="w-24 h-24 rounded-full bg-red-500/20 flex items-center justify-center mx-auto mb-6">
-            <svg class="w-12 h-12 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M6 18L18 6M6 6l12 12" stroke-width="4"></path></svg>
-          </div>
-          <h3 class="text-3xl font-black mb-2 tracking-tighter">Challenge Not Met</h3>
-          <p class="text-gray-400 mb-8">Your score: ${score}/5. The scholar program requires a minimum of 4/5. Please review your logic and try again later.</p>
-          <button onclick="location.reload()" class="px-10 py-4 bg-white/10 text-white font-black rounded-2xl hover:bg-white/20 transition-all">Retry Challenge</button>
-        `;
-      }
-    }
-
-    document.getElementById('application-form').onsubmit = (e) => {
+    document.getElementById('application-form').onsubmit = async (e) => {
       e.preventDefault();
-      nextStep('success');
+      const btn = document.getElementById('submit-btn');
+      btn.innerText = "Processing...";
+      btn.disabled = true;
+
+      // FORM DATA
+      const data = {
+        name: document.getElementById('form-name').value,
+        school: document.getElementById('form-school').value,
+        prefix: document.getElementById('form-prefix').value,
+        statement: document.getElementById('form-statement').value
+      };
+
+      console.log("Application Submitted:", data);
+      
+      // MOCK DELAY
+      setTimeout(() => {
+        nextStep('success');
+      }, 1500);
     };
   </script>
 </body>
