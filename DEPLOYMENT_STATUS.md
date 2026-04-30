@@ -16,8 +16,7 @@
 - ✅ `admin-waec-upload.js` - Admin upload logic
 
 #### Backend API
-- ✅ `api/waec-questions.js` - Main API endpoint
-- ✅ `api/waec-questions-download.js` - Download API
+- ✅ `api/waec-questions.js` - Unified API endpoint (GET/POST/DELETE + downloads)
 
 #### Documentation
 - ✅ `WAEC_BLOB_SETUP.md` - Setup guide

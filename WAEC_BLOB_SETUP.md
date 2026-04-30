@@ -162,8 +162,11 @@ Upload a new question PDF
 }
 ```
 
-### GET `/api/waec-questions/download/:questionId`
-Get secure download URL for a question
+### GET `/api/waec-questions?questionId=:id`
+Get secure download URL for a specific question
+
+**Query Parameters:**
+- `questionId` - The ID of the question to download (required for download)
 
 **Response:**
 ```json

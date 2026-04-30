@@ -123,8 +123,15 @@ export default async function handler(req, res) {
       return res.status(401).json({ error: 'Unauthorized' });
     }
 
+    // Check if this is a download request (has questionId in query for GET)
+    const { questionId } = req.query;
+    
     // Route handling
-    if (req.method === 'GET') {
+    if (req.method === 'GET' && questionId) {
+      // Download URL request
+      return await handleGetDownloadUrl(req, res);
+    } else if (req.method === 'GET') {
+      // List questions request
       return await handleGetQuestions(req, res);
     } else if (req.method === 'POST') {
       return await handleUploadQuestion(req, res);
@@ -273,26 +280,48 @@ async function handleDeleteQuestion(req, res) {
   }
 }
 
-// Helper: Get download URL for a specific question
-export async function getDownloadUrl(questionId) {
+// GET: Get download URL for a specific question
+async function handleGetDownloadUrl(req, res) {
   try {
-    // Find question metadata
-    const question = mockQuestions.find(q => q.id === questionId);
-    
-    if (!question) {
-      throw new Error('Question not found');
+    const { questionId } = req.query;
+
+    if (!questionId) {
+      return res.status(400).json({ error: 'Question ID required' });
     }
 
-    // In production, get signed URL from Vercel Blob
-    // const { url } = await head(question.blobUrl);
-    
-    // For now, return mock URL
-    return {
-      downloadUrl: question.blobUrl || `https://blob.vercel-storage.com/waec-questions/${questionId}.pdf`,
-      expiresAt: new Date(Date.now() + 3600000).toISOString() // 1 hour
-    };
+    // Find the question
+    const question = mockQuestions.find(q => q.id === questionId);
+
+    if (!question) {
+      return res.status(404).json({ error: 'Question not found' });
+    }
+
+    // In production with actual Vercel Blob:
+    // const blobInfo = await head(question.blobUrl);
+    // const downloadUrl = blobInfo.url;
+
+    // For now, return the blob URL directly
+    const downloadUrl = question.blobUrl || `https://blob.vercel-storage.com/waec-questions/${questionId}.pdf`;
+
+    // Generate expiry time (1 hour from now)
+    const expiresAt = new Date(Date.now() + 3600000).toISOString();
+
+    return res.status(200).json({
+      success: true,
+      downloadUrl: downloadUrl,
+      expiresAt: expiresAt,
+      fileName: `${question.subject}_${question.year}_${question.paperType}.pdf`,
+      metadata: {
+        subject: question.subject,
+        year: question.year,
+        paperType: question.paperType
+      }
+    });
   } catch (error) {
-    console.error('Error getting download URL:', error);
-    throw error;
+    console.error('Download error:', error);
+    return res.status(500).json({ 
+      error: 'Failed to generate download URL',
+      message: error.message 
+    });
   }
 }

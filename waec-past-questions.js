@@ -217,7 +217,7 @@ async function downloadQuestion(questionId) {
     btn.disabled = true;
 
     // Fetch download URL from API
-    const response = await fetch(`/api/waec-questions/download/${questionId}`, {
+    const response = await fetch(`/api/waec-questions?questionId=${questionId}`, {
       method: 'GET',
       headers: {
         'Authorization': `Bearer ${session.token || ''}`

@@ -29,7 +29,6 @@
   "rewrites": [
     { "source": "/sitemap.xml", "destination": "/sitemap.xml" },
     { "source": "/robots.txt", "destination": "/robots.txt" },
-    { "source": "/scholars", "destination": "/scholars.html" },
-    { "source": "/api/waec-questions/download/:questionId", "destination": "/api/waec-questions-download.js" }
+    { "source": "/scholars", "destination": "/scholars.html" }
   ]
 }
