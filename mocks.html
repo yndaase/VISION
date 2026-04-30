@@ -1,0 +1,618 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Official WASSCE Mock Exams 2026 | Vision Education Entrance Hall</title>
+    <meta
+      name="description"
+      content="Take full-length, timed 2026 WASSCE mock exams for Core Maths, Integrated Science, and English. Real exam-standard questions with expert diagnostics."
+    />
+    <meta
+      name="keywords"
+      content="wassce mock exams, waec mock papers, core maths mock, integrated science mock, wassce 2026 practice"
+    />
+    <link rel="manifest" href="manifest.json" />
+    <meta name="theme-color" content="#0ea5e9" />
+    <link rel="apple-touch-icon" href="assets/logo.png" />
+    <meta property="og:title" content="2026 WASSCE Mock Exams | Vision Education" />
+    <meta property="og:image" content="https://www.visionedu.online/assets/logo.png" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="dashboard.css" />
+    <link rel="stylesheet" href="theme.css" />
+    <script src="theme.js"></script>
+
+    <script>
+      (function () {
+        const SESSION_KEY = "waec_session";
+        const session =
+          sessionStorage.getItem(SESSION_KEY) ||
+          localStorage.getItem(SESSION_KEY);
+        if (!session) {
+          window.location.href = "/login";
+        }
+      })();
+    </script>
+    <style>
+      .mocks-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+        gap: 1.5rem;
+        padding: 2rem 0;
+      }
+      .mock-card {
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-lg);
+        padding: 2rem;
+        position: relative;
+        overflow: hidden;
+        transition: all 0.3s ease;
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+      }
+      .mock-card:hover {
+        border-color: var(--primary);
+        transform: translateY(-5px);
+        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+      }
+      .mock-badge {
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        background: var(--primary-dim);
+        color: var(--primary);
+        font-size: 0.65rem;
+        font-weight: 800;
+        padding: 4px 10px;
+        border-radius: 4px;
+        text-transform: uppercase;
+      }
+      .mock-title {
+        font-size: 1.3rem;
+        font-weight: 800;
+        margin: 0;
+      }
+      .mock-meta {
+        display: flex;
+        gap: 1rem;
+        color: #64748b;
+        font-size: 0.85rem;
+      }
+      .mock-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: auto;
+      }
+      .start-mock-btn {
+        background: var(--primary);
+        color: #fff;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 8px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: opacity 0.2s;
+      }
+      .start-mock-btn:hover {
+        opacity: 0.9;
+      }
+      @keyframes pulse {
+        0% { transform: scale(1); opacity: 1; box-shadow: 0 0 0 0 rgba(14, 165, 233, 0.7); }
+        70% { transform: scale(1.05); opacity: 0.8; box-shadow: 0 0 0 10px rgba(14, 165, 233, 0); }
+        100% { transform: scale(1); opacity: 1; box-shadow: 0 0 0 0 rgba(14, 165, 233, 0); }
+      }
+    </style>
+  </head>
+  <body class="dashboard-page">
+    <!--  SIDE NAVIGATION  -->
+    <aside class="side-nav">
+      <a class="side-nav-logo" href="/dashboard">
+        <img src="assets/logo.png" alt="Vision Education logo" style="height: 48px; width: 48px; object-fit: contain;" loading="lazy">
+        <span>Vision Edu</span>
+      </a>
+      <nav class="side-nav-menu">
+        <a href="/dashboard" class="nav-item">
+          <span class="nav-item-icon"><svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg></span>
+          <span>Dashboard</span>
+        </a>
+        <a href="/mocks" class="nav-item active" aria-current="page">
+          <span class="nav-item-icon"><svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg></span>
+          <span>Mock Exams</span>
+        </a>
+        <a href="/ai-learning" class="nav-item">
+          <span class="nav-item-icon"><svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M19 13l-1.26-2.74L15 9l2.74-1.26L19 5l1.26 2.74L23 9l-2.74 1.26L19 13zM9 13l-2.26-4.74L2 6l4.74-2.26L9 1.5l2.26 4.74L16 8.26l-4.74 2.26L9 13zm10 9.5l-1.26-2.74L15 18.5l2.74-1.26L19 14.5l1.26 2.74L23 18.5l-2.74 1.26L19 22.5z"/></svg></span>
+          <span>AI Learning Hub</span>
+        </a>
+        <a href="https://visionedu.site" target="_blank" rel="noopener" class="nav-item">
+          <span class="nav-item-icon"><svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm-5 14H4v-4h11v4zm0-5H4V9h11v4zm5 5h-4V9h4v9z"/></svg></span>
+          <span>Vision Blog</span>
+        </a>
+        <a href="/planner" class="nav-item">
+          <span class="nav-item-icon"><svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM7 10h5v5H7z"/></svg></span>
+          <span>Study Planner</span>
+        </a>
+        <a href="pricing.html" class="nav-get-pro" id="sideGetProBtn" style="display:none;">
+          <span>Upgrade</span>
+        </a>
+      </nav>
+      <div class="side-nav-footer">
+        <a href="#" class="nav-item" onclick="openSettings(); return false;">
+          <span class="nav-item-icon"><svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58a.49.49 0 00.12-.61l-1.92-3.32a.49.49 0 00-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54a.484.484 0 00-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96a.49.49 0 00-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.07.62-.07.94s.02.64.07.94l-2.03 1.58a.49.49 0 00-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6A3.6 3.6 0 1115.6 12 3.611 3.611 0 0112 15.6z"/></svg></span>
+          <span>Settings</span>
+        </a>
+        <a href="https://www.youtube.com/channel/UCo4k-_8Q92hXOcUdbAtwabg" target="_blank" rel="noopener" class="nav-item" title="Vision YouTube">
+          <span class="nav-item-icon" style="display:flex; align-items:center; justify-content:center;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+          </span>
+          <span>YouTube</span>
+        </a>
+      </div>
+    </aside>
+
+    <!--  BOTTOM NAVIGATION (Mobile)  -->
+    <nav class="bottom-nav">
+      <a href="/dashboard" class="bottom-nav-item">
+        <span class="bottom-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg></span>
+        <span>Home</span>
+      </a>
+      <a href="/mocks" class="bottom-nav-item active">
+        <span class="bottom-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg></span>
+        <span>Mocks</span>
+      </a>
+      <a href="/ai-learning" class="bottom-nav-item">
+        <span class="bottom-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M19 13l-1.26-2.74L15 9l2.74-1.26L19 5l1.26 2.74L23 9l-2.74 1.26L19 13zM9 13l-2.26-4.74L2 6l4.74-2.26L9 1.5l2.26 4.74L16 8.26l-4.74 2.26L9 13zm10 9.5l-1.26-2.74L15 18.5l2.74-1.26L19 14.5l1.26 2.74L23 18.5l-2.74 1.26L19 22.5z"/></svg></span>
+        <span>AI Hub</span>
+      </a>
+      <a href="#" class="bottom-nav-item" onclick="openSettings(); return false;">
+        <span class="bottom-icon"><svg aria-hidden="true" viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58a.49.49 0 00.12-.61l-1.92-3.32a.49.49 0 00-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54a.484.484 0 00-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96a.49.49 0 00-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.07.62-.07.94s.02.64.07.94l-2.03 1.58a.49.49 0 00-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6A3.6 3.6 0 1115.6 12 3.611 3.611 0 0112 15.6z"/></svg></span>
+        <span>Settings</span>
+      </a>
+    </nav>
+
+    <div class="main-wrapper">
+      <nav class="dash-nav">
+        <div class="dash-nav-inner">
+          <div class="dash-logo">
+            <img src="assets/logo.png" alt="Vision Education Exam Hall Logo" style="height: 32px; width: 32px; object-fit: contain; margin-right: 10px;" loading="lazy">
+            <span class="dash-logo-text"
+              >Mock <span class="brand-accent">Exams</span></span
+            >
+          </div>
+          <div class="dash-nav-right">
+            <button
+            class="theme-toggle-btn"
+            onclick="toggleTheme()"
+            title="Toggle Theme"
+            aria-label="Toggle dark/light mode"
+          >
+            <!-- Moon: shown in light mode -->
+            <svg class="theme-icon-dark" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+            <!-- Sun: shown in dark mode -->
+            <svg class="theme-icon-light" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+          </button>
+          <div class="nav-user-chip" id="navUserChip"
+            onclick="window.location.href='/dashboard'"
+            style="cursor:pointer;"
+            title="Go to Dashboard"
+          >
+            <div class="nav-avatar" id="navAvatar">K</div>
+            <span class="nav-username" id="navUsername">Student</span>
+          </div>
+          </div>
+        </div>
+      </nav>
+
+      <main style="padding: 2rem 3rem">
+        <header>
+          <h1
+            style="font-size: 2.5rem; font-weight: 800; margin-bottom: 0.5rem"
+          >
+            Examination Hall
+          </h1>
+          <p style="color: var(--text-secondary); max-width: 600px">
+            Simulate the real WASSCE environment with full-length, timed mock
+            papers curated by senior examiners.
+          </p>
+        </header>
+
+        <div class="mocks-grid">
+          <!-- AI Daily Challenge (Generative) -->
+          <div class="mock-card" style="border: 1px solid var(--primary); background: radial-gradient(circle at top right, rgba(14, 165, 233, 0.1), transparent); grid-column: 1 / -1;">
+            <div style="position: absolute; top: 1rem; right: 1rem; background: var(--primary); color: #fff; font-size: 0.65rem; font-weight: 800; padding: 4px 10px; border-radius: 4px; text-transform: uppercase; animation: pulse 2s infinite;">New Goal Available</div>
+            <div>
+              <h3 class="mock-title" style="font-size: 1.8rem; display: flex; align-items: center; gap: 10px;">
+                <span id="challengeIcon" style="font-size: 1.4rem;"></span> <span id="challengeTitle">Daily WASSCE Mock</span>
+              </h3>
+              <p id="challengeDesc" style="color: var(--text-secondary); margin-top: 0.5rem; max-width: 600px;">
+                Take a new short mock exam every day. Fresh questions selected to help you prepare.
+              </p>
+            </div>
+            <script>
+              document.addEventListener("DOMContentLoaded", () => {
+                const session = JSON.parse(sessionStorage.getItem("waec_session") || localStorage.getItem("waec_session") || "{}");
+                const isAdmin = session.role === 'admin';
+                const isPro = session.role === 'pro' || isAdmin;
+                if (isPro) {
+                  document.getElementById("challengeTitle").textContent = "Premium Daily Mock";
+                  document.getElementById("challengeDesc").innerHTML = "<strong>Vision Pro Feature:</strong> Get an advanced, AI-curated exam tailored to improve your weak areas.";
+                  document.getElementById("challengeIcon").textContent = "⭐";
+                }
+              });
+            </script>
+            <div class="mock-footer">
+               <div class="mock-meta">
+                 <span>45 Mins</span>
+                 <span>10 Questions</span>
+                 <span>AI Grading</span>
+               </div>
+               <button class="start-mock-btn" onclick="window.location.href = '/mock-hall?id=daily_ai_mock'" style="padding: 12px 30px; font-size: 1rem;">Start Mock</button>
+            </div>
+          </div>
+
+
+          <!-- Mock 1: Core Mathematics -->
+          <div class="mock-card">
+            <span class="mock-badge">AI-Generated</span>
+            <div>
+              <h3 class="mock-title">Core Mathematics Mock</h3>
+              <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 0.5rem;">Algebra, Geometry, Statistics &amp; Theory — fresh AI questions every session.</p>
+            </div>
+            <div class="mock-meta">
+              <span>2.5 Hours</span><span>60 Questions</span><span>AI Grading</span>
+            </div>
+            <div class="mock-footer">
+              <span style="font-weight:700;color:var(--primary)">Ready to start</span>
+              <button class="start-mock-btn" onclick="window.location.href='/mock-hall?id=ai_mock_maths'">Launch Exam</button>
+            </div>
+          </div>
+
+          <!-- Mock 2: Integrated Science -->
+          <div class="mock-card">
+            <span class="mock-badge">AI-Generated</span>
+            <div>
+              <h3 class="mock-title">Integrated Science Mock</h3>
+              <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 0.5rem;">Biology, Physics &amp; Chemistry — comprehensive AI paper.</p>
+            </div>
+            <div class="mock-meta">
+              <span>2.5 Hours</span><span>60 Questions</span><span>AI Grading</span>
+            </div>
+            <div class="mock-footer">
+              <span style="font-weight:700;color:var(--primary)">Ready to start</span>
+              <button class="start-mock-btn" onclick="window.location.href='/mock-hall?id=ai_mock_science'">Launch Exam</button>
+            </div>
+          </div>
+
+          <!-- Mock 3: English Language -->
+          <div class="mock-card">
+            <span class="mock-badge">AI-Generated</span>
+            <div>
+              <h3 class="mock-title">English Language Mock</h3>
+              <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 0.5rem;">Lexis, Structure &amp; Oral English — full WASSCE simulation.</p>
+            </div>
+            <div class="mock-meta">
+              <span>2 Hours</span><span>90 Questions</span><span>AI Grading</span>
+            </div>
+            <div class="mock-footer">
+              <span style="font-weight:700;color:var(--primary)">Ready to start</span>
+              <button class="start-mock-btn" onclick="window.location.href='/mock-hall?id=ai_mock_english'">Launch Exam</button>
+            </div>
+          </div>
+
+          <!-- Mock 4: Computer Science -->
+          <div class="mock-card">
+            <span class="mock-badge">AI-Generated</span>
+            <div>
+              <h3 class="mock-title">Computer Science Mock</h3>
+              <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 0.5rem;">Programming, Algorithms &amp; Hardware — 60 precision AI questions.</p>
+            </div>
+            <div class="mock-meta">
+              <span>2.5 Hours</span><span>60 Questions</span><span>AI Grading</span>
+            </div>
+            <div class="mock-footer">
+              <span style="font-weight:700;color:var(--primary)">Ready to start</span>
+              <button class="start-mock-btn" onclick="window.location.href='/mock-hall?id=ai_mock_cs'">Launch Exam</button>
+            </div>
+          </div>
+
+          <!-- Mock 5: Social Studies -->
+          <div class="mock-card">
+            <span class="mock-badge">AI-Generated</span>
+            <div>
+              <h3 class="mock-title">Social Studies Mock</h3>
+              <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 0.5rem;">Government, Citizenship &amp; Development — complete WASSCE coverage.</p>
+            </div>
+            <div class="mock-meta">
+              <span>2.5 Hours</span><span>60 Questions</span><span>AI Grading</span>
+            </div>
+            <div class="mock-footer">
+              <span style="font-weight:700;color:var(--primary)">Ready to start</span>
+              <button class="start-mock-btn" onclick="window.location.href='/mock-hall?id=ai_mock_social'">Launch Exam</button>
+            </div>
+          </div>
+
+          <!-- Mock 6: Economics -->
+          <div class="mock-card">
+            <span class="mock-badge">AI-Generated</span>
+            <div>
+              <h3 class="mock-title">Economics Mock</h3>
+              <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 0.5rem;">Micro &amp; Macro Economics, Trade &amp; Fiscal Policy.</p>
+            </div>
+            <div class="mock-meta">
+              <span>2.5 Hours</span><span>60 Questions</span><span>AI Grading</span>
+            </div>
+            <div class="mock-footer">
+              <span style="font-weight:700;color:var(--primary)">Ready to start</span>
+              <button class="start-mock-btn" onclick="window.location.href='/mock-hall?id=ai_mock_economics'">Launch Exam</button>
+            </div>
+          </div>
+
+          <!-- Mock 7: Geography -->
+          <div class="mock-card">
+            <span class="mock-badge">AI-Generated</span>
+            <div>
+              <h3 class="mock-title">Geography Mock</h3>
+              <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 0.5rem;">Physical &amp; Human Geography, Map Reading &amp; Regional Studies.</p>
+            </div>
+            <div class="mock-meta">
+              <span>2.5 Hours</span><span>60 Questions</span><span>AI Grading</span>
+            </div>
+            <div class="mock-footer">
+              <span style="font-weight:700;color:var(--primary)">Ready to start</span>
+              <button class="start-mock-btn" onclick="window.location.href='/mock-hall?id=ai_mock_geography'">Launch Exam</button>
+            </div>
+          </div>
+
+          <!-- Mock 8: Elective Mathematics -->
+          <div class="mock-card">
+            <span class="mock-badge">AI-Generated</span>
+            <div>
+              <h3 class="mock-title">Elective Mathematics Mock</h3>
+              <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 0.5rem;">Vectors, Calculus, Matrices &amp; Advanced Statistics.</p>
+            </div>
+            <div class="mock-meta">
+              <span>3 Hours</span><span>60 Questions</span><span>AI Grading</span>
+            </div>
+            <div class="mock-footer">
+              <span style="font-weight:700;color:var(--primary)">Ready to start</span>
+              <button class="start-mock-btn" onclick="window.location.href='/mock-hall?id=ai_mock_elective_maths'">Launch Exam</button>
+            </div>
+          </div>
+
+          <!-- Mock: Elective Maths Focused (Graphs, Gradients, Modulo & Differentiation) -->
+          <div class="mock-card" style="border: 1px solid #8b5cf6; background: radial-gradient(circle at top right, rgba(139, 92, 246, 0.12), transparent);">
+            <div style="position: absolute; top: 1rem; right: 1rem; background: linear-gradient(135deg, #8b5cf6, #6366f1); color: #fff; font-size: 0.65rem; font-weight: 800; padding: 4px 10px; border-radius: 4px; text-transform: uppercase;">Focused Topics</div>
+            <div>
+              <h3 class="mock-title" style="color: #a78bfa;">Elective Maths: Targeted Mock</h3>
+              <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 0.5rem;">Graphs &amp; Interpretation, Gradient of a Line, Modulo Arithmetic &amp; Differentiation — 30 precision AI questions.</p>
+            </div>
+            <div class="mock-meta">
+              <span>2.5 Hours</span><span>30 Questions</span><span>AI Grading</span>
+            </div>
+            <div class="mock-footer">
+              <span style="font-weight:700;color:#8b5cf6">Ready to start</span>
+              <button class="start-mock-btn" style="background: linear-gradient(135deg, #8b5cf6, #6366f1); color: #fff;" onclick="window.location.href='/mock-hall?id=ai_mock_emath_focus'">Launch Exam</button>
+            </div>
+          </div>
+
+          <!-- Mock 9: Physics -->
+          <div class="mock-card">
+            <span class="mock-badge">AI-Generated</span>
+            <div>
+              <h3 class="mock-title">Physics Mock</h3>
+              <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 0.5rem;">Mechanics, Waves, Electricity &amp; Fields — precision questions.</p>
+            </div>
+            <div class="mock-meta">
+              <span>2.5 Hours</span><span>60 Questions</span><span>AI Grading</span>
+            </div>
+            <div class="mock-footer">
+              <span style="font-weight:700;color:var(--primary)">Ready to start</span>
+              <button class="start-mock-btn" onclick="window.location.href='/mock-hall?id=ai_mock_physics'">Launch Exam</button>
+            </div>
+          </div>
+
+          <!-- Mock 10: Chemistry -->
+          <div class="mock-card">
+            <span class="mock-badge">AI-Generated</span>
+            <div>
+              <h3 class="mock-title">Chemistry Mock</h3>
+              <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 0.5rem;">Organic, Inorganic &amp; Physical Chemistry — full WASSCE standard.</p>
+            </div>
+            <div class="mock-meta">
+              <span>2.5 Hours</span><span>60 Questions</span><span>AI Grading</span>
+            </div>
+            <div class="mock-footer">
+              <span style="font-weight:700;color:var(--primary)">Ready to start</span>
+              <button class="start-mock-btn" onclick="window.location.href='/mock-hall?id=ai_mock_chemistry'">Launch Exam</button>
+            </div>
+          </div>
+
+          <!-- Mock 11: Biology -->
+          <div class="mock-card">
+            <span class="mock-badge">AI-Generated</span>
+            <div>
+              <h3 class="mock-title">Biology Mock</h3>
+              <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 0.5rem;">Cell Biology, Genetics, Ecology &amp; Human Systems.</p>
+            </div>
+            <div class="mock-meta">
+              <span>2.5 Hours</span><span>60 Questions</span><span>AI Grading</span>
+            </div>
+            <div class="mock-footer">
+              <span style="font-weight:700;color:var(--primary)">Ready to start</span>
+              <button class="start-mock-btn" onclick="window.location.href='/mock-hall?id=ai_mock_biology'">Launch Exam</button>
+            </div>
+          </div>
+
+          <!-- Mock: Business Management -->
+          <div class="mock-card">
+            <span class="mock-badge">AI-Generated</span>
+            <div>
+              <h3 class="mock-title">Business Management Mock</h3>
+              <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 0.5rem;">Business planning, production, marketing, human resources & finance.</p>
+            </div>
+            <div class="mock-meta"><span>2.5 Hours</span><span>60 Questions</span><span>AI Grading</span></div>
+            <div class="mock-footer">
+              <span style="font-weight:700;color:var(--primary)">Ready to start</span>
+              <button class="start-mock-btn" onclick="window.location.href='/mock-hall?id=ai_mock_business'">Launch Exam</button>
+            </div>
+          </div>
+
+          <!-- Mock: Financial Accounting -->
+          <div class="mock-card">
+            <span class="mock-badge">AI-Generated</span>
+            <div>
+              <h3 class="mock-title">Financial Accounting Mock</h3>
+              <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 0.5rem;">Double entry, trial balance, income statements, balance sheets & ledger accounts.</p>
+            </div>
+            <div class="mock-meta"><span>2.5 Hours</span><span>60 Questions</span><span>AI Grading</span></div>
+            <div class="mock-footer">
+              <span style="font-weight:700;color:var(--primary)">Ready to start</span>
+              <button class="start-mock-btn" onclick="window.location.href='/mock-hall?id=ai_mock_accounting'">Launch Exam</button>
+            </div>
+          </div>
+
+          <!-- Mock: Literature in English -->
+          <div class="mock-card">
+            <span class="mock-badge">AI-Generated</span>
+            <div>
+              <h3 class="mock-title">Literature in English Mock</h3>
+              <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 0.5rem;">Prose, poetry, drama — themes, characters, stylistic devices & literary analysis.</p>
+            </div>
+            <div class="mock-meta"><span>2.5 Hours</span><span>60 Questions</span><span>AI Grading</span></div>
+            <div class="mock-footer">
+              <span style="font-weight:700;color:var(--primary)">Ready to start</span>
+              <button class="start-mock-btn" onclick="window.location.href='/mock-hall?id=ai_mock_literature'">Launch Exam</button>
+            </div>
+          </div>
+
+          <!-- Mock: French -->
+          <div class="mock-card">
+            <span class="mock-badge">AI-Generated</span>
+            <div>
+              <h3 class="mock-title">French Mock</h3>
+              <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 0.5rem;">Comprehension, grammar, vocabulary, essay writing & oral expression in French.</p>
+            </div>
+            <div class="mock-meta"><span>2.5 Hours</span><span>60 Questions</span><span>AI Grading</span></div>
+            <div class="mock-footer">
+              <span style="font-weight:700;color:var(--primary)">Ready to start</span>
+              <button class="start-mock-btn" onclick="window.location.href='/mock-hall?id=ai_mock_french'">Launch Exam</button>
+            </div>
+          </div>
+
+          <!-- Mock: History -->
+          <div class="mock-card">
+            <span class="mock-badge">AI-Generated</span>
+            <div>
+              <h3 class="mock-title">History Mock</h3>
+              <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 0.5rem;">Pre-colonial Africa, colonisation, independence movements & Ghanaian history.</p>
+            </div>
+            <div class="mock-meta"><span>2.5 Hours</span><span>60 Questions</span><span>AI Grading</span></div>
+            <div class="mock-footer">
+              <span style="font-weight:700;color:var(--primary)">Ready to start</span>
+              <button class="start-mock-btn" onclick="window.location.href='/mock-hall?id=ai_mock_history'">Launch Exam</button>
+            </div>
+          </div>
+
+          <!-- Mock: Government -->
+          <div class="mock-card">
+            <span class="mock-badge">AI-Generated</span>
+            <div>
+              <h3 class="mock-title">Government Mock</h3>
+              <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 0.5rem;">Political systems, constitutions, branches of government & international relations.</p>
+            </div>
+            <div class="mock-meta"><span>2.5 Hours</span><span>60 Questions</span><span>AI Grading</span></div>
+            <div class="mock-footer">
+              <span style="font-weight:700;color:var(--primary)">Ready to start</span>
+              <button class="start-mock-btn" onclick="window.location.href='/mock-hall?id=ai_mock_government'">Launch Exam</button>
+            </div>
+          </div>
+
+          <!-- Mock: Christian Religious Studies -->
+          <div class="mock-card">
+            <span class="mock-badge">AI-Generated</span>
+            <div>
+              <h3 class="mock-title">Christian Religious Studies Mock</h3>
+              <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 0.5rem;">Old & New Testament, church history, Christian ethics & world religions.</p>
+            </div>
+            <div class="mock-meta"><span>2.5 Hours</span><span>60 Questions</span><span>AI Grading</span></div>
+            <div class="mock-footer">
+              <span style="font-weight:700;color:var(--primary)">Ready to start</span>
+              <button class="start-mock-btn" onclick="window.location.href='/mock-hall?id=ai_mock_crs'">Launch Exam</button>
+            </div>
+          </div>
+
+          <!-- Mock: Twi -->
+          <div class="mock-card">
+            <span class="mock-badge">AI-Generated</span>
+            <div>
+              <h3 class="mock-title">Twi Mock</h3>
+              <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 0.5rem;">Comprehension, grammar, oral literature, proverbs & cultural expression in Twi.</p>
+            </div>
+            <div class="mock-meta"><span>2.5 Hours</span><span>60 Questions</span><span>AI Grading</span></div>
+            <div class="mock-footer">
+              <span style="font-weight:700;color:var(--primary)">Ready to start</span>
+              <button class="start-mock-btn" onclick="window.location.href='/mock-hall?id=ai_mock_twi'">Launch Exam</button>
+            </div>
+          </div>
+
+          <!-- Bertina Exclusive Mock -->
+          <div class="mock-card" id="bertinaMockCard" style="display:none; border: 1px solid #f59e0b; background: radial-gradient(circle at top right, rgba(245, 158, 11, 0.12), transparent);">
+            <span class="mock-badge" style="background: rgba(245, 158, 11, 0.15); color: #f59e0b;">Exclusive</span>
+            <div>
+              <h3 class="mock-title">Bertinas Mock</h3>
+              <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 0.5rem;">Azure GPT Core Maths intensive pack focused on Graph Differentiation and Modulo reasoning.</p>
+            </div>
+            <div class="mock-meta">
+              <span>30 Mins</span><span>30 Questions</span><span>Azure GPT</span>
+            </div>
+            <div class="mock-footer">
+              <span style="font-weight:700;color:#f59e0b">Bertina Mission</span>
+              <button class="start-mock-btn" style="background:#f59e0b;color:#111827;" onclick="window.location.href='/mock-hall?id=ai_mock_bertina'">Launch Exam</button>
+            </div>
+          </div>
+
+        </div>
+      </main>
+    </div>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        const session = JSON.parse(sessionStorage.getItem("waec_session") || localStorage.getItem("waec_session") || "{}");
+        const email = (session.email || "").toLowerCase();
+        const isAdmin = session.role === "admin";
+        const isBertina = email === "bertina@vision.edu";
+        const card = document.getElementById("bertinaMockCard");
+        if (card && (isBertina || isAdmin)) card.style.display = "flex";
+
+        // Populate user chip — try session first, then Firebase
+        function setChip(name) {
+          const navAvatar   = document.getElementById("navAvatar");
+          const navUsername = document.getElementById("navUsername");
+          if (!name) return;
+          if (navAvatar)   navAvatar.textContent   = name.charAt(0).toUpperCase();
+          if (navUsername) navUsername.textContent  = name.split(" ")[0];
+        }
+
+        const sessionName = session.name || session.email?.split("@")[0];
+        if (sessionName) {
+          setChip(sessionName);
+        } else if (email && typeof window.fbGetUser === "function") {
+          // Firebase fallback — runs after firebase.js loads
+          window.fbGetUser(email).then(user => {
+            if (user && user.name) setChip(user.name);
+          }).catch(() => {});
+        }
+      });
+    </script>
+
+    <script src="https://js.paystack.co/v2/inline.js"></script>
+    <script src="auth.js"></script>
+    <script src="payment.js"></script>
+  </body>
+</html>
