@@ -322,10 +322,10 @@
       doc.setFillColor(...gold); doc.rect(20, 193, 40, 1.5, 'F');
 
       const steps = [
-        { n:'1', t:'Access the Portal', d:`Visit open.larksuite.com on your computer or download the Lark app.` },
-        { n:'2', t:'Enter Your Personal Email', d:`Type your personal email (the one you used to apply).` },
-        { n:'3', t:'Use Verification Code', d:'Lark will send a 6-digit verification code to your personal inbox. Enter it to log in.' },
-        { n:'4', t:'Access Workspace', d:'You are now in! You can set a permanent password later in your Lark Security Settings.' },
+        { n:'1', t:'Visit the Portal', d:`Go to open.larksuite.com on your computer or open the Lark mobile app.` },
+        { n:'2', t:'Use Personal Email', d:`CRITICAL: You MUST enter your personal email here (the one you applied with).` },
+        { n:'3', t:'Enter Access Code', d:'Lark will instantly email a 6-digit access code to your personal inbox. Enter it.' },
+        { n:'4', t:'Unlock Workspace', d:'You are in! Your Vision inbox is now accessible. (Set a password later in Settings).' },
       ];
       let sy = 200;
       steps.forEach((s, idx) => {
@@ -341,7 +341,8 @@
         doc.setFontSize(10); doc.setTextColor(...darkBlue); doc.setFont('helvetica', 'bold');
         doc.text(s.t, 36, sy + 6.5);
         
-        doc.setFontSize(8.5); doc.setTextColor(...gray); doc.setFont('helvetica', 'normal');
+        // Make step 2 text slightly red for emphasis if possible, or just keep it gray but strong
+        doc.setFontSize(8.5); doc.setTextColor(...(idx === 1 ? [180, 50, 50] : gray)); doc.setFont('helvetica', idx === 1 ? 'bold' : 'normal');
         doc.text(s.d, 36, sy + 11.5);
         
         sy += 17.5;

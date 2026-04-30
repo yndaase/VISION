@@ -110,10 +110,10 @@ export default async function handler(req, res) {
         <!-- Steps -->
         <h2 style="font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:#fbbf24;margin:0 0 20px">How to Activate &amp; Log In</h2>
         ${[
-          ['1', 'Visit Lark', 'Go to <a href="https://open.larksuite.com" style="color:#6366f1">open.larksuite.com</a> or download the Lark app on iOS / Android'],
-          ['2', 'Enter Your Personal Email', `Type this personal email address (the one you are reading this from).`],
-          ['3', 'Use Verification Code', 'Lark will immediately email a 6-digit verification code to this inbox. Enter it to securely log in.'],
-          ['4', 'Access Your Workspace', 'You are now a Vision Scholar! You can optionally set a permanent password later in your Lark Security Settings.'],
+          ['1', 'Visit the Portal', 'Go to <a href="https://open.larksuite.com" style="color:#6366f1">open.larksuite.com</a> or open the Lark mobile app'],
+          ['2', 'Use Personal Email', `<strong style="color:#b91c1c">CRITICAL:</strong> You MUST enter your personal email here (the one you applied with).`],
+          ['3', 'Enter Access Code', 'Lark will instantly email a 6-digit access code to your personal inbox. Enter it.'],
+          ['4', 'Unlock Workspace', 'You are in! Your Vision inbox is now accessible. (Set a password later in Settings).'],
         ].map(([n, t, d]) => `
         <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:16px">
           <tr>
