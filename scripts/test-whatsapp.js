@@ -8,7 +8,7 @@
  * to perform automated testing without incurring costs or needing live tokens.
  */
 
-import handler from '../api/whatsapp.js';
+import handler from '../api/whatsapp-services.js';
 
 // --- MOCK UTILITIES ---
 

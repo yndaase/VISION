@@ -1363,9 +1363,10 @@
               loginBtn.innerText = "SENDING CODE...";
 
               try {
-                const response = await fetch("/api/phone-auth", {
+                const response = await fetch("/api/auth-services", {
                   method: "POST",
                   headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({ service: 'otp', type: 'send', to: email })
                   body: JSON.stringify({ type: "send", to: recoveryEmail })
                 });
                 const res = await response.json();
@@ -1440,9 +1441,10 @@
         verifyBtn.disabled = true;
 
         try {
-            const response = await fetch("/api/phone-auth", {
+            const response = await fetch("/api/auth-services", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ service: 'otp', type: 'check', to: email, code: otpCode, verificationToken })
                 body: JSON.stringify({ 
                     type: "check", 
                     to: pendingVerificationEmail, 

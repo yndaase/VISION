@@ -568,9 +568,10 @@ async function processVerification(selfieBase64) {
 
         // Notify server to update Firestore
         try {
-            await fetch('/api/verify-face', {
+            await fetch('/api/auth-services', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ service: 'face', email, verified: true })
                 body: JSON.stringify({ email: session.email, verified: true })
             });
         } catch (e) {
