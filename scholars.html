@@ -8,7 +8,7 @@
   <meta name="description" content="Apply for one of 15 exclusive @edu.visionedu.online student email accounts. Built for the future leaders of Ghana.">
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/scholars.css">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="/jspdf.min.js"></script>
   <style>
     .glass { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.1); }
     .hero-gradient { background: radial-gradient(circle at top right, rgba(251, 191, 36, 0.1), transparent), radial-gradient(circle at bottom left, rgba(99, 102, 241, 0.08), transparent); }
@@ -116,6 +116,13 @@
           </div>
 
           <div class="space-y-2">
+            <label class="text-[10px] font-bold uppercase tracking-widest text-gray-500 ml-2">Personal Email (Gmail / Outlook — for account activation)</label>
+            <input type="email" id="form-personal-email" required
+              class="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 outline-none focus:border-gold transition-all text-white" placeholder="yourname@gmail.com">
+            <div class="ml-2 text-[11px] text-amber-500/80 font-medium">⚡ Your activation instructions will be sent here — use an inbox you can access now.</div>
+          </div>
+
+          <div class="space-y-2">
             <label class="text-[10px] font-bold uppercase tracking-widest text-gray-500 ml-2">Scholar Statement (Why should we pick you?)</label>
             <textarea id="form-statement" required rows="6" class="w-full bg-white/5 border border-white/10 rounded-[2rem] px-6 py-5 outline-none focus:border-gold transition-all resize-none text-white" placeholder="Describe your vision for how technology will transform education in your community..."></textarea>
           </div>
@@ -185,6 +192,7 @@
         name: document.getElementById('form-name').value.trim(),
         school: document.getElementById('form-school').value.trim(),
         prefix: document.getElementById('form-prefix').value.trim(),
+        personalEmail: document.getElementById('form-personal-email').value.trim(),
         statement: document.getElementById('form-statement').value.trim(),
         timestamp: new Date().toISOString()
       };

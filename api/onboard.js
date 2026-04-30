@@ -38,11 +38,11 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: "Method not allowed" });
   }
 
-  const { name, prefix, school, statement } = req.body;
+  const { name, prefix, school, statement, personalEmail } = req.body;
 
   // Validate required fields
-  if (!name || !prefix) {
-    return res.status(400).json({ error: "Missing required fields: name and prefix" });
+  if (!name || !prefix || !personalEmail) {
+    return res.status(400).json({ error: "Missing required fields: name, prefix, and personalEmail" });
   }
 
   // Sanitize prefix — lowercase, strip anything not a letter/number/dot/hyphen/underscore
@@ -82,7 +82,68 @@ export default async function handler(req, res) {
     console.log("[onboard] Lark Contacts API response:", JSON.stringify(result, null, 2));
 
     if (result.code === 0) {
-      // ── Success ──────────────────────────────────────────────────────────
+      // ── Send activation email to personal inbox ──────────────────────────
+      const activationHtml = `
+<!DOCTYPE html><html><head><meta charset="UTF-8"></head>
+<body style="margin:0;padding:0;background:#f4f4fc;font-family:Arial,sans-serif">
+<table width="100%" cellpadding="0" cellspacing="0" style="background:#f4f4fc;padding:40px 0">
+  <tr><td align="center">
+    <table width="600" cellpadding="0" cellspacing="0" style="background:#ffffff;border-radius:12px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,0.08)">
+      <!-- Header -->
+      <tr><td style="background:#1a1a2e;padding:32px 40px;border-bottom:3px solid #fbbf24">
+        <div style="display:inline-block;background:#fbbf24;border-radius:10px;padding:6px 14px;font-size:20px;font-weight:900;color:#1a1a2e;letter-spacing:-1px">V</div>
+        <span style="color:#ffffff;font-size:18px;font-weight:700;margin-left:12px;vertical-align:middle">Vision Education</span>
+        <p style="color:#fbbf24;font-size:11px;font-weight:600;letter-spacing:2px;text-transform:uppercase;margin:8px 0 0">Scholar Fellowship Program</p>
+      </td></tr>
+      <!-- Body -->
+      <tr><td style="padding:40px">
+        <h1 style="color:#1a1a2e;font-size:26px;font-weight:800;margin:0 0 8px">Welcome to the Cohort, ${name.trim()}!</h1>
+        <p style="color:#6b7280;font-size:15px;line-height:1.6;margin:0 0 32px">Your exclusive Vision Scholar account has been provisioned. Follow the steps below to activate it and set your password.</p>
+        <!-- Email badge -->
+        <div style="background:#f4f4fc;border:1.5px solid #e5e7eb;border-radius:10px;padding:20px 24px;margin-bottom:32px">
+          <p style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:#9ca3af;margin:0 0 6px">Your Institutional Email</p>
+          <p style="font-size:22px;font-weight:800;color:#1a1a2e;margin:0">${email}</p>
+          <p style="font-size:12px;color:#9ca3af;margin:6px 0 0">Powered by Lark Suite &bull; 100 GB Storage</p>
+        </div>
+        <!-- Steps -->
+        <h2 style="font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:#fbbf24;margin:0 0 20px">How to Activate &amp; Log In</h2>
+        ${[
+          ['1', 'Visit Lark', 'Go to <a href="https://open.larksuite.com" style="color:#6366f1">open.larksuite.com</a> or download the Lark app on iOS / Android'],
+          ['2', 'Enter Your Vision Email', `Type: <strong>${email}</strong>`],
+          ['3', 'Click &ldquo;Forgot Password&rdquo;', 'On the login screen, click <strong>Forgot Password</strong> and enter your Vision email to receive a password reset link directly to this personal inbox.'],
+          ['4', 'Set Your Password &amp; Log In', 'Create a secure password. You are now a Vision Scholar — welcome to the workspace.'],
+        ].map(([n, t, d]) => `
+        <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:16px">
+          <tr>
+            <td width="36" valign="top"><div style="width:28px;height:28px;background:#fbbf24;border-radius:50%;text-align:center;line-height:28px;font-weight:800;font-size:13px;color:#1a1a2e">${n}</div></td>
+            <td style="padding-left:12px"><strong style="color:#1a1a2e;font-size:14px">${t}</strong><br><span style="color:#6b7280;font-size:13px">${d}</span></td>
+          </tr>
+        </table>`).join('')}
+        <div style="margin-top:32px;padding:16px 20px;background:#fffbeb;border-left:4px solid #fbbf24;border-radius:6px">
+          <p style="margin:0;font-size:13px;color:#92400e"><strong>Tip:</strong> Use <strong>Forgot Password</strong> on first login — it sends a reset link to this personal inbox so you can set your own password instantly.</p>
+        </div>
+      </td></tr>
+      <!-- Footer -->
+      <tr><td style="background:#1a1a2e;padding:20px 40px;text-align:center">
+        <p style="color:#6b7280;font-size:11px;margin:0">&copy; 2026 Vision Education &bull; Scholar Fellowship &bull; Accra, Ghana</p>
+      </td></tr>
+    </table>
+  </td></tr>
+</table>
+</body></html>`;
+
+      // Fire-and-forget the email — don't block the main response
+      fetch(`${process.env.VERCEL_URL ? 'https://' + process.env.VERCEL_URL : 'http://localhost:3000'}/api/send-email`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          to: personalEmail,
+          subject: `🎓 Your Vision Scholar Account is Ready — ${email}`,
+          html: activationHtml,
+        }),
+      }).catch(err => console.warn('[onboard] Activation email failed (non-fatal):', err.message));
+
+      // ── Success response ──────────────────────────────────────────────────
       return res.status(200).json({
         success: true,
         email,
