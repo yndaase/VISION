@@ -134,16 +134,26 @@ export default async function handler(req, res) {
 </table>
 </body></html>`;
 
-      // Fire-and-forget the email — don't block the main response
-      fetch(`${process.env.VERCEL_URL ? 'https://' + process.env.VERCEL_URL : 'http://localhost:3000'}/api/send-email`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          to: personalEmail,
-          subject: `🎓 Your Vision Scholar Account is Ready — ${email}`,
-          html: activationHtml,
-        }),
-      }).catch(err => console.warn('[onboard] Activation email failed (non-fatal):', err.message));
+      // Await the email send so Vercel doesn't kill the function before it finishes
+      try {
+        const baseUrl = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000';
+        const emailRes = await fetch(`${baseUrl}/api/send-email`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            to: personalEmail,
+            subject: `🎓 Your Vision Scholar Account is Ready — ${email}`,
+            html: activationHtml,
+          }),
+        });
+        if (!emailRes.ok) {
+          console.error('[onboard] Failed to send welcome email:', await emailRes.text());
+        } else {
+          console.log('[onboard] Welcome email sent successfully to', personalEmail);
+        }
+      } catch (emailErr) {
+        console.error('[onboard] Error sending welcome email:', emailErr);
+      }
 
       // ── Success response ──────────────────────────────────────────────────
       return res.status(200).json({
