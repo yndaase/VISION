@@ -98,6 +98,16 @@ setTimeout(function() {
 }, 500);
 ```
 
+## 🔧 Recent Fix (Loading Screen Issue)
+
+**Issue:** Loading screen text wasn't showing properly
+**Cause:** Script timing and DOM readiness issues
+**Solution:** Improved script with:
+- Immediate CSS injection
+- MutationObserver for body detection  
+- Better timing controls
+- Overflow management via CSS classes
+
 ## 🎨 Current Design
 
 ### Visual Elements

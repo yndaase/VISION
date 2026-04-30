@@ -4,83 +4,84 @@
 (function() {
   'use strict';
   
-  // Loading screen CSS (minified)
-  const loadingCSS = `
+  // Immediately inject CSS to prevent flash
+  const style = document.createElement('style');
+  style.textContent = `
     #visionLoader{position:fixed;inset:0;background:#0f172a;z-index:99999;display:flex;align-items:center;justify-content:center;opacity:1;transition:opacity .3s}
     #visionLoader.hide{opacity:0;pointer-events:none}
     .vision-text{font-family:system-ui,-apple-system,sans-serif;font-size:clamp(2rem,8vw,4rem);font-weight:900;letter-spacing:.2em;color:#fff;animation:pulse 1.5s ease-in-out infinite}
     @keyframes pulse{0%,100%{opacity:.6}50%{opacity:1}}
     [data-theme=light] #visionLoader{background:#fff}
     [data-theme=light] .vision-text{color:#0f172a}
+    body{overflow:hidden!important}
+    body.loaded{overflow:auto!important}
   `;
   
-  // Loading screen HTML
-  const loadingHTML = `
-    <div id="visionLoader">
-      <div class="vision-text">VISION EDU</div>
-    </div>
-  `;
-  
-  // Inject CSS immediately
-  function injectCSS() {
-    const style = document.createElement('style');
-    style.textContent = loadingCSS;
-    document.head.insertBefore(style, document.head.firstChild);
+  // Insert CSS immediately if head exists, otherwise wait
+  if (document.head) {
+    document.head.appendChild(style);
+  } else {
+    document.addEventListener('DOMContentLoaded', function() {
+      document.head.appendChild(style);
+    });
   }
   
-  // Inject HTML immediately
-  function injectHTML() {
-    // Create a temporary container
-    const temp = document.createElement('div');
-    temp.innerHTML = loadingHTML;
+  // Create and inject loader HTML
+  function createLoader() {
+    // Don't create if already exists
+    if (document.getElementById('visionLoader')) {
+      return;
+    }
     
-    // Insert at the very beginning of body
+    const loader = document.createElement('div');
+    loader.id = 'visionLoader';
+    loader.innerHTML = '<div class="vision-text">VISION EDU</div>';
+    
+    // Insert into body if it exists
     if (document.body) {
-      document.body.insertBefore(temp.firstChild, document.body.firstChild);
+      document.body.insertBefore(loader, document.body.firstChild);
     } else {
-      // If body doesn't exist yet, wait for it
-      document.addEventListener('DOMContentLoaded', function() {
-        document.body.insertBefore(temp.firstChild, document.body.firstChild);
+      // Wait for body to be available
+      const observer = new MutationObserver(function(mutations) {
+        if (document.body) {
+          document.body.insertBefore(loader, document.body.firstChild);
+          observer.disconnect();
+        }
       });
+      observer.observe(document.documentElement, { childList: true });
     }
   }
   
-  // Hide loading screen when page is loaded
+  // Hide loading screen
   function hideLoader() {
     const loader = document.getElementById('visionLoader');
     if (loader) {
       loader.classList.add('hide');
+      if (document.body) {
+        document.body.classList.add('loaded');
+      }
       setTimeout(function() {
-        if (loader.parentNode) {
+        if (loader && loader.parentNode) {
           loader.remove();
         }
       }, 300);
     }
   }
   
-  // Initialize immediately
-  injectCSS();
-  injectHTML();
-  
-  // Hide when page loads
-  if (document.readyState === 'complete') {
-    hideLoader();
+  // Initialize loader creation
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', createLoader);
   } else {
-    window.addEventListener('load', hideLoader);
+    createLoader();
   }
   
-  // Prevent scrolling while loading
-  if (document.body) {
-    document.body.style.overflow = 'hidden';
+  // Hide loader when page is fully loaded
+  if (document.readyState === 'complete') {
+    setTimeout(hideLoader, 100); // Small delay to ensure visibility
+  } else {
+    window.addEventListener('load', function() {
+      setTimeout(hideLoader, 100);
+    });
   }
-  
-  // Restore scrolling when hiding
-  window.addEventListener('load', function() {
-    setTimeout(function() {
-      if (document.body) {
-        document.body.style.overflow = '';
-      }
-    }, 300);
-  });
   
 })();

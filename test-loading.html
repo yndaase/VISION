@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Loading Screen Test</title>
+  
+  <!-- Vision EDU Universal Loading Screen -->
+  <script src="/loading-screen-universal.js"></script>
+  
+  <style>
+    body {
+      font-family: system-ui, sans-serif;
+      padding: 2rem;
+      background: #f8fafc;
+    }
+    .content {
+      max-width: 600px;
+      margin: 0 auto;
+      background: white;
+      padding: 2rem;
+      border-radius: 8px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+    h1 {
+      color: #1e293b;
+      margin-bottom: 1rem;
+    }
+    p {
+      color: #64748b;
+      line-height: 1.6;
+    }
+    .test-button {
+      background: #6366f1;
+      color: white;
+      padding: 0.75rem 1.5rem;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 1rem;
+      margin-top: 1rem;
+    }
+    .test-button:hover {
+      background: #5855eb;
+    }
+  </style>
+</head>
+<body>
+  <div class="content">
+    <h1>🎯 Loading Screen Test Page</h1>
+    <p>This page tests the universal loading screen functionality. You should have seen "VISION EDU" loading text when the page loaded.</p>
+    
+    <h2>✅ Expected Behavior:</h2>
+    <ul>
+      <li>Dark background with "VISION EDU" text appears immediately</li>
+      <li>Text has a pulsing animation</li>
+      <li>Loading screen fades out after page loads</li>
+      <li>Page content becomes visible</li>
+    </ul>
+    
+    <h2>🔧 Test Actions:</h2>
+    <button class="test-button" onclick="location.reload()">Reload Page</button>
+    <button class="test-button" onclick="window.open('/dashboard.html', '_blank')">Test Dashboard</button>
+    <button class="test-button" onclick="window.open('/waec-past-questions.html', '_blank')">Test WAEC Page</button>
+    
+    <h2>📊 Debug Info:</h2>
+    <div id="debug-info">
+      <p><strong>Page Load Time:</strong> <span id="load-time">Calculating...</span></p>
+      <p><strong>Loading Screen Element:</strong> <span id="loader-status">Checking...</span></p>
+    </div>
+  </div>
+
+  <script>
+    // Debug information
+    window.addEventListener('load', function() {
+      const loadTime = performance.now();
+      document.getElementById('load-time').textContent = Math.round(loadTime) + 'ms';
+      
+      // Check if loader was present
+      const loaderExists = document.getElementById('visionLoader') !== null;
+      const loaderStatus = loaderExists ? 'Found (working)' : 'Not found (issue)';
+      document.getElementById('loader-status').textContent = loaderStatus;
+      
+      console.log('Loading screen test results:', {
+        loadTime: loadTime,
+        loaderExists: loaderExists,
+        readyState: document.readyState
+      });
+    });
+  </script>
+</body>
+</html>
