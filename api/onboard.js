@@ -11,6 +11,7 @@ const LARK_BASE = "https://open-jp.larksuite.com/open-apis";
 const LARK_ERRORS = {
   40004: "App has no authority over this department. In Lark Admin → App Management → your app → set 'Scope of Data Access' to all employees.",
   41059: "Invalid employee type. Your Lark tenant does not support this employee category — contact your Lark admin to verify allowed workforce types.",
+  44012: "Lark Security Intercept: Adding this user was blocked by Lark's anti-spam or security system. Please check your user limit or contact Lark Support.",
   99991663: "App permissions not approved yet. Ask your Lark admin to approve the app.",
   99991400: "That email prefix is already taken. Please choose a different one.",
   99991672: "Invalid department ID. Check your LARK_DEPT_ID environment variable.",
