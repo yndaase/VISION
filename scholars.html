@@ -286,40 +286,40 @@
       // ── WELCOME CARD (Overlaps Banner) ──────────────────────────────────────────
       doc.setFillColor(...white); 
       // Add drop shadow effect using a light gray rectangle slightly offset
-      doc.setFillColor(230, 230, 235); doc.roundedRect(16, 76, W - 30, 60, 4, 4, 'F');
-      doc.setFillColor(...white); doc.roundedRect(15, 75, W - 30, 60, 4, 4, 'F');
+      doc.setFillColor(230, 230, 235); doc.roundedRect(16, 71, W - 30, 50, 4, 4, 'F');
+      doc.setFillColor(...white); doc.roundedRect(15, 70, W - 30, 50, 4, 4, 'F');
       
-      doc.setFillColor(...gold); doc.rect(15, 75, 4, 60, 'F'); // gold left stripe
+      doc.setFillColor(...gold); doc.rect(15, 70, 4, 50, 'F'); // gold left stripe
 
       doc.setFontSize(22); doc.setTextColor(...darkBlue); doc.setFont('helvetica', 'bold');
-      doc.text(`Welcome, ${name}!`, W / 2, 95, { align: 'center' });
+      doc.text(`Welcome, ${name}!`, W / 2, 85, { align: 'center' });
 
       doc.setFontSize(11); doc.setTextColor(...gray); doc.setFont('helvetica', 'normal');
       const body = `Congratulations on your selection as one of the exclusive 15 Vision Scholars. Your premium institutional email account is now fully active and provisioned on our enterprise workspace.`;
-      doc.text(doc.splitTextToSize(body, W - 50), W / 2, 108, { align: 'center', lineHeightFactor: 1.5 });
+      doc.text(doc.splitTextToSize(body, W - 50), W / 2, 95, { align: 'center', lineHeightFactor: 1.5 });
 
       // ── CREDENTIALS CARD ──────────────────────────────────────
-      doc.setFillColor(...darkBlue); doc.roundedRect(15, 145, W - 30, 55, 4, 4, 'F');
+      doc.setFillColor(...darkBlue); doc.roundedRect(15, 130, W - 30, 50, 4, 4, 'F');
       
       // Decorative inner border
       doc.setDrawColor(50, 50, 70); doc.setLineWidth(0.5);
-      doc.roundedRect(20, 150, W - 40, 45, 2, 2, 'S');
+      doc.roundedRect(20, 135, W - 40, 40, 2, 2, 'S');
 
       doc.setFontSize(9); doc.setTextColor(...gold); doc.setFont('helvetica', 'bold');
-      doc.text('YOUR EXCLUSIVE SCHOLAR EMAIL', W/2, 162, { align: 'center' });
+      doc.text('YOUR EXCLUSIVE SCHOLAR EMAIL', W/2, 146, { align: 'center' });
       
       doc.setFontSize(18); doc.setTextColor(...white); doc.setFont('helvetica', 'bold');
-      doc.text(email, W/2, 174, { align: 'center' });
+      doc.text(email, W/2, 158, { align: 'center' });
       
-      doc.setFillColor(55, 55, 80); doc.rect(40, 182, W - 80, 0.5, 'F');
+      doc.setFillColor(55, 55, 80); doc.rect(40, 166, W - 80, 0.5, 'F');
       
       doc.setFontSize(9); doc.setTextColor(180, 180, 200); doc.setFont('helvetica', 'normal');
-      doc.text('Lark Suite Enterprise  •  100 GB Cloud Storage  •  Vision Workspace', W/2, 190, { align: 'center' });
+      doc.text('Lark Suite Enterprise  •  100 GB Cloud Storage  •  Vision Workspace', W/2, 172, { align: 'center' });
 
       // ── STEPS ─────────────────────────────────────────────────
       doc.setFontSize(14); doc.setTextColor(...darkBlue); doc.setFont('helvetica', 'bold');
-      doc.text('Account Activation & Login Guide', 20, 215);
-      doc.setFillColor(...gold); doc.rect(20, 219, 40, 1.5, 'F');
+      doc.text('Account Activation & Login Guide', 20, 189);
+      doc.setFillColor(...gold); doc.rect(20, 193, 40, 1.5, 'F');
 
       const steps = [
         { n:'1', t:'Access the Portal', d:`Visit open.larksuite.com on your computer or download the Lark app.` },
@@ -327,24 +327,24 @@
         { n:'3', t:'Use Verification Code', d:'Lark will send a 6-digit verification code to your personal inbox. Enter it to log in.' },
         { n:'4', t:'Access Workspace', d:'You are now in! You can set a permanent password later in your Lark Security Settings.' },
       ];
-      let sy = 228;
+      let sy = 200;
       steps.forEach((s, idx) => {
         // Step box
         doc.setFillColor(255, 255, 255); doc.setDrawColor(220, 220, 230);
-        doc.roundedRect(20, sy, W - 40, 16, 2, 2, 'FD');
+        doc.roundedRect(20, sy, W - 40, 15, 2, 2, 'FD');
         
-        doc.setFillColor(...gold); doc.rect(20, sy, 3, 16, 'F');
+        doc.setFillColor(...gold); doc.rect(20, sy, 3, 15, 'F');
         
         doc.setFontSize(14); doc.setTextColor(...gold); doc.setFont('helvetica', 'bold');
-        doc.text(s.n, 28, sy + 11);
+        doc.text(s.n, 28, sy + 10.5);
         
         doc.setFontSize(10); doc.setTextColor(...darkBlue); doc.setFont('helvetica', 'bold');
-        doc.text(s.t, 36, sy + 7);
+        doc.text(s.t, 36, sy + 6.5);
         
-        doc.setFontSize(9); doc.setTextColor(...gray); doc.setFont('helvetica', 'normal');
-        doc.text(s.d, 36, sy + 12.5);
+        doc.setFontSize(8.5); doc.setTextColor(...gray); doc.setFont('helvetica', 'normal');
+        doc.text(s.d, 36, sy + 11.5);
         
-        sy += 19;
+        sy += 17.5;
       });
 
       // ── FOOTER ────────────────────────────────────────────────
