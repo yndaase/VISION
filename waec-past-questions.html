@@ -1,0 +1,534 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+
+<head>
+  <meta charset="UTF-8" />
+  <script>
+    document.documentElement.setAttribute("data-theme", "dark");
+  </script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>WAEC Past Questions | Vision Education</title>
+  <meta name="description" content="Access comprehensive WAEC past questions for all subjects. Download and practice with authentic exam papers." />
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="dashboard.css" />
+  <script src="theme.js"></script>
+  <link rel="stylesheet" href="theme.css" />
+  
+  <style>
+    .learning-hub-layout {
+      display: flex;
+      height: 100vh;
+      background: var(--bg);
+    }
+    .learning-main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      margin-left: 250px;
+    }
+    .learning-workspace {
+      flex: 1;
+      padding: 2rem;
+      overflow-y: auto;
+      max-width: 1200px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    /* Header Section */
+    .page-header {
+      margin-bottom: 2.5rem;
+    }
+    .page-title {
+      font-size: 2.5rem;
+      font-weight: 900;
+      color: var(--text-primary);
+      margin-bottom: 0.5rem;
+      letter-spacing: -0.02em;
+    }
+    .page-subtitle {
+      color: var(--text-secondary);
+      font-size: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    /* Filter Section */
+    .filter-section {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    .filter-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      flex: 1;
+      min-width: 200px;
+    }
+    .filter-label {
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+    }
+    .filter-select {
+      background: var(--bg-input);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 10px 14px;
+      color: var(--text-primary);
+      font-size: 0.9rem;
+      font-family: 'Outfit', sans-serif;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .filter-select:focus {
+      border-color: var(--primary);
+      outline: none;
+    }
+    .filter-select:hover {
+      border-color: var(--primary);
+    }
+
+    /* Subject Pills */
+    .subject-pills {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 2rem;
+    }
+    .subject-pill {
+      padding: 10px 20px;
+      border: 1px solid var(--border);
+      color: var(--text-secondary);
+      border-radius: 30px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      cursor: pointer;
+      background: var(--bg-input);
+      transition: all 0.2s;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+    .subject-pill:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+    .subject-pill.active {
+      background: var(--primary);
+      color: white;
+      border-color: var(--primary);
+    }
+
+    /* Questions Grid */
+    .questions-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 3rem;
+    }
+    .question-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 1.5rem;
+      transition: all 0.3s;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+    }
+    .question-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: var(--primary);
+      transform: scaleX(0);
+      transition: transform 0.3s;
+    }
+    .question-card:hover {
+      border-color: var(--primary);
+      transform: translateY(-4px);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+    }
+    .question-card:hover::before {
+      transform: scaleX(1);
+    }
+    .question-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 1rem;
+    }
+    .question-subject {
+      font-size: 0.7rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--primary);
+      background: var(--primary-dim);
+      padding: 4px 10px;
+      border-radius: 6px;
+    }
+    .question-year {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      background: var(--bg-input);
+      padding: 4px 10px;
+      border-radius: 6px;
+    }
+    .question-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 0.75rem;
+      line-height: 1.4;
+    }
+    .question-meta {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 1rem;
+      flex-wrap: wrap;
+    }
+    .meta-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+    .meta-item svg {
+      width: 14px;
+      height: 14px;
+    }
+    .question-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 1rem;
+    }
+    .btn-download {
+      flex: 1;
+      background: var(--primary);
+      color: white;
+      border: none;
+      padding: 10px 16px;
+      border-radius: var(--radius-sm);
+      font-size: 0.85rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+    .btn-download:hover {
+      background: #4f46e5;
+      transform: translateY(-1px);
+    }
+    .btn-preview {
+      background: var(--bg-input);
+      color: var(--text-secondary);
+      border: 1px solid var(--border);
+      padding: 10px 16px;
+      border-radius: var(--radius-sm);
+      font-size: 0.85rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+    .btn-preview:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    /* Loading State */
+    .loading-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 4rem 2rem;
+      gap: 1rem;
+    }
+    .spinner {
+      width: 48px;
+      height: 48px;
+      border: 4px solid var(--border);
+      border-top-color: var(--primary);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    .loading-text {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+    }
+
+    /* Empty State */
+    .empty-state {
+      text-align: center;
+      padding: 4rem 2rem;
+    }
+    .empty-icon {
+      width: 80px;
+      height: 80px;
+      margin: 0 auto 1.5rem;
+      color: var(--text-muted);
+      opacity: 0.5;
+    }
+    .empty-title {
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 0.5rem;
+    }
+    .empty-text {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+    }
+
+    /* Stats Bar */
+    .stats-bar {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+    }
+    .stat-card {
+      flex: 1;
+      min-width: 200px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    .stat-icon {
+      width: 48px;
+      height: 48px;
+      background: var(--primary-dim);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--primary);
+    }
+    .stat-content {
+      flex: 1;
+    }
+    .stat-value {
+      font-size: 1.8rem;
+      font-weight: 900;
+      color: var(--text-primary);
+      line-height: 1;
+      margin-bottom: 0.25rem;
+    }
+    .stat-label {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    @media (max-width: 900px) {
+      .learning-main { 
+        margin-left: 0; 
+        padding-bottom: 70px; 
+      }
+      .questions-grid {
+        grid-template-columns: 1fr;
+      }
+      .filter-section {
+        flex-direction: column;
+      }
+      .filter-group {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+
+<body class="dashboard-page">
+  <aside class="side-nav">
+    <a class="side-nav-logo" href="/dashboard">
+      <img src="assets/logo.png" alt="Vision Education logo" style="height: 48px; width: 48px; object-fit: contain;" loading="lazy">
+      <span>Vision Edu</span>
+    </a>
+    <nav class="side-nav-menu">
+      <a href="/dashboard" class="nav-item">
+        <span class="nav-item-icon"><svg aria-hidden="true" viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg></span>
+        <span>Dashboard</span>
+      </a>
+      <a href="/mocks" class="nav-item">
+        <span class="nav-item-icon"><svg aria-hidden="true" viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg></span>
+        <span>Mock Exams</span>
+      </a>
+      <a href="/waec-past-questions" class="nav-item active" aria-current="page">
+        <span class="nav-item-icon"><svg aria-hidden="true" viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M19 3h-4.18C14.4 1.84 13.3 1 12 1c-1.3 0-2.4.84-2.82 2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 0c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm2 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg></span>
+        <span>Past Questions</span>
+      </a>
+      <a href="/ai-learning" class="nav-item">
+        <span class="nav-item-icon"><svg aria-hidden="true" viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M19 13l-1.26-2.74L15 9l2.74-1.26L19 5l1.26 2.74L23 9l-2.74 1.26L19 13zM9 13l-2.26-4.74L2 6l4.74-2.26L9 1.5l2.26 4.74L16 8.26l-4.74 2.26L9 13zm10 9.5l-1.26-2.74L15 18.5l2.74-1.26L19 14.5l1.26 2.74L23 18.5l-2.74 1.26L19 22.5z"/></svg></span>
+        <span>AI Learning Hub</span>
+      </a>
+      <a href="https://visionedu.site" target="_blank" rel="noopener" class="nav-item">
+        <span class="nav-item-icon"><svg aria-hidden="true" viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm-5 14H4v-4h11v4zm0-5H4V9h11v4zm5 5h-4V9h4v9z"/></svg></span>
+        <span>Vision Blog</span>
+      </a>
+      <a href="/planner" class="nav-item">
+        <span class="nav-item-icon"><svg aria-hidden="true" viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM7 10h5v5H7z"/></svg></span>
+        <span>Study Planner</span>
+      </a>
+      <a href="pricing.html" class="nav-get-pro" id="sideGetProBtn" style="display:none;">
+        <span>Upgrade</span>
+      </a>
+    </nav>
+    <div class="side-nav-footer">
+      <a href="#" class="nav-item" onclick="openSettings(); return false;">
+        <span class="nav-item-icon"><svg aria-hidden="true" viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58a.49.49 0 00.12-.61l-1.92-3.32a.49.49 0 00-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54a.484.484 0 00-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96a.49.49 0 00-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.07.62-.07.94s.02.64.07.94l-2.03 1.58a.49.49 0 00-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6A3.6 3.6 0 1115.6 12 3.611 3.611 0 0112 15.6z"/></svg></span>
+        <span>Settings</span>
+      </a>
+      <a href="https://www.youtube.com/channel/UCo4k-_8Q92hXOcUdbAtwabg" target="_blank" rel="noopener" class="nav-item" title="Vision YouTube">
+        <span class="nav-item-icon" style="display:flex; align-items:center; justify-content:center;">
+          <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+        </span>
+        <span>YouTube</span>
+      </a>
+    </div>
+  </aside>
+
+  <div class="learning-main">
+    <section class="learning-workspace">
+      <!-- Back Button -->
+      <div style="margin-bottom: 1.5rem;">
+        <a href="/dashboard" style="display: inline-flex; align-items: center; gap: 8px; color: var(--text-secondary); text-decoration: none; font-size: 0.85rem; font-weight: 600; padding: 8px 16px; border: 1px solid var(--border); border-radius: 20px; background: var(--bg-input); transition: all 0.2s;" onmouseover="this.style.borderColor='var(--primary)';this.style.color='var(--primary)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--text-secondary)'">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
+          Back to Dashboard
+        </a>
+      </div>
+
+      <!-- Page Header -->
+      <div class="page-header">
+        <h1 class="page-title">WAEC Past Questions</h1>
+        <p class="page-subtitle">Access authentic WAEC past questions for all subjects. Download and practice to excel in your exams.</p>
+      </div>
+
+      <!-- Stats Bar -->
+      <div class="stats-bar">
+        <div class="stat-card">
+          <div class="stat-icon">
+            <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+          </div>
+          <div class="stat-content">
+            <div class="stat-value" id="totalQuestions">0</div>
+            <div class="stat-label">Total Papers</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">
+            <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+          </div>
+          <div class="stat-content">
+            <div class="stat-value" id="totalSubjects">8</div>
+            <div class="stat-label">Subjects</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">
+            <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+          </div>
+          <div class="stat-content">
+            <div class="stat-value" id="yearRange">2015-2024</div>
+            <div class="stat-label">Year Range</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Subject Pills -->
+      <div class="subject-pills" id="subjectPills">
+        <div class="subject-pill active" data-subject="all">All Subjects</div>
+        <div class="subject-pill" data-subject="mathematics">Mathematics</div>
+        <div class="subject-pill" data-subject="english">English</div>
+        <div class="subject-pill" data-subject="physics">Physics</div>
+        <div class="subject-pill" data-subject="chemistry">Chemistry</div>
+        <div class="subject-pill" data-subject="biology">Biology</div>
+        <div class="subject-pill" data-subject="economics">Economics</div>
+        <div class="subject-pill" data-subject="geography">Geography</div>
+        <div class="subject-pill" data-subject="literature">Literature</div>
+      </div>
+
+      <!-- Filter Section -->
+      <div class="filter-section">
+        <div class="filter-group">
+          <label class="filter-label">Year</label>
+          <select class="filter-select" id="yearFilter">
+            <option value="all">All Years</option>
+            <option value="2024">2024</option>
+            <option value="2023">2023</option>
+            <option value="2022">2022</option>
+            <option value="2021">2021</option>
+            <option value="2020">2020</option>
+            <option value="2019">2019</option>
+            <option value="2018">2018</option>
+            <option value="2017">2017</option>
+            <option value="2016">2016</option>
+            <option value="2015">2015</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label class="filter-label">Paper Type</label>
+          <select class="filter-select" id="paperFilter">
+            <option value="all">All Papers</option>
+            <option value="objective">Objective (Paper 1)</option>
+            <option value="theory">Theory (Paper 2)</option>
+            <option value="practical">Practical (Paper 3)</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label class="filter-label">Sort By</label>
+          <select class="filter-select" id="sortFilter">
+            <option value="newest">Newest First</option>
+            <option value="oldest">Oldest First</option>
+            <option value="subject">Subject A-Z</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Questions Grid -->
+      <div id="questionsContainer">
+        <div class="loading-container">
+          <div class="spinner"></div>
+          <div class="loading-text">Loading past questions...</div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script src="auth.js"></script>
+  <script src="waec-past-questions.js"></script>
+</body>
+</html>
