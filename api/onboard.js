@@ -134,22 +134,29 @@ export default async function handler(req, res) {
 </table>
 </body></html>`;
 
-      // Await the email send so Vercel doesn't kill the function before it finishes
+      // Await the email send directly via Resend API so Vercel doesn't kill the function
       try {
-        const baseUrl = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000';
-        const emailRes = await fetch(`${baseUrl}/api/send-email`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            to: personalEmail,
-            subject: `🎓 Your Vision Scholar Account is Ready — ${email}`,
-            html: activationHtml,
-          }),
-        });
-        if (!emailRes.ok) {
-          console.error('[onboard] Failed to send welcome email:', await emailRes.text());
+        if (!process.env.RESEND_API_KEY) {
+            console.error('[onboard] RESEND_API_KEY is missing. Cannot send welcome email.');
         } else {
-          console.log('[onboard] Welcome email sent successfully to', personalEmail);
+            const emailRes = await fetch('https://api.resend.com/emails', {
+              method: 'POST',
+              headers: { 
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${process.env.RESEND_API_KEY}`
+              },
+              body: JSON.stringify({
+                from: 'Vision Education <welcome@visionedu.online>',
+                to: [personalEmail],
+                subject: `🎓 Your Vision Scholar Account is Ready — ${email}`,
+                html: activationHtml,
+              }),
+            });
+            if (!emailRes.ok) {
+              console.error('[onboard] Failed to send welcome email:', await emailRes.text());
+            } else {
+              console.log('[onboard] Welcome email sent successfully to', personalEmail);
+            }
         }
       } catch (emailErr) {
         console.error('[onboard] Error sending welcome email:', emailErr);
