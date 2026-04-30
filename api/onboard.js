@@ -111,9 +111,9 @@ export default async function handler(req, res) {
         <h2 style="font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:#fbbf24;margin:0 0 20px">How to Activate &amp; Log In</h2>
         ${[
           ['1', 'Visit Lark', 'Go to <a href="https://open.larksuite.com" style="color:#6366f1">open.larksuite.com</a> or download the Lark app on iOS / Android'],
-          ['2', 'Enter Your Vision Email', `Type: <strong>${email}</strong>`],
-          ['3', 'Click &ldquo;Forgot Password&rdquo;', 'On the login screen, click <strong>Forgot Password</strong> and enter your Vision email to receive a password reset link directly to this personal inbox.'],
-          ['4', 'Set Your Password &amp; Log In', 'Create a secure password. You are now a Vision Scholar — welcome to the workspace.'],
+          ['2', 'Enter Your Personal Email', `Type this personal email address (the one you are reading this from).`],
+          ['3', 'Use Verification Code', 'Lark will immediately email a 6-digit verification code to this inbox. Enter it to securely log in.'],
+          ['4', 'Access Your Workspace', 'You are now a Vision Scholar! You can optionally set a permanent password later in your Lark Security Settings.'],
         ].map(([n, t, d]) => `
         <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:16px">
           <tr>
@@ -122,7 +122,7 @@ export default async function handler(req, res) {
           </tr>
         </table>`).join('')}
         <div style="margin-top:32px;padding:16px 20px;background:#fffbeb;border-left:4px solid #fbbf24;border-radius:6px">
-          <p style="margin:0;font-size:13px;color:#92400e"><strong>Tip:</strong> Use <strong>Forgot Password</strong> on first login — it sends a reset link to this personal inbox so you can set your own password instantly.</p>
+          <p style="margin:0;font-size:13px;color:#92400e"><strong>Tip:</strong> Logging in with a verification code is the fastest and most secure way to access your account for the first time.</p>
         </div>
       </td></tr>
       <!-- Footer -->
