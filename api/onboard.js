@@ -9,6 +9,7 @@ const LARK_BASE = "https://open-jp.larksuite.com/open-apis";
 
 // Human-readable messages for common Lark error codes
 const LARK_ERRORS = {
+  40004: "App has no authority over this department. In Lark Admin → App Management → your app → set 'Scope of Data Access' to all employees.",
   99991663: "App permissions not approved yet. Ask your Lark admin to approve the app.",
   99991400: "That email prefix is already taken. Please choose a different one.",
   99991672: "Invalid department ID. Check your LARK_DEPT_ID environment variable.",
