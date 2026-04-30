@@ -138,17 +138,22 @@ class VisionLoader {
   }
 }
 
-// Auto-initialize on page load
+// Auto-initialize immediately (before DOM ready)
 if (typeof window !== 'undefined') {
-  // Initialize loader immediately
-  const visionLoader = new VisionLoader({
-    minDisplayTime: 800,
-    showParticles: true
+  // Create and show loader immediately
+  document.addEventListener('DOMContentLoaded', () => {
+    const visionLoader = new VisionLoader({
+      minDisplayTime: 800,
+      showParticles: true
+    });
+    
+    // Make it globally accessible
+    window.VisionLoader = VisionLoader;
+    window.visionLoader = visionLoader;
   });
   
-  // Make it globally accessible
+  // Also make class available immediately
   window.VisionLoader = VisionLoader;
-  window.visionLoader = visionLoader;
 }
 
 // Enhanced navigation with loading screen
