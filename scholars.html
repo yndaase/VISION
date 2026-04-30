@@ -8,6 +8,7 @@
   <meta name="description" content="Apply for one of 15 exclusive @edu.visionedu.online student email accounts. Built for the future leaders of Ghana.">
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/scholars.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <style>
     .glass { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.1); }
     .hero-gradient { background: radial-gradient(circle at top right, rgba(251, 191, 36, 0.1), transparent), radial-gradient(circle at bottom left, rgba(99, 102, 241, 0.08), transparent); }
@@ -198,11 +199,10 @@
         const result = await response.json();
 
         if (response.ok && result.success) {
-          // Show the provisioned email on the success screen
-          if (result.email) {
-            document.getElementById('success-email').textContent = result.email;
-          }
+          const finalEmail = result.email || `${data.prefix}@edu.visionedu.online`;
+          document.getElementById('success-email').textContent = finalEmail;
           nextStep('success');
+          await generateScholarPDF(data.name, finalEmail);
         } else {
           const detail = result.detail ? JSON.stringify(result.detail, null, 2) : 'Unknown error';
           console.error("Lark error detail:", detail);
@@ -217,6 +217,116 @@
         btn.disabled = false;
       }
     };
+
+    async function generateScholarPDF(name, email) {
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+      const W = 210, H = 297;
+      const navy = [26, 26, 46], gold = [251, 191, 36], white = [255, 255, 255];
+      const gray = [120, 120, 150], lightBg = [244, 244, 252], goldDark = [245, 158, 11];
+
+      // ── Load Vision logo ──────────────────────────────────────
+      let logoB64 = null;
+      try {
+        const r = await fetch('/assets/logo.png');
+        const blob = await r.blob();
+        logoB64 = await new Promise(res => { const fr = new FileReader(); fr.onload = () => res(fr.result); fr.readAsDataURL(blob); });
+      } catch(e) {}
+
+      // ── PAGE BACKGROUND ───────────────────────────────────────
+      doc.setFillColor(...lightBg); doc.rect(0, 0, W, H, 'F');
+
+      // ── HEADER ────────────────────────────────────────────────
+      doc.setFillColor(...navy); doc.rect(0, 0, W, 70, 'F');
+      // Gold top bar
+      doc.setFillColor(...gold); doc.rect(0, 0, W, 4, 'F');
+      // Subtle decorative circles
+      doc.setFillColor(32, 32, 52); doc.circle(195, 18, 38, 'F');
+      doc.setFillColor(28, 28, 48); doc.circle(185, 62, 26, 'F');
+      // Gold accent bar bottom of header
+      doc.setFillColor(...gold); doc.rect(0, 68, W, 2, 'F');
+
+      // Logo image or "V" fallback
+      if (logoB64) {
+        doc.addImage(logoB64, 'PNG', 12, 10, 42, 16);
+        doc.setFontSize(19); doc.setTextColor(...white); doc.setFont('helvetica', 'bold');
+        doc.text('Vision Education', 62, 28);
+      } else {
+        doc.setFillColor(...gold); doc.roundedRect(12, 10, 36, 14, 2, 2, 'F');
+        doc.setFontSize(14); doc.setTextColor(...navy); doc.setFont('helvetica', 'bold');
+        doc.text('VISION', 30, 20, { align: 'center' });
+        doc.setFontSize(19); doc.setTextColor(...white); doc.setFont('helvetica', 'bold');
+        doc.text('Vision Education', 58, 28);
+      }
+      doc.setFontSize(9); doc.setTextColor(...gold); doc.setFont('helvetica', 'normal');
+      doc.text('Scholar Fellowship Program — Cohort 2026', 62, 37);
+      const dateStr = new Date().toLocaleDateString('en-GB', { day:'numeric', month:'long', year:'numeric' });
+      doc.setFontSize(8); doc.setTextColor(160, 160, 200);
+      doc.text(`Issued: ${dateStr}  •  Accra, Ghana`, 62, 46);
+
+      // ── WELCOME CARD ──────────────────────────────────────────
+      doc.setFillColor(...white); doc.roundedRect(12, 80, W - 24, 62, 3, 3, 'F');
+      doc.setFillColor(...gold); doc.rect(12, 80, 3, 62, 'F'); // gold left stripe
+
+      doc.setFontSize(7.5); doc.setTextColor(...goldDark); doc.setFont('helvetica', 'bold');
+      doc.text('OFFICIAL SCHOLAR WELCOME LETTER', W / 2, 92, { align: 'center' });
+      doc.setFillColor(...gold); doc.rect(68, 95, 74, 0.5, 'F');
+
+      doc.setFontSize(18); doc.setTextColor(...navy); doc.setFont('helvetica', 'bold');
+      doc.text(`Welcome, ${name}!`, W / 2, 107, { align: 'center' });
+
+      doc.setFontSize(9); doc.setTextColor(...gray); doc.setFont('helvetica', 'normal');
+      const body = `Congratulations! You have been selected as one of the exclusive 15 Vision Scholars. Your institutional @edu.visionedu.online email account is now active and provisioned in the Vision Lark workspace.`;
+      doc.text(doc.splitTextToSize(body, W - 52), W / 2, 118, { align: 'center' });
+
+      // ── CREDENTIALS CARD ──────────────────────────────────────
+      doc.setFillColor(...navy); doc.roundedRect(12, 152, W - 24, 50, 3, 3, 'F');
+      doc.setFillColor(...gold); doc.rect(12, 152, 3, 50, 'F');
+
+      doc.setFontSize(7.5); doc.setTextColor(...gold); doc.setFont('helvetica', 'bold');
+      doc.text('YOUR INSTITUTIONAL EMAIL ADDRESS', 22, 164);
+      doc.setFontSize(15); doc.setTextColor(...white); doc.setFont('helvetica', 'bold');
+      doc.text(email, 22, 176);
+      doc.setFontSize(8); doc.setTextColor(160, 160, 200); doc.setFont('helvetica', 'normal');
+      doc.text('Platform: Lark Suite  •  Storage: 100 GB  •  Workspace: Vision Education', 22, 185);
+      doc.setFillColor(55, 55, 80); doc.rect(22, 189, W - 50, 0.4, 'F');
+      doc.setFontSize(8.5); doc.setTextColor(160, 160, 200);
+      doc.text('Login at: ', 22, 196);
+      doc.setTextColor(...gold); doc.text('open.larksuite.com', 46, 196);
+
+      // ── STEPS ─────────────────────────────────────────────────
+      doc.setFontSize(11); doc.setTextColor(...navy); doc.setFont('helvetica', 'bold');
+      doc.text('How to Access Your Account', W / 2, 217, { align: 'center' });
+      doc.setFillColor(...gold); doc.rect(64, 220, 82, 1, 'F');
+
+      const steps = [
+        { n:'1', t:'Visit Lark',       d:`Go to open.larksuite.com or download the Lark app (iOS / Android)` },
+        { n:'2', t:'Enter Your Email', d:`Type your Vision email: ${email}` },
+        { n:'3', t:'Activate Account', d:'Check your Vision Lark inbox for the activation link sent by Lark' },
+        { n:'4', t:'Set Your Password',d:'Create a secure password and complete your Vision scholar profile' },
+      ];
+      let sy = 228;
+      steps.forEach(s => {
+        doc.setFillColor(...gold); doc.circle(21, sy + 3, 4.5, 'F');
+        doc.setFontSize(8); doc.setTextColor(...navy); doc.setFont('helvetica', 'bold');
+        doc.text(s.n, 21, sy + 5.5, { align: 'center' });
+        doc.setFontSize(9.5); doc.setTextColor(...navy); doc.setFont('helvetica', 'bold');
+        doc.text(s.t, 30, sy + 2);
+        doc.setFontSize(8.5); doc.setTextColor(...gray); doc.setFont('helvetica', 'normal');
+        doc.text(s.d, 30, sy + 8);
+        sy += 14;
+      });
+
+      // ── FOOTER ────────────────────────────────────────────────
+      doc.setFillColor(...navy); doc.rect(0, H - 22, W, 22, 'F');
+      doc.setFillColor(...gold); doc.rect(0, H - 22, W, 1.5, 'F');
+      doc.setFontSize(8); doc.setTextColor(160, 160, 200); doc.setFont('helvetica', 'normal');
+      doc.text('© 2026 Vision Education • Scholar Fellowship Program • Accra, Ghana', W/2, H - 12, { align:'center' });
+      doc.text('Keep this document safe — it contains your account details', W/2, H - 6, { align:'center' });
+
+      // ── DOWNLOAD ──────────────────────────────────────────────
+      doc.save(`vision-scholar-${email.split('@')[0]}.pdf`);
+    }
   </script>
 </body>
 </html>
