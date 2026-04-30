@@ -1,0 +1,107 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Helper function to check if user is authenticated
+    function isSignedIn() {
+      return request.auth != null;
+    }
+    
+    // Helper function to check if user is admin
+    function isAdmin() {
+      return isSignedIn() && 
+             get(/databases/$(database)/documents/users/$(request.auth.token.email)).data.role == 'admin';
+    }
+    
+    // Helper function to check if user is pro
+    function isPro() {
+      return isSignedIn() && 
+             (get(/databases/$(database)/documents/users/$(request.auth.token.email)).data.role == 'pro' ||
+              isAdmin());
+    }
+    
+    // Users collection
+    match /users/{email} {
+      // Anyone authenticated can read their own user document
+      allow read: if isSignedIn() && request.auth.token.email == email;
+      
+      // Anyone authenticated can create/update their own user document
+      allow create, update: if isSignedIn() && request.auth.token.email == email;
+      
+      // Admins can read all users
+      allow read: if isAdmin();
+      
+      // Admins can update any user
+      allow update: if isAdmin();
+      
+      // No one can delete users (except through admin console)
+      allow delete: if false;
+    }
+    
+    // Materials collection
+    match /materials/{materialId} {
+      // Anyone authenticated can read materials
+      allow read: if isSignedIn();
+      
+      // Only admins can create, update, or delete materials
+      allow create, update, delete: if isAdmin();
+    }
+    
+    // WAEC Past Questions collection
+    match /waec_questions/{questionId} {
+      // Anyone authenticated can read questions
+      allow read: if isSignedIn();
+      
+      // Only admins can create, update, or delete questions
+      allow create, update, delete: if isAdmin();
+    }
+    
+    // Analytics collection
+    match /analytics/{docId} {
+      // Users can read their own analytics
+      allow read: if isSignedIn() && resource.data.userId == request.auth.token.email;
+      
+      // Users can create their own analytics
+      allow create: if isSignedIn() && request.resource.data.userId == request.auth.token.email;
+      
+      // Admins can read all analytics
+      allow read: if isAdmin();
+    }
+    
+    // Study planner collection
+    match /study_plans/{userId} {
+      // Users can read/write their own study plans
+      allow read, write: if isSignedIn() && userId == request.auth.token.email;
+      
+      // Admins can read all study plans
+      allow read: if isAdmin();
+    }
+    
+    // Mock exam results
+    match /mock_results/{resultId} {
+      // Users can read their own results
+      allow read: if isSignedIn() && resource.data.userId == request.auth.token.email;
+      
+      // Users can create their own results
+      allow create: if isSignedIn() && request.resource.data.userId == request.auth.token.email;
+      
+      // Admins can read all results
+      allow read: if isAdmin();
+    }
+    
+    // System broadcasts
+    match /broadcasts/{broadcastId} {
+      // Anyone authenticated can read broadcasts
+      allow read: if isSignedIn();
+      
+      // Only admins can create, update, or delete broadcasts
+      allow create, update, delete: if isAdmin();
+    }
+    
+    // Default deny all other collections
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
