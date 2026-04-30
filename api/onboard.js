@@ -69,12 +69,14 @@ export default async function handler(req, res) {
       },
       body: JSON.stringify({
         name: name.trim(),
-        email: email,
+        // enterprise_email → appears as "Business email" in Lark (Lark Mail inbox)
+        enterprise_email: email,
+        // email (work email) → used by Lark for login & activation notifications
+        // Using personal email here so the scholar receives the invite in an inbox they can access
+        email: personalEmail,
         department_ids: [deptId],
         // employee_type: 1=Regular, 2=Intern, 3=Outsourcing, 4=Contractor, 5=Consultant
-        // 0 is NOT a valid value per Lark Contacts API — use 1 (Regular) for scholars
         employee_type: 1,
-        // Lark will send a welcome/set-password email automatically
       }),
     });
 
