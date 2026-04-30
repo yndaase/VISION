@@ -10,6 +10,7 @@ const LARK_BASE = "https://open-jp.larksuite.com/open-apis";
 // Human-readable messages for common Lark error codes
 const LARK_ERRORS = {
   40004: "App has no authority over this department. In Lark Admin → App Management → your app → set 'Scope of Data Access' to all employees.",
+  41059: "Invalid employee type. Your Lark tenant does not support this employee category — contact your Lark admin to verify allowed workforce types.",
   99991663: "App permissions not approved yet. Ask your Lark admin to approve the app.",
   99991400: "That email prefix is already taken. Please choose a different one.",
   99991672: "Invalid department ID. Check your LARK_DEPT_ID environment variable.",
@@ -70,8 +71,9 @@ export default async function handler(req, res) {
         name: name.trim(),
         email: email,
         department_ids: [deptId],
-        // employee_type 0 = full-time; required by some Lark tenants
-        employee_type: 0,
+        // employee_type: 1=Regular, 2=Intern, 3=Outsourcing, 4=Contractor, 5=Consultant
+        // 0 is NOT a valid value per Lark Contacts API — use 1 (Regular) for scholars
+        employee_type: 1,
         // Lark will send a welcome/set-password email automatically
       }),
     });
