@@ -40,6 +40,14 @@ export default async function handler(req, res) {
   }
 
   try {
+    // Check if R2 is configured
+    if (!process.env.R2_ACCOUNT_ID || !process.env.R2_ACCESS_KEY_ID || !process.env.R2_SECRET_ACCESS_KEY) {
+      console.error('[Upload API] R2 environment variables not configured');
+      return res.status(500).json({ 
+        error: 'Storage not configured. Please set R2 environment variables.' 
+      });
+    }
+
     const { action } = req.query;
 
     // 1. GET: Generate pre-signed URL for upload

@@ -158,7 +158,11 @@ async function uploadMaterial() {
       }
     });
     
-    if (!urlResponse.ok) throw new Error('Failed to get upload URL');
+    if (!urlResponse.ok) {
+      const errorData = await urlResponse.json().catch(() => ({ error: 'Unknown error' }));
+      console.error('[Upload] Failed to get upload URL:', errorData);
+      throw new Error(errorData.error || 'Failed to get upload URL');
+    }
     const { uploadUrl } = await urlResponse.json();
 
     // Upload the file directly to R2
