@@ -6,7 +6,7 @@ const USERS_PATH = 'users/vision_v2_users.json';
 const JWKS = jose.createRemoteJWKSet(new URL('https://www.googleapis.com/oauth2/v3/certs'));
 
 export default async function handler(req, res) {
-  const { type } = req.body || req.query || {};
+  const type = req.query.type || (req.body ? req.body.type : null);
 
   // Verify and Enforce Cloud Storage Configuration
   if (!process.env.BLOB_READ_WRITE_TOKEN) {
