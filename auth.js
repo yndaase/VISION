@@ -770,21 +770,8 @@ window.checkVerificationAndGo = function(url) {
     const session = getSession();
     if (!session) return;
     
-    if (session.isVerified) {
-        window.location.href = url;
-    } else {
-        openSettings();
-        if (typeof switchSettingsTab === 'function') {
-            const tabs = document.querySelectorAll('.settings-nav-item');
-            for(let tab of tabs) {
-                if(tab.textContent.includes('Verification')) {
-                    switchSettingsTab('verification', tab);
-                    break;
-                }
-            }
-        }
-        alert("Verification Required: You must complete Face Verification to access this feature.");
-    }
+    // AI Hub is now free for everyone - no verification required
+    window.location.href = url;
 }
 
 //  Google Sign-In callback (GIS)

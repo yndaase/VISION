@@ -35,8 +35,7 @@
         label: 'AI Learning Hub',
         href: '/ai-learning',
         icon: 'ai',
-        description: 'AI-powered learning',
-        premium: true
+        description: 'AI-powered learning'
       },
       {
         id: 'blog',
