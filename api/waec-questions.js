@@ -335,8 +335,27 @@ async function handleDeleteQuestion(req, res) {
       return res.status(400).json({ error: 'Question ID required' });
     }
 
+    let blobUrlToDelete = null;
+
     if (db) {
-      await db.collection('waec_questions').doc(id).delete();
+      const doc = await db.collection('waec_questions').doc(id).get();
+      if (doc.exists) {
+        blobUrlToDelete = doc.data().blobUrl;
+        await db.collection('waec_questions').doc(id).delete();
+      }
+    }
+
+    // Delete from R2
+    if (blobUrlToDelete) {
+      try {
+        const command = new DeleteObjectCommand({
+          Bucket: BUCKET_NAME,
+          Key: blobUrlToDelete
+        });
+        await r2Client.send(command);
+      } catch (r2Err) {
+        console.error('Error deleting from R2:', r2Err);
+      }
     }
 
     return res.status(200).json({
