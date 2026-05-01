@@ -13,7 +13,6 @@
   <link rel="stylesheet" href="theme.css" />
   <script src="theme.js"></script>
   <script src="auth.js"></script>
-  <script src="materials.js"></script>
   <script type="module" src="firebase.js"></script>
   <style>
     :root {
@@ -289,10 +288,6 @@
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25h-2.25a2.25 2.25 0 01-2.25-2.25v-2.25z" /></svg>
           <span>Dashboard</span>
         </button>
-        <button class="nav-item" onclick="navTo('materials', this)">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18c-2.305 0-4.408.867-6 2.292m0-14.25v14.25" /></svg>
-          <span>Materials</span>
-        </button>
         <a href="/admin-materials-upload" class="nav-item" style="text-decoration: none;">
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5"/></svg>
           <span>Materials Upload</span>
@@ -367,17 +362,6 @@
               </div>
             </div>
           </div>
-        </div>
-      </section>
-
-      <!-- --- MATERIALS --- -->
-      <section class="admin-section" id="sec-materials">
-        <div class="card">
-          <div class="card-header">
-            <span class="card-title">Learning Materials</span>
-            <button class="btn btn-primary" onclick="openMatModal()">+ Add Material</button>
-          </div>
-          <div class="card-body" id="matDisplay"></div>
         </div>
       </section>
 
@@ -497,46 +481,6 @@
   </div>
 
   <!-- --- MODALS --- -->
-  <div class="modal-overlay" id="matModal">
-    <div class="modal-card">
-      <div class="modal-header"><h3>Add Material</h3><p style="color: var(--admin-text-muted); font-size: 0.85rem; margin-top: 4px;">Add new resources to the database.</p></div>
-      <div class="field"><label class="label">Subject</label><select class="input" id="matSubject"></select></div>
-      <div class="field"><label class="label">Title</label><input class="input" id="matTitle" placeholder="e.g. 2026 Core Maths Schema" /></div>
-      <div class="field"><label class="label">Type</label><select class="input" id="matType"><option value="PDF">PDF</option><option value="VIDEO">Video</option><option value="DOC">Document</option><option value="SLIDE">Slides</option><option value="LINK">Web Link</option></select></div>
-      <div class="field">
-        <label class="label">Resource Mode</label>
-        <div style="display: flex; gap: 0.5rem; background: rgba(255,255,255,0.03); padding: 4px; border-radius: 12px; border: 1px solid var(--admin-border);">
-            <button class="btn" style="flex: 1; background: var(--admin-primary); font-size: 0.75rem;" id="modeLinkBtn" onclick="setMatMode('link')">Link / URL</button>
-            <button class="btn" style="flex: 1; background: transparent; font-size: 0.75rem;" id="modeFileBtn" onclick="setMatMode('file')">Upload File</button>
-        </div>
-      </div>
-      
-      <div id="matUrlGroup" class="field">
-        <label class="label">Resource URL</label>
-        <input class="input" id="matUrl" placeholder="https://..." />
-      </div>
-
-      <div id="matFileGroup" class="field" style="display: none;">
-        <label class="label">Select File (Max 50MB)</label>
-        <input type="file" id="matFileInput" class="input" style="padding: 10px;" />
-        <div class="progress-container" id="uploadProgressContainer">
-            <div class="progress-bar" id="uploadProgressBar"></div>
-        </div>
-        <p id="uploadStatus" style="font-size: 0.7rem; color: var(--admin-text-muted); margin-top: 6px;"></p>
-      </div>
-
-      <div class="field" style="margin-top: 1.5rem; display: flex; align-items: center; gap: 10px; padding: 12px; background: rgba(37, 211, 102, 0.05); border: 1px solid rgba(37, 211, 102, 0.1); border-radius: 12px;">
-         <input type="checkbox" id="matNotifyWA" checked style="width: 18px; height: 18px; cursor: pointer;">
-         <label for="matNotifyWA" style="font-size: 0.85rem; font-weight: 700; color: #25D366; cursor: pointer; user-select: none;">Send WhatsApp Broadcast to Students</label>
-      </div>
-
-      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 2rem;">
-        <button class="btn" style="background: rgba(255,255,255,0.05); color: #fff;" id="closeMatModalBtn">Cancel</button>
-        <button class="btn btn-primary" id="saveMaterialBtn">Save Material</button>
-      </div>
-    </div>
-  </div>
-
   <div class="modal-overlay" id="waMsgModal">
     <div class="modal-card">
       <div class="modal-header">
@@ -577,55 +521,6 @@
 
     // --- GLOBAL ADMINISTRATIVE HANDLERS ---
     
-    // Register these globally so HTML onclick can find them
-    window.openMatModal = () => { 
-      console.info("[Admin] Opening Material Modal");
-      const m = document.getElementById("matModal");
-      if(m) { m.style.display = "flex"; m.classList.add("visible"); }
-      resetMatModal();
-      
-      const subSel = document.getElementById("matSubject");
-      if (subSel && !subSel.options.length) {
-        subSel.innerHTML = SUBJECTS_META.map(s => `<option value="${s.id}">${s.name}</option>`).join("");
-      }
-    };
-
-    function resetMatModal() {
-        setMatMode('link');
-        ["matTitle", "matUrl", "matFileInput"].forEach(id => {
-            const el = document.getElementById(id);
-            if (el) el.value = "";
-        });
-        const pc = document.getElementById("uploadProgressContainer");
-        const pb = document.getElementById("uploadProgressBar");
-        const us = document.getElementById("uploadStatus");
-        if (pc) pc.style.display = "none";
-        if (pb) pb.style.width = "0%";
-        if (us) us.innerText = "";
-    }
-
-    window.setMatMode = (mode) => {
-        const linkBtn = document.getElementById("modeLinkBtn");
-        const fileBtn = document.getElementById("modeFileBtn");
-        const urlGroup = document.getElementById("matUrlGroup");
-        const fileGroup = document.getElementById("matFileGroup");
-
-        if (mode === 'link') {
-            if (linkBtn) linkBtn.style.background = "var(--admin-primary)";
-            if (fileBtn) fileBtn.style.background = "transparent";
-            if (urlGroup) urlGroup.style.display = "block";
-            if (fileGroup) fileGroup.style.display = "none";
-        } else {
-            if (fileBtn) fileBtn.style.background = "var(--admin-primary)";
-            if (linkBtn) linkBtn.style.background = "transparent";
-            if (urlGroup) urlGroup.style.display = "none";
-            if (fileGroup) fileGroup.style.display = "block";
-        }
-    };
-    window.closeMatModal = () => { 
-      const m = document.getElementById("matModal");
-      if(m) { m.style.display = "none"; m.classList.remove("visible"); }
-    };
     window.handleLogout = () => { sessionStorage.removeItem(ADMIN_SESSION_KEY); location.reload(); };
     
     window.navTo = (secId, btn) => {
@@ -636,19 +531,12 @@
       document.querySelectorAll(".nav-item").forEach(b => b.classList.remove("active"));
       if (btn) btn.classList.add("active");
 
-      const titles = { overview: "Dashboard", materials: "Materials", users: "Users", announce: "Announcements", support: "Support Chat" };
-      const subs = { overview: "Manage your platform and metrics", materials: "Manage learning materials", users: "Manage user access and roles", announce: "Post global announcements", support: "Direct WhatsApp student support" };
+      const titles = { overview: "Dashboard", users: "Users", announce: "Announcements", support: "Support Chat" };
+      const subs = { overview: "Manage your platform and metrics", users: "Manage user access and roles", announce: "Post global announcements", support: "Direct WhatsApp student support" };
       
       document.getElementById("pageTitleText").innerText = titles[secId] || "Admin Portal";
       document.getElementById("pageSubText").innerText = subs[secId] || "Management Portal";
 
-      if (secId === "materials") {
-          if (typeof syncMaterials === 'function') {
-              syncMaterials().then(renderMats);
-          } else {
-              renderMats();
-          }
-      }
       if (secId === "support") renderSupport();
       if (secId === "users") renderUsers();
       if (secId === "overview") renderStats();

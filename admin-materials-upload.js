@@ -1,5 +1,5 @@
 // Admin Materials Upload Handler
-// Handles file uploads to Vercel Blob Storage for learning materials
+// Handles file uploads to Cloudflare R2 Storage for learning materials
 
 let selectedFile = null;
 let recentMaterials = [];
@@ -120,7 +120,7 @@ function initializeForm() {
   });
 }
 
-// Upload material to Vercel Blob
+// Upload material to Cloudflare R2
 async function uploadMaterial() {
   const uploadBtn = document.getElementById('uploadBtn');
   const progressContainer = document.getElementById('progressContainer');
@@ -139,37 +139,55 @@ async function uploadMaterial() {
   progressContainer.style.display = 'block';
 
   try {
-    // Create form data
-    const formData = new FormData();
-    formData.append('file', selectedFile);
+    const ADMIN_SESSION_KEY = "vision_admin_session";
+    const adminSession = sessionStorage.getItem(ADMIN_SESSION_KEY);
+    const authHeader = `Bearer ${adminSession || ''}`;
 
-    // Upload to Vercel Blob via API
-    progressText.textContent = 'Uploading file...';
-    progressFill.style.width = '30%';
+    // 1. Upload to Cloudflare R2 directly from client using a pre-signed URL
+    progressText.textContent = 'Preparing upload...';
+    progressFill.style.width = '10%';
 
-    const uploadResponse = await fetch('/api/upload', {
-      method: 'POST',
-      body: formData
+    const timestamp = Date.now();
+    const fileKey = `materials/${subject}/${timestamp}_${selectedFile.name}`;
+    
+    // Get the upload URL from the backend
+    const urlResponse = await fetch(`/api/upload?action=get-upload-url&fileKey=${encodeURIComponent(fileKey)}&contentType=${encodeURIComponent(selectedFile.type)}`, {
+      method: 'GET',
+      headers: {
+        'Authorization': authHeader
+      }
+    });
+    
+    if (!urlResponse.ok) throw new Error('Failed to get upload URL');
+    const { uploadUrl } = await urlResponse.json();
+
+    // Upload the file directly to R2
+    progressText.textContent = 'Uploading file to storage...';
+    progressFill.style.width = '50%';
+
+    const r2Response = await fetch(uploadUrl, {
+      method: 'PUT',
+      body: selectedFile,
+      headers: {
+        'Content-Type': selectedFile.type
+      }
     });
 
-    if (!uploadResponse.ok) {
-      throw new Error('Upload failed');
-    }
-
-    const uploadResult = await uploadResponse.json();
+    if (!r2Response.ok) throw new Error('Failed to upload file to Cloudflare R2');
+    
     progressFill.style.width = '70%';
     progressText.textContent = 'Saving metadata...';
 
     // Create material metadata
     const material = {
-      id: Date.now().toString(),
+      id: timestamp.toString(),
       title: title,
       description: description,
       subject: subject,
       type: materialType,
       fileName: selectedFile.name,
       fileSize: selectedFile.size,
-      blobUrl: uploadResult.url,
+      blobUrl: fileKey, // Store the R2 key
       uploadedAt: new Date().toISOString(),
       uploadedBy: sessionStorage.getItem('vision_admin_email') || 'admin'
     };
