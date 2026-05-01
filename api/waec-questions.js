@@ -121,7 +121,9 @@ export default async function handler(req, res) {
     // Light auth check — only block on writes; reads are open to any session holder
     const authHeader = req.headers.authorization;
     const isWrite = req.method === 'POST' || req.method === 'DELETE';
-    if (isWrite && !authHeader) {
+    const isClientUpload = req.method === 'POST' && req.query.action === 'upload';
+    
+    if (isWrite && !isClientUpload && !authHeader) {
       return res.status(401).json({ error: 'Unauthorized' });
     }
 
@@ -202,7 +204,11 @@ async function handleClientUpload(req, res) {
       body: req.body,
       request: req,
       token,
-      onBeforeGenerateToken: async (pathname) => {
+      onBeforeGenerateToken: async (pathname, clientPayload) => {
+        // Authenticate via clientPayload since standard Authorization header isn't sent
+        if (!clientPayload || clientPayload === 'unauthenticated') {
+          throw new Error('Unauthorized');
+        }
         return {
           allowedContentTypes: ['application/pdf'],
           tokenPayload: JSON.stringify({}),

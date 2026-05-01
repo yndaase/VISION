@@ -126,7 +126,8 @@ async function handleUpload(e) {
       
       const blob = await upload(`waec-questions/${id}/${selectedFile.name}`, selectedFile, {
         access: 'private',
-        handleUploadUrl: '/api/waec-questions?action=upload'
+        handleUploadUrl: '/api/waec-questions?action=upload',
+        clientPayload: session.token || 'unauthenticated'
       });
       finalBlobUrl = blob.url;
     } catch (blobErr) {
