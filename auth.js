@@ -272,11 +272,26 @@ function checkAuth() {
  */
 async function validateRevocationStatus(session) {
   try {
+    // Ensure we have required data
+    if (!session.sub && !session.email) {
+      console.warn('[Security] Cannot check revocation: missing sub and email');
+      return;
+    }
+    
     const res = await fetch('/api/auth-core?type=check-revocation', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ sub: session.sub, email: session.email })
+      body: JSON.stringify({ 
+        sub: session.sub || null, 
+        email: session.email || null 
+      })
     });
+    
+    if (!res.ok) {
+      console.warn('[Security] RISC Check failed with status:', res.status);
+      return;
+    }
+    
     const data = await res.json();
     if (data.revoked) {
       console.warn('[Security] Account Revocation Detected via RISC. Force Logout.');

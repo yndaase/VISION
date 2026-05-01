@@ -350,7 +350,7 @@ function initGlobalSearch() {
     }
 
     // 1. Filter Subjects
-    const matchSubjects = SUBJECTS_META.filter(
+    const matchSubjects = (typeof SUBJECTS_META !== 'undefined' ? SUBJECTS_META : []).filter(
       (s) =>
         s.name.toLowerCase().includes(query) ||
         s.id.toLowerCase().includes(query),
@@ -406,7 +406,7 @@ function renderSearchResults(subjects, materials, query) {
   if (materials.length > 0) {
     html += `<div class="search-section-label">Study Materials</div>`;
     materials.forEach((m) => {
-      const subj = SUBJECTS_META.find((s) => s.id === m.subject) || { icon: "" };
+      const subj = (typeof SUBJECTS_META !== 'undefined' ? SUBJECTS_META : []).find((s) => s.id === m.subject) || { icon: "" };
       const isR2 = m.url && !m.url.startsWith('http');
       const downloadUrl = isR2 ? `/api/upload?action=download&materialId=${m.id}` : (m.url || "#");
       html += `
