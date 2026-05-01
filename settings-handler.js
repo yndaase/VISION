@@ -220,4 +220,22 @@
     initializeHandlers();
   }
 
+  // Also check on window load (after all resources including auth.js)
+  window.addEventListener('load', function() {
+    const shouldOpenSettings = sessionStorage.getItem('openSettingsOnLoad');
+    if (shouldOpenSettings === 'true') {
+      console.log("[Settings] Window loaded, checking for auto-open");
+      const modal = document.getElementById("settingsModal");
+      if (modal) {
+        sessionStorage.removeItem('openSettingsOnLoad');
+        setTimeout(() => {
+          if (typeof openSettings === 'function') {
+            console.log("[Settings] Triggering auto-open from window.load");
+            openSettings();
+          }
+        }, 100);
+      }
+    }
+  });
+
 })();
