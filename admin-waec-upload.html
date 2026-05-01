@@ -292,6 +292,18 @@
 
 <body class="dashboard-page">
   <div class="admin-container">
+    <!-- Login Required Message -->
+    <div id="loginRequired" style="display: none; text-align: center; padding: 4rem 2rem;">
+      <div style="font-size: 4rem; margin-bottom: 1rem;">🔒</div>
+      <h2 style="font-size: 2rem; font-weight: 800; color: var(--text-primary); margin-bottom: 1rem;">Authentication Required</h2>
+      <p style="color: var(--text-secondary); margin-bottom: 2rem;">You need to be logged in as an admin to upload questions.</p>
+      <a href="/login.html" style="display: inline-block; background: var(--primary); color: white; padding: 14px 32px; border-radius: 12px; text-decoration: none; font-weight: 700; transition: all 0.2s;">
+        Log In to Continue
+      </a>
+    </div>
+
+    <!-- Main Content (hidden until authenticated) -->
+    <div id="mainContent" style="display: none;">
     <!-- Back Button -->
     <div style="margin-bottom: 2rem;">
       <a href="/admin" style="display: inline-flex; align-items: center; gap: 8px; color: var(--text-secondary); text-decoration: none; font-size: 0.85rem; font-weight: 600; padding: 8px 16px; border: 1px solid var(--border); border-radius: 20px; background: var(--bg-input); transition: all 0.2s;" onmouseover="this.style.borderColor='var(--primary)';this.style.color='var(--primary)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--text-secondary)'">
@@ -421,6 +433,35 @@
     </div>
   </div>
 
+  <script type="module">
+    // Check authentication before loading page
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js';
+    import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js';
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDUAGZbCEU2W5I_107OB5P_p-krtGALfXg",
+      authDomain: "vision-education-gh.firebaseapp.com",
+      projectId: "vision-education-gh",
+      storageBucket: "vision-education-gh.firebasestorage.app",
+      messagingSenderId: "378999569796",
+      appId: "1:378999569796:web:e1c6b0e0b8f8b8b8b8b8b8"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        // User is logged in - show main content
+        document.getElementById('loginRequired').style.display = 'none';
+        document.getElementById('mainContent').style.display = 'block';
+      } else {
+        // User is not logged in - show login message
+        document.getElementById('loginRequired').style.display = 'block';
+        document.getElementById('mainContent').style.display = 'none';
+      }
+    });
+  </script>
   <script src="auth.js"></script>
   <script src="admin-waec-upload.js"></script>
 </body>

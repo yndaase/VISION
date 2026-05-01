@@ -191,7 +191,7 @@
 
   <script type="module">
     import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js';
-    import { getAuth } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js';
+    import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js';
 
     // Firebase config
     const firebaseConfig = {
@@ -205,6 +205,15 @@
 
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
+
+    // Check authentication
+    onAuthStateChanged(auth, (user) => {
+      if (!user) {
+        // Not logged in - redirect to login
+        alert('Please log in to upload questions');
+        window.location.href = '/login.html?redirect=' + encodeURIComponent(window.location.pathname);
+      }
+    });
 
     let selectedFiles = [];
     const uploadArea = document.getElementById('uploadArea');
