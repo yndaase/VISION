@@ -215,7 +215,7 @@ async function uploadMaterial() {
       progressContainer.style.display = 'none';
       progressFill.style.width = '0%';
       uploadBtn.disabled = false;
-      uploadBtn.textContent = 'Upload to Vercel Blob';
+      uploadBtn.textContent = 'Upload to Cloudflare R2';
       
       // Reload recent materials
       loadRecentMaterials();
