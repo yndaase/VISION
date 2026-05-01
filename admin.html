@@ -769,27 +769,36 @@
             document.getElementById("uploadProgressContainer").style.display = "block";
 
             try {
-                // Using the specific stable ESM build for the browser
-                const { upload } = await import('https://esm.sh/@vercel/blob@0.22.1/client');
+                // 1. Get pre-signed URL from Cloudflare R2 via our API
+                const fileKey = pathname;
+                const urlResponse = await fetch(`/api/upload?action=get-upload-url&fileKey=${encodeURIComponent(fileKey)}&contentType=${encodeURIComponent(file.type)}`);
+                if (!urlResponse.ok) throw new Error('Failed to get secure upload authorization');
+                const { uploadUrl } = await urlResponse.json();
 
-                const blob = await upload(pathname, file, {
-                    access: 'public',
-                    handleUploadUrl: window.location.origin + '/api/upload', // Absolute URL prevents CORS fallbacks
-                    onUploadProgress: (progressEvent) => {
-                        const pct = (progressEvent.loaded / progressEvent.total) * 100;
+                // 2. Direct Upload to R2
+                const xhr = new XMLHttpRequest();
+                xhr.open('PUT', uploadUrl, true);
+                xhr.setRequestHeader('Content-Type', file.type);
+                
+                xhr.upload.onprogress = (e) => {
+                    if (e.lengthComputable) {
+                        const pct = (e.loaded / e.total) * 100;
                         document.getElementById("uploadProgressBar").style.width = pct + "%";
                         document.getElementById("uploadStatus").innerText = `Uploading: ${Math.round(pct)}%`;
-                    },
-                    headers: {
-                        'x-mat-title': encodeURIComponent(title),
-                        'x-mat-subject': sub,
-                        'x-mat-type': type
                     }
-                });
-                
-                finalUrl = blob.url;
+                };
 
-                // INSTANT UI UPDATE: Add to local list so it shows up without refresh
+                const uploadPromise = new Promise((resolve, reject) => {
+                    xhr.onload = () => xhr.status === 200 ? resolve() : reject(new Error('R2 Transfer Failed'));
+                    xhr.onerror = () => reject(new Error('Network connectivity issue'));
+                });
+
+                xhr.send(file);
+                await uploadPromise;
+                
+                finalUrl = fileKey; // Use the R2 key as the URL
+
+                // INSTANT UI UPDATE: Add to local list and sync to Firebase
                 const entry = { 
                     id: 'mat-' + timestamp, 
                     subject: sub, 
@@ -801,19 +810,12 @@
                     size: (file.size / (1024*1024)).toFixed(2) + " MB"
                 };
                 
-                // Update local storage so it persists immediately
-                const all = getMaterials();
-                all.push(entry);
-                saveMaterials(all);
+                await upsertMaterial(entry);
                 renderMats(); // Re-render the list on screen
                 
                 showToast("Asset secured and linked to Firebase");
             } catch (uploadErr) {
-                console.error("[Large Upload Error]:", uploadErr);
-                // If it fails with 'public access' error, remind the user about Vercel settings
-                if (uploadErr.message.includes("public access")) {
-                    alert("CRITICAL: Your Vercel Storage is set to PRIVATE. Please go to Vercel -> Storage -> Settings and change Access Level to PUBLIC.");
-                }
+                console.error("[R2 Upload Error]:", uploadErr);
                 throw new Error("Upload Failed: " + uploadErr.message);
             }
         } else {

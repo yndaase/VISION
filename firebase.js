@@ -525,8 +525,11 @@ window.fbGetMaterials = async function() {
 window.fbDeleteMaterial = async function(id) {
   if (!id) return;
   try {
-    await deleteDoc(doc(db, "learning_materials", id));
-    console.log('[Firebase] Material deleted:', id);
+    const response = await fetch(`/api/upload?materialId=${encodeURIComponent(id)}`, {
+      method: 'DELETE'
+    });
+    if (!response.ok) throw new Error('Cloud storage deletion failed');
+    console.log('[Firebase] Material deleted via API (including R2 cleanup):', id);
   } catch(err) {
     console.error('[Firebase] fbDeleteMaterial failed:', err.message);
   }
