@@ -436,36 +436,33 @@
   </div>
   <!-- End of admin-container -->
 
-  <script type="module">
-    // Check authentication before loading page
-    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js';
-    import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js';
-
-    const firebaseConfig = {
-      apiKey: "AIzaSyDUAGZbCEU2W5I_107OB5P_p-krtGALfXg",
-      authDomain: "vision-education-gh.firebaseapp.com",
-      projectId: "vision-education-gh",
-      storageBucket: "vision-education-gh.firebasestorage.app",
-      messagingSenderId: "378999569796",
-      appId: "1:378999569796:web:e1c6b0e0b8f8b8b8b8b8b8"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-
-    onAuthStateChanged(auth, (user) => {
-      if (user) {
-        // User is logged in - show main content
+  <script>
+    // Check admin authentication before loading page
+    const ADMIN_SESSION_KEY = "vision_admin_session";
+    
+    function checkAdminAuth() {
+      const adminSession = sessionStorage.getItem(ADMIN_SESSION_KEY);
+      
+      if (adminSession) {
+        // Admin is logged in - show main content
         document.getElementById('loginRequired').style.display = 'none';
         document.getElementById('mainContent').style.display = 'block';
       } else {
-        // User is not logged in - show login message
+        // Admin is not logged in - show login message and update link
         document.getElementById('loginRequired').style.display = 'block';
         document.getElementById('mainContent').style.display = 'none';
+        // Update the login link to point to admin login
+        const loginLink = document.querySelector('#loginRequired a');
+        if (loginLink) {
+          loginLink.href = '/admin.html';
+          loginLink.textContent = 'Log In to Admin Panel';
+        }
       }
-    });
+    }
+    
+    // Run auth check when page loads
+    checkAdminAuth();
   </script>
-  <script src="auth.js"></script>
   <script src="admin-waec-upload.js"></script>
 </body>
 </html>

@@ -189,31 +189,27 @@
     </div>
   </div>
 
-  <script type="module">
-    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js';
-    import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js';
-
-    // Firebase config
-    const firebaseConfig = {
-      apiKey: "AIzaSyDUAGZbCEU2W5I_107OB5P_p-krtGALfXg",
-      authDomain: "vision-education-gh.firebaseapp.com",
-      projectId: "vision-education-gh",
-      storageBucket: "vision-education-gh.firebasestorage.app",
-      messagingSenderId: "378999569796",
-      appId: "1:378999569796:web:e1c6b0e0b8f8b8b8b8b8b8"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-
-    // Check authentication
-    onAuthStateChanged(auth, (user) => {
-      if (!user) {
-        // Not logged in - redirect to login
-        alert('Please log in to upload questions');
-        window.location.href = '/login.html?redirect=' + encodeURIComponent(window.location.pathname);
+  <script>
+    // Check admin authentication
+    const ADMIN_SESSION_KEY = "vision_admin_session";
+    
+    function checkAdminAuth() {
+      const adminSession = sessionStorage.getItem(ADMIN_SESSION_KEY);
+      
+      if (!adminSession) {
+        // Admin is not logged in - redirect to admin panel
+        alert('Please log in to the admin panel to upload questions');
+        window.location.href = '/admin.html';
+        return false;
       }
-    });
+      return true;
+    }
+    
+    // Run auth check when page loads
+    if (!checkAdminAuth()) {
+      // Stop script execution if not authenticated
+      throw new Error('Authentication required');
+    }
 
     let selectedFiles = [];
     const uploadArea = document.getElementById('uploadArea');
