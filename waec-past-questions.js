@@ -206,7 +206,7 @@ async function downloadQuestion(questionId) {
   try {
     const question = allQuestions.find(q => q.id === questionId);
     if (!question) {
-      alert('Question not found');
+      showNotification('Question not found', 'error');
       return;
     }
 
@@ -224,16 +224,24 @@ async function downloadQuestion(questionId) {
       }
     });
 
-    if (!response.ok) {
-      throw new Error('Failed to get download URL');
-    }
-
     const data = await response.json();
+
+    if (!response.ok) {
+      // Handle specific error cases
+      if (response.status === 404) {
+        showNotification(data.message || 'PDF not available yet. Please check back later.', 'warning');
+      } else {
+        throw new Error(data.error || 'Failed to get download URL');
+      }
+      btn.innerHTML = originalText;
+      btn.disabled = false;
+      return;
+    }
     
     // Create temporary link and trigger download
     const link = document.createElement('a');
     link.href = data.downloadUrl;
-    link.download = `${question.subject}_${question.year}_${question.paperType}.pdf`;
+    link.download = data.fileName || `${question.subject}_${question.year}_${question.paperType}.pdf`;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -242,12 +250,50 @@ async function downloadQuestion(questionId) {
     btn.innerHTML = originalText;
     btn.disabled = false;
 
+    // Show success message
+    showNotification('Download started successfully!', 'success');
+
     // Track download analytics
     trackDownload(questionId);
   } catch (error) {
     console.error('Download error:', error);
-    alert('Failed to download. Please try again.');
+    showNotification('Failed to download. Please try again.', 'error');
     
+    // Restore button
+    const btn = event.target.closest('.btn-download');
+    if (btn) {
+      btn.innerHTML = '<svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg> Download PDF';
+      btn.disabled = false;
+    }
+  }
+}
+
+// Show notification helper
+function showNotification(message, type = 'info') {
+  const notification = document.createElement('div');
+  notification.style.cssText = `
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    padding: 16px 24px;
+    background: ${type === 'error' ? '#ef4444' : type === 'warning' ? '#f59e0b' : type === 'success' ? '#10b981' : '#6366f1'};
+    color: white;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    z-index: 10000;
+    font-weight: 600;
+    max-width: 400px;
+    animation: slideIn 0.3s ease;
+  `;
+  notification.textContent = message;
+  
+  document.body.appendChild(notification);
+  
+  setTimeout(() => {
+    notification.style.animation = 'slideOut 0.3s ease';
+    setTimeout(() => notification.remove(), 300);
+  }, 4000);
+}
     // Restore button
     const btn = event.target.closest('.btn-download');
     btn.innerHTML = originalText;

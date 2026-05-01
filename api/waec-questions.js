@@ -296,27 +296,50 @@ async function handleGetDownloadUrl(req, res) {
       return res.status(404).json({ error: 'Question not found' });
     }
 
+    // Check if actual blob URL exists
+    if (!question.blobUrl) {
+      return res.status(404).json({ 
+        error: 'PDF not available',
+        message: 'This past question PDF has not been uploaded yet. Please contact admin to upload the file.',
+        questionInfo: {
+          subject: question.subject,
+          year: question.year,
+          paperType: question.paperType
+        }
+      });
+    }
+
     // In production with actual Vercel Blob:
-    // const blobInfo = await head(question.blobUrl);
-    // const downloadUrl = blobInfo.url;
+    try {
+      const blobInfo = await head(question.blobUrl);
+      const downloadUrl = blobInfo.url;
+      
+      // Generate expiry time (1 hour from now)
+      const expiresAt = new Date(Date.now() + 3600000).toISOString();
 
-    // For now, return the blob URL directly
-    const downloadUrl = question.blobUrl || `https://blob.vercel-storage.com/waec-questions/${questionId}.pdf`;
-
-    // Generate expiry time (1 hour from now)
-    const expiresAt = new Date(Date.now() + 3600000).toISOString();
-
-    return res.status(200).json({
-      success: true,
-      downloadUrl: downloadUrl,
-      expiresAt: expiresAt,
-      fileName: `${question.subject}_${question.year}_${question.paperType}.pdf`,
-      metadata: {
-        subject: question.subject,
-        year: question.year,
-        paperType: question.paperType
-      }
-    });
+      return res.status(200).json({
+        success: true,
+        downloadUrl: downloadUrl,
+        expiresAt: expiresAt,
+        fileName: `${question.subject}_${question.year}_${question.paperType}.pdf`,
+        metadata: {
+          subject: question.subject,
+          year: question.year,
+          paperType: question.paperType
+        }
+      });
+    } catch (blobError) {
+      // Blob doesn't exist
+      return res.status(404).json({ 
+        error: 'PDF file not found in storage',
+        message: 'The PDF file for this question is missing from storage. Please contact admin.',
+        questionInfo: {
+          subject: question.subject,
+          year: question.year,
+          paperType: question.paperType
+        }
+      });
+    }
   } catch (error) {
     console.error('Download error:', error);
     return res.status(500).json({ 
