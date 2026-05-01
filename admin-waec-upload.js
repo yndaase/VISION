@@ -122,7 +122,7 @@ async function handleUpload(e) {
 
     // 1. Upload to Blob Storage directly from client
     try {
-      const { upload } = await import('https://esm.sh/@vercel/blob@0.22.1/client');
+      const { upload } = await import('https://esm.sh/@vercel/blob@2.3.2/client');
       
       const blob = await upload(`waec-questions/${id}/${selectedFile.name}`, selectedFile, {
         access: 'private',
