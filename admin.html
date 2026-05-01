@@ -1,7 +1,11 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
   <meta charset="UTF-8" />
+  
+  <script>
+    document.documentElement.setAttribute("data-theme", localStorage.getItem("theme") || "dark");
+  </script>
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Dashboard | Vision Admin Portal</title>
@@ -11,29 +15,32 @@
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
   <link rel="stylesheet" href="theme.css" />
+  <link rel="stylesheet" href="dashboard.css" />
   <script src="theme.js"></script>
   <script src="auth.js"></script>
   <script type="module" src="firebase.js"></script>
   <style>
+    /* Map admin variables to theme variables for compatibility */
     :root {
-      --admin-primary: #6366f1;
-      --admin-primary-hover: #818cf8;
-      --admin-bg: #05080f;
-      --admin-card: #0d1117;
-      --admin-sidebar: #080b12;
-      --admin-border: rgba(255, 255, 255, 0.08);
-      --admin-text: #f1f5f9;
-      --admin-text-muted: #94a3b8;
-      --admin-success: #10b981;
-      --admin-danger: #f43f5e;
-      --admin-warning: #f59e0b;
+      --admin-primary: var(--primary);
+      --admin-primary-hover: var(--primary-hover);
+      --admin-bg: var(--bg-primary);
+      --admin-card: var(--bg-card);
+      --admin-sidebar: var(--bg-sidebar);
+      --admin-border: var(--border);
+      --admin-text: var(--text-primary);
+      --admin-text-muted: var(--text-muted);
+      --admin-success: var(--success);
+      --admin-danger: var(--error);
+      --admin-warning: var(--warning);
+      --admin-card-bg: var(--bg-card);
     }
-
+    
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
       font-family: 'Outfit', sans-serif;
-      background: var(--admin-bg);
-      color: var(--admin-text);
+      background: var(--bg-primary);
+      color: var(--text-primary);
       min-height: 100vh;
       overflow-x: hidden;
     }
@@ -44,8 +51,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      background: radial-gradient(circle at top right, rgba(99, 102, 241, 0.15), transparent 400px),
-                  radial-gradient(circle at bottom left, rgba(139, 92, 246, 0.1), transparent 400px);
+      background: var(--bg-primary);
     }
     .auth-card {
       background: var(--admin-card);
@@ -328,9 +334,18 @@
           <h2 id="pageTitleText">Dashboard</h2>
           <p id="pageSubText">Manage your platform and metrics</p>
         </div>
-        <div class="security-status">
-          <div class="pulse"></div>
-          <span>Secure Connection Active</span>
+        <div style="display: flex; align-items: center; gap: 1.5rem;">
+          <!-- Theme Toggle -->
+          <button id="themeToggle" class="btn" style="background: var(--bg-input); border: 1px solid var(--border); padding: 10px; border-radius: 12px;" title="Toggle theme">
+            <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
+              <path class="sun-icon" d="M12 18a6 6 0 100-12 6 6 0 000 12zM12 2v2m0 16v2M4.22 4.22l1.42 1.42m12.72 12.72l1.42 1.42M2 12h2m16 0h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+              <path class="moon-icon" style="display: none;" d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/>
+            </svg>
+          </button>
+          <div class="security-status">
+            <div class="pulse"></div>
+            <span>Secure Connection Active</span>
+          </div>
         </div>
       </div>
 
@@ -526,6 +541,40 @@
     const ADMIN_SESSION_KEY = "vision_admin_at";
 
     // --- GLOBAL ADMINISTRATIVE HANDLERS ---
+    
+    // Theme toggle
+    const themeToggle = document.getElementById('themeToggle');
+    if (themeToggle) {
+      themeToggle.addEventListener('click', () => {
+        const currentTheme = document.documentElement.getAttribute('data-theme');
+        const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+        document.documentElement.setAttribute('data-theme', newTheme);
+        localStorage.setItem('theme', newTheme);
+        
+        // Update icon
+        const sunIcon = themeToggle.querySelector('.sun-icon');
+        const moonIcon = themeToggle.querySelector('.moon-icon');
+        if (newTheme === 'dark') {
+          sunIcon.style.display = 'block';
+          moonIcon.style.display = 'none';
+        } else {
+          sunIcon.style.display = 'none';
+          moonIcon.style.display = 'block';
+        }
+      });
+      
+      // Set initial icon state
+      const currentTheme = document.documentElement.getAttribute('data-theme');
+      const sunIcon = themeToggle.querySelector('.sun-icon');
+      const moonIcon = themeToggle.querySelector('.moon-icon');
+      if (currentTheme === 'dark') {
+        sunIcon.style.display = 'block';
+        moonIcon.style.display = 'none';
+      } else {
+        sunIcon.style.display = 'none';
+        moonIcon.style.display = 'block';
+      }
+    }
     
     window.handleLogout = () => { sessionStorage.removeItem(ADMIN_SESSION_KEY); location.reload(); };
     
