@@ -263,8 +263,10 @@ window.renderDashMaterials = function() {
             ${mats.map((m) => {
                 const typeColor = { PDF: "#ef4444", VIDEO: "#f59e0b", DOC: "#3b82f6", SLIDE: "#8b5cf6", LINK: "#10b981" }[m.type?.toUpperCase()] || "#94a3b8";
                 const isNew = m.uploadedAt && (Date.now() - new Date(m.uploadedAt).getTime() < 48 * 60 * 60 * 1000);
-                const isR2 = m.url && !m.url.startsWith('http');
-                const downloadUrl = isR2 ? `/api/upload?action=download&materialId=${m.id}` : (m.url || "#");
+                // Check for both blobUrl (R2 key) and url (direct URL)
+                const materialUrl = m.blobUrl || m.url;
+                const isR2 = materialUrl && !materialUrl.startsWith('http');
+                const downloadUrl = isR2 ? `/api/upload?action=download&materialId=${m.id}` : (materialUrl || "#");
                 
                 return `
                 <div class="material-card" style="position:relative; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.06); border-radius:16px; padding:1.25rem; display:flex; align-items:center; gap:16px; transition:all 0.3s cubic-bezier(0.4, 0, 0.2, 1); cursor:pointer;" onmouseover="this.style.background='rgba(255,255,255,0.05)'; this.style.borderColor='var(--primary)'; this.style.transform='translateY(-2px)';" onmouseout="this.style.background='rgba(255,255,255,0.03)'; this.style.borderColor='rgba(255,255,255,0.06)'; this.style.transform='translateY(0)';" onclick="window.open('${downloadUrl}', '_blank')">
@@ -277,7 +279,7 @@ window.renderDashMaterials = function() {
                     <div style="display:flex; align-items:center; gap:8px;">
                       <span style="font-size:0.72rem; color:var(--text-muted); display:flex; align-items:center; gap:4px;">
                         <svg width="12" height="12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                        ${m.uploadedAt || "Session Asset"}
+                        ${m.uploadedAt ? new Date(m.uploadedAt).toLocaleDateString() : "Recent"}
                       </span>
                       ${m.size ? `<span style="width:3px; height:3px; background:var(--text-muted); border-radius:50%;"></span><span style="font-size:0.72rem; color:var(--text-muted);">${m.size}</span>` : ""}
                     </div>
@@ -407,10 +409,12 @@ function renderSearchResults(subjects, materials, query) {
     html += `<div class="search-section-label">Study Materials</div>`;
     materials.forEach((m) => {
       const subj = (typeof SUBJECTS_META !== 'undefined' ? SUBJECTS_META : []).find((s) => s.id === m.subject) || { icon: "" };
-      const isR2 = m.url && !m.url.startsWith('http');
-      const downloadUrl = isR2 ? `/api/upload?action=download&materialId=${m.id}` : (m.url || "#");
+      // Check for both blobUrl (R2 key) and url (direct URL)
+      const materialUrl = m.blobUrl || m.url;
+      const isR2 = materialUrl && !materialUrl.startsWith('http');
+      const downloadUrl = isR2 ? `/api/upload?action=download&materialId=${m.id}` : (materialUrl || "#");
       html += `
-        <a href="${downloadUrl}" target="${m.url !== "#" ? "_blank" : "_self"}" class="search-result-item">
+        <a href="${downloadUrl}" target="${materialUrl !== "#" ? "_blank" : "_self"}" class="search-result-item">
           <div class="search-result-icon">${subj.icon}</div>
           <div class="search-result-info">
             <span class="search-result-title">${m.title}</span>

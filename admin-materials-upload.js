@@ -190,6 +190,7 @@ async function uploadMaterial() {
       subject: subject,
       type: materialType,
       fileName: selectedFile.name,
+      size: formatFileSize(selectedFile.size), // Add formatted size
       fileSize: selectedFile.size,
       blobUrl: fileKey, // Store the R2 key
       uploadedAt: new Date().toISOString(),
