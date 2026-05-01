@@ -125,12 +125,11 @@
     const css = `
       /* Enhanced Professional Navigation Styles */
       .side-nav {
-        background: linear-gradient(180deg, 
-          rgba(15, 23, 42, 0.95) 0%, 
-          rgba(15, 23, 42, 0.98) 100%);
+        background: var(--bg-sidebar);
         backdrop-filter: blur(20px);
-        border-right: 1px solid rgba(148, 163, 184, 0.1);
-        box-shadow: 4px 0 24px rgba(0, 0, 0, 0.1);
+        border-right: 1px solid var(--border);
+        box-shadow: var(--shadow-sm);
+        transition: background 0.25s ease, border-color 0.25s ease;
       }
 
       .nav-item {
@@ -142,7 +141,7 @@
         margin: 2px 0;
         border-radius: 12px;
         text-decoration: none;
-        color: rgba(148, 163, 184, 0.8);
+        color: var(--text-muted);
         font-weight: 500;
         font-size: 0.875rem;
         transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
@@ -163,9 +162,9 @@
       }
 
       .nav-item:hover {
-        background: rgba(99, 102, 241, 0.08);
-        color: rgba(255, 255, 255, 0.9);
-        border-color: rgba(99, 102, 241, 0.2);
+        background: var(--primary-dim);
+        color: var(--text-primary);
+        border-color: var(--border-accent);
         transform: translateX(2px);
       }
 
@@ -174,13 +173,11 @@
       }
 
       .nav-item.active {
-        background: linear-gradient(135deg, 
-          rgba(99, 102, 241, 0.15) 0%, 
-          rgba(139, 92, 246, 0.1) 100%);
-        color: rgba(255, 255, 255, 0.95);
-        border-color: rgba(99, 102, 241, 0.3);
+        background: var(--primary-dim);
+        color: var(--text-primary);
+        border-color: var(--border-accent);
         font-weight: 600;
-        box-shadow: 0 4px 12px rgba(99, 102, 241, 0.15);
+        box-shadow: var(--shadow-sm);
       }
 
       .nav-item.active::before {
@@ -194,22 +191,22 @@
         align-items: center;
         justify-content: center;
         border-radius: 10px;
-        background: rgba(255, 255, 255, 0.05);
-        border: 1px solid rgba(255, 255, 255, 0.1);
+        background: var(--bg-input);
+        border: 1px solid var(--border);
         transition: all 0.2s ease;
         flex-shrink: 0;
       }
 
       .nav-item:hover .nav-item-icon {
-        background: rgba(99, 102, 241, 0.2);
-        border-color: rgba(99, 102, 241, 0.3);
+        background: var(--primary-dim);
+        border-color: var(--border-accent);
         transform: scale(1.05);
       }
 
       .nav-item.active .nav-item-icon {
-        background: rgba(99, 102, 241, 0.25);
-        border-color: rgba(99, 102, 241, 0.4);
-        color: rgba(255, 255, 255, 0.95);
+        background: var(--primary-dim);
+        border-color: var(--border-accent);
+        color: var(--primary);
       }
 
       .nav-item-content {
@@ -227,22 +224,23 @@
 
       .nav-item-desc {
         font-size: 0.75rem;
-        color: rgba(148, 163, 184, 0.6);
+        color: var(--text-muted);
         line-height: 1.2;
         transition: color 0.2s ease;
+        opacity: 0.7;
       }
 
       .nav-item:hover .nav-item-desc {
-        color: rgba(148, 163, 184, 0.8);
+        opacity: 0.9;
       }
 
       .nav-item.active .nav-item-desc {
-        color: rgba(148, 163, 184, 0.9);
+        opacity: 1;
       }
 
       .nav-premium-badge {
-        background: linear-gradient(135deg, #fbbf24, #f59e0b);
-        color: #000;
+        background: linear-gradient(135deg, var(--gold), var(--warning));
+        color: var(--bg);
         font-size: 0.625rem;
         font-weight: 800;
         padding: 2px 6px;
@@ -254,12 +252,13 @@
 
       .nav-external-icon {
         font-size: 0.75rem;
-        color: rgba(148, 163, 184, 0.5);
+        color: var(--text-muted);
         flex-shrink: 0;
+        opacity: 0.5;
       }
 
       .side-nav-footer {
-        border-top: 1px solid rgba(148, 163, 184, 0.1);
+        border-top: 1px solid var(--border);
         padding-top: 16px;
         margin-top: 16px;
       }
@@ -300,7 +299,7 @@
         right: 8px;
         width: 8px;
         height: 8px;
-        background: #ef4444;
+        background: var(--error);
         border-radius: 50%;
         border: 2px solid var(--bg-sidebar);
       }

@@ -7,28 +7,109 @@
   <link rel="icon" type="image/png" href="/favicon.png">
   <meta name="description" content="Apply for one of 15 exclusive @edu.visionedu.online student email accounts. Built for the future leaders of Ghana.">
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <script src="theme.js"></script>
+  <link rel="stylesheet" href="theme.css">
   <link rel="stylesheet" href="/scholars.css">
   <script src="/jspdf.min.js"></script>
   <style>
-    .glass { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.1); }
-    .hero-gradient { background: radial-gradient(circle at top right, rgba(251, 191, 36, 0.1), transparent), radial-gradient(circle at bottom left, rgba(99, 102, 241, 0.08), transparent); }
-    .shimmer { background: linear-gradient(90deg, transparent, rgba(255,255,255,0.05), transparent); background-size: 200% 100%; animation: shimmer 3s infinite; }
+    body {
+      background: var(--bg);
+      color: var(--text-primary);
+      transition: background 0.25s ease, color 0.25s ease;
+    }
+    .glass { 
+      background: var(--bg-card); 
+      backdrop-filter: blur(12px); 
+      border: 1px solid var(--border);
+      transition: background 0.25s ease, border-color 0.25s ease;
+    }
+    .hero-gradient { 
+      background: var(--bg-hero);
+      position: relative;
+    }
+    .hero-gradient::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at top right, var(--primary-dim), transparent), 
+                  radial-gradient(circle at bottom left, rgba(99, 102, 241, 0.08), transparent);
+      pointer-events: none;
+    }
+    .shimmer { 
+      background: linear-gradient(90deg, transparent, var(--border), transparent); 
+      background-size: 200% 100%; 
+      animation: shimmer 3s infinite; 
+    }
     @keyframes shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
     .hidden-step { display: none; }
+    .scholar-header {
+      background: var(--bg-header);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+    }
+    .scholar-badge {
+      background: var(--primary-dim);
+      border: 1px solid var(--border-accent);
+      color: var(--gold);
+    }
+    .scholar-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      transition: all 0.3s ease;
+    }
+    .scholar-card:hover {
+      border-color: var(--border-accent);
+    }
+    .scholar-input {
+      background: var(--bg-input);
+      border: 1px solid var(--border);
+      color: var(--text-primary);
+    }
+    .scholar-input:focus {
+      border-color: var(--gold);
+      outline: none;
+    }
+    .scholar-input::placeholder {
+      color: var(--text-muted);
+    }
+    .text-muted-custom {
+      color: var(--text-muted);
+    }
+    .text-secondary-custom {
+      color: var(--text-secondary);
+    }
+    .bg-blur {
+      position: absolute;
+      border-radius: 50%;
+      pointer-events: none;
+      opacity: 0.3;
+    }
+    .bg-blur-gold {
+      background: var(--gold);
+      filter: blur(120px);
+    }
+    .bg-blur-blue {
+      background: var(--indigo);
+      filter: blur(150px);
+    }
   </style>
 </head>
-<body class="bg-navy text-white font-sans antialiased overflow-x-hidden">
+<body class="font-sans antialiased overflow-x-hidden">
 
   <!-- Header -->
-  <header class="sticky top-0 z-50 bg-[#1a1a2e]/80 backdrop-blur-xl border-b border-white/5">
+  <header class="sticky top-0 z-50 scholar-header">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex justify-between items-center h-20">
         <a href="index.html" class="flex items-center gap-3 group">
-          <div class="w-10 h-10 bg-gold rounded-xl flex items-center justify-center text-navy font-black text-xl group-hover:scale-110 transition-transform shadow-lg">V</div>
-          <span class="font-black text-xl tracking-tighter text-white">Vision <span class="text-gold">Education</span></span>
+          <div class="w-10 h-10 bg-gold rounded-xl flex items-center justify-center font-black text-xl group-hover:scale-110 transition-transform shadow-lg" style="color: var(--bg);">V</div>
+          <span class="font-black text-xl tracking-tighter">Vision <span class="text-gold">Education</span></span>
         </a>
         <div class="flex items-center gap-4">
-          <div class="hidden sm:flex px-4 py-1.5 rounded-full bg-gold/10 border border-gold/20 text-gold text-[10px] font-bold uppercase tracking-widest">
+          <button class="theme-toggle-btn" onclick="toggleTheme()" aria-label="Toggle theme">
+            <svg class="theme-icon-dark" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+            <svg class="theme-icon-light" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+          </button>
+          <div class="hidden sm:flex px-4 py-1.5 rounded-full scholar-badge text-[10px] font-bold uppercase tracking-widest">
             Scholar Program Active
           </div>
         </div>
@@ -37,44 +118,44 @@
   </header>
 
   <main class="min-h-screen hero-gradient relative">
-    <div class="absolute top-40 left-10 w-72 h-72 bg-gold/5 blur-[120px] rounded-full pointer-events-none"></div>
-    <div class="absolute bottom-20 right-10 w-96 h-96 bg-vibrantBlue/5 blur-[150px] rounded-full pointer-events-none"></div>
+    <div class="bg-blur bg-blur-gold absolute top-40 left-10 w-72 h-72"></div>
+    <div class="bg-blur bg-blur-blue absolute bottom-20 right-10 w-96 h-96"></div>
 
     <div class="max-w-4xl mx-auto px-4 py-20 relative z-10">
       
       <!-- Step 1: Introduction -->
       <section id="step-1" class="animate-in fade-in slide-in-from-bottom-4 duration-700">
         <div class="text-center mb-12">
-          <h1 class="text-5xl md:text-7xl font-black tracking-tighter mb-6 bg-gradient-to-r from-white to-white/60 bg-clip-text text-transparent">
+          <h1 class="text-5xl md:text-7xl font-black tracking-tighter mb-6">
             Join the Exclusive <span class="text-gold">15</span>.
           </h1>
-          <p class="text-xl text-gray-400 max-w-2xl mx-auto leading-relaxed">
-            We are issuing exactly 15 verified <span class="text-white font-bold">@edu.visionedu.online</span> emails to Ghana's most promising students.
+          <p class="text-xl text-secondary-custom max-w-2xl mx-auto leading-relaxed">
+            We are issuing exactly 15 verified <span style="color: var(--text-primary);" class="font-bold">@edu.visionedu.online</span> emails to Ghana's most promising students.
           </p>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
-          <div class="glass p-8 rounded-[2rem] border-white/5 hover:border-gold/30 transition-all group">
-            <div class="w-12 h-12 bg-gold/10 rounded-2xl flex items-center justify-center text-gold mb-6 group-hover:scale-110 transition-transform">
+          <div class="scholar-card p-8 rounded-[2rem] group">
+            <div class="w-12 h-12 rounded-2xl flex items-center justify-center text-gold mb-6 group-hover:scale-110 transition-transform" style="background: var(--primary-dim);">
               <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" stroke-width="2.5"></path></svg>
             </div>
             <h3 class="text-xl font-bold mb-2">Verified Identity</h3>
-            <p class="text-gray-400 text-sm leading-relaxed">Official institutional recognition that opens doors to student discounts and global research tools.</p>
+            <p class="text-secondary-custom text-sm leading-relaxed">Official institutional recognition that opens doors to student discounts and global research tools.</p>
           </div>
-          <div class="glass p-8 rounded-[2rem] border-white/5 hover:border-vibrantBlue/30 transition-all group">
-            <div class="w-12 h-12 bg-vibrantBlue/10 rounded-2xl flex items-center justify-center text-vibrantBlue mb-6 group-hover:scale-110 transition-transform">
+          <div class="scholar-card p-8 rounded-[2rem] group">
+            <div class="w-12 h-12 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform" style="background: var(--primary-dim); color: var(--indigo);">
               <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M13 10V3L4 14h7v7l9-11h-7z" stroke-width="2.5"></path></svg>
             </div>
             <h3 class="text-xl font-bold mb-2">Lark Suite Access</h3>
-            <p class="text-gray-400 text-sm leading-relaxed">Full access to the Vision collaborative workspace, including 100GB storage and elite project tools.</p>
+            <p class="text-secondary-custom text-sm leading-relaxed">Full access to the Vision collaborative workspace, including 100GB storage and elite project tools.</p>
           </div>
         </div>
 
-        <div class="bg-white/5 border border-white/10 rounded-[2.5rem] p-8 mb-12 text-center relative overflow-hidden">
+        <div class="scholar-card rounded-[2.5rem] p-8 mb-12 text-center relative overflow-hidden">
           <div class="shimmer absolute inset-0"></div>
           <div class="relative z-10">
             <div class="text-gold font-black text-5xl mb-2" id="live-counter">15</div>
-            <div class="text-[10px] font-bold uppercase tracking-widest text-gray-500">Seats Remaining Globally</div>
+            <div class="text-[10px] font-bold uppercase tracking-widest text-muted-custom">Seats Remaining Globally</div>
           </div>
         </div>
 
@@ -90,65 +171,65 @@
       <section id="step-3" class="hidden-step animate-in fade-in zoom-in duration-500">
         <div class="text-center mb-12">
           <h2 class="text-4xl font-black tracking-tighter mb-4">Scholar Application</h2>
-          <p class="text-gray-400">Complete the form below to register your interest for the final 15 seats.</p>
+          <p class="text-secondary-custom">Complete the form below to register your interest for the final 15 seats.</p>
         </div>
 
-        <form id="application-form" class="space-y-6 bg-white/5 p-8 md:p-12 rounded-[3rem] border border-white/10">
+        <form id="application-form" class="space-y-6 scholar-card p-8 md:p-12 rounded-[3rem]">
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div class="space-y-2">
-              <label class="text-[10px] font-bold uppercase tracking-widest text-gray-500 ml-2">Full Name</label>
-              <input type="text" id="form-name" required class="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 outline-none focus:border-gold transition-all text-white" placeholder="Yaw Ndaase">
+              <label class="text-[10px] font-bold uppercase tracking-widest text-muted-custom ml-2">Full Name</label>
+              <input type="text" id="form-name" required class="w-full scholar-input rounded-2xl px-6 py-4 transition-all" placeholder="Yaw Ndaase">
             </div>
             <div class="space-y-2">
-              <label class="text-[10px] font-bold uppercase tracking-widest text-gray-500 ml-2">Current School / Institution</label>
-              <input type="text" id="form-school" required class="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 outline-none focus:border-gold transition-all text-white" placeholder="St. Augustine's College">
+              <label class="text-[10px] font-bold uppercase tracking-widest text-muted-custom ml-2">Current School / Institution</label>
+              <input type="text" id="form-school" required class="w-full scholar-input rounded-2xl px-6 py-4 transition-all" placeholder="St. Augustine's College">
             </div>
           </div>
 
           <div class="space-y-2">
-            <label class="text-[10px] font-bold uppercase tracking-widest text-gray-500 ml-2">Preferred Email Prefix (@edu.visionedu.online)</label>
+            <label class="text-[10px] font-bold uppercase tracking-widest text-muted-custom ml-2">Preferred Email Prefix (@edu.visionedu.online)</label>
             <input type="text" id="form-prefix" required
               pattern="[a-zA-Z0-9.\-_]+"
               title="Only letters, numbers, dots, hyphens, and underscores are allowed."
               oninput="updateEmailPreview(this.value)"
-              class="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 outline-none focus:border-gold transition-all text-white" placeholder="yourname">
-            <div id="email-preview" class="ml-2 text-sm text-gray-500 transition-all">Your email will appear here</div>
+              class="w-full scholar-input rounded-2xl px-6 py-4 transition-all" placeholder="yourname">
+            <div id="email-preview" class="ml-2 text-sm text-muted-custom transition-all">Your email will appear here</div>
           </div>
 
           <div class="space-y-2">
-            <label class="text-[10px] font-bold uppercase tracking-widest text-gray-500 ml-2">Personal Email (Gmail / Outlook — for account activation)</label>
+            <label class="text-[10px] font-bold uppercase tracking-widest text-muted-custom ml-2">Personal Email (Gmail / Outlook — for account activation)</label>
             <input type="email" id="form-personal-email" required
-              class="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 outline-none focus:border-gold transition-all text-white" placeholder="yourname@gmail.com">
-            <div class="ml-2 text-[11px] text-amber-500/80 font-medium">⚡ Your activation instructions will be sent here — use an inbox you can access now.</div>
+              class="w-full scholar-input rounded-2xl px-6 py-4 transition-all" placeholder="yourname@gmail.com">
+            <div class="ml-2 text-[11px] font-medium" style="color: var(--warning);">⚡ Your activation instructions will be sent here — use an inbox you can access now.</div>
           </div>
 
           <div class="space-y-2">
-            <label class="text-[10px] font-bold uppercase tracking-widest text-gray-500 ml-2">Scholar Statement (Why should we pick you?)</label>
-            <textarea id="form-statement" required rows="6" class="w-full bg-white/5 border border-white/10 rounded-[2rem] px-6 py-5 outline-none focus:border-gold transition-all resize-none text-white" placeholder="Describe your vision for how technology will transform education in your community..."></textarea>
+            <label class="text-[10px] font-bold uppercase tracking-widest text-muted-custom ml-2">Scholar Statement (Why should we pick you?)</label>
+            <textarea id="form-statement" required rows="6" class="w-full scholar-input rounded-[2rem] px-6 py-5 resize-none transition-all" placeholder="Describe your vision for how technology will transform education in your community..."></textarea>
           </div>
 
           <div class="pt-6">
-            <button type="submit" id="submit-btn" class="w-full py-5 bg-gradient-to-r from-gold to-vibrantBlue text-navy font-black rounded-2xl hover:shadow-2xl hover:shadow-gold/20 transition-all active:scale-95 text-lg">
+            <button type="submit" id="submit-btn" class="w-full py-5 bg-gradient-to-r from-gold font-black rounded-2xl hover:shadow-2xl transition-all active:scale-95 text-lg" style="background: linear-gradient(135deg, var(--gold), var(--indigo)); color: var(--bg);">
               Create My Scholar Account
             </button>
-            <p class="text-center text-[10px] text-gray-500 mt-4 uppercase tracking-widest font-bold">Instant Institutional Email Provisioning</p>
+            <p class="text-center text-[10px] text-muted-custom mt-4 uppercase tracking-widest font-bold">Instant Institutional Email Provisioning</p>
           </div>
         </form>
       </section>
 
       <!-- Success View -->
       <section id="step-success" class="hidden-step text-center py-20 animate-in fade-in zoom-in duration-500">
-        <div class="w-32 h-32 bg-gold/10 border border-gold/30 rounded-full flex items-center justify-center mx-auto mb-8">
+        <div class="w-32 h-32 rounded-full flex items-center justify-center mx-auto mb-8" style="background: var(--primary-dim); border: 1px solid var(--border-accent);">
           <svg class="w-16 h-16 text-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7" stroke-width="4"></path></svg>
         </div>
-        <h2 class="text-5xl font-black mb-4 tracking-tighter text-white">Account Provisioned.</h2>
-        <p class="text-gray-400 text-xl max-w-lg mx-auto leading-relaxed">
+        <h2 class="text-5xl font-black mb-4 tracking-tighter">Account Provisioned.</h2>
+        <p class="text-secondary-custom text-xl max-w-lg mx-auto leading-relaxed">
           Welcome to the cohort. Your institutional email is now active:
         </p>
-        <div class="mt-6 mb-4 px-8 py-5 bg-gold/10 border border-gold/30 rounded-2xl inline-block">
+        <div class="mt-6 mb-4 px-8 py-5 rounded-2xl inline-block" style="background: var(--primary-dim); border: 1px solid var(--border-accent);">
           <span id="success-email" class="text-gold font-black text-2xl tracking-tight">@edu.visionedu.online</span>
         </div>
-        <p class="text-gray-500 text-sm mt-2">Use this to log in to the Vision Lark workspace.</p>
+        <p class="text-muted-custom text-sm mt-2">Use this to log in to the Vision Lark workspace.</p>
         <div class="mt-10">
           <a href="index.html" class="text-gold font-bold hover:underline">Return to Hub</a>
         </div>
@@ -157,7 +238,7 @@
     </div>
   </main>
 
-  <footer class="py-12 border-t border-white/5 text-center text-gray-600 text-[10px] font-bold uppercase tracking-[0.2em]">
+  <footer class="py-12 text-center text-[10px] font-bold uppercase tracking-[0.2em]" style="border-top: 1px solid var(--border); color: var(--text-muted);">
     &copy; 2026 Vision Education • Private Scholar Program • Accra, Ghana
   </footer>
 
@@ -175,9 +256,9 @@
       const preview = document.getElementById('email-preview');
       const clean = value.toLowerCase().replace(/[^a-z0-9.\-_]/g, '');
       if (!clean) {
-        preview.innerHTML = '<span class="text-gray-600">Your email will appear here</span>';
+        preview.innerHTML = '<span style="color: var(--text-muted);">Your email will appear here</span>';
       } else {
-        preview.innerHTML = `<span class="text-gold font-bold">${clean}</span><span class="text-gray-400">@edu.visionedu.online</span>`;
+        preview.innerHTML = `<span class="text-gold font-bold">${clean}</span><span style="color: var(--text-secondary);">@edu.visionedu.online</span>`;
       }
     }
 
