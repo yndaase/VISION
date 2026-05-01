@@ -2,6 +2,7 @@
 // This handles fetching, uploading, and managing past question PDFs
 
 import { put, list, head } from '@vercel/blob';
+import { handleUpload } from '@vercel/blob/client';
 
 // Mock data for development - Replace with actual Vercel Blob queries in production
 const mockQuestions = [
@@ -135,6 +136,9 @@ export default async function handler(req, res) {
       // List questions request
       return await handleGetQuestions(req, res);
     } else if (req.method === 'POST') {
+      if (req.query.action === 'upload') {
+        return await handleClientUpload(req, res);
+      }
       return await handleUploadQuestion(req, res);
     } else if (req.method === 'DELETE') {
       return await handleDeleteQuestion(req, res);
@@ -190,7 +194,32 @@ async function handleGetQuestions(req, res) {
   }
 }
 
-// POST: Upload a new question PDF to Vercel Blob
+// POST: Handle Vercel Blob client upload
+async function handleClientUpload(req, res) {
+  try {
+    const token = process.env.BLOB_READ_WRITE_TOKEN || process.env.PUBLIC_BLOB_READ_WRITE_TOKEN;
+    const jsonResponse = await handleUpload({
+      body: req.body,
+      request: req,
+      token,
+      onBeforeGenerateToken: async (pathname) => {
+        return {
+          allowedContentTypes: ['application/pdf'],
+          tokenPayload: JSON.stringify({}),
+        };
+      },
+      onUploadCompleted: async ({ blob, tokenPayload }) => {
+        // Metadata is handled in the second POST request
+      },
+    });
+    return res.status(200).json(jsonResponse);
+  } catch (error) {
+    console.error('Client upload token generation error:', error);
+    return res.status(400).json({ error: error.message });
+  }
+}
+
+// POST: Upload a new question PDF metadata to Vercel Blob
 async function handleUploadQuestion(req, res) {
   try {
     const { 
@@ -201,29 +230,35 @@ async function handleUploadQuestion(req, res) {
       duration, 
       questions: questionCount,
       fileData,
+      blobUrl,
       fileName 
     } = req.body;
 
     // Validate required fields
-    if (!subject || !year || !paperType || !fileData || !fileName) {
+    if (!subject || !year || !paperType || !fileName) {
       return res.status(400).json({ 
         error: 'Missing required fields',
-        required: ['subject', 'year', 'paperType', 'fileData', 'fileName']
+        required: ['subject', 'year', 'paperType', 'fileName']
       });
     }
 
     // Generate unique ID
     const id = `waec-${subject.toLowerCase()}-${year}-${paperType}`;
 
-    // Convert base64 to buffer
-    const buffer = Buffer.from(fileData, 'base64');
+    let finalBlobUrl = blobUrl;
 
-    // Upload to Vercel Blob
-    const blob = await put(`waec-questions/${id}/${fileName}`, buffer, {
-      access: 'private',
-      addRandomSuffix: false,
-      contentType: 'application/pdf'
-    });
+    // Fallback for base64
+    if (fileData) {
+      const buffer = Buffer.from(fileData, 'base64');
+      const token = process.env.BLOB_READ_WRITE_TOKEN || process.env.PUBLIC_BLOB_READ_WRITE_TOKEN;
+      const blob = await put(`waec-questions/${id}/${fileName}`, buffer, {
+        access: 'private',
+        token: token,
+        addRandomSuffix: false,
+        contentType: 'application/pdf'
+      });
+      finalBlobUrl = blob.url;
+    }
 
     // Create question metadata
     const questionMetadata = {
@@ -234,7 +269,7 @@ async function handleUploadQuestion(req, res) {
       paperType,
       duration: duration || '3 hours',
       questions: questionCount || null,
-      blobUrl: blob.url,
+      blobUrl: finalBlobUrl,
       uploadedAt: new Date().toISOString()
     };
 
@@ -245,13 +280,15 @@ async function handleUploadQuestion(req, res) {
       success: true,
       message: 'Question uploaded successfully',
       question: questionMetadata,
-      blobUrl: blob.url
+      blobUrl: finalBlobUrl
     });
   } catch (error) {
     console.error('Error uploading question:', error);
     return res.status(500).json({ 
       error: 'Failed to upload question',
-      message: error.message 
+      message: error.message,
+      stack: error.stack,
+      details: 'Check Vercel logs or if token is valid'
     });
   }
 }

@@ -117,10 +117,24 @@ async function handleUpload(e) {
   uploadBtn.disabled = true;
 
   try {
-    // Convert file to base64
-    const fileData = await fileToBase64(selectedFile);
+    const id = `waec-${subject.toLowerCase()}-${year}-${paperType}`;
+    let finalBlobUrl = null;
 
-    // Prepare upload data
+    // 1. Upload to Blob Storage directly from client
+    try {
+      const { upload } = await import('https://esm.sh/@vercel/blob@0.22.1/client');
+      
+      const blob = await upload(`waec-questions/${id}/${selectedFile.name}`, selectedFile, {
+        access: 'private',
+        handleUploadUrl: '/api/waec-questions?action=upload'
+      });
+      finalBlobUrl = blob.url;
+    } catch (blobErr) {
+      console.error('Blob client upload error:', blobErr);
+      throw new Error('Failed to upload file to storage');
+    }
+
+    // 2. Prepare upload metadata
     const uploadData = {
       subject,
       year,
@@ -128,11 +142,11 @@ async function handleUpload(e) {
       duration,
       questions: questions ? parseInt(questions) : null,
       title: title || `WAEC ${subject} ${year} - ${paperType}`,
-      fileData: fileData.split(',')[1], // Remove data:application/pdf;base64, prefix
+      blobUrl: finalBlobUrl,
       fileName: selectedFile.name
     };
 
-    // Upload to API
+    // 3. Save metadata to API
     const response = await fetch('/api/waec-questions', {
       method: 'POST',
       headers: {
