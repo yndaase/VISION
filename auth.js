@@ -583,82 +583,8 @@ window.handleWAToggle = async function() {
 };
 
 //  Settings Immersive Logic
-window.openSettings = function() {
-  console.log("[Settings] Opening immersive workspace");
-  const session = typeof getSession === 'function' ? getSession() : null;
-  if (!session) return;
-
-  const modal = document.getElementById("settingsModal");
-  if (!modal) return;
-
-  // Populate user info
-  const nameEl = document.getElementById("settingsName");
-  const emailEl = document.getElementById("settingsEmail");
-  const avatarEl = document.getElementById("settingsAvatar");
-  
-  if (nameEl) nameEl.textContent = session.name;
-  if (emailEl) emailEl.textContent = session.email;
-  if (avatarEl) avatarEl.textContent = session.name.charAt(0).toUpperCase();
-
-  // Immediate local state (fast path — no waiting for Firebase)
-  const phoneEl = document.getElementById("settingsPhone");
-  if (phoneEl) phoneEl.value = session.phone || "";
-
-  const waEl = document.getElementById("waToggle");
-  if (waEl) waEl.classList.toggle("active", !!session.waOptIn);
-
-  const waStatusText = document.getElementById("waStatusText");
-  if (waStatusText) {
-      waStatusText.innerText = session.phone ? "WhatsApp Linked" : "Not Linked";
-      waStatusText.style.color = session.phone ? "#10b981" : "var(--text-muted)";
-  }
-
-  // Sync Profile state from Firestore (Ground Truth — overwrites local when ready)
-  if (typeof window.fbGetUser === 'function') {
-      window.fbGetUser(session.email).then(userData => {
-          if (userData) {
-              const phoneEl = document.getElementById("settingsPhone");
-              if (phoneEl) phoneEl.value = userData.phone || "";
-              
-              const waEl = document.getElementById("waToggle");
-              if (waEl) waEl.classList.toggle("active", !!userData.waOptIn);
-              
-              const waStatusText = document.getElementById("waStatusText");
-              if (waStatusText) {
-                  waStatusText.innerText = userData.phone ? "WhatsApp Linked" : "Not Linked";
-                  waStatusText.style.color = userData.phone ? "#10b981" : "var(--text-muted)";
-              }
-          }
-      });
-  }
-
-  // Sync 2FA state
-  if (typeof is2FAEnabled === 'function') {
-    const enabled = is2FAEnabled(session.email);
-    updateSecurityStatusUI(enabled);
-  }
-
-  // Sync Verification State
-  updateVerificationUI(session.isVerified);
-
-  // Show immersive view
-  modal.classList.add("visible");
-  modal.style.display = "flex";
-  document.body.style.overflow = "hidden"; 
-
-  if (typeof updateSettingsSubUI === "function") {
-    updateSettingsSubUI();
-  }
-};
-
-window.closeSettings = function() {
-  const modal = document.getElementById("settingsModal");
-  if (modal) {
-    modal.classList.remove("visible");
-    modal.style.display = "none";
-    document.body.style.overflow = ""; 
-  }
-};
+// NOTE: openSettings() and closeSettings() are now defined in settings-handler.js
+// This provides universal settings modal functionality across all pages
 
 window.switchSettingsTab = function(tabId, btn) {
   document.querySelectorAll('.settings-nav-item').forEach(el => el.classList.remove('active'));
