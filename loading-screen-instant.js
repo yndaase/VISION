@@ -1,12 +1,11 @@
 // INSTANT Loading Screen - Shows BEFORE any content renders
-// This is the fastest possible loading screen implementation
+// Ultra-fast and minimal
 
 // Inject CSS immediately - blocks rendering until complete
 document.write(`<style>
-#visionLoader{position:fixed!important;inset:0!important;background:#0f172a!important;z-index:999999!important;display:flex!important;align-items:center!important;justify-content:center!important;opacity:1!important;transition:opacity .15s ease!important;font-family:system-ui,sans-serif!important}
+#visionLoader{position:fixed!important;inset:0!important;background:#0f172a!important;z-index:999999!important;display:flex!important;align-items:center!important;justify-content:center!important;opacity:1!important;transition:opacity .1s ease!important;font-family:system-ui,sans-serif!important}
 #visionLoader.hide{opacity:0!important;pointer-events:none!important}
-.vision-text{font-size:clamp(2rem,8vw,4rem)!important;font-weight:900!important;letter-spacing:.2em!important;color:#fff!important;animation:visionPulse .8s ease-in-out infinite!important;text-align:center!important;line-height:1!important}
-@keyframes visionPulse{0%,100%{opacity:.8}50%{opacity:1}}
+.vision-text{font-size:1.5rem!important;font-weight:700!important;letter-spacing:.15em!important;color:#fff!important;text-align:center!important;line-height:1!important}
 [data-theme=light] #visionLoader{background:#fff!important}
 [data-theme=light] .vision-text{color:#0f172a!important}
 body{overflow:hidden!important}
@@ -25,16 +24,16 @@ document.write(`<div id="visionLoader"><div class="vision-text">VISION EDU</div>
       if (document.body) document.body.classList.add('loaded');
       setTimeout(() => {
         if (loader.parentNode) loader.remove();
-      }, 150);
+      }, 100);
     }
   }
   
   if (document.readyState === 'complete') {
-    setTimeout(hideLoader, 200);
+    hideLoader();
   } else {
-    window.addEventListener('load', () => setTimeout(hideLoader, 50));
+    window.addEventListener('load', hideLoader);
   }
   
-  // Fallback
-  setTimeout(hideLoader, 2500);
+  // Fallback: hide after 1.5 seconds max
+  setTimeout(hideLoader, 1500);
 })();
