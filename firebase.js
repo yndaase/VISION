@@ -64,6 +64,27 @@ function candidateEmailKeys(email) {
   return [...new Set(keys.filter(Boolean))];
 }
 
+/**
+ * Helper to wait for Firebase Auth to initialize if it's currently null
+ */
+async function waitForAuth(timeoutMs = 3000) {
+  if (auth.currentUser) return auth.currentUser;
+  
+  return new Promise((resolve) => {
+    const start = Date.now();
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      unsubscribe();
+      resolve(user);
+    });
+    
+    // Safety timeout
+    setTimeout(() => {
+      unsubscribe();
+      resolve(auth.currentUser);
+    }, timeoutMs);
+  });
+}
+
 /* ─────────────────────────────────────────────────────────────
    USER DATABASE  (Firestore collection: "users")
    Document ID = lowercased email address
@@ -79,6 +100,9 @@ window.fbGetUser = async function(email, collectionName = 'users') {
   if (!email) return null;
   try {
     const keys = candidateEmailKeys(email);
+    // Ensure auth is ready before trying to read from a protected collection
+    await waitForAuth();
+    
     for (const key of keys) {
       const docSnap = await getDoc(doc(db, collectionName, key));
       if (docSnap.exists()) return docSnap.data();
