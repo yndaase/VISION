@@ -1,60 +1,75 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
   <meta charset="UTF-8">
+  
+  <script>
+    document.documentElement.setAttribute("data-theme", "dark");
+  </script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Bulk Upload WAEC Questions</title>
+  <title>Bulk Upload WAEC Questions | Admin Panel</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="dashboard.css" />
+  <script src="theme.js"></script>
+  <link rel="stylesheet" href="theme.css" />
+  
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      font-family: 'Outfit', sans-serif;
+      background: var(--bg-primary);
+      color: var(--text-primary);
       min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
       padding: 20px;
     }
     .container {
-      background: white;
-      border-radius: 20px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
       padding: 40px;
-      max-width: 800px;
+      max-width: 900px;
       width: 100%;
-      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+      margin: 0 auto;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
     }
     h1 {
-      color: #333;
+      color: var(--text-primary);
       margin-bottom: 10px;
-      font-size: 2rem;
+      font-size: 2.5rem;
+      font-weight: 900;
     }
     .subtitle {
-      color: #666;
+      color: var(--text-secondary);
       margin-bottom: 30px;
-      font-size: 0.95rem;
+      font-size: 1rem;
     }
     .upload-area {
-      border: 3px dashed #667eea;
-      border-radius: 15px;
+      border: 2px dashed var(--border);
+      border-radius: var(--radius-md);
       padding: 40px;
       text-align: center;
-      background: #f8f9ff;
+      background: rgba(255, 255, 255, 0.02);
       cursor: pointer;
       transition: all 0.3s;
       margin-bottom: 20px;
     }
     .upload-area:hover {
-      background: #f0f2ff;
-      border-color: #764ba2;
+      background: var(--primary-dim);
+      border-color: var(--primary);
     }
     .upload-area.dragover {
-      background: #e8ebff;
-      border-color: #764ba2;
+      background: var(--primary-dim);
+      border-color: var(--primary);
       transform: scale(1.02);
     }
     .upload-icon {
       font-size: 4rem;
       margin-bottom: 15px;
+      color: var(--text-muted);
     }
     input[type="file"] {
       display: none;
@@ -65,9 +80,10 @@
       overflow-y: auto;
     }
     .file-item {
-      background: #f8f9fa;
+      background: var(--bg-input);
+      border: 1px solid var(--border);
       padding: 15px;
-      border-radius: 10px;
+      border-radius: var(--radius-sm);
       margin-bottom: 10px;
       display: flex;
       justify-content: space-between;
@@ -77,8 +93,8 @@
       flex: 1;
     }
     .file-name {
-      font-weight: 600;
-      color: #333;
+      font-weight: 700;
+      color: var(--text-primary);
       margin-bottom: 5px;
     }
     .file-meta {
@@ -87,13 +103,20 @@
       margin-top: 8px;
     }
     .file-meta select, .file-meta input {
-      padding: 5px 10px;
-      border: 1px solid #ddd;
-      border-radius: 5px;
+      padding: 8px 12px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
       font-size: 0.85rem;
+      background: var(--bg-input);
+      color: var(--text-primary);
+      font-family: 'Outfit', sans-serif;
+    }
+    .file-meta select:focus, .file-meta input:focus {
+      border-color: var(--primary);
+      outline: none;
     }
     .remove-btn {
-      background: #ef4444;
+      background: var(--error);
       color: white;
       border: none;
       padding: 8px 15px;
@@ -106,12 +129,12 @@
       background: #dc2626;
     }
     .upload-btn {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      background: var(--primary);
       color: white;
       border: none;
       padding: 15px 40px;
-      border-radius: 12px;
-      font-size: 1.1rem;
+      border-radius: var(--radius-sm);
+      font-size: 1rem;
       font-weight: 700;
       cursor: pointer;
       width: 100%;
@@ -119,11 +142,13 @@
       transition: all 0.3s;
     }
     .upload-btn:hover {
+      background: #4f46e5;
       transform: translateY(-2px);
-      box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+      box-shadow: 0 8px 24px rgba(99, 102, 241, 0.3);
     }
     .upload-btn:disabled {
-      background: #ccc;
+      background: var(--text-muted);
+      opacity: 0.5;
       cursor: not-allowed;
       transform: none;
     }
@@ -132,14 +157,15 @@
       display: none;
     }
     .progress-bar {
-      background: #e0e0e0;
-      border-radius: 10px;
+      background: var(--bg-input);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
       height: 30px;
       overflow: hidden;
       margin-bottom: 10px;
     }
     .progress-fill {
-      background: linear-gradient(90deg, #667eea, #764ba2);
+      background: var(--primary);
       height: 100%;
       width: 0%;
       transition: width 0.3s;
@@ -152,7 +178,7 @@
     }
     .status {
       text-align: center;
-      color: #666;
+      color: var(--text-secondary);
       font-size: 0.9rem;
     }
     .success {
@@ -163,10 +189,36 @@
       color: #ef4444;
       font-weight: 600;
     }
+    .back-button {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 0.85rem;
+      font-weight: 600;
+      padding: 8px 16px;
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      background: var(--bg-input);
+      transition: all 0.2s;
+      margin-bottom: 2rem;
+    }
+    .back-button:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+    }
   </style>
 </head>
-<body>
+<body class="dashboard-page">
   <div class="container">
+    <!-- Back Button -->
+    <a href="/admin.html" class="back-button">
+      <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+        <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
+      </svg>
+      Back to Admin
+    </a>
     <h1>📚 Bulk Upload WAEC Questions</h1>
     <p class="subtitle">Upload multiple WAEC/WASSCE past question PDFs at once</p>
 
