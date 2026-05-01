@@ -20,7 +20,10 @@
 
     const modal = document.getElementById("settingsModal");
     if (!modal) {
-      console.warn("[Settings] Settings modal not found on this page");
+      console.log("[Settings] Settings modal not found on this page - redirecting to dashboard");
+      // Store intent to open settings
+      sessionStorage.setItem('openSettingsOnLoad', 'true');
+      window.location.href = '/dashboard.html';
       return;
     }
 
@@ -187,6 +190,18 @@
           closeSettings();
         }
       });
+
+      // Check if we should auto-open settings (from redirect)
+      const shouldOpenSettings = sessionStorage.getItem('openSettingsOnLoad');
+      if (shouldOpenSettings === 'true') {
+        sessionStorage.removeItem('openSettingsOnLoad');
+        // Wait for page to fully load
+        setTimeout(() => {
+          if (typeof openSettings === 'function') {
+            openSettings();
+          }
+        }, 500);
+      }
     }
 
     console.log("[Settings Handler] Initialized");
