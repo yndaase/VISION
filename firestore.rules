@@ -11,12 +11,14 @@ service cloud.firestore {
     // Helper function to check if user is admin
     function isAdmin() {
       return isSignedIn() && 
+             exists(/databases/$(database)/documents/users/$(request.auth.token.email)) &&
              get(/databases/$(database)/documents/users/$(request.auth.token.email)).data.role == 'admin';
     }
     
     // Helper function to check if user is pro
     function isPro() {
       return isSignedIn() && 
+             exists(/databases/$(database)/documents/users/$(request.auth.token.email)) &&
              (get(/databases/$(database)/documents/users/$(request.auth.token.email)).data.role == 'pro' ||
               isAdmin());
     }
@@ -24,10 +26,10 @@ service cloud.firestore {
     // Users collection
     match /users/{email} {
       // Anyone authenticated can read their own user document
-      allow read: if isSignedIn() && request.auth.token.email == email;
+      allow read: if isSignedIn() && request.auth.token.email.toLowerCase() == email.toLowerCase();
       
       // Anyone authenticated can create/update their own user document
-      allow create, update: if isSignedIn() && request.auth.token.email == email;
+      allow create, update: if isSignedIn() && request.auth.token.email.toLowerCase() == email.toLowerCase();
       
       // Admins can read all users
       allow read: if isAdmin();
@@ -37,6 +39,12 @@ service cloud.firestore {
       
       // No one can delete users (except through admin console)
       allow delete: if false;
+    }
+
+    // Parent Users collection
+    match /parent_users/{email} {
+      allow read, write: if isSignedIn() && request.auth.token.email.toLowerCase() == email.toLowerCase();
+      allow read: if isAdmin();
     }
     
     // Materials collection
@@ -88,6 +96,21 @@ service cloud.firestore {
       
       // Admins can read all results
       allow read: if isAdmin();
+    }
+
+    // Student Stats collection
+    match /student_stats/{email} {
+      allow read, write: if isSignedIn() && request.auth.token.email.toLowerCase() == email.toLowerCase();
+      allow read: if isAdmin();
+    }
+
+    // Student Links (Parent Linking)
+    match /student_links/{code} {
+      // Anyone can verify a code (read)
+      allow read: if isSignedIn();
+      // Only the student can create a link code
+      allow create: if isSignedIn() && request.resource.data.email.toLowerCase() == request.auth.token.email.toLowerCase();
+      allow delete: if isAdmin();
     }
     
     // System broadcasts

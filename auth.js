@@ -738,6 +738,11 @@ async function handleGoogleCredential(response) {
     setSession(user);
     showAuthSuccess("Welcome, " + user.name + "! ");
     
+    // --- FIREBASE AUTH BRIDGE FOR GOOGLE ---
+    if (typeof window.fbSignInWithGoogle === 'function') {
+      await window.fbSignInWithGoogle(response.credential);
+    }
+    
     // Pull latest role/subscription/verification from Firestore
     const cloudUser = await fbGetUserWithFallback(user.email);
     // Also merge from local cache to preserve isVerified if Firestore read fails

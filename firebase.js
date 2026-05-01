@@ -15,7 +15,9 @@ import {
 import { 
   getAuth,
   signInWithEmailAndPassword,
-  createUserWithEmailAndPassword
+  createUserWithEmailAndPassword,
+  signInWithCredential,
+  GoogleAuthProvider
 } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 import { 
   getStorage, 
@@ -154,6 +156,23 @@ window.fbSignIn = async function(email, password) {
   }
 };
 export const fbSignIn = window.fbSignIn;
+
+/**
+ * Sign in to Firebase Auth using a Google ID Token (from GIS)
+ * @param {string} idToken 
+ */
+window.fbSignInWithGoogle = async function(idToken) {
+  try {
+    const credential = GoogleAuthProvider.credential(idToken);
+    const result = await signInWithCredential(auth, credential);
+    console.log("[Firebase] Google Auth successful:", result.user.email);
+    return { success: true, user: result.user };
+  } catch (error) {
+    console.warn("[Firebase] Google Auth failed:", error.message);
+    return { success: false, error: error.message };
+  }
+};
+export const fbSignInWithGoogle = window.fbSignInWithGoogle;
 
 /**
  * Toggle WhatsApp Opt-in for a user.
