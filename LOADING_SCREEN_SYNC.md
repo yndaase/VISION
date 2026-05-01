@@ -100,13 +100,32 @@ setTimeout(function() {
 
 ## 🔧 Recent Fix (Loading Screen Issue)
 
-**Issue:** Loading screen text wasn't showing properly
-**Cause:** Script timing and DOM readiness issues
-**Solution:** Improved script with:
-- Immediate CSS injection
-- MutationObserver for body detection  
-- Better timing controls
-- Overflow management via CSS classes
+**Issue:** Loading screen was slow and didn't show immediately
+**Cause:** Script timing, DOM readiness delays, and async loading
+**Solution:** Created instant loading screen with:
+- `document.write()` for immediate injection (blocks rendering)
+- Inline CSS and HTML injected before any content
+- Faster animations (0.8s instead of 1.5s)
+- Shorter transitions (0.15s instead of 0.3s)
+- Aggressive `!important` flags to override any conflicts
+- Multiple fallback mechanisms
+
+## 🚀 Loading Screen Versions
+
+### 1. **loading-screen-instant.js** (RECOMMENDED - Fastest)
+- Uses `document.write()` to inject before any content renders
+- Blocks rendering until loading screen is visible
+- Guaranteed to show before page content
+- Fastest possible implementation
+
+### 2. **loading-screen-universal.js** (Fallback)
+- Dynamic injection with DOM manipulation
+- Better for pages that can't use `document.write()`
+- Slightly slower but more compatible
+
+### 3. **loading-screen-inline.html** (Manual)
+- Copy-paste inline version for custom implementations
+- Full control over placement and timing
 
 ## 🎨 Current Design
 
