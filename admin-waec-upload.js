@@ -120,10 +120,11 @@ async function handleUpload(e) {
     const id = `waec-${subject.toLowerCase()}-${year}-${paperType}`;
     let finalBlobUrl = null;
 
+    const authHeader = `Bearer ${adminSession ? adminSession.toString() : (session?.token || '')}`;
+
     // 1. Upload to Cloudflare R2 directly from client using a pre-signed URL
     try {
       const fileKey = `waec-questions/${id}/${selectedFile.name}`;
-      const authHeader = `Bearer ${adminSession ? adminSession.toString() : (session?.token || '')}`;
       
       // Get the upload URL from the backend
       const urlResponse = await fetch(`/api/waec-questions?action=get-upload-url&fileKey=${encodeURIComponent(fileKey)}&contentType=${encodeURIComponent(selectedFile.type)}`, {
