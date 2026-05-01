@@ -260,10 +260,13 @@ async function deleteQuestion(questionId) {
   }
 
   try {
+    const adminSession = sessionStorage.getItem('vision_admin_at');
+    const authHeader = `Bearer ${adminSession ? adminSession : (session?.token || '')}`;
+    
     const response = await fetch(`/api/waec-questions?id=${questionId}`, {
       method: 'DELETE',
       headers: {
-        'Authorization': `Bearer ${session.token || ''}`
+        'Authorization': authHeader
       }
     });
 
