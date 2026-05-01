@@ -204,57 +204,33 @@ function createQuestionCard(question) {
 // Download question PDF
 async function downloadQuestion(questionId) {
   try {
-    const question = allQuestions.find(q => q.id === questionId);
-    if (!question) {
-      showNotification('Question not found', 'error');
-      return;
-    }
-
-    // Show loading state
     const btn = event.target.closest('.btn-download');
     const originalText = btn.innerHTML;
-    btn.innerHTML = '<svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" opacity="0.25"/><path d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"/></svg> Downloading...';
+    btn.innerHTML = '<span class="loading-spinner" style="display:inline-block; width:16px; height:16px; border:2px solid #fff; border-top-color:transparent; border-radius:50%; animation:spin 1s linear infinite;"></span>';
     btn.disabled = true;
 
-    // Fetch download URL from API
-    const response = await fetch(`/api/waec-questions?questionId=${questionId}`, {
-      method: 'GET',
-      headers: {
-        'Authorization': `Bearer ${session.token || ''}`
-      }
-    });
-
-    const data = await response.json();
-
-    if (!response.ok) {
-      // Handle specific error cases
-      if (response.status === 404) {
-        showNotification(data.message || 'PDF not available yet. Please check back later.', 'warning');
-      } else {
-        throw new Error(data.error || 'Failed to get download URL');
-      }
+    // Check if the question exists and has a blobUrl
+    const question = allQuestions.find(q => q.id === questionId);
+    if (!question || !question.blobUrl) {
+      showNotification('PDF not available for this question yet.', 'warning');
       btn.innerHTML = originalText;
       btn.disabled = false;
       return;
     }
+
+    // Redirect to proxy download route
+    const token = session.token || '';
+    window.location.href = `/api/waec-questions?action=download&questionId=${questionId}&download=1&token=${token}`;
     
-    // Create temporary link and trigger download
-    const link = document.createElement('a');
-    link.href = data.downloadUrl;
-    link.download = data.fileName || `${question.subject}_${question.year}_${question.paperType}.pdf`;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-
-    // Restore button
-    btn.innerHTML = originalText;
-    btn.disabled = false;
-
-    // Show success message
-    showNotification('Download started successfully!', 'success');
-
-    // Track download analytics
+    // Track download locally
     trackDownload(questionId);
+    showNotification('Download started', 'success');
+
+    // Restore button immediately since it's just a location change
+    setTimeout(() => {
+      btn.innerHTML = originalText;
+      btn.disabled = false;
+    }, 1000);
   } catch (error) {
     console.error('Download error:', error);
     showNotification('Failed to download. Please try again.', 'error');
@@ -305,8 +281,9 @@ function previewQuestion(questionId) {
   }
 
   if (question.blobUrl) {
-    // Open PDF directly in a new tab
-    window.open(question.blobUrl, '_blank');
+    // Open PDF securely via proxy
+    const token = session.token || '';
+    window.open(`/api/waec-questions?action=download&questionId=${questionId}&token=${token}`, '_blank');
   } else {
     showNotification('PDF preview not yet available. Click Download to access when uploaded.', 'warning');
   }

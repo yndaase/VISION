@@ -134,12 +134,16 @@ export default async function handler(req, res) {
 
   try {
     // Light auth check — only block on writes; reads are open to any session holder
-    const authHeader = req.headers.authorization;
+    const authHeader = req.headers.authorization || (req.query.token ? `Bearer ${req.query.token}` : null);
     const isWrite = req.method === 'POST' || req.method === 'DELETE';
     const isClientUpload = req.method === 'POST' && req.query.action === 'upload';
     
     if (isWrite && !isClientUpload && !authHeader) {
       return res.status(401).json({ error: 'Unauthorized' });
+    }
+
+    if (req.method === 'GET' && req.query.action === 'download') {
+      return await handleProxyDownload(req, res);
     }
 
     // Check if this is a download request (has questionId in query for GET)
@@ -343,6 +347,56 @@ async function handleDeleteQuestion(req, res) {
       error: 'Failed to delete question',
       message: error.message 
     });
+  }
+}
+
+// GET: Proxy download for private Vercel blobs
+async function handleProxyDownload(req, res) {
+  try {
+    const { questionId, download } = req.query;
+
+    if (!questionId) {
+      return res.status(400).send('Question ID required');
+    }
+
+    let question = null;
+    if (db) {
+      const doc = await db.collection('waec_questions').doc(questionId).get();
+      if (doc.exists) question = doc.data();
+    } else {
+      question = mockQuestions.find(q => q.id === questionId);
+    }
+
+    if (!question || !question.blobUrl) {
+      return res.status(404).send('File not found or not yet uploaded');
+    }
+
+    // Proxy the fetch from Vercel Blob using the Read/Write token
+    const token = process.env.BLOB_READ_WRITE_TOKEN || process.env.PUBLIC_BLOB_READ_WRITE_TOKEN;
+    const blobResponse = await fetch(question.blobUrl, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    });
+
+    if (!blobResponse.ok) {
+      return res.status(blobResponse.status).send('Error fetching file from private storage');
+    }
+
+    res.setHeader('Content-Type', blobResponse.headers.get('content-type') || 'application/pdf');
+    if (download === '1') {
+      const filename = `${question.subject}_${question.year}_${question.paperType}.pdf`;
+      res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
+    } else {
+      res.setHeader('Content-Disposition', 'inline');
+    }
+    res.setHeader('Cache-Control', 'private, no-cache');
+
+    const buffer = await blobResponse.arrayBuffer();
+    return res.status(200).send(Buffer.from(buffer));
+  } catch (error) {
+    console.error('Proxy download error:', error);
+    return res.status(500).send('Failed to serve download');
   }
 }
 
