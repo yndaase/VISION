@@ -3,6 +3,21 @@
 
 import { put, list, head } from '@vercel/blob';
 import { handleUpload } from '@vercel/blob/client';
+import admin from 'firebase-admin';
+
+// Initialize Firebase Admin
+if (!admin.apps.length) {
+  try {
+    let rawKey = process.env.FIREBASE_SERVICE_ACCOUNT;
+    if (rawKey.startsWith("'") && rawKey.endsWith("'")) rawKey = rawKey.slice(1, -1);
+    if (rawKey.startsWith('"') && rawKey.endsWith('"')) rawKey = rawKey.slice(1, -1);
+    const serviceAccount = JSON.parse(rawKey);
+    admin.initializeApp({ credential: admin.credential.cert(serviceAccount) });
+  } catch (err) {
+    console.error('Firebase admin init error:', err);
+  }
+}
+const db = admin.apps.length ? admin.firestore() : null;
 
 // Mock data for development - Replace with actual Vercel Blob queries in production
 const mockQuestions = [
@@ -156,16 +171,20 @@ export default async function handler(req, res) {
   }
 }
 
-// GET: Fetch all questions from Vercel Blob
+// GET: Fetch all questions from Firestore
 async function handleGetQuestions(req, res) {
   try {
     const { subject, year, paperType } = req.query;
 
-    // In production, fetch from Vercel Blob
-    // const { blobs } = await list({ prefix: 'waec-questions/' });
-    
-    // For now, return mock data
-    let questions = [...mockQuestions];
+    let questions = [];
+    if (db) {
+      const snapshot = await db.collection('waec_questions').get();
+      snapshot.forEach(doc => {
+        questions.push(doc.data());
+      });
+    } else {
+      questions = [...mockQuestions]; // Fallback if DB not connected
+    }
 
     // Apply filters
     if (subject && subject !== 'all') {
@@ -279,8 +298,10 @@ async function handleUploadQuestion(req, res) {
       uploadedAt: new Date().toISOString()
     };
 
-    // In production, save metadata to database
-    // await saveQuestionMetadata(questionMetadata);
+    // Save metadata to database
+    if (db) {
+      await db.collection('waec_questions').doc(id).set(questionMetadata);
+    }
 
     return res.status(201).json({
       success: true,
@@ -308,8 +329,9 @@ async function handleDeleteQuestion(req, res) {
       return res.status(400).json({ error: 'Question ID required' });
     }
 
-    // In production, delete from Vercel Blob
-    // await del(blobUrl);
+    if (db) {
+      await db.collection('waec_questions').doc(id).delete();
+    }
 
     return res.status(200).json({
       success: true,
@@ -334,7 +356,15 @@ async function handleGetDownloadUrl(req, res) {
     }
 
     // Find the question
-    const question = mockQuestions.find(q => q.id === questionId);
+    let question = null;
+    if (db) {
+      const doc = await db.collection('waec_questions').doc(questionId).get();
+      if (doc.exists) {
+        question = doc.data();
+      }
+    } else {
+      question = mockQuestions.find(q => q.id === questionId);
+    }
 
     if (!question) {
       return res.status(404).json({ error: 'Question not found' });
