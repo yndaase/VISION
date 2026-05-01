@@ -1,0 +1,482 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+
+<head>
+  <meta charset="UTF-8" />
+  
+  <script>
+    document.documentElement.setAttribute("data-theme", "dark");
+  </script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Upload Learning Materials | Admin Panel</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="dashboard.css" />
+  <script src="theme.js"></script>
+  <link rel="stylesheet" href="theme.css" />
+  
+  <style>
+    .admin-container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 3rem 2rem;
+    }
+
+    .admin-header {
+      margin-bottom: 3rem;
+      text-align: center;
+    }
+
+    .admin-title {
+      font-size: 2.5rem;
+      font-weight: 900;
+      color: var(--text-primary);
+      margin-bottom: 0.5rem;
+    }
+
+    .admin-subtitle {
+      color: var(--text-secondary);
+      font-size: 1rem;
+    }
+
+    .upload-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 2.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      margin-bottom: 0.5rem;
+    }
+
+    .form-input,
+    .form-select,
+    .form-textarea {
+      width: 100%;
+      background: var(--bg-input);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 12px 16px;
+      color: var(--text-primary);
+      font-size: 0.95rem;
+      font-family: 'Outfit', sans-serif;
+      transition: all 0.2s;
+    }
+
+    .form-textarea {
+      min-height: 100px;
+      resize: vertical;
+    }
+
+    .form-input:focus,
+    .form-select:focus,
+    .form-textarea:focus {
+      border-color: var(--primary);
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+    }
+
+    .file-upload-area {
+      border: 2px dashed var(--border);
+      border-radius: var(--radius-md);
+      padding: 3rem 2rem;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s;
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .file-upload-area:hover {
+      border-color: var(--primary);
+      background: var(--primary-dim);
+    }
+
+    .file-upload-area.dragover {
+      border-color: var(--primary);
+      background: var(--primary-dim);
+      transform: scale(1.02);
+    }
+
+    .upload-icon {
+      width: 64px;
+      height: 64px;
+      margin: 0 auto 1rem;
+      color: var(--text-muted);
+    }
+
+    .upload-text {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 0.5rem;
+    }
+
+    .upload-hint {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    .file-info {
+      display: none;
+      background: var(--bg-input);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 1rem;
+      margin-top: 1rem;
+    }
+
+    .file-info.show {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .file-icon {
+      width: 40px;
+      height: 40px;
+      background: var(--primary-dim);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--primary);
+    }
+
+    .file-details {
+      flex: 1;
+    }
+
+    .file-name {
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 0.25rem;
+    }
+
+    .file-size {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .btn-remove {
+      background: none;
+      border: none;
+      color: var(--error);
+      cursor: pointer;
+      padding: 0.5rem;
+      border-radius: 6px;
+      transition: all 0.2s;
+    }
+
+    .btn-remove:hover {
+      background: rgba(248, 113, 113, 0.1);
+    }
+
+    .btn-upload {
+      width: 100%;
+      background: var(--primary);
+      color: white;
+      border: none;
+      padding: 14px 24px;
+      border-radius: var(--radius-sm);
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+      margin-top: 1.5rem;
+    }
+
+    .btn-upload:hover {
+      background: #4f46e5;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(99, 102, 241, 0.3);
+    }
+
+    .btn-upload:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .alert {
+      padding: 1rem 1.25rem;
+      border-radius: var(--radius-sm);
+      margin-bottom: 1.5rem;
+      display: none;
+    }
+
+    .alert.show {
+      display: block;
+    }
+
+    .alert-success {
+      background: rgba(34, 197, 94, 0.1);
+      border: 1px solid rgba(34, 197, 94, 0.3);
+      color: #22c55e;
+    }
+
+    .alert-error {
+      background: rgba(248, 113, 113, 0.1);
+      border: 1px solid rgba(248, 113, 113, 0.3);
+      color: #f87171;
+    }
+
+    .uploaded-list {
+      margin-top: 3rem;
+    }
+
+    .list-title {
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: var(--text-primary);
+      margin-bottom: 1.5rem;
+    }
+
+    .uploaded-item {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 1.25rem;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .item-info {
+      flex: 1;
+    }
+
+    .item-title {
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 0.25rem;
+    }
+
+    .item-meta {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .btn-delete {
+      background: var(--error);
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-delete:hover {
+      background: #dc2626;
+    }
+
+    .progress-container {
+      display: none;
+      margin-top: 1rem;
+    }
+
+    .progress-bar {
+      width: 100%;
+      height: 8px;
+      background: var(--bg-input);
+      border-radius: 4px;
+      overflow: hidden;
+      margin-bottom: 0.5rem;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: var(--primary);
+      transition: width 0.3s;
+      width: 0%;
+    }
+
+    .progress-text {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      text-align: center;
+    }
+  </style>
+</head>
+
+<body class="dashboard-page">
+  <div class="admin-container">
+    <!-- Login Required Message -->
+    <div id="loginRequired" style="display: none; text-align: center; padding: 4rem 2rem;">
+      <div style="font-size: 4rem; margin-bottom: 1rem;">🔒</div>
+      <h2 style="font-size: 2rem; font-weight: 800; color: var(--text-primary); margin-bottom: 1rem;">Authentication Required</h2>
+      <p style="color: var(--text-secondary); margin-bottom: 2rem;">You need to be logged in as an admin to upload materials.</p>
+      <a href="/admin.html" style="display: inline-block; background: var(--primary); color: white; padding: 14px 32px; border-radius: 12px; text-decoration: none; font-weight: 700; transition: all 0.2s;">
+        Log In to Admin Panel
+      </a>
+    </div>
+
+    <!-- Main Content (hidden until authenticated) -->
+    <div id="mainContent" style="display: none;">
+    <!-- Back Button -->
+    <div style="margin-bottom: 2rem;">
+      <a href="/admin.html" style="display: inline-flex; align-items: center; gap: 8px; color: var(--text-secondary); text-decoration: none; font-size: 0.85rem; font-weight: 600; padding: 8px 16px; border: 1px solid var(--border); border-radius: 20px; background: var(--bg-input); transition: all 0.2s;" onmouseover="this.style.borderColor='var(--primary)';this.style.color='var(--primary)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--text-secondary)'">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
+        Back to Admin
+      </a>
+    </div>
+
+    <!-- Header -->
+    <div class="admin-header">
+      <h1 class="admin-title">Upload Learning Materials</h1>
+      <p class="admin-subtitle">Upload study materials, notes, and resources to Vercel Blob Storage</p>
+    </div>
+
+    <!-- Alert Messages -->
+    <div id="alertSuccess" class="alert alert-success"></div>
+    <div id="alertError" class="alert alert-error"></div>
+
+    <!-- Upload Form -->
+    <div class="upload-card">
+      <form id="uploadForm">
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Subject</label>
+            <select class="form-select" id="subject" required>
+              <option value="">Select Subject</option>
+              <option value="core-maths">Core Mathematics</option>
+              <option value="english">English Language</option>
+              <option value="social">Social Studies</option>
+              <option value="physics">Physics</option>
+              <option value="chemistry">Chemistry</option>
+              <option value="biology">Biology</option>
+              <option value="economics">Economics</option>
+              <option value="cs">Computer Science</option>
+              <option value="science">Integrated Science</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Material Type</label>
+            <select class="form-select" id="materialType" required>
+              <option value="">Select Type</option>
+              <option value="notes">Study Notes</option>
+              <option value="slides">Presentation Slides</option>
+              <option value="worksheet">Worksheet</option>
+              <option value="guide">Study Guide</option>
+              <option value="reference">Reference Material</option>
+              <option value="practice">Practice Questions</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Title</label>
+          <input type="text" class="form-input" id="title" placeholder="e.g., Quadratic Equations - Complete Guide" required />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Description (Optional)</label>
+          <textarea class="form-textarea" id="description" placeholder="Brief description of the material content..."></textarea>
+        </div>
+
+        <!-- File Upload Area -->
+        <div class="form-group">
+          <label class="form-label">File</label>
+          <div class="file-upload-area" id="fileUploadArea">
+            <svg class="upload-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
+            </svg>
+            <div class="upload-text">Click to upload or drag and drop</div>
+            <div class="upload-hint">PDF, DOCX, PPTX, or images (Max 50MB)</div>
+            <input type="file" id="fileInput" accept=".pdf,.doc,.docx,.ppt,.pptx,.jpg,.jpeg,.png" hidden required />
+          </div>
+
+          <div class="file-info" id="fileInfo">
+            <div class="file-icon">
+              <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/>
+              </svg>
+            </div>
+            <div class="file-details">
+              <div class="file-name" id="fileName"></div>
+              <div class="file-size" id="fileSize"></div>
+            </div>
+            <button type="button" class="btn-remove" onclick="removeFile()">
+              <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Progress Bar -->
+        <div class="progress-container" id="progressContainer">
+          <div class="progress-bar">
+            <div class="progress-fill" id="progressFill"></div>
+          </div>
+          <div class="progress-text" id="progressText">Uploading...</div>
+        </div>
+
+        <button type="submit" class="btn-upload" id="uploadBtn">
+          Upload to Vercel Blob
+        </button>
+      </form>
+    </div>
+
+    <!-- Recently Uploaded List -->
+    <div class="uploaded-list">
+      <h2 class="list-title">Recently Uploaded</h2>
+      <div id="uploadedList">
+        <p style="color: var(--text-muted); text-align: center; padding: 2rem;">No materials uploaded yet.</p>
+      </div>
+    </div>
+    </div>
+    <!-- End of mainContent -->
+  </div>
+  <!-- End of admin-container -->
+
+  <script>
+    // Check admin authentication before loading page
+    const ADMIN_SESSION_KEY = "vision_admin_session";
+    
+    function checkAdminAuth() {
+      const adminSession = sessionStorage.getItem(ADMIN_SESSION_KEY);
+      
+      if (adminSession) {
+        // Admin is logged in - show main content
+        document.getElementById('loginRequired').style.display = 'none';
+        document.getElementById('mainContent').style.display = 'block';
+      } else {
+        // Admin is not logged in - show login message
+        document.getElementById('loginRequired').style.display = 'block';
+        document.getElementById('mainContent').style.display = 'none';
+      }
+    }
+    
+    // Run auth check when page loads
+    checkAdminAuth();
+  </script>
+  <script src="admin-materials-upload.js"></script>
+</body>
+</html>
