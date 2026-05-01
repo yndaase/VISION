@@ -107,19 +107,24 @@
     .pr-card {
       background: var(--bg-card);
       border: 1.5px solid var(--border);
-      border-radius: 20px; padding: 2.25rem;
+      border-radius: 24px; padding: 2.5rem;
       display: flex; flex-direction: column; gap: 0;
-      position: relative; transition: all 0.3s; overflow: hidden;
+      position: relative; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      overflow: hidden;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
     }
     .pr-card:hover {
       border-color: var(--border-accent);
-      transform: translateY(-4px);
-      box-shadow: var(--shadow-lg);
+      transform: translateY(-6px);
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
     }
     .pr-card.featured {
-      border-color: var(--border-accent);
+      border-color: var(--primary);
+      box-shadow: 0 10px 15px -3px rgba(99, 102, 241, 0.1), 0 4px 6px -2px rgba(99, 102, 241, 0.05);
     }
-    .pr-card.featured:hover { box-shadow: var(--shadow-premium); }
+    .pr-card.featured:hover {
+      box-shadow: 0 25px 50px -12px rgba(99, 102, 241, 0.25);
+    }
     /* Gradient top border */
     .pr-card::before {
       content: '';
@@ -201,12 +206,28 @@
     /* Feature list */
     .pr-features {
       list-style: none; padding: 0;
-      display: flex; flex-direction: column; gap: 12px;
+      display: flex; flex-direction: column; gap: 14px;
       margin-bottom: 2rem; flex: 1;
     }
-    .pr-feature { display: flex; align-items: flex-start; gap: 10px; font-size: 0.86rem; color: var(--text-muted); line-height: 1.5; }
-    .pr-feature strong { color: var(--text-primary); font-weight: 600; }
-    .pr-feature.dim { color: var(--border-bright); }
+    .pr-feature { display: flex; align-items: flex-start; gap: 12px; font-size: 0.88rem; color: var(--text-secondary); line-height: 1.6; }
+    .pr-feature strong { color: var(--text-primary); font-weight: 700; }
+    .pr-feature.dim { color: var(--border-bright); opacity: 0.6; }
+    
+    .pr-feature-check {
+      width: 20px; height: 20px; min-width: 20px;
+      border-radius: 6px;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+    .pr-feature-check.on {
+      background: rgba(34, 197, 94, 0.15);
+      color: #22c55e;
+    }
+    .pr-feature-check.off {
+      background: rgba(148, 163, 184, 0.1);
+      color: var(--border-bright);
+    }
 
     /* CTA */
     .pr-cta {
@@ -371,37 +392,43 @@
           <span class="pr-feature-check on" aria-hidden="true">
             <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
           </span>
-          <span>Gemini 2.5 AI Assistant</span>
+          <span>AI Learning Hub Access</span>
         </li>
         <li class="pr-feature">
           <span class="pr-feature-check on" aria-hidden="true">
             <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
           </span>
-          <span>2026 Core Mathematics Mock Exams</span>
+          <span>Core Mathematics Mock Exams</span>
         </li>
         <li class="pr-feature">
           <span class="pr-feature-check on" aria-hidden="true">
             <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
           </span>
-          <span>Basic Progress Tracking</span>
+          <span>WAEC Past Questions Library</span>
         </li>
         <li class="pr-feature">
           <span class="pr-feature-check on" aria-hidden="true">
             <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
           </span>
-          <span>WAEC-aligned Past Questions</span>
+          <span>Progress Tracking Dashboard</span>
+        </li>
+        <li class="pr-feature">
+          <span class="pr-feature-check on" aria-hidden="true">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+          </span>
+          <span>Study Planner & Calendar</span>
         </li>
         <li class="pr-feature dim">
           <span class="pr-feature-check off" aria-hidden="true">
             <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
           </span>
-          <span>Azure GPT-4o Copilot AI</span>
+          <span>Premium AI Tutor (GPT-4o)</span>
         </li>
         <li class="pr-feature dim">
           <span class="pr-feature-check off" aria-hidden="true">
             <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
           </span>
-          <span>Section B Step-by-Step Marking</span>
+          <span>All Subject Access</span>
         </li>
       </ul>
       <a href="/login" class="pr-cta ghost" id="standardCta">Start for Free</a>
@@ -424,43 +451,43 @@
           <span class="pr-feature-check on" aria-hidden="true">
             <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
           </span>
-          <span><strong>Azure GPT-4o Copilot AI</strong> — premium engine</span>
+          <span><strong>Premium GPT-4o AI Tutor</strong> — Advanced assistance</span>
         </li>
         <li class="pr-feature">
           <span class="pr-feature-check on" aria-hidden="true">
             <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
           </span>
-          <span>Priority Support Access</span>
+          <span><strong>All Subjects Access</strong> — Complete WASSCE coverage</span>
         </li>
         <li class="pr-feature">
           <span class="pr-feature-check on" aria-hidden="true">
             <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
           </span>
-          <span>Chief Examiner Marking Mode</span>
+          <span>Detailed Answer Explanations</span>
         </li>
         <li class="pr-feature">
           <span class="pr-feature-check on" aria-hidden="true">
             <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
           </span>
-          <span>Detailed Section B Feedback</span>
+          <span>Advanced Performance Analytics</span>
         </li>
         <li class="pr-feature">
           <span class="pr-feature-check on" aria-hidden="true">
             <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
           </span>
-          <span>Verified WAEC Marking Schemes</span>
+          <span>Personalized Study Recommendations</span>
         </li>
         <li class="pr-feature">
           <span class="pr-feature-check on" aria-hidden="true">
             <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
           </span>
-          <span>Offline Subject Access</span>
+          <span>Downloadable Study Materials</span>
         </li>
         <li class="pr-feature">
           <span class="pr-feature-check on" aria-hidden="true">
             <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
           </span>
-          <span>Priority Support</span>
+          <span>Priority Support & Updates</span>
         </li>
       </ul>
       <button onclick="handlePricingUpgrade()" class="pr-cta primary" id="proLink">Subscribe — GH₵ 30/mo</button>
@@ -565,15 +592,15 @@
         Is the free plan really free forever?
         <svg class="pr-faq-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
       </div>
-      <div class="pr-faq-a">Yes — the Standard plan is permanently free. You get access to Core Mathematics practice questions, mock exams, and Gemini AI assistance with no expiry date and no credit card required.</div>
+      <div class="pr-faq-a">Yes — the Standard plan is permanently free. You get access to Core Mathematics practice, mock exams, past questions, AI Learning Hub, and progress tracking with no expiry date and no credit card required.</div>
     </div>
 
     <div class="pr-faq-item" onclick="toggleFaq(this)">
       <div class="pr-faq-q">
-        What is the difference between GPT-4o and Gemini 2.5?
+        What additional features does Vision Pro unlock?
         <svg class="pr-faq-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
       </div>
-      <div class="pr-faq-a">The free plan uses Gemini 2.5 for AI assistance. Vision Pro unlocks Azure GPT-4o — our Copilot engine — which provides more granular Section B marking, step-by-step feedback and Chief Examiner-style commentary on your theory answers.</div>
+      <div class="pr-faq-a">Vision Pro unlocks premium GPT-4o AI tutoring, access to all WASSCE subjects (not just Core Maths), detailed answer explanations, advanced analytics, personalized study recommendations, and downloadable materials. Perfect for students aiming for top grades.</div>
     </div>
 
     <div class="pr-faq-item" onclick="toggleFaq(this)">
