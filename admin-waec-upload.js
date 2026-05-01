@@ -170,7 +170,7 @@ async function handleUpload(e) {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${session.token || ''}`
+        'Authorization': authHeader
       },
       body: JSON.stringify(uploadData)
     });
