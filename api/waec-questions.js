@@ -1,9 +1,20 @@
 // API endpoint for WAEC Past Questions with Vercel Blob Storage
 // This handles fetching, uploading, and managing past question PDFs
 
-import { put, list, head } from '@vercel/blob';
-import { handleUpload } from '@vercel/blob/client';
+import { S3Client, PutObjectCommand, GetObjectCommand, DeleteObjectCommand } from '@aws-sdk/client-s3';
+import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import admin from 'firebase-admin';
+
+// Initialize Cloudflare R2 (S3 Client)
+const r2Client = new S3Client({
+  region: 'auto',
+  endpoint: `https://${process.env.R2_ACCOUNT_ID}.r2.cloudflarestorage.com`,
+  credentials: {
+    accessKeyId: process.env.R2_ACCESS_KEY_ID || '',
+    secretAccessKey: process.env.R2_SECRET_ACCESS_KEY || '',
+  },
+});
+const BUCKET_NAME = process.env.R2_BUCKET_NAME || 'vision-edu-materials';
 
 // Initialize Firebase Admin
 if (!admin.apps.length) {
@@ -136,10 +147,15 @@ export default async function handler(req, res) {
     // Light auth check — only block on writes; reads are open to any session holder
     const authHeader = req.headers.authorization || (req.query.token ? `Bearer ${req.query.token}` : null);
     const isWrite = req.method === 'POST' || req.method === 'DELETE';
-    const isClientUpload = req.method === 'POST' && req.query.action === 'upload';
+    const isGetUploadUrl = req.method === 'GET' && req.query.action === 'get-upload-url';
     
-    if (isWrite && !isClientUpload && !authHeader) {
+    const hasValidAuth = authHeader && authHeader.trim() !== 'Bearer' && authHeader.trim() !== 'Bearer null';
+    if ((isWrite || isGetUploadUrl) && !hasValidAuth) {
       return res.status(401).json({ error: 'Unauthorized' });
+    }
+
+    if (isGetUploadUrl) {
+      return await handleGetUploadUrl(req, res);
     }
 
     if (req.method === 'GET' && req.query.action === 'download') {
@@ -150,16 +166,10 @@ export default async function handler(req, res) {
     const { questionId } = req.query;
     
     // Route handling
-    if (req.method === 'GET' && questionId) {
-      // Download URL request
-      return await handleGetDownloadUrl(req, res);
-    } else if (req.method === 'GET') {
+    if (req.method === 'GET' && !req.query.action) {
       // List questions request
       return await handleGetQuestions(req, res);
     } else if (req.method === 'POST') {
-      if (req.query.action === 'upload') {
-        return await handleClientUpload(req, res);
-      }
       return await handleUploadQuestion(req, res);
     } else if (req.method === 'DELETE') {
       return await handleDeleteQuestion(req, res);
@@ -219,36 +229,29 @@ async function handleGetQuestions(req, res) {
   }
 }
 
-// POST: Handle Vercel Blob client upload
-async function handleClientUpload(req, res) {
+// GET: Generate pre-signed URL for client upload to Cloudflare R2
+async function handleGetUploadUrl(req, res) {
   try {
-    const token = process.env.BLOB_READ_WRITE_TOKEN || process.env.PUBLIC_BLOB_READ_WRITE_TOKEN;
-    const jsonResponse = await handleUpload({
-      body: req.body,
-      request: req,
-      token,
-      onBeforeGenerateToken: async (pathname, clientPayload) => {
-        // Authenticate via clientPayload since standard Authorization header isn't sent
-        if (!clientPayload || clientPayload === 'unauthenticated') {
-          throw new Error('Unauthorized');
-        }
-        return {
-          allowedContentTypes: ['application/pdf'],
-          tokenPayload: JSON.stringify({}),
-        };
-      },
-      onUploadCompleted: async ({ blob, tokenPayload }) => {
-        // Metadata is handled in the second POST request
-      },
+    const { fileKey, contentType } = req.query;
+    if (!fileKey) return res.status(400).json({ error: 'fileKey required' });
+
+    const command = new PutObjectCommand({
+      Bucket: BUCKET_NAME,
+      Key: fileKey,
+      ContentType: contentType || 'application/pdf',
     });
-    return res.status(200).json(jsonResponse);
+
+    // URL expires in 1 hour
+    const uploadUrl = await getSignedUrl(r2Client, command, { expiresIn: 3600 });
+    
+    return res.status(200).json({ uploadUrl, fileKey });
   } catch (error) {
-    console.error('Client upload token generation error:', error);
-    return res.status(400).json({ error: error.message });
+    console.error('R2 pre-signed URL generation error:', error);
+    return res.status(500).json({ error: 'Failed to generate upload URL' });
   }
 }
 
-// POST: Upload a new question PDF metadata to Vercel Blob
+// POST: Upload a new question PDF metadata to database
 async function handleUploadQuestion(req, res) {
   try {
     const { 
@@ -274,19 +277,18 @@ async function handleUploadQuestion(req, res) {
     // Generate unique ID
     const id = `waec-${subject.toLowerCase()}-${year}-${paperType}`;
 
-    let finalBlobUrl = blobUrl;
+    let finalBlobUrl = blobUrl || `waec-questions/${id}/${fileName}`;
 
-    // Fallback for base64
+    // Fallback for base64 (if someone uses old method)
     if (fileData) {
       const buffer = Buffer.from(fileData, 'base64');
-      const token = process.env.BLOB_READ_WRITE_TOKEN || process.env.PUBLIC_BLOB_READ_WRITE_TOKEN;
-      const blob = await put(`waec-questions/${id}/${fileName}`, buffer, {
-        access: 'private',
-        token: token,
-        addRandomSuffix: false,
-        contentType: 'application/pdf'
+      const command = new PutObjectCommand({
+        Bucket: BUCKET_NAME,
+        Key: finalBlobUrl,
+        Body: buffer,
+        ContentType: 'application/pdf'
       });
-      finalBlobUrl = blob.url;
+      await r2Client.send(command);
     }
 
     // Create question metadata
@@ -350,7 +352,7 @@ async function handleDeleteQuestion(req, res) {
   }
 }
 
-// GET: Proxy download for private Vercel blobs
+// GET: Proxy download for private R2 blobs (generates pre-signed URL and redirects)
 async function handleProxyDownload(req, res) {
   try {
     const { questionId, download } = req.query;
@@ -371,108 +373,29 @@ async function handleProxyDownload(req, res) {
       return res.status(404).send('File not found or not yet uploaded');
     }
 
-    // Proxy the fetch from Vercel Blob using the Read/Write token
-    const token = process.env.BLOB_READ_WRITE_TOKEN || process.env.PUBLIC_BLOB_READ_WRITE_TOKEN;
-    const blobResponse = await fetch(question.blobUrl, {
-      headers: {
-        'Authorization': `Bearer ${token}`
-      }
-    });
+    // Generate pre-signed URL for Cloudflare R2
+    const commandParams = {
+      Bucket: BUCKET_NAME,
+      Key: question.blobUrl,
+    };
 
-    if (!blobResponse.ok) {
-      return res.status(blobResponse.status).send('Error fetching file from private storage');
-    }
-
-    res.setHeader('Content-Type', blobResponse.headers.get('content-type') || 'application/pdf');
     if (download === '1') {
       const filename = `${question.subject}_${question.year}_${question.paperType}.pdf`;
-      res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
+      commandParams.ResponseContentDisposition = `attachment; filename="${filename}"`;
     } else {
-      res.setHeader('Content-Disposition', 'inline');
+      commandParams.ResponseContentDisposition = `inline`;
+      commandParams.ResponseContentType = 'application/pdf';
     }
-    res.setHeader('Cache-Control', 'private, no-cache');
 
-    const buffer = await blobResponse.arrayBuffer();
-    return res.status(200).send(Buffer.from(buffer));
+    const command = new GetObjectCommand(commandParams);
+    const presignedUrl = await getSignedUrl(r2Client, command, { expiresIn: 3600 });
+
+    // Redirect user to the pre-signed R2 URL (offloads bandwidth to Cloudflare)
+    return res.redirect(302, presignedUrl);
   } catch (error) {
     console.error('Proxy download error:', error);
     return res.status(500).send('Failed to serve download');
   }
 }
 
-// GET: Get download URL for a specific question
-async function handleGetDownloadUrl(req, res) {
-  try {
-    const { questionId } = req.query;
-
-    if (!questionId) {
-      return res.status(400).json({ error: 'Question ID required' });
-    }
-
-    // Find the question
-    let question = null;
-    if (db) {
-      const doc = await db.collection('waec_questions').doc(questionId).get();
-      if (doc.exists) {
-        question = doc.data();
-      }
-    } else {
-      question = mockQuestions.find(q => q.id === questionId);
-    }
-
-    if (!question) {
-      return res.status(404).json({ error: 'Question not found' });
-    }
-
-    // Check if actual blob URL exists
-    if (!question.blobUrl) {
-      return res.status(404).json({ 
-        error: 'PDF not available',
-        message: 'This past question PDF has not been uploaded yet. Please contact admin to upload the file.',
-        questionInfo: {
-          subject: question.subject,
-          year: question.year,
-          paperType: question.paperType
-        }
-      });
-    }
-
-    // In production with actual Vercel Blob:
-    try {
-      const blobInfo = await head(question.blobUrl);
-      const downloadUrl = blobInfo.url;
-      
-      // Generate expiry time (1 hour from now)
-      const expiresAt = new Date(Date.now() + 3600000).toISOString();
-
-      return res.status(200).json({
-        success: true,
-        downloadUrl: downloadUrl,
-        expiresAt: expiresAt,
-        fileName: `${question.subject}_${question.year}_${question.paperType}.pdf`,
-        metadata: {
-          subject: question.subject,
-          year: question.year,
-          paperType: question.paperType
-        }
-      });
-    } catch (blobError) {
-      // Blob doesn't exist
-      return res.status(404).json({ 
-        error: 'PDF file not found in storage',
-        message: 'The PDF file for this question is missing from storage. Please contact admin.',
-        questionInfo: {
-          subject: question.subject,
-          year: question.year,
-          paperType: question.paperType
-        }
-      });
-    }
-  } catch (error) {
-    console.error('Download error:', error);
-    return res.status(500).json({ 
-      error: 'Failed to generate download URL',
-      message: error.message 
-    });
-  }
-}
+// End of file

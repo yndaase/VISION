@@ -120,18 +120,36 @@ async function handleUpload(e) {
     const id = `waec-${subject.toLowerCase()}-${year}-${paperType}`;
     let finalBlobUrl = null;
 
-    // 1. Upload to Blob Storage directly from client
+    // 1. Upload to Cloudflare R2 directly from client using a pre-signed URL
     try {
-      const { upload } = await import('https://esm.sh/@vercel/blob@2.3.2/client');
+      const fileKey = `waec-questions/${id}/${selectedFile.name}`;
+      const authHeader = `Bearer ${adminSession ? adminSession.toString() : (session?.token || '')}`;
       
-      const blob = await upload(`waec-questions/${id}/${selectedFile.name}`, selectedFile, {
-        access: 'private',
-        handleUploadUrl: '/api/waec-questions?action=upload',
-        clientPayload: adminSession ? adminSession.toString() : (session?.token || 'unauthenticated')
+      // Get the upload URL from the backend
+      const urlResponse = await fetch(`/api/waec-questions?action=get-upload-url&fileKey=${encodeURIComponent(fileKey)}&contentType=${encodeURIComponent(selectedFile.type)}`, {
+        method: 'GET',
+        headers: {
+          'Authorization': authHeader
+        }
       });
-      finalBlobUrl = blob.url;
+      
+      if (!urlResponse.ok) throw new Error('Failed to get upload URL');
+      const { uploadUrl } = await urlResponse.json();
+
+      // Upload the file directly to R2
+      const r2Response = await fetch(uploadUrl, {
+        method: 'PUT',
+        body: selectedFile,
+        headers: {
+          'Content-Type': selectedFile.type
+        }
+      });
+
+      if (!r2Response.ok) throw new Error('Failed to upload file to Cloudflare R2');
+      
+      finalBlobUrl = fileKey; // Store the R2 key as the blobUrl
     } catch (blobErr) {
-      console.error('Blob client upload error:', blobErr);
+      console.error('R2 client upload error:', blobErr);
       throw new Error('Failed to upload file to storage');
     }
 
