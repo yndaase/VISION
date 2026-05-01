@@ -11,11 +11,6 @@ document.addEventListener("DOMContentLoaded", () => {
   //  Populate user chip
   const navAvatar = document.getElementById("navAvatar");
   const navUsername = document.getElementById("navUsername");
-  
-  if (typeof updateVerificationUI === 'function') {
-      updateVerificationUI(session.isVerified);
-  }
-
   const initial = session.name ? session.name.charAt(0).toUpperCase() : "?";
   if (navAvatar) navAvatar.textContent = initial;
   if (navUsername) {
@@ -128,9 +123,6 @@ document.addEventListener("DOMContentLoaded", () => {
           if (cloudUser) {
               const updatedSession = typeof verifyUserSchema === 'function' ? verifyUserSchema({ ...session, ...cloudUser }) : { ...session, ...cloudUser };
               setSession(updatedSession);
-              if (typeof updateVerificationUI === 'function') {
-                  updateVerificationUI(updatedSession.isVerified);
-              }
               // Also update pro badges if needed
               if (updatedSession.role === "pro" && !document.querySelector('.pro-badge')) {
                   // This is a naive way, but reloading is safer if role changed significantly

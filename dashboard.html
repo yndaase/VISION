@@ -417,9 +417,6 @@
             <div class="nav-avatar" id="navAvatar"><img src="assets/logo.png" onerror="this.src='assets/logo.png'"
                 style="width:100%; height:100%; object-fit:cover; border-radius:inherit;"></div>
             <span class="nav-username" id="navUsername">Yaw Ndaase</span>
-            <span id="navVerifiedBadge" class="verified-badge-icon" style="display: none; margin-left: 4px; color: #0ea5e9;">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
-            </span>
             <span style="
                   font-size: 0.7rem;
                   color: var(--text-muted);
@@ -434,11 +431,6 @@
               </div>
               <button class="dropdown-item" onclick="openSettings(); closeUserDropdown();">
                 Settings
-              </button>
-
-              <button id="navVerifyBtn" class="dropdown-item" style="color: var(--primary); font-weight: 700; display: none;" onclick="openVerifyModal(); closeUserDropdown();">
-                <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M9 12.75L11.25 15 15 9.75M21 12c0 1.268-.63 2.39-1.593 3.068a3.745 3.745 0 01-1.043 3.296 3.745 3.745 0 01-3.296 1.043A3.745 3.745 0 0112 21c-1.268 0-2.39-.63-3.068-1.593a3.746 3.746 0 01-3.296-1.043 3.745 3.745 0 01-1.043-3.296A3.745 3.745 0 013 12c0-1.268.63-2.39 1.593-3.068a3.745 3.745 0 011.043-3.296 3.746 3.746 0 013.296-1.043A3.746 3.746 0 0112 3c1.268 0 2.39.63 3.068 1.593a3.746 3.746 0 013.296 1.043 3.746 3.746 0 011.043 3.296A3.745 3.745 0 0121 12z"/></svg>
-                Verify Identity
               </button>
               
               <button class="dropdown-item danger" onclick="handleLogout()">
@@ -475,9 +467,6 @@
         <h1 class="welcome-heading">
           Welcome,<br />
           <span class="welcome-name" id="welcomeName">Student</span>
-          <span id="heroVerifiedBadge" class="verified-badge-icon" style="display: none; color: #0ea5e9; margin-left: 8px; vertical-align: middle;">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
-          </span>
         </h1>
         <p class="welcome-sub">
           Choose a subject to practice, take a mock, or review your progress.
@@ -924,9 +913,6 @@
               <div>
                 <div style="display: flex; align-items: center; gap: 8px;">
                   <h2 id="settingsName" style="margin: 0; font-size: 1.5rem;">Student Name</h2>
-                  <span id="settingsVerifiedBadge" class="verified-badge-icon" style="display: none; color: #0ea5e9;">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
-                  </span>
                 </div>
                 <p id="settingsEmail" style="margin: 0; color: var(--text-muted);">student@visionedu.online</p>
               </div>
@@ -1147,16 +1133,6 @@
           if (avatarS) avatarS.textContent = session.name.charAt(0).toUpperCase();
 
           if (typeof syncProUI === 'function') syncProUI();
-          
-          // Show verification badges if verified
-          if (session.isVerified) {
-            const navBadge = document.getElementById("navVerifiedBadge");
-            const setBadge = document.getElementById("settingsVerifiedBadge");
-            const heroBadge = document.getElementById("heroVerifiedBadge");
-            if (navBadge) navBadge.style.display = "inline-flex";
-            if (setBadge) setBadge.style.display = "inline-flex";
-            if (heroBadge) heroBadge.style.display = "inline-flex";
-          }
         }
 
         // Show announcements
@@ -1340,149 +1316,10 @@
         // Auto-open verification if redirected from certificate page
         if (sessionStorage.getItem('vision_open_verify')) {
             sessionStorage.removeItem('vision_open_verify');
-            setTimeout(() => {
-                if (typeof handleFaceVerification === 'function') {
-                    handleFaceVerification();
-                } else if (typeof openVerifyModal === 'function') {
-                    openVerifyModal();
-                }
-            }, 1000);
         }
       });
     </script>
-  <!-- --- IDENTITY VERIFICATION MODAL (Real-Time Liveness) --- -->
-  <div id="verifyModal" class="modal" style="display:none; position:fixed; inset:0; z-index:2000; background:rgba(0,0,0,0.92); backdrop-filter:blur(16px); align-items:center; justify-content:center; padding:20px;">
-    <div class="modal-card" style="background:var(--bg-card); border:1px solid var(--border); border-radius:32px; width:100%; max-width:520px; overflow:hidden; position:relative; animation: modalIn 0.4s cubic-bezier(0.16, 1, 0.3, 1); max-height:90vh; overflow-y:auto;">
-      <!-- Scanning line -->
-      <div style="position:absolute; top:0; left:0; width:100%; height:3px; background:linear-gradient(to right, transparent, var(--primary), transparent); box-shadow:0 0 15px var(--primary); z-index:10; animation:scan 2.5s linear infinite;"></div>
 
-      <button onclick="closeVerifyModal()" style="position:absolute; top:20px; right:20px; width:36px; height:36px; border-radius:50%; background:rgba(255,255,255,0.05); border:1px solid var(--border); color:var(--text-primary); display:flex; align-items:center; justify-content:center; cursor:pointer; z-index:10;">
-        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M6 18L18 6M6 6l12 12"/></svg>
-      </button>
-
-      <div class="modal-body" style="padding:36px;">
-
-        <!-- ═══ STEP 1: Real-Time Face Tracking ═══ -->
-        <div id="verifyStep1">
-          <div style="display:flex; align-items:center; gap:10px; margin-bottom:6px;">
-            <div style="width:28px; height:28px; background:var(--primary); border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:0.75rem; font-weight:900; color:#fff;">
-              <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="M9 12l2 2 4-4"/></svg>
-            </div>
-            <span style="font-size:0.7rem; font-weight:800; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.1em;">Liveness Verification</span>
-          </div>
-          <h2 style="font-size:1.5rem; font-weight:900; color:var(--text-primary); margin-bottom:4px;">Real-Time Face Scan</h2>
-          <p id="trackingStatus" style="color:var(--primary); font-size:0.85rem; margin-bottom:20px; font-weight:700; min-height:1.3em;">🔍 Looking for your face...</p>
-          
-          <!-- Liveness Progress Bar -->
-          <div style="width:100%; height:6px; background:var(--border); border-radius:100px; margin-bottom:20px; overflow:hidden;">
-            <div id="livenessProgress" style="width:10%; height:100%; background:linear-gradient(90deg, var(--primary), #3b82f6); border-radius:100px; transition:width 0.6s cubic-bezier(0.16, 1, 0.3, 1);"></div>
-          </div>
-
-          <!-- Camera View with Tracking Overlay -->
-          <div id="faceRing" style="position:relative; width:300px; height:300px; margin:0 auto 20px; border-radius:24px; overflow:hidden; border:4px solid var(--primary); box-shadow:0 0 0 10px rgba(99,102,241,0.08), 0 0 40px rgba(99,102,241,0.12); transition:border-color 0.5s, box-shadow 0.5s;">
-            <video id="selfieVideo" autoplay playsinline style="width:100%; height:100%; object-fit:cover;"></video>
-            <canvas id="trackingOverlay" style="position:absolute; inset:0; width:100%; height:100%; pointer-events:none; z-index:5;"></canvas>
-            <canvas id="selfieCanvas" style="display:none;"></canvas>
-            <div id="shutterOverlay" style="position:absolute; inset:0; background:white; opacity:0; pointer-events:none; transition:opacity 0.12s; z-index:6;"></div>
-            
-            <!-- Switch Camera -->
-            <button onclick="switchCamera()" style="position:absolute; bottom:12px; right:12px; width:36px; height:36px; border-radius:50%; background:rgba(0,0,0,0.5); border:1px solid rgba(255,255,255,0.2); color:white; display:flex; align-items:center; justify-content:center; cursor:pointer; backdrop-filter:blur(4px); z-index:20;">
-              <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99"/></svg>
-            </button>
-          </div>
-
-          <!-- Liveness Check Indicators -->
-          <div style="display:flex; gap:8px; margin-bottom:20px; justify-content:center; flex-wrap:wrap;">
-            <div id="checkFace" class="liveness-check" style="display:flex; align-items:center; gap:6px; padding:8px 14px; border-radius:10px; background:var(--bg-input); border:1px solid var(--border); transition:all 0.4s;">
-              <span class="check-icon" style="width:18px; height:18px; border-radius:50%; border:2px solid var(--border-bright); display:flex; align-items:center; justify-content:center; transition:all 0.3s;">
-                <svg class="check-svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" style="display:none;"><polyline points="20 6 9 17 4 12"/></svg>
-              </span>
-              <span style="font-size:0.72rem; font-weight:700; color:var(--text-secondary);">Face Found</span>
-            </div>
-            <div id="checkMovement" class="liveness-check" style="display:flex; align-items:center; gap:6px; padding:8px 14px; border-radius:10px; background:var(--bg-input); border:1px solid var(--border); transition:all 0.4s;">
-              <span class="check-icon" style="width:18px; height:18px; border-radius:50%; border:2px solid var(--border-bright); display:flex; align-items:center; justify-content:center; transition:all 0.3s;">
-                <svg class="check-svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" style="display:none;"><polyline points="20 6 9 17 4 12"/></svg>
-              </span>
-              <span style="font-size:0.72rem; font-weight:700; color:var(--text-secondary);">Movement</span>
-            </div>
-            <div id="checkBlink" class="liveness-check" style="display:flex; align-items:center; gap:6px; padding:8px 14px; border-radius:10px; background:var(--bg-input); border:1px solid var(--border); transition:all 0.4s;">
-              <span class="check-icon" style="width:18px; height:18px; border-radius:50%; border:2px solid var(--border-bright); display:flex; align-items:center; justify-content:center; transition:all 0.3s;">
-                <svg class="check-svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" style="display:none;"><polyline points="20 6 9 17 4 12"/></svg>
-              </span>
-              <span style="font-size:0.72rem; font-weight:700; color:var(--text-secondary);">Blink</span>
-            </div>
-          </div>
-
-          <button id="verifyCaptureBtn" onclick="captureSelfie()" style="width:100%; padding:16px; border-radius:16px; font-weight:800; background:linear-gradient(135deg, var(--primary), #3b82f6); color:#fff; border:none; cursor:pointer; font-size:0.95rem; display:flex; align-items:center; justify-content:center; gap:10px; opacity:0.5; transition:opacity 0.3s;">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
-            Verifying automatically...
-          </button>
-        </div>
-
-        <!-- ═══ STEP 2: Processing & Result ═══ -->
-        <div id="verifyStep2" style="display:none; text-align:center; padding:20px 0;">
-          <!-- Photo Preview -->
-          <div style="display:flex; justify-content:center; gap:16px; margin-bottom:24px;">
-            <div style="text-align:center;">
-              <div style="width:72px; height:72px; border-radius:14px; overflow:hidden; border:2px solid var(--border); margin:0 auto 6px;">
-                <img id="capturedPhotoPreview" style="width:100%; height:100%; object-fit:cover;">
-              </div>
-              <div style="font-size:0.65rem; font-weight:700; color:var(--text-muted); text-transform:uppercase;">Selfie</div>
-            </div>
-          </div>
-
-          <!-- Spinner -->
-          <div id="verifySpinner" style="width:50px; height:50px; background:var(--primary-dim); border-radius:50%; margin:0 auto 20px; display:flex; align-items:center; justify-content:center; border:1px solid var(--primary); animation: pulse 1.5s ease infinite;">
-            <svg class="spin" width="24" height="24" fill="none" stroke="var(--primary)" stroke-width="2.5" viewBox="0 0 24 24"><path d="M12 2v4m0 12v4m-7.07-3.93l2.83-2.83m8.48-8.48l2.83-2.83M2 12h4m12 0h4M4.93 4.93l2.83 2.83m8.48 8.48l2.83 2.83"/></svg>
-          </div>
-
-          <!-- Result Icon (hidden initially) -->
-          <div id="verifyResultIcon" style="display:none; width:64px; height:64px; border-radius:50%; margin:0 auto 20px; align-items:center; justify-content:center; border:2px solid var(--border);"></div>
-
-          <h2 id="verifyStatusTitle" style="font-size:1.4rem; font-weight:900; color:var(--text-primary); margin-bottom:10px;">Verifying Identity</h2>
-          <p id="verifyStatusText" style="color:var(--text-muted); font-size:0.88rem; line-height:1.6;">Liveness confirmed! Finalizing...</p>
-        </div>
-
-      </div>
-    </div>
-  </div>
-
-  <style>
-    @keyframes scan {
-      0% { top: 0%; opacity: 0; }
-      10% { opacity: 1; }
-      90% { opacity: 1; }
-      100% { top: 100%; opacity: 0; }
-    }
-    @keyframes pulse {
-      0%, 100% { transform: scale(1); opacity: 1; }
-      50% { transform: scale(1.08); opacity: 0.7; }
-    }
-    .spin { animation: spinAnim 1.2s linear infinite; }
-    @keyframes spinAnim {
-      from { transform: rotate(0deg); }
-      to { transform: rotate(360deg); }
-    }
-
-    /* Liveness check indicators */
-    .liveness-check.done {
-      background: rgba(16, 185, 129, 0.10) !important;
-      border-color: rgba(16, 185, 129, 0.30) !important;
-    }
-    .liveness-check.done .check-icon {
-      background: #10b981 !important;
-      border-color: #10b981 !important;
-      color: #fff !important;
-    }
-    .liveness-check.done .check-icon .check-svg {
-      display: block !important;
-      stroke: #fff;
-    }
-  </style>
-
-  <!-- face-api.js must load BEFORE verification.js -->
-  <script src="https://cdn.jsdelivr.net/npm/@vladmandic/face-api/dist/face-api.js"></script>
-  <script defer src="verification.js"></script>
   <script type="module" src="sessions.js?v=3"></script>
 </body>
 </html>
