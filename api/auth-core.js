@@ -22,7 +22,7 @@ export default async function handler(req, res) {
     switch (type || (req.method === 'GET' ? 'risc-get' : null)) {
       case 'send-code': return await handleSendCode(req.body, res);
       case 'check-revocation': return await handleCheckRevocation(req.body, res);
-      case 'sync-users': return await handleSyncUsers(req.body, res);
+      case 'sync-users': return await handleSyncUsers(req.body || {}, res);
       case 'get-pro-users': return await handleGetProUsers(req, res);
       case 'risc-receiver': return await handleRiscReceiver(req, res);
       case 'risc-get': return await handleRiscGet(req, res);
@@ -88,7 +88,20 @@ async function handleSendCode(data, res) {
 
 
 async function handleCheckRevocation(data, res) {
+  // Validate data exists
+  if (!data) {
+    console.error('[handleCheckRevocation] No data provided');
+    return res.status(400).json({ error: 'Missing request data' });
+  }
+  
   const { sub, email } = data;
+  
+  // Validate at least one identifier is provided
+  if (!sub && !email) {
+    console.error('[handleCheckRevocation] No sub or email provided');
+    return res.status(400).json({ error: 'Missing sub or email identifier' });
+  }
+  
   const { blobs } = await list({ prefix: BLACKLIST_PATH });
   if (blobs.length === 0) return res.status(200).json({ revoked: false });
   const response = await fetch(blobs[0].url);
