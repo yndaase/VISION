@@ -555,35 +555,55 @@
       portal.style.display = "grid";
       portal.classList.add("visible");
       
-      // Kick off background sync
-      syncMaterials().then(() => {
-        renderStats();
-        renderMats();
-      });
-      
+      // Initialize dashboard
       renderStats();
       renderAudit();
     }
 
     async function renderStats() {
-      const mats = getMaterials();
       const grid = document.getElementById("statsGrid");
       if (!grid) return;
+      
       // Show placeholder while loading
       grid.innerHTML = `
-        <div class="stat-card"><span class="stat-lbl">Authorized Learners</span><span class="stat-val" id="statLearners">...</span></div>
-        <div class="stat-card"><span class="stat-lbl">Educational Assets</span><span class="stat-val">${mats.length}</span></div>
+        <div class="stat-card"><span class="stat-lbl">Total Learners</span><span class="stat-val" id="statLearners">...</span></div>
+        <div class="stat-card"><span class="stat-lbl">Active Today</span><span class="stat-val" id="statActive">...</span></div>
         <div class="stat-card"><span class="stat-lbl">Database</span><span class="stat-val" style="color:var(--admin-success);font-size:1.2rem;">Firebase</span></div>
         <div class="stat-card"><span class="stat-lbl">Auth Protocol</span><span class="stat-val" style="font-size:1.1rem;">SHA-256</span></div>
       `;
+      
       // Async load real count from Firestore
-      if (typeof window.fbGetAllUsers === 'function') {
-        const allUsers = await window.fbGetAllUsers();
-        const el = document.getElementById('statLearners');
-        if (el) el.textContent = allUsers.length || getUsers().length;
-      } else {
-        const el = document.getElementById('statLearners');
-        if (el) el.textContent = getUsers().length;
+      try {
+        let userCount = 0;
+        let activeCount = 0;
+        
+        if (typeof window.fbGetAllUsers === 'function') {
+          const allUsers = await window.fbGetAllUsers('users');
+          userCount = allUsers.length;
+          
+          // Count active users (logged in today)
+          const today = new Date().toDateString();
+          activeCount = allUsers.filter(u => {
+            if (u.lastLogin) {
+              const lastLogin = new Date(u.lastLogin).toDateString();
+              return lastLogin === today;
+            }
+            return false;
+          }).length;
+        } else {
+          // Fallback to localStorage
+          const localUsers = getUsers();
+          userCount = localUsers.length;
+        }
+        
+        const learnersEl = document.getElementById('statLearners');
+        const activeEl = document.getElementById('statActive');
+        if (learnersEl) learnersEl.textContent = userCount;
+        if (activeEl) activeEl.textContent = activeCount;
+      } catch (error) {
+        console.error('[Admin] Error loading stats:', error);
+        const learnersEl = document.getElementById('statLearners');
+        if (learnersEl) learnersEl.textContent = getUsers().length;
       }
     }
 
@@ -598,231 +618,6 @@
           <div class="audit-content"><span class="audit-action">${l.action}</span></div>
         </div>
       `).join("");
-    }
-
-    function renderMats() {
-      const mats = getMaterials();
-      const container = document.getElementById("matDisplay");
-      if (!container) return;
-      const subjects = {};
-      SUBJECTS_META.forEach(s => subjects[s.id] = []);
-      mats.forEach(m => { if (subjects[m.subject]) subjects[m.subject].push(m); });
-
-      container.innerHTML = SUBJECTS_META.map(s => {
-        const subjMats = subjects[s.id];
-        if (!subjMats.length) return "";
-        return `
-          <div style="margin-bottom: 2rem;">
-            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 1rem; padding-bottom: 8px; border-bottom: 1px solid var(--admin-border);">
-              <span style="font-weight: 800; font-size: 0.95rem; color: var(--admin-primary);">${s.name}</span>
-              <span style="font-size: 0.7rem; background: rgba(99,102,241,0.1); padding: 2px 8px; border-radius: 4px;">${subjMats.length} Assets</span>
-            </div>
-            <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1rem;">
-              ${subjMats.map(m => `
-                <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--admin-border); padding: 1.25rem; border-radius: 16px; display: flex; align-items: center; gap: 12px;">
-                  <div style="flex: 1; min-width: 0;">
-                    <div style="font-weight: 700; white-space: nowrap; text-overflow: ellipsis; overflow: hidden; font-size: 0.9rem;">${m.title}</div>
-                    <div style="font-size: 0.7rem; color: var(--admin-text-muted); margin-top: 4px;">${m.type} · Resource Node</div>
-                  </div>
-                  <button class="btn btn-danger" style="padding: 6px 12px; font-size: 0.7rem;" onclick="deleteMat('${m.id}')">Delete</button>
-                </div>
-              `).join("")}
-            </div>
-          </div>
-        `;
-      }).join("");
-    }
-
-    window.saveNewMaterial = async () => {
-      const sub = document.getElementById("matSubject").value;
-      const title = document.getElementById("matTitle").value.trim();
-      const type = document.getElementById("matType").value;
-      const urlInput = document.getElementById("matUrl").value.trim();
-      const fileInput = document.getElementById("matFileInput");
-      const isFileUpload = document.getElementById("matFileGroup").style.display !== "none";
-      
-      if (!title) return showToast("Protocol error: Title required");
-      if (!isFileUpload && !urlInput) return showToast("Protocol error: URL required");
-      if (isFileUpload && (!fileInput.files || !fileInput.files[0])) return showToast("Protocol error: No file selected");
-
-      const saveBtn = document.getElementById("saveMaterialBtn");
-      saveBtn.disabled = true;
-      saveBtn.innerText = "PROCESSING...";
-
-      let finalUrl = urlInput;
-
-      try {
-        if (isFileUpload) {
-            const file = fileInput.files[0];
-            const timestamp = Date.now();
-            const safeName = file.name.replace(/[^a-z0-9.]/gi, '_');
-            const pathname = `materials/${sub}/${timestamp}_${safeName}`;
-            
-            document.getElementById("uploadProgressContainer").style.display = "block";
-
-            try {
-                // 1. Get pre-signed URL from Cloudflare R2 via our API
-                const fileKey = pathname;
-                const urlResponse = await fetch(`/api/upload?action=get-upload-url&fileKey=${encodeURIComponent(fileKey)}&contentType=${encodeURIComponent(file.type)}`);
-                if (!urlResponse.ok) throw new Error('Failed to get secure upload authorization');
-                const { uploadUrl } = await urlResponse.json();
-
-                // 2. Direct Upload to R2
-                const xhr = new XMLHttpRequest();
-                xhr.open('PUT', uploadUrl, true);
-                xhr.setRequestHeader('Content-Type', file.type);
-                
-                xhr.upload.onprogress = (e) => {
-                    if (e.lengthComputable) {
-                        const pct = (e.loaded / e.total) * 100;
-                        document.getElementById("uploadProgressBar").style.width = pct + "%";
-                        document.getElementById("uploadStatus").innerText = `Uploading: ${Math.round(pct)}%`;
-                    }
-                };
-
-                const uploadPromise = new Promise((resolve, reject) => {
-                    xhr.onload = () => xhr.status === 200 ? resolve() : reject(new Error('R2 Transfer Failed'));
-                    xhr.onerror = () => reject(new Error('Network connectivity issue'));
-                });
-
-                xhr.send(file);
-                await uploadPromise;
-                
-                finalUrl = fileKey; // Use the R2 key as the URL
-
-                // INSTANT UI UPDATE: Add to local list and sync to Firebase
-                const entry = { 
-                    id: 'mat-' + timestamp, 
-                    subject: sub, 
-                    title, 
-                    type, 
-                    url: finalUrl, 
-                    uploadedAt: new Date().toISOString().split("T")[0], 
-                    uploadedBy: "admin",
-                    size: (file.size / (1024*1024)).toFixed(2) + " MB"
-                };
-                
-                await upsertMaterial(entry);
-                renderMats(); // Re-render the list on screen
-                
-                showToast("Asset secured and linked to Firebase");
-            } catch (uploadErr) {
-                console.error("[R2 Upload Error]:", uploadErr);
-                throw new Error("Upload Failed: " + uploadErr.message);
-            }
-        } else {
-            // ONLY for manual links (non-file uploads)
-            const entry = { 
-                id: 'mat-' + Date.now(), 
-                subject: sub, 
-                title, 
-                type, 
-                url: finalUrl, 
-                uploadedAt: new Date().toISOString().split("T")[0], 
-                uploadedBy: "admin",
-                size: null
-            };
-            await upsertMaterial(entry); 
-        }
-
-        logAction("MATERIAL_SYNCED: " + title);
-        
-        // Automated WhatsApp Blast
-        const notifyWA = document.getElementById("matNotifyWA")?.checked;
-        if (notifyWA) {
-            triggerMaterialBroadcast(title, sub);
-        }
-
-        closeMatModal(); 
-        renderMats(); 
-        showToast("Mission assets synchronized");
-      } catch(e) {
-        console.error("[Admin] Material save failure:", e);
-        showToast(e.message || "Error saving material");
-        // Also alert for high visibility since toast might fade
-        if (e.message.includes("Security Error")) {
-            alert("UPLOAD FAILED: Your Firebase Storage Rules are blocking this upload. Please set them to 'allow read, write: if true;' in your console.");
-        }
-      } finally {
-        saveBtn.disabled = false;
-        saveBtn.innerText = "Save Material";
-      }
-    };
-
-    window.deleteMat = (id) => {
-      if (!confirm("Delete this material?")) return;
-      deleteMaterial(id).then(() => { renderMats(); showToast("Material deleted"); }).catch(console.error);
-      logAction("MATERIAL_DELETED");
-    };
-
-    /**
-     * Automated WhatsApp Broadcast to all opted-in students
-     */
-    async function triggerMaterialBroadcast(title, subject) {
-        showToast("Identifying recipients...");
-        try {
-            if (typeof window.fbGetAllUsers !== 'function') return;
-            
-            // 1. Fetch from Cloud
-            let users = await window.fbGetAllUsers('users');
-            
-            // 2. Hybrid Sync: If cloud is empty but local has data, push local to cloud
-            if (users.length === 0) {
-                const localUsers = getUsers(); // from local storage
-                if (localUsers.length > 0) {
-                    showToast("Syncing local users to cloud...");
-                    // Batch push local users to cloud so WhatsApp can find them
-                    for (const lu of localUsers) {
-                        if (typeof window.fbUpdateUser === 'function') {
-                            await window.fbUpdateUser(lu.email, lu);
-                        }
-                    }
-                    users = await window.fbGetAllUsers('users'); // Re-fetch
-                }
-            }
-            
-            // Smarter filter: handle strings, booleans, and various phone field names
-            const recipients = users.filter(u => {
-                const hasOptedIn = u.waOptIn === true || u.waOptIn === 'true' || u.waOptIn === 'on';
-                const hasPhone = u.phone || u.phoneNumber || u.waPhone;
-                return hasOptedIn && hasPhone;
-            });
-            
-            if (recipients.length === 0) {
-                console.info("[Admin] Broadcast aborted: No students match criteria.");
-                alert(`Broadcast Alert: Found ${users.length} total students, but 0 have both WhatsApp Opt-in AND a phone number recorded. Check the User Management table.`);
-                return;
-            }
-
-            console.info(`[Admin] Broadcasting to ${recipients.length} students...`);
-            showToast(`Broadcasting to ${recipients.length} students...`);
-            
-            // Limit to concurrent batches if necessary, but for now we'll do simple async triggers
-            await Promise.all(recipients.map(u => 
-                fetch("/api/whatsapp", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ 
-                        email: u.email, 
-                        phone: u.phone || u.phoneNumber || u.waPhone, 
-                        name: u.name,
-                        type: "NEW_MATERIAL",
-                        templateName: "vision_new_material", // This must match your Meta template name
-                        components: [
-                            { type: "body", parameters: [
-                                { type: "text", text: u.name || "Student" },
-                                { type: "text", text: title },
-                                { type: "text", text: subject }
-                            ]}
-                        ]
-                    })
-                })
-            ));
-            
-            showToast(`Broadcast sent to ${recipients.length} students.`);
-        } catch(e) {
-            console.error("[Admin] Broadcast failed:", e);
-        }
     }
 
     /**
@@ -1663,9 +1458,6 @@
     function initEvents() {
         document.getElementById("voiceRecordBtn")?.addEventListener("click", toggleRecording);
       const btnMap = {
-        "openMatModalBtn": openMatModal,
-        "closeMatModalBtn": closeMatModal,
-        "saveMaterialBtn": saveNewMaterial,
         "postAnnBtn": postAnn,
         "createUserBtn": createUser
       };
