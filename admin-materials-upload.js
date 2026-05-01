@@ -139,7 +139,7 @@ async function uploadMaterial() {
   progressContainer.style.display = 'block';
 
   try {
-    const ADMIN_SESSION_KEY = "vision_admin_session";
+    const ADMIN_SESSION_KEY = "vision_admin_at";
     const adminSession = sessionStorage.getItem(ADMIN_SESSION_KEY);
     const authHeader = `Bearer ${adminSession || ''}`;
 

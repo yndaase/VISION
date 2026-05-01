@@ -381,17 +381,23 @@
               <label class="label">User Role / Position</label>
               <div style="display: flex; gap: 1rem;">
                 <select class="input" id="newUserRole" style="flex: 2;">
-                  <option value="pro">Student (Pro Access)</option>
-                  <option value="teacher">Teacher (Faculty)</option>
-                  <option value="enterprise">Enterprise (School Admin)</option>
+                  <optgroup label="Student Roles">
+                    <option value="student">Student (Pro Access)</option>
+                  </optgroup>
+                  <optgroup label="Staff Roles">
+                    <option value="teacher">Teacher (Faculty)</option>
+                    <option value="admin">Admin</option>
+                  </optgroup>
                   <optgroup label="Institutional Roles">
                     <option value="President">President</option>
                     <option value="Vice President 1">Vice President 1</option>
                     <option value="Vice President 2">Vice President 2</option>
                     <option value="General Secretary">General Secretary</option>
                     <option value="Organiser">Organiser</option>
-                    <option value="PRO">PRO</option>
-                    <option value="Admin">Admin</option>
+                    <option value="PRO">PRO (Public Relations)</option>
+                  </optgroup>
+                  <optgroup label="Enterprise">
+                    <option value="enterprise">Enterprise (School Admin)</option>
                   </optgroup>
                 </select>
                 <button class="btn btn-primary" id="createUserBtn" style="height: 50px; padding: 0 40px; white-space: nowrap;">Create Account</button>
@@ -415,7 +421,7 @@
           </div>
           <div class="card-body" style="padding: 0;">
             <table class="table">
-              <thead><tr><th>User</th><th>Identity</th><th>Email Address</th><th>UID</th><th>Role</th><th style="text-align: center;">WhatsApp</th><th style="text-align: right;">Control</th></tr></thead>
+              <thead><tr><th>Name</th><th>Status</th><th>Email Address</th><th>Firebase UID</th><th>Role</th><th style="text-align: center;">WhatsApp</th><th style="text-align: right;">Actions</th></tr></thead>
               <tbody id="allUsersTbody"></tbody>
             </table>
           </div>
@@ -831,17 +837,25 @@
           <td style="width: 260px;">
             <input class="input" style="padding: 6px 12px; font-size: 0.75rem; font-family: 'JetBrains Mono';" value="${u.uid || ""}" placeholder="Firebase UID" onchange="updateUid('${u.email}', this.value, '${currentViewCollection}')" />
           </td>
-          <td><select class="input" style="padding: 6px 12px; font-size: 0.75rem; width: auto;" onchange="updateRole('${u.email}', this.value, '${currentViewCollection}')">
-            <option value="pro" ${role === 'pro' || role === 'student' ? 'selected' : ''}>Student</option>
-            <option value="teacher" ${role === 'teacher' ? 'selected' : ''}>Teacher</option>
-            <option value="enterprise" ${role === 'enterprise' ? 'selected' : ''}>Enterprise Admin</option>
-            <option value="President" ${role === 'President' ? 'selected' : ''}>President</option>
-            <option value="Vice President 1" ${role === 'Vice President 1' ? 'selected' : ''}>Vice President 1</option>
-            <option value="Vice President 2" ${role === 'Vice President 2' ? 'selected' : ''}>Vice President 2</option>
-            <option value="General Secretary" ${role === 'General Secretary' ? 'selected' : ''}>General Secretary</option>
-            <option value="Organiser" ${role === 'Organiser' ? 'selected' : ''}>Organiser</option>
-            <option value="PRO" ${role === 'PRO' ? 'selected' : ''}>PRO</option>
-            <option value="Admin" ${role === 'Admin' || role === 'admin' ? 'selected' : ''}>Admin</option>
+          <td><select class="input" style="padding: 6px 12px; font-size: 0.75rem; width: auto; min-width: 150px;" onchange="updateRole('${u.email}', this.value, '${currentViewCollection}')">
+            <optgroup label="Student Roles">
+              <option value="student" ${role === 'pro' || role === 'student' ? 'selected' : ''}>Student (Pro)</option>
+            </optgroup>
+            <optgroup label="Staff Roles">
+              <option value="teacher" ${role === 'teacher' ? 'selected' : ''}>Teacher</option>
+              <option value="admin" ${role === 'Admin' || role === 'admin' ? 'selected' : ''}>Admin</option>
+            </optgroup>
+            <optgroup label="Institutional Roles">
+              <option value="President" ${role === 'President' ? 'selected' : ''}>President</option>
+              <option value="Vice President 1" ${role === 'Vice President 1' ? 'selected' : ''}>Vice President 1</option>
+              <option value="Vice President 2" ${role === 'Vice President 2' ? 'selected' : ''}>Vice President 2</option>
+              <option value="General Secretary" ${role === 'General Secretary' ? 'selected' : ''}>General Secretary</option>
+              <option value="Organiser" ${role === 'Organiser' ? 'selected' : ''}>Organiser</option>
+              <option value="PRO" ${role === 'PRO' ? 'selected' : ''}>PRO (Public Relations)</option>
+            </optgroup>
+            <optgroup label="Enterprise">
+              <option value="enterprise" ${role === 'enterprise' ? 'selected' : ''}>Enterprise Admin</option>
+            </optgroup>
           </select></td>
           <td style="text-align: center;">
             ${u.waOptIn ? 
