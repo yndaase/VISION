@@ -220,7 +220,7 @@ async function handleUploadQuestion(req, res) {
 
     // Upload to Vercel Blob
     const blob = await put(`waec-questions/${id}/${fileName}`, buffer, {
-      access: 'public',
+      access: 'private',
       addRandomSuffix: false,
       contentType: 'application/pdf'
     });
