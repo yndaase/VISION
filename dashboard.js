@@ -29,14 +29,16 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  // If Google user has picture, show it
+  // If Google user has picture, show it with a safety loader
   if (session.picture && navAvatar) {
-    navAvatar.style.cssText = `
-      background-image: url('${session.picture}');
-      background-size: cover;
-      background-position: center;
-      font-size: 0;
-    `;
+    const img = new Image();
+    img.onload = () => {
+      navAvatar.style.backgroundImage = `url('${session.picture}')`;
+      navAvatar.style.backgroundSize = 'cover';
+      navAvatar.style.backgroundPosition = 'center';
+      navAvatar.style.fontSize = '0';
+    };
+    img.src = session.picture;
   }
 
   //  Populate dropdown
