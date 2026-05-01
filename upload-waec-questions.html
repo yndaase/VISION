@@ -314,7 +314,7 @@
       if (selectedFiles.length === 0) return;
 
       // Get auth token
-      const user = auth.currentUser;
+      const user = window.fbAuth?.currentUser;
       if (!user) {
         alert('Please log in first!');
         window.location.href = '/login.html';
@@ -393,5 +393,6 @@
       });
     }
   </script>
+  <script type="module" src="firebase.js"></script>
 </body>
 </html>
