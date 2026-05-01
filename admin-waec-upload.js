@@ -2,9 +2,11 @@
 // Handles file uploads to Vercel Blob Storage
 
 // Auth guard - Admin only
-const session = checkAuth();
-if (!session || session.role !== 'admin') {
-  window.location.href = '/dashboard';
+// Use the vision_admin_at session key set by admin.html on successful login
+const adminSession = sessionStorage.getItem('vision_admin_at');
+const session = adminSession ? JSON.parse(adminSession) : checkAuth();
+if (!session || (session.role !== 'admin' && !adminSession)) {
+  window.location.href = '/admin';
   throw new Error("Admin access required");
 }
 

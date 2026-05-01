@@ -210,6 +210,13 @@ export const fbDeleteUser = window.fbDeleteUser;
  */
 window.adminInitFirebase = async function(accounts) {
   if (!accounts || !accounts.length) return;
+  // Only seed Firestore when a Firebase Auth user is signed in.
+  // Without this, every page load triggers "Missing or insufficient permissions" errors.
+  const currentUser = auth?.currentUser;
+  if (!currentUser) {
+    // No Firebase Auth session — skip Firestore seeding, local cache is already updated.
+    return;
+  }
   for (const account of accounts) {
     try {
       const key = account.email.toLowerCase();
@@ -238,7 +245,10 @@ window.adminInitFirebase = async function(accounts) {
         });
       }
     } catch(err) {
-      console.warn(`[Firebase] adminInitFirebase failed for ${account.email}:`, err.message);
+      // Suppress permission errors — they're expected when Firebase Auth session isn't set up yet
+      if (!err.message?.includes('permission')) {
+        console.warn(`[Firebase] adminInitFirebase failed for ${account.email}:`, err.message);
+      }
     }
   }
 };

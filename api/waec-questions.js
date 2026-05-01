@@ -117,9 +117,10 @@ export default async function handler(req, res) {
   }
 
   try {
-    // Authentication check (basic)
+    // Light auth check — only block on writes; reads are open to any session holder
     const authHeader = req.headers.authorization;
-    if (!authHeader) {
+    const isWrite = req.method === 'POST' || req.method === 'DELETE';
+    if (isWrite && !authHeader) {
       return res.status(401).json({ error: 'Unauthorized' });
     }
 

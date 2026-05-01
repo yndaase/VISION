@@ -294,44 +294,33 @@ function showNotification(message, type = 'info') {
     setTimeout(() => notification.remove(), 300);
   }, 4000);
 }
-    // Restore button
-    const btn = event.target.closest('.btn-download');
-    btn.innerHTML = originalText;
-    btn.disabled = false;
-  }
-}
 
-// Preview question
+
+// Preview question - open PDF directly or show message
 function previewQuestion(questionId) {
   const question = allQuestions.find(q => q.id === questionId);
   if (!question) {
-    alert('Question not found');
+    showNotification('Question not found', 'error');
     return;
   }
 
-  // Open preview in new window/tab
-  window.open(`/preview-question?id=${questionId}`, '_blank');
+  if (question.blobUrl) {
+    // Open PDF directly in a new tab
+    window.open(question.blobUrl, '_blank');
+  } else {
+    showNotification('PDF preview not yet available. Click Download to access when uploaded.', 'warning');
+  }
 }
 
-// Track download for analytics
-async function trackDownload(questionId) {
+// Track download for analytics (local only)
+function trackDownload(questionId) {
   try {
-    await fetch('/api/analytics/track', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${session.token || ''}`
-      },
-      body: JSON.stringify({
-        event: 'question_download',
-        questionId: questionId,
-        userId: session.uid,
-        timestamp: new Date().toISOString()
-      })
-    });
-  } catch (error) {
-    console.error('Analytics tracking error:', error);
-  }
+    const key = 'vision_waec_downloads';
+    const downloads = JSON.parse(localStorage.getItem(key) || '[]');
+    downloads.push({ questionId, timestamp: new Date().toISOString() });
+    if (downloads.length > 200) downloads.shift();
+    localStorage.setItem(key, JSON.stringify(downloads));
+  } catch (e) {}
 }
 
 // Update statistics
