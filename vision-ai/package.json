@@ -1,14 +1,28 @@
 {
   "name": "vision-ai",
-  "version": "1.0.0",
-  "description": "Vision AI - WASSCE Intelligence Engine",
+  "version": "2.0.0",
+  "description": "Vision AI - WASSCE Intelligence Engine (Self-Contained)",
   "main": "index.html",
+  "type": "module",
   "scripts": {
     "dev": "vercel dev",
-    "build": "echo 'No build step required'",
+    "build": "echo 'Static site - no build required'",
     "deploy": "vercel --prod"
   },
-  "keywords": ["vision", "ai", "wassce", "education", "ghana"],
+  "dependencies": {},
+  "devDependencies": {
+    "@vercel/node": "^3.0.21"
+  },
+  "keywords": [
+    "vision",
+    "ai",
+    "wassce",
+    "education",
+    "ghana"
+  ],
   "author": "Vision Education",
-  "license": "MIT"
+  "license": "MIT",
+  "engines": {
+    "node": ">=18.0.0"
+  }
 }
