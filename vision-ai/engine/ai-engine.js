@@ -19,6 +19,9 @@ export class VisionAI {
    */
   async query(userQuery, sessionId = 'default') {
     try {
+      console.log('[VisionAI] Processing query:', userQuery.substring(0, 50) + '...');
+      console.log('[VisionAI] Groq enabled:', this.useGroq);
+      
       // Initialize session if needed
       if (!this.sessions.has(sessionId)) {
         this.sessions.set(sessionId, []);
@@ -36,6 +39,7 @@ export class VisionAI {
 
       // 1. Try Math Engine first (for calculations)
       if (MathEngine.isMathQuery(userQuery)) {
+        console.log('[VisionAI] Using Math Engine');
         result = MathEngine.solve(userQuery);
         if (result) {
           return this.formatResponse(result.answer, 'math-engine', sessionId);
@@ -45,17 +49,22 @@ export class VisionAI {
       // 2. Use Groq API if available
       if (this.useGroq) {
         try {
+          console.log('[VisionAI] Attempting Groq API call');
           const groqResponse = await this.queryGroq(userQuery, sessionId);
           if (groqResponse) {
+            console.log('[VisionAI] Groq API success');
             return this.formatResponse(groqResponse, 'groq-ai', sessionId);
           }
         } catch (groqError) {
-          console.warn('Groq API error, falling back to local engines:', groqError.message);
+          console.warn('[VisionAI] Groq API error, falling back to local engines:', groqError.message);
           // Continue to fallback options
         }
+      } else {
+        console.log('[VisionAI] Groq API not configured, using local engines');
       }
 
       // 3. Search Knowledge Base
+      console.log('[VisionAI] Searching Knowledge Base');
       const knowledgeResults = searchKnowledge(userQuery);
       if (knowledgeResults.length > 0) {
         const bestMatch = knowledgeResults[0];
@@ -68,12 +77,14 @@ export class VisionAI {
       }
 
       // 4. Pattern-based responses for common queries
+      console.log('[VisionAI] Checking pattern responses');
       const patternResponse = this.handlePatternQueries(userQuery);
       if (patternResponse) {
         return this.formatResponse(patternResponse, 'system', sessionId);
       }
 
       // 5. Fallback response
+      console.log('[VisionAI] Using fallback response');
       return this.formatResponse(
         this.generateFallbackResponse(userQuery),
         'fallback',
@@ -81,7 +92,7 @@ export class VisionAI {
       );
 
     } catch (error) {
-      console.error('Vision AI Error:', error);
+      console.error('[VisionAI] Error:', error);
       return {
         answer: 'I encountered an error processing your question. Please try rephrasing it.',
         source: 'system',
@@ -97,6 +108,8 @@ export class VisionAI {
     if (!this.groqApiKey) {
       throw new Error('Groq API key not configured');
     }
+
+    console.log('[Groq] Attempting API call with model:', this.groqModel);
 
     // Get conversation history (last 10 messages for context)
     const history = this.getHistory(sessionId).slice(-10);
@@ -144,35 +157,47 @@ Always be helpful, accurate, and educational. If you're unsure, say so and sugge
     // Add current query
     messages.push({ role: 'user', content: userQuery });
 
-    // Call Groq API
-    const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${this.groqApiKey}`,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        model: this.groqModel,
-        messages: messages,
-        temperature: 0.7,
-        max_tokens: 2000,
-        top_p: 0.9,
-        stream: false
-      })
-    });
+    console.log('[Groq] Sending request with', messages.length, 'messages');
 
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}));
-      throw new Error(`Groq API error: ${response.status} - ${errorData.error?.message || 'Unknown error'}`);
+    try {
+      // Call Groq API
+      const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${this.groqApiKey}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          model: this.groqModel,
+          messages: messages,
+          temperature: 0.7,
+          max_tokens: 2000,
+          top_p: 0.9,
+          stream: false
+        })
+      });
+
+      console.log('[Groq] Response status:', response.status);
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        console.error('[Groq] API error:', errorData);
+        throw new Error(`Groq API error: ${response.status} - ${errorData.error?.message || 'Unknown error'}`);
+      }
+
+      const data = await response.json();
+      
+      if (!data.choices || !data.choices[0] || !data.choices[0].message) {
+        console.error('[Groq] Invalid response structure:', data);
+        throw new Error('Invalid response from Groq API');
+      }
+
+      console.log('[Groq] Success! Response length:', data.choices[0].message.content.length);
+      return data.choices[0].message.content;
+    } catch (error) {
+      console.error('[Groq] Request failed:', error.message);
+      throw error;
     }
-
-    const data = await response.json();
-    
-    if (!data.choices || !data.choices[0] || !data.choices[0].message) {
-      throw new Error('Invalid response from Groq API');
-    }
-
-    return data.choices[0].message.content;
   }
 
   /**

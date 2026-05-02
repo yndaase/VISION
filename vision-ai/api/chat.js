@@ -39,6 +39,10 @@ export default async function handler(req, res) {
   }
 
   try {
+    // Log API key status (without exposing the key)
+    const hasApiKey = !!process.env.GROQ_API_KEY;
+    console.log('[API/chat] Groq API Key configured:', hasApiKey);
+    
     const engine = getEngine();
     const result = await engine.query(query.trim(), sessionId || 'anon');
     return res.status(200).json(result);
@@ -46,7 +50,8 @@ export default async function handler(req, res) {
     console.error('[API/chat] Error:', err);
     return res.status(500).json({ 
       error: 'Internal server error.',
-      message: err.message 
+      message: err.message,
+      details: err.stack
     });
   }
 }
