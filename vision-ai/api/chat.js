@@ -12,7 +12,7 @@ function getEngine() {
   if (!_engine) {
     _engine = new VisionAI({
       groqApiKey: process.env.GROQ_API_KEY,
-      groqModel: 'llama-3.3-70b-versatile' // Latest Groq model
+      groqModel: 'llama-3.1-70b-versatile' // Updated to stable model
     });
   }
   return _engine;
