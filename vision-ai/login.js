@@ -37,7 +37,7 @@ function showSuccess(message) {
 // Initialize Google Sign-In
 function initializeGoogleSignIn() {
   if (googleInitialized) {
-    console.log('Google Sign-In already initialized');
+    console.log('[Login] Google Sign-In already initialized');
     return;
   }
   
@@ -60,17 +60,18 @@ function initializeGoogleSignIn() {
         {
           theme: 'filled_blue',
           size: 'large',
-          width: buttonDiv.offsetWidth,
+          width: Math.min(buttonDiv.offsetWidth, 400),
           text: 'continue_with',
           shape: 'rectangular'
         }
       );
+      console.log('[Login] Google button rendered');
     }
     
     googleInitialized = true;
-    console.log('Google Sign-In initialized with button');
+    console.log('[Login] Google Sign-In initialized');
   } else {
-    console.error('Google Sign-In library not loaded');
+    console.error('[Login] Google Sign-In library not loaded, retrying...');
     setTimeout(initializeGoogleSignIn, 500); // Retry after 500ms
   }
 }
@@ -176,7 +177,7 @@ async function handleEmailLogin(e) {
 // Initialize
 document.addEventListener('DOMContentLoaded', () => {
   if (!checkExistingSession()) {
-    console.log('Vision AI Login - Ready');
+    console.log('[Login] Vision AI Login - Ready');
     // Initialize Google Sign-In after page loads
     setTimeout(initializeGoogleSignIn, 1000);
   }
@@ -184,5 +185,4 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Make functions globally available
 window.handleGoogleCredential = handleGoogleCredential;
-window.triggerGoogleSignIn = triggerGoogleSignIn;
 window.handleEmailLogin = handleEmailLogin;

@@ -6,19 +6,29 @@ let userEmail = null;
 let firebaseReady = false;
 
 // Wait for Firebase to be ready
-function waitForFirebase(callback, maxAttempts = 10) {
+function waitForFirebase(callback, maxAttempts = 20) {
   let attempts = 0;
   const checkFirebase = setInterval(() => {
     attempts++;
-    if (typeof window.fbSaveVisionAIMessage === 'function') {
+    // Check if both Firebase functions AND Firebase Auth are ready
+    const functionsReady = typeof window.fbSaveVisionAIMessage === 'function';
+    const authReady = window.fbAuth && window.fbAuth.currentUser;
+    
+    if (functionsReady && authReady) {
       clearInterval(checkFirebase);
       firebaseReady = true;
-      console.log('[Chat] Firebase ready');
+      console.log('[Chat] Firebase ready with authenticated user:', window.fbAuth.currentUser.email);
       if (callback) callback();
     } else if (attempts >= maxAttempts) {
       clearInterval(checkFirebase);
-      console.warn('[Chat] Firebase not available after', maxAttempts, 'attempts');
+      if (!functionsReady) {
+        console.warn('[Chat] Firebase functions not available after', maxAttempts, 'attempts');
+      } else if (!authReady) {
+        console.warn('[Chat] Firebase Auth not ready - user may not be authenticated');
+      }
       if (callback) callback(); // Continue anyway
+    } else if (attempts % 5 === 0) {
+      console.log(`[Chat] Waiting for Firebase... (attempt ${attempts}/${maxAttempts}, functions: ${functionsReady}, auth: ${authReady})`);
     }
   }, 500);
 }
@@ -27,6 +37,7 @@ function waitForFirebase(callback, maxAttempts = 10) {
 function loadUserProfile() {
   const session = sessionStorage.getItem(SESSION_KEY) || localStorage.getItem(SESSION_KEY);
   if (!session) {
+    console.warn('[Chat] No session found, redirecting to login');
     window.location.href = '/login';
     return;
   }
@@ -34,6 +45,8 @@ function loadUserProfile() {
   try {
     const user = JSON.parse(session);
     userEmail = user.email; // Store for Firebase operations
+    
+    console.log('[Chat] User session loaded:', userEmail);
     
     // Update sidebar profile
     const userNameSidebar = document.getElementById('userNameSidebar');
@@ -71,11 +84,18 @@ function loadUserProfile() {
     
     // Wait for Firebase to be ready before loading history
     waitForFirebase(() => {
-      loadChatHistory();
-      loadChatSessions();
+      // Check if Firebase Auth is ready
+      if (window.fbAuth && window.fbAuth.currentUser) {
+        console.log('[Chat] Firebase Auth confirmed:', window.fbAuth.currentUser.email);
+        loadChatHistory();
+        loadChatSessions();
+      } else {
+        console.warn('[Chat] Firebase Auth not ready - chat history will not be saved');
+        // Still allow chat to work, just without persistence
+      }
     });
   } catch (e) {
-    console.error('Error loading user profile:', e);
+    console.error('[Chat] Error loading user profile:', e);
     window.location.href = '/login';
   }
 }
