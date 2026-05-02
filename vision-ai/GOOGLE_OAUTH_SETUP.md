@@ -55,6 +55,8 @@ https://vision-ai-[your-id].vercel.app/chat
 https://vision-ai-[your-id].vercel.app
 ```
 
+**Note:** Use clean URLs without `.html` extension (e.g., `/chat` not `/chat.html`)
+
 ### Step 6: Save Changes
 
 1. Click **Save** at the bottom
@@ -126,13 +128,15 @@ After saving:
 - `https://ai.visionedu.online`
 - `https://vision-ai-[your-id].vercel.app`
 
-**Required Authorized Redirect URIs:**
+**Required Authorized Redirect URIs (Clean URLs - No .html):**
 - `https://ai.visionedu.online/login`
 - `https://ai.visionedu.online/chat`
 - `https://ai.visionedu.online`
 - `https://vision-ai-[your-id].vercel.app/login`
 - `https://vision-ai-[your-id].vercel.app/chat`
 - `https://vision-ai-[your-id].vercel.app`
+
+**Important:** Always use clean URLs like `/chat` and `/login` (without `.html` extension)
 
 ---
 
