@@ -1,0 +1,14 @@
+{
+  "name": "vision-ai",
+  "version": "1.0.0",
+  "description": "Vision AI - WASSCE Intelligence Engine",
+  "main": "index.html",
+  "scripts": {
+    "dev": "vercel dev",
+    "build": "echo 'No build step required'",
+    "deploy": "vercel --prod"
+  },
+  "keywords": ["vision", "ai", "wassce", "education", "ghana"],
+  "author": "Vision Education",
+  "license": "MIT"
+}
