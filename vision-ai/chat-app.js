@@ -324,7 +324,7 @@ function addMessage(role, content, source = null, saveToFirebase = true) {
     const sourceMap = {
       'knowledge-base': { icon: '📚', label: 'Knowledge Base' },
       'math-engine': { icon: '🔢', label: 'Math Engine' },
-      'groq-ai': { icon: '🤖', label: 'Groq AI' },
+      'groq-ai': { icon: '🤖', label: 'Vision AI' },
       'system': { icon: '⚙️', label: 'Vision AI' },
       'fallback': { icon: '💡', label: 'Suggestion' }
     };
