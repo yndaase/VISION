@@ -16,7 +16,7 @@
   <meta property="og:type" content="website" />
   
   <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
   
   <style>
     * {
@@ -26,358 +26,761 @@
     }
 
     body {
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      font-family: 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: linear-gradient(135deg, #e0f7fa 0%, #fff9c4 50%, #ffe0b2 100%);
       min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
       overflow-x: hidden;
-      position: relative;
     }
 
-    /* Animated background orbs */
-    .bg-orb {
-      position: fixed;
-      border-radius: 50%;
-      filter: blur(80px);
-      opacity: 0.3;
-      animation: float 20s infinite ease-in-out;
-      z-index: 0;
+    /* Navigation */
+    nav {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      padding: 20px 0;
+      box-shadow: 0 2px 20px rgba(0,0,0,0.05);
+      position: sticky;
+      top: 0;
+      z-index: 100;
     }
 
-    .bg-orb-1 {
-      width: 500px;
-      height: 500px;
-      background: #f093fb;
-      top: -10%;
-      left: -10%;
-      animation-delay: 0s;
-    }
-
-    .bg-orb-2 {
-      width: 400px;
-      height: 400px;
-      background: #4facfe;
-      bottom: -10%;
-      right: -10%;
-      animation-delay: 7s;
-    }
-
-    .bg-orb-3 {
-      width: 350px;
-      height: 350px;
-      background: #43e97b;
-      top: 50%;
-      left: 50%;
-      animation-delay: 14s;
-    }
-
-    @keyframes float {
-      0%, 100% { transform: translate(0, 0) scale(1); }
-      33% { transform: translate(30px, -30px) scale(1.1); }
-      66% { transform: translate(-20px, 20px) scale(0.9); }
-    }
-
-    .container {
-      position: relative;
-      z-index: 1;
-      max-width: 1200px;
-      width: 90%;
+    .nav-container {
+      max-width: 1400px;
       margin: 0 auto;
-      padding: 40px 20px;
+      padding: 0 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
     }
 
-    .hero {
-      text-align: center;
-      color: white;
-      margin-bottom: 60px;
-    }
-
-    .logo-large {
+    .logo {
       display: flex;
       align-items: center;
-      justify-content: center;
-      gap: 15px;
-      margin-bottom: 30px;
+      gap: 12px;
+      text-decoration: none;
     }
 
-    .logo-icon-large {
-      width: 80px;
-      height: 80px;
+    .logo-icon {
+      width: 50px;
+      height: 50px;
       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      border-radius: 20px;
+      border-radius: 12px;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 48px;
+      font-size: 28px;
       font-weight: 800;
       color: white;
-      box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+      box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
     }
 
-    .logo-text-large {
-      font-size: 56px;
-      font-weight: 800;
-      letter-spacing: -2px;
+    .logo-text {
+      font-size: 28px;
+      font-weight: 700;
+      color: #2d3748;
     }
 
-    .logo-text-large span {
-      background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    .logo-text span {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
     }
 
-    .hero h1 {
-      font-size: 48px;
-      font-weight: 700;
+    .nav-links {
+      display: flex;
+      gap: 40px;
+      align-items: center;
+      list-style: none;
+    }
+
+    .nav-links a {
+      text-decoration: none;
+      color: #4a5568;
+      font-weight: 500;
+      font-size: 16px;
+      transition: color 0.3s;
+      position: relative;
+    }
+
+    .nav-links a:hover {
+      color: #667eea;
+    }
+
+    .nav-links a.active {
+      color: #667eea;
+    }
+
+    .nav-links a.active::after {
+      content: '';
+      position: absolute;
+      bottom: -5px;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border-radius: 2px;
+    }
+
+    .nav-cta {
+      display: flex;
+      gap: 15px;
+      align-items: center;
+    }
+
+    .btn-login {
+      padding: 10px 24px;
+      border-radius: 8px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.3s;
+      font-size: 15px;
+      border: 2px solid #667eea;
+      color: #667eea;
+      background: transparent;
+    }
+
+    .btn-login:hover {
+      background: #667eea;
+      color: white;
+    }
+
+    .btn-start {
+      padding: 12px 28px;
+      border-radius: 8px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.3s;
+      font-size: 15px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+    }
+
+    .btn-start:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
+    }
+
+    /* Hero Section */
+    .hero {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 80px 40px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 60px;
+      align-items: center;
+    }
+
+    .hero-content {
+      animation: fadeInLeft 0.8s ease-out;
+    }
+
+    .badge {
+      display: inline-block;
+      background: linear-gradient(135deg, #ffd54f 0%, #ffb300 100%);
+      color: #2d3748;
+      padding: 8px 20px;
+      border-radius: 20px;
+      font-weight: 600;
+      font-size: 14px;
       margin-bottom: 20px;
+      box-shadow: 0 4px 15px rgba(255, 179, 0, 0.3);
+    }
+
+    .hero h1 {
+      font-size: 56px;
+      font-weight: 800;
       line-height: 1.2;
+      margin-bottom: 20px;
+      color: #2d3748;
+    }
+
+    .hero h1 .highlight {
+      background: linear-gradient(135deg, #ff9800 0%, #ff5722 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero h1 .highlight-2 {
+      background: linear-gradient(135deg, #4caf50 0%, #2e7d32 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero h1 .highlight-3 {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
     }
 
     .hero p {
-      font-size: 20px;
-      opacity: 0.9;
-      max-width: 600px;
-      margin: 0 auto 40px;
-      line-height: 1.6;
+      font-size: 18px;
+      color: #4a5568;
+      line-height: 1.8;
+      margin-bottom: 30px;
+      max-width: 500px;
     }
 
-    .cta-buttons {
+    .hero-buttons {
       display: flex;
       gap: 20px;
-      justify-content: center;
-      flex-wrap: wrap;
+      margin-bottom: 40px;
     }
 
-    .btn {
+    .btn-primary {
       padding: 16px 40px;
       border-radius: 12px;
-      font-size: 18px;
       font-weight: 600;
       text-decoration: none;
-      transition: all 0.3s ease;
-      cursor: pointer;
-      border: none;
+      transition: all 0.3s;
+      font-size: 16px;
+      background: linear-gradient(135deg, #00897b 0%, #00695c 100%);
+      color: white;
+      box-shadow: 0 6px 20px rgba(0, 137, 123, 0.4);
       display: inline-flex;
       align-items: center;
       gap: 10px;
     }
 
-    .btn-primary {
-      background: white;
-      color: #667eea;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-    }
-
     .btn-primary:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+      transform: translateY(-3px);
+      box-shadow: 0 8px 25px rgba(0, 137, 123, 0.5);
     }
 
     .btn-secondary {
-      background: rgba(255,255,255,0.2);
-      color: white;
-      backdrop-filter: blur(10px);
-      border: 2px solid rgba(255,255,255,0.3);
+      padding: 16px 40px;
+      border-radius: 12px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.3s;
+      font-size: 16px;
+      background: white;
+      color: #00897b;
+      border: 2px solid #00897b;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
     }
 
     .btn-secondary:hover {
-      background: rgba(255,255,255,0.3);
-      transform: translateY(-2px);
+      background: #00897b;
+      color: white;
     }
 
+    /* Hero Image */
+    .hero-image {
+      position: relative;
+      animation: fadeInRight 0.8s ease-out;
+    }
+
+    .hero-image-container {
+      position: relative;
+      background: white;
+      border-radius: 30px;
+      padding: 40px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+    }
+
+    .student-illustration {
+      width: 100%;
+      max-width: 500px;
+      height: auto;
+      display: block;
+      margin: 0 auto;
+    }
+
+    .floating-card {
+      position: absolute;
+      background: white;
+      border-radius: 15px;
+      padding: 15px 20px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      animation: float 3s ease-in-out infinite;
+    }
+
+    .floating-card-1 {
+      top: 10%;
+      left: -10%;
+      animation-delay: 0s;
+    }
+
+    .floating-card-2 {
+      top: 50%;
+      right: -10%;
+      animation-delay: 1s;
+    }
+
+    .floating-card-3 {
+      bottom: 10%;
+      left: -5%;
+      animation-delay: 2s;
+    }
+
+    .card-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+    }
+
+    .card-icon-1 { background: linear-gradient(135deg, #ff9800 0%, #ff5722 100%); }
+    .card-icon-2 { background: linear-gradient(135deg, #4caf50 0%, #2e7d32 100%); }
+    .card-icon-3 { background: linear-gradient(135deg, #2196f3 0%, #1565c0 100%); }
+
+    .card-content h4 {
+      font-size: 14px;
+      font-weight: 600;
+      color: #2d3748;
+      margin-bottom: 2px;
+    }
+
+    .card-content p {
+      font-size: 12px;
+      color: #718096;
+    }
+
+    .rating {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      margin-top: 5px;
+    }
+
+    .stars {
+      color: #ffd54f;
+      font-size: 14px;
+    }
+
+    .rating-text {
+      font-size: 12px;
+      font-weight: 600;
+      color: #2d3748;
+    }
+
+    /* Features Section */
     .features {
+      max-width: 1400px;
+      margin: 80px auto;
+      padding: 0 40px;
+    }
+
+    .section-header {
+      text-align: center;
+      margin-bottom: 60px;
+    }
+
+    .section-badge {
+      display: inline-block;
+      background: rgba(102, 126, 234, 0.1);
+      color: #667eea;
+      padding: 8px 20px;
+      border-radius: 20px;
+      font-weight: 600;
+      font-size: 14px;
+      margin-bottom: 15px;
+    }
+
+    .section-header h2 {
+      font-size: 42px;
+      font-weight: 800;
+      color: #2d3748;
+      margin-bottom: 15px;
+    }
+
+    .section-header p {
+      font-size: 18px;
+      color: #718096;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .features-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
       gap: 30px;
-      margin-top: 60px;
     }
 
     .feature-card {
-      background: rgba(255,255,255,0.15);
-      backdrop-filter: blur(10px);
+      background: white;
       border-radius: 20px;
-      padding: 30px;
-      border: 1px solid rgba(255,255,255,0.2);
-      transition: all 0.3s ease;
+      padding: 35px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+      transition: all 0.3s;
+      border: 2px solid transparent;
     }
 
     .feature-card:hover {
       transform: translateY(-5px);
-      background: rgba(255,255,255,0.2);
-      box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+      box-shadow: 0 15px 40px rgba(0,0,0,0.12);
+      border-color: #667eea;
     }
 
     .feature-icon {
-      font-size: 48px;
+      width: 70px;
+      height: 70px;
+      border-radius: 15px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 32px;
       margin-bottom: 20px;
     }
 
+    .feature-icon-1 { background: linear-gradient(135deg, #ff9800 0%, #ff5722 100%); }
+    .feature-icon-2 { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+    .feature-icon-3 { background: linear-gradient(135deg, #4caf50 0%, #2e7d32 100%); }
+    .feature-icon-4 { background: linear-gradient(135deg, #2196f3 0%, #1565c0 100%); }
+
     .feature-card h3 {
-      color: white;
       font-size: 22px;
       font-weight: 700;
+      color: #2d3748;
       margin-bottom: 12px;
     }
 
     .feature-card p {
-      color: rgba(255,255,255,0.9);
-      font-size: 16px;
-      line-height: 1.6;
+      font-size: 15px;
+      color: #718096;
+      line-height: 1.7;
     }
 
+    /* Stats Section */
     .stats {
-      display: flex;
-      justify-content: center;
-      gap: 60px;
-      margin-top: 60px;
-      flex-wrap: wrap;
+      max-width: 1400px;
+      margin: 80px auto;
+      padding: 60px 40px;
+      background: white;
+      border-radius: 30px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.08);
     }
 
-    .stat {
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 40px;
       text-align: center;
-      color: white;
+    }
+
+    .stat-item {
+      padding: 20px;
     }
 
     .stat-number {
       font-size: 48px;
       font-weight: 800;
-      margin-bottom: 8px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 10px;
     }
 
     .stat-label {
       font-size: 16px;
-      opacity: 0.9;
+      color: #718096;
+      font-weight: 500;
     }
 
-    @media (max-width: 768px) {
-      .logo-text-large {
-        font-size: 40px;
-      }
+    /* Footer */
+    footer {
+      background: #2d3748;
+      color: white;
+      padding: 40px;
+      text-align: center;
+      margin-top: 80px;
+    }
 
-      .logo-icon-large {
-        width: 60px;
-        height: 60px;
-        font-size: 36px;
+    footer p {
+      font-size: 15px;
+      opacity: 0.8;
+    }
+
+    footer a {
+      color: #667eea;
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    /* Animations */
+    @keyframes fadeInLeft {
+      from {
+        opacity: 0;
+        transform: translateX(-30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    @keyframes fadeInRight {
+      from {
+        opacity: 0;
+        transform: translateX(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    @keyframes float {
+      0%, 100% {
+        transform: translateY(0);
+      }
+      50% {
+        transform: translateY(-15px);
+      }
+    }
+
+    /* Mobile Responsive */
+    @media (max-width: 1024px) {
+      .hero {
+        grid-template-columns: 1fr;
+        padding: 60px 30px;
       }
 
       .hero h1 {
-        font-size: 32px;
+        font-size: 42px;
+      }
+
+      .floating-card {
+        display: none;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .nav-container {
+        padding: 0 20px;
+      }
+
+      .nav-links {
+        display: none;
+      }
+
+      .hero h1 {
+        font-size: 36px;
       }
 
       .hero p {
-        font-size: 18px;
-      }
-
-      .btn {
-        padding: 14px 30px;
         font-size: 16px;
       }
 
-      .features {
+      .hero-buttons {
+        flex-direction: column;
+      }
+
+      .btn-primary, .btn-secondary {
+        width: 100%;
+        justify-content: center;
+      }
+
+      .section-header h2 {
+        font-size: 32px;
+      }
+
+      .features-grid {
         grid-template-columns: 1fr;
       }
 
-      .stats {
-        gap: 40px;
-      }
-
-      .stat-number {
-        font-size: 36px;
+      .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
       }
     }
   </style>
 </head>
 <body>
-  <span class="bg-orb bg-orb-1"></span>
-  <span class="bg-orb bg-orb-2"></span>
-  <span class="bg-orb bg-orb-3"></span>
+  <!-- Navigation -->
+  <nav>
+    <div class="nav-container">
+      <a href="/" class="logo">
+        <div class="logo-icon">V</div>
+        <div class="logo-text">Vision <span>AI</span></div>
+      </a>
+      
+      <ul class="nav-links">
+        <li><a href="/" class="active">Home</a></li>
+        <li><a href="#features">Features</a></li>
+        <li><a href="#about">About</a></li>
+        <li><a href="https://visionedu.online" target="_blank">Main Platform</a></li>
+      </ul>
 
-  <div class="container">
-    <div class="hero">
-      <div class="logo-large">
-        <div class="logo-icon-large">V</div>
-        <div class="logo-text-large">Vision <span>AI</span></div>
+      <div class="nav-cta">
+        <a href="/login" class="btn-login">Login</a>
+        <a href="/chat" class="btn-start">Get Started</a>
       </div>
+    </div>
+  </nav>
 
-      <h1>Your WASSCE Intelligence Engine</h1>
-      <p>Get instant answers, step-by-step solutions, and personalized study help. Built specifically for Ghanaian students preparing for WASSCE exams.</p>
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="hero-content">
+      <div class="badge">🎓 AI-Powered Learning</div>
+      
+      <h1>
+        <span class="highlight">BETTER</span><br>
+        <span class="highlight-2">FUTURE</span> FOR<br>
+        <span class="highlight-3">YOUR KIDS</span>
+      </h1>
 
-      <div class="cta-buttons">
-        <a href="/chat" class="btn btn-primary">
+      <p>
+        Empower WASSCE students with instant AI assistance. Get step-by-step solutions, 
+        comprehensive explanations, and personalized study help across all subjects.
+      </p>
+
+      <div class="hero-buttons">
+        <a href="/chat" class="btn-primary">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M19 13l-1.26-2.74L15 9l2.74-1.26L19 5l1.26 2.74L23 9l-2.74 1.26L19 13z"/>
-            <path d="M9 13l-1.26-2.74L5 9l2.74-1.26L9 5l1.26 2.74L13 9l-2.74 1.26L9 13z"/>
+            <circle cx="12" cy="12" r="10"/>
+            <polygon points="10 8 16 12 10 16 10 8"/>
           </svg>
           Start Learning
         </a>
-        <a href="https://visionedu.online" class="btn btn-secondary">
+        <a href="#features" class="btn-secondary">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+            <circle cx="12" cy="12" r="10"/>
+            <line x1="12" y1="16" x2="12" y2="12"/>
+            <line x1="12" y1="8" x2="12.01" y2="8"/>
           </svg>
-          Main Platform
+          How It Works
         </a>
       </div>
     </div>
 
-    <div class="features">
+    <div class="hero-image">
+      <div class="hero-image-container">
+        <!-- Student Illustration -->
+        <svg class="student-illustration" viewBox="0 0 400 500" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <!-- Graduation Cap -->
+          <path d="M200 100 L300 140 L200 180 L100 140 Z" fill="#1a237e"/>
+          <rect x="190" y="180" width="20" height="80" fill="#1a237e"/>
+          <circle cx="200" cy="270" r="15" fill="#1a237e"/>
+          
+          <!-- Face -->
+          <circle cx="200" cy="220" r="60" fill="#ffcc80"/>
+          
+          <!-- Glasses -->
+          <circle cx="180" cy="210" r="20" fill="none" stroke="#333" stroke-width="3"/>
+          <circle cx="220" cy="210" r="20" fill="none" stroke="#333" stroke-width="3"/>
+          <line x1="200" y1="210" x2="200" y2="210" stroke="#333" stroke-width="3"/>
+          
+          <!-- Smile -->
+          <path d="M180 235 Q200 245 220 235" fill="none" stroke="#333" stroke-width="2"/>
+          
+          <!-- Body (Yellow Shirt) -->
+          <rect x="140" y="280" width="120" height="150" rx="10" fill="#ffd54f"/>
+          
+          <!-- Book -->
+          <rect x="260" y="320" width="60" height="80" rx="5" fill="#42a5f5"/>
+          <line x1="290" y1="320" x2="290" y2="400" stroke="#1976d2" stroke-width="2"/>
+          
+          <!-- Arm pointing up -->
+          <path d="M260 300 L280 250 L290 255" fill="#ffcc80"/>
+          <circle cx="290" cy="245" r="8" fill="#ffcc80"/>
+        </svg>
+
+        <!-- Floating Cards -->
+        <div class="floating-card floating-card-1">
+          <div class="card-icon card-icon-1">📐</div>
+          <div class="card-content">
+            <h4>Best Learning</h4>
+            <p>Step-by-step solutions</p>
+          </div>
+        </div>
+
+        <div class="floating-card floating-card-2">
+          <div class="card-icon card-icon-2">🎯</div>
+          <div class="card-content">
+            <h4>Korest Patha</h4>
+            <div class="rating">
+              <span class="stars">★★★★★</span>
+              <span class="rating-text">4.7</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="floating-card floating-card-3">
+          <div class="card-icon card-icon-3">🔬</div>
+          <div class="card-content">
+            <h4>Sport Area</h4>
+            <p>All subjects covered</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features Section -->
+  <section class="features" id="features">
+    <div class="section-header">
+      <div class="section-badge">Why Choose Us</div>
+      <h2>Everything You Need to Excel</h2>
+      <p>Comprehensive AI-powered learning tools designed specifically for WASSCE students</p>
+    </div>
+
+    <div class="features-grid">
       <div class="feature-card">
-        <div class="feature-icon">📐</div>
+        <div class="feature-icon feature-icon-1">📐</div>
         <h3>Mathematics Solver</h3>
-        <p>Solve equations step-by-step. From basic arithmetic to quadratic equations, get detailed solutions instantly.</p>
+        <p>Solve equations step-by-step. From basic arithmetic to quadratic equations with detailed explanations.</p>
       </div>
 
       <div class="feature-card">
-        <div class="feature-icon">📚</div>
+        <div class="feature-icon feature-icon-2">📚</div>
         <h3>WASSCE Curriculum</h3>
         <p>Complete coverage of Mathematics, English, Science, Social Studies, and Economics topics.</p>
       </div>
 
       <div class="feature-card">
-        <div class="feature-icon">⚡</div>
+        <div class="feature-icon feature-icon-3">⚡</div>
         <h3>Instant Answers</h3>
-        <p>No waiting. Get responses in under 200ms. Works offline with no API limits or costs.</p>
+        <p>Get responses in under 200ms. Works offline with no API limits or costs. Always available.</p>
       </div>
 
       <div class="feature-card">
-        <div class="feature-icon">🎯</div>
+        <div class="feature-icon feature-icon-4">🎯</div>
         <h3>Study Tips</h3>
         <p>Exam strategies, study techniques, and personalized guidance for WASSCE success.</p>
       </div>
-
-      <div class="feature-card">
-        <div class="feature-icon">🔒</div>
-        <h3>100% Free</h3>
-        <p>No subscriptions, no hidden fees. Unlimited queries for all students.</p>
-      </div>
-
-      <div class="feature-card">
-        <div class="feature-icon">📱</div>
-        <h3>Mobile Ready</h3>
-        <p>Works perfectly on any device. Study anywhere, anytime.</p>
-      </div>
     </div>
+  </section>
 
-    <div class="stats">
-      <div class="stat">
+  <!-- Stats Section -->
+  <section class="stats">
+    <div class="stats-grid">
+      <div class="stat-item">
         <div class="stat-number">11+</div>
         <div class="stat-label">Topics Covered</div>
       </div>
-      <div class="stat">
+      <div class="stat-item">
         <div class="stat-number">5</div>
         <div class="stat-label">Core Subjects</div>
       </div>
-      <div class="stat">
+      <div class="stat-item">
         <div class="stat-number">∞</div>
         <div class="stat-label">Free Queries</div>
       </div>
-      <div class="stat">
+      <div class="stat-item">
         <div class="stat-number">&lt;200ms</div>
         <div class="stat-label">Response Time</div>
       </div>
     </div>
-  </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <p>Built with ❤️ for WASSCE Students | <a href="https://visionedu.online" target="_blank">Vision Education</a></p>
+    <p style="margin-top: 10px; font-size: 13px;">© 2026 Vision AI. All rights reserved.</p>
+  </footer>
 </body>
 </html>
