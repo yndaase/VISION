@@ -82,8 +82,22 @@ async function handleGoogleCredential(response) {
       role: 'student'
     };
 
+    // Store session locally
     sessionStorage.setItem(SESSION_KEY, JSON.stringify(user));
     localStorage.setItem(SESSION_KEY, JSON.stringify(user));
+
+    // Sign into Firebase Auth with Google credential
+    if (typeof window.fbSignInWithGoogle === 'function') {
+      console.log('[Login] Signing into Firebase Auth...');
+      const fbResult = await window.fbSignInWithGoogle(response.credential);
+      if (fbResult.success) {
+        console.log('[Login] Firebase Auth successful');
+      } else {
+        console.warn('[Login] Firebase Auth failed:', fbResult.error);
+      }
+    } else {
+      console.warn('[Login] Firebase Auth not available');
+    }
 
     showSuccess('Welcome, ' + user.name + '! Redirecting to Vision AI...');
     
