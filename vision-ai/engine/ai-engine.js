@@ -1,14 +1,17 @@
 /**
  * Vision AI Engine - Main Intelligence System
- * Self-contained AI without external APIs
+ * Powered by Groq API with local fallbacks
  */
 
 import { searchKnowledge } from './knowledge-base.js';
 import { MathEngine } from './math-engine.js';
 
 export class VisionAI {
-  constructor() {
+  constructor(options = {}) {
     this.sessions = new Map(); // Store conversation history
+    this.groqApiKey = options.groqApiKey || process.env.GROQ_API_KEY;
+    this.groqModel = options.groqModel || 'llama-3.3-70b-versatile'; // Latest Groq model
+    this.useGroq = !!this.groqApiKey;
   }
 
   /**
@@ -39,7 +42,20 @@ export class VisionAI {
         }
       }
 
-      // 2. Search Knowledge Base
+      // 2. Use Groq API if available
+      if (this.useGroq) {
+        try {
+          const groqResponse = await this.queryGroq(userQuery, sessionId);
+          if (groqResponse) {
+            return this.formatResponse(groqResponse, 'groq-ai', sessionId);
+          }
+        } catch (groqError) {
+          console.warn('Groq API error, falling back to local engines:', groqError.message);
+          // Continue to fallback options
+        }
+      }
+
+      // 3. Search Knowledge Base
       const knowledgeResults = searchKnowledge(userQuery);
       if (knowledgeResults.length > 0) {
         const bestMatch = knowledgeResults[0];
@@ -51,13 +67,13 @@ export class VisionAI {
         );
       }
 
-      // 3. Pattern-based responses for common queries
+      // 4. Pattern-based responses for common queries
       const patternResponse = this.handlePatternQueries(userQuery);
       if (patternResponse) {
         return this.formatResponse(patternResponse, 'system', sessionId);
       }
 
-      // 4. Fallback response
+      // 5. Fallback response
       return this.formatResponse(
         this.generateFallbackResponse(userQuery),
         'fallback',
@@ -72,6 +88,91 @@ export class VisionAI {
         error: true
       };
     }
+  }
+
+  /**
+   * Query Groq API
+   */
+  async queryGroq(userQuery, sessionId) {
+    if (!this.groqApiKey) {
+      throw new Error('Groq API key not configured');
+    }
+
+    // Get conversation history (last 10 messages for context)
+    const history = this.getHistory(sessionId).slice(-10);
+    
+    // Build messages array for Groq
+    const messages = [
+      {
+        role: 'system',
+        content: `You are Vision AI, an intelligent learning assistant for WASSCE (West African Senior School Certificate Examination) students in Ghana.
+
+**Your Role:**
+- Help students understand WASSCE subjects: Mathematics, English, Science, Social Studies, Economics
+- Provide clear, accurate, and educational responses
+- Give step-by-step explanations for complex topics
+- Use examples relevant to Ghanaian students
+- Be encouraging and supportive
+
+**Response Style:**
+- Clear and concise
+- Use markdown formatting (bold, lists, code blocks)
+- Break down complex topics into simple steps
+- Provide examples when helpful
+- Stay focused on WASSCE curriculum
+
+**Subjects You Cover:**
+- **Mathematics:** Algebra, geometry, trigonometry, calculus basics
+- **English Language:** Grammar, writing, comprehension, formal letters
+- **Integrated Science:** Biology, chemistry, physics
+- **Social Studies:** Ghana history, government, geography, citizenship
+- **Economics:** Demand/supply, market systems, production
+
+Always be helpful, accurate, and educational. If you're unsure, say so and suggest how the student can find the answer.`
+      }
+    ];
+
+    // Add conversation history
+    history.forEach(msg => {
+      if (msg.role === 'user') {
+        messages.push({ role: 'user', content: msg.content });
+      } else if (msg.role === 'assistant') {
+        messages.push({ role: 'assistant', content: msg.content });
+      }
+    });
+
+    // Add current query
+    messages.push({ role: 'user', content: userQuery });
+
+    // Call Groq API
+    const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${this.groqApiKey}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        model: this.groqModel,
+        messages: messages,
+        temperature: 0.7,
+        max_tokens: 2000,
+        top_p: 0.9,
+        stream: false
+      })
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(`Groq API error: ${response.status} - ${errorData.error?.message || 'Unknown error'}`);
+    }
+
+    const data = await response.json();
+    
+    if (!data.choices || !data.choices[0] || !data.choices[0].message) {
+      throw new Error('Invalid response from Groq API');
+    }
+
+    return data.choices[0].message.content;
   }
 
   /**

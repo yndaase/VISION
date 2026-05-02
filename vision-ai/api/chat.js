@@ -1,6 +1,6 @@
 /**
  * Vercel Serverless Function — /api/chat
- * Vision AI Chat Endpoint (Self-Contained)
+ * Vision AI Chat Endpoint (Powered by Groq)
  */
 
 import { VisionAI } from '../engine/ai-engine.js';
@@ -10,7 +10,10 @@ let _engine = null;
 
 function getEngine() {
   if (!_engine) {
-    _engine = new VisionAI();
+    _engine = new VisionAI({
+      groqApiKey: process.env.GROQ_API_KEY,
+      groqModel: 'llama-3.3-70b-versatile' // Latest Groq model
+    });
   }
   return _engine;
 }

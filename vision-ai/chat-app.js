@@ -178,7 +178,8 @@ function addMessage(role, content, source = null) {
     const sourceMap = {
       'knowledge-base': { icon: '📚', label: 'Knowledge Base' },
       'math-engine': { icon: '🔢', label: 'Math Engine' },
-      'system': { icon: '🤖', label: 'Vision AI' },
+      'groq-ai': { icon: '🤖', label: 'Groq AI' },
+      'system': { icon: '⚙️', label: 'Vision AI' },
       'fallback': { icon: '💡', label: 'Suggestion' }
     };
     const sourceInfo = sourceMap[source] || { icon: '💡', label: source };
