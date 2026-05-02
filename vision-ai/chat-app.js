@@ -2,6 +2,7 @@ const SESSION_KEY = "waec_session";
 const SESSION_ID = 'session_' + Math.random().toString(36).slice(2);
 let currentSubject = '';
 let isLoading = false;
+let userEmail = null;
 
 // Load user profile
 function loadUserProfile() {
@@ -13,6 +14,7 @@ function loadUserProfile() {
 
   try {
     const user = JSON.parse(session);
+    userEmail = user.email; // Store for Firebase operations
     
     // Update sidebar profile
     const userNameSidebar = document.getElementById('userNameSidebar');
@@ -47,6 +49,12 @@ function loadUserProfile() {
       };
       userAvatarSidebar.appendChild(img);
     }
+    
+    // Load chat history from Firebase
+    loadChatHistory();
+    
+    // Load chat sessions for sidebar
+    loadChatSessions();
   } catch (e) {
     console.error('Error loading user profile:', e);
     window.location.href = '/login';
@@ -100,6 +108,119 @@ function startNewChat() {
   });
 }
 
+// Load chat history from Firebase
+async function loadChatHistory() {
+  if (!userEmail || typeof window.fbLoadVisionAIHistory !== 'function') {
+    console.log('[Chat] Firebase not available, skipping history load');
+    return;
+  }
+  
+  try {
+    const messages = await window.fbLoadVisionAIHistory(userEmail, SESSION_ID);
+    if (messages && messages.length > 0) {
+      hideEmptyState();
+      messages.forEach(msg => {
+        if (msg.role === 'user') {
+          addMessage('user', msg.content, null, false); // Don't save again
+        } else if (msg.role === 'assistant') {
+          addMessage('assistant', msg.content, msg.source, false); // Don't save again
+        }
+      });
+      console.log(`[Chat] Loaded ${messages.length} messages from history`);
+    }
+  } catch (error) {
+    console.warn('[Chat] Failed to load history:', error);
+  }
+}
+
+// Load chat sessions for sidebar
+async function loadChatSessions() {
+  if (!userEmail || typeof window.fbGetVisionAISessions !== 'function') {
+    return;
+  }
+  
+  try {
+    const sessions = await window.fbGetVisionAISessions(userEmail);
+    if (!sessions || sessions.length === 0) return;
+    
+    const now = new Date();
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const weekAgo = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000);
+    
+    const todayChats = [];
+    const weekChats = [];
+    
+    sessions.forEach(session => {
+      const sessionDate = new Date(session.lastUpdated);
+      const item = {
+        sessionId: session.sessionId,
+        title: session.lastMessage || 'New Chat',
+        date: sessionDate
+      };
+      
+      if (sessionDate >= today) {
+        todayChats.push(item);
+      } else if (sessionDate >= weekAgo) {
+        weekChats.push(item);
+      }
+    });
+    
+    // Render today's chats
+    const todayContainer = document.getElementById('todayChats');
+    if (todayContainer && todayChats.length > 0) {
+      todayContainer.innerHTML = todayChats.map(chat => `
+        <div class="history-item" onclick="loadSession('${chat.sessionId}')">
+          ${chat.title}
+        </div>
+      `).join('');
+    }
+    
+    // Render week's chats
+    const weekContainer = document.getElementById('weekChats');
+    if (weekContainer && weekChats.length > 0) {
+      weekContainer.innerHTML = weekChats.map(chat => `
+        <div class="history-item" onclick="loadSession('${chat.sessionId}')">
+          ${chat.title}
+        </div>
+      `).join('');
+    }
+    
+    console.log(`[Chat] Loaded ${sessions.length} sessions`);
+  } catch (error) {
+    console.warn('[Chat] Failed to load sessions:', error);
+  }
+}
+
+// Load a specific session
+async function loadSession(sessionId) {
+  if (!userEmail || !sessionId) return;
+  
+  try {
+    // Clear current chat
+    const messages = document.getElementById('messages');
+    messages.innerHTML = '';
+    hideEmptyState();
+    
+    // Load session messages
+    const sessionMessages = await window.fbLoadVisionAIHistory(userEmail, sessionId);
+    if (sessionMessages && sessionMessages.length > 0) {
+      sessionMessages.forEach(msg => {
+        if (msg.role === 'user') {
+          addMessage('user', msg.content, null, false);
+        } else if (msg.role === 'assistant') {
+          addMessage('assistant', msg.content, msg.source, false);
+        }
+      });
+    }
+    
+    // Close sidebar on mobile
+    const sidebar = document.getElementById('sidebar');
+    if (sidebar) sidebar.classList.remove('show');
+  } catch (error) {
+    console.error('[Chat] Failed to load session:', error);
+  }
+}
+
 // Select subject
 function selectSubject(button, subject) {
   currentSubject = subject;
@@ -113,6 +234,12 @@ function selectSubject(button, subject) {
 function clearChat() {
   if (confirm('Are you sure you want to clear this chat?')) {
     startNewChat();
+    
+    // Optionally delete from Firebase
+    if (userEmail && typeof window.fbDeleteVisionAISession === 'function') {
+      window.fbDeleteVisionAISession(userEmail, SESSION_ID)
+        .catch(err => console.warn('[Chat] Failed to delete session:', err));
+    }
   }
 }
 
@@ -158,7 +285,7 @@ function hideEmptyState() {
 }
 
 // Add message to chat
-function addMessage(role, content, source = null) {
+function addMessage(role, content, source = null, saveToFirebase = true) {
   hideEmptyState();
   
   const messages = document.getElementById('messages');
@@ -200,6 +327,19 @@ function addMessage(role, content, source = null) {
   
   messages.appendChild(messageDiv);
   scrollToBottom();
+  
+  // Save to Firebase
+  if (saveToFirebase && userEmail && typeof window.fbSaveVisionAIMessage === 'function') {
+    const messageData = {
+      role: role === 'user' ? 'user' : 'assistant',
+      content: content,
+      timestamp: Date.now()
+    };
+    if (source) messageData.source = source;
+    
+    window.fbSaveVisionAIMessage(userEmail, SESSION_ID, messageData)
+      .catch(err => console.warn('[Chat] Failed to save message:', err));
+  }
   
   return messageDiv;
 }
@@ -356,3 +496,4 @@ window.handleKeyPress = handleKeyPress;
 window.ask = ask;
 window.sendMessage = sendMessage;
 window.attachFile = attachFile;
+window.loadSession = loadSession;

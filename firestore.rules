@@ -122,6 +122,17 @@ service cloud.firestore {
       allow create, update, delete: if isAdmin();
     }
     
+    // Vision AI Chat History
+    match /vision_ai_chats/{email}/sessions/{sessionId} {
+      // Users can read/write their own chat sessions
+      allow read, write: if isSignedIn() && request.auth.token.email.toLowerCase() == email.toLowerCase();
+      
+      // Allow reading messages subcollection
+      match /messages/{messageId} {
+        allow read, write: if isSignedIn() && request.auth.token.email.toLowerCase() == email.toLowerCase();
+      }
+    }
+    
     // Default deny all other collections
     match /{document=**} {
       allow read, write: if false;
