@@ -48,30 +48,30 @@ function initializeGoogleSignIn() {
       auto_select: false,
       cancel_on_tap_outside: true
     });
+    
+    // Render the Google button
+    const buttonDiv = document.getElementById('googleSignInBtn');
+    if (buttonDiv) {
+      // Clear existing content
+      buttonDiv.innerHTML = '';
+      // Render Google's button
+      google.accounts.id.renderButton(
+        buttonDiv,
+        {
+          theme: 'filled_blue',
+          size: 'large',
+          width: buttonDiv.offsetWidth,
+          text: 'continue_with',
+          shape: 'rectangular'
+        }
+      );
+    }
+    
     googleInitialized = true;
-    console.log('Google Sign-In initialized');
+    console.log('Google Sign-In initialized with button');
   } else {
     console.error('Google Sign-In library not loaded');
     setTimeout(initializeGoogleSignIn, 500); // Retry after 500ms
-  }
-}
-
-// Handle Google Sign-In button click
-function triggerGoogleSignIn() {
-  console.log('[Login] Google Sign-In button clicked');
-  try {
-    if (typeof google !== 'undefined' && google.accounts) {
-      console.log('[Login] Triggering Google prompt');
-      google.accounts.id.prompt((notification) => {
-        console.log('[Login] Prompt notification:', notification);
-      });
-    } else {
-      console.error('[Login] Google Sign-In not ready');
-      showError('Google Sign-In is not ready. Please refresh the page.');
-    }
-  } catch (error) {
-    console.error('Google Sign-In trigger error:', error);
-    showError('Failed to open Google Sign-In. Please try again.');
   }
 }
 
