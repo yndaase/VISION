@@ -1,4 +1,5 @@
 const SESSION_KEY = "waec_session";
+const GOOGLE_CLIENT_ID = "378999569796-v8bj9miq61sggvpea5sbslc24dr9t71s.apps.googleusercontent.com";
 
 // Check if already logged in
 function checkExistingSession() {
@@ -32,11 +33,38 @@ function showSuccess(message) {
   successEl.classList.add('show');
 }
 
-// Handle Google Sign-In
+// Initialize Google Sign-In
+function initializeGoogleSignIn() {
+  if (typeof google !== 'undefined' && google.accounts) {
+    google.accounts.id.initialize({
+      client_id: GOOGLE_CLIENT_ID,
+      callback: handleGoogleCredential,
+      auto_select: false,
+      cancel_on_tap_outside: true
+    });
+    console.log('Google Sign-In initialized');
+  } else {
+    console.error('Google Sign-In library not loaded');
+    setTimeout(initializeGoogleSignIn, 500); // Retry after 500ms
+  }
+}
+
+// Handle Google Sign-In button click
 function triggerGoogleSignIn() {
-  const googleBtn = document.querySelector('.g_id_signin');
-  if (googleBtn) {
-    googleBtn.click();
+  try {
+    if (typeof google !== 'undefined' && google.accounts) {
+      google.accounts.id.prompt((notification) => {
+        if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
+          // Fallback: Show One Tap dialog
+          console.log('One Tap not displayed, showing popup');
+        }
+      });
+    } else {
+      showError('Google Sign-In is not ready. Please refresh the page.');
+    }
+  } catch (error) {
+    console.error('Google Sign-In trigger error:', error);
+    showError('Failed to open Google Sign-In. Please try again.');
   }
 }
 
@@ -128,6 +156,8 @@ async function handleEmailLogin(e) {
 document.addEventListener('DOMContentLoaded', () => {
   if (!checkExistingSession()) {
     console.log('Vision AI Login - Ready');
+    // Initialize Google Sign-In after page loads
+    setTimeout(initializeGoogleSignIn, 1000);
   }
 });
 
