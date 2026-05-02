@@ -3,6 +3,25 @@ const SESSION_ID = 'session_' + Math.random().toString(36).slice(2);
 let currentSubject = '';
 let isLoading = false;
 let userEmail = null;
+let firebaseReady = false;
+
+// Wait for Firebase to be ready
+function waitForFirebase(callback, maxAttempts = 10) {
+  let attempts = 0;
+  const checkFirebase = setInterval(() => {
+    attempts++;
+    if (typeof window.fbSaveVisionAIMessage === 'function') {
+      clearInterval(checkFirebase);
+      firebaseReady = true;
+      console.log('[Chat] Firebase ready');
+      if (callback) callback();
+    } else if (attempts >= maxAttempts) {
+      clearInterval(checkFirebase);
+      console.warn('[Chat] Firebase not available after', maxAttempts, 'attempts');
+      if (callback) callback(); // Continue anyway
+    }
+  }, 500);
+}
 
 // Load user profile
 function loadUserProfile() {
@@ -50,11 +69,11 @@ function loadUserProfile() {
       userAvatarSidebar.appendChild(img);
     }
     
-    // Load chat history from Firebase
-    loadChatHistory();
-    
-    // Load chat sessions for sidebar
-    loadChatSessions();
+    // Wait for Firebase to be ready before loading history
+    waitForFirebase(() => {
+      loadChatHistory();
+      loadChatSessions();
+    });
   } catch (e) {
     console.error('Error loading user profile:', e);
     window.location.href = '/login';
@@ -328,8 +347,8 @@ function addMessage(role, content, source = null, saveToFirebase = true) {
   messages.appendChild(messageDiv);
   scrollToBottom();
   
-  // Save to Firebase
-  if (saveToFirebase && userEmail && typeof window.fbSaveVisionAIMessage === 'function') {
+  // Save to Firebase (only if ready and should save)
+  if (saveToFirebase && userEmail && firebaseReady && typeof window.fbSaveVisionAIMessage === 'function') {
     const messageData = {
       role: role === 'user' ? 'user' : 'assistant',
       content: content,
@@ -338,6 +357,7 @@ function addMessage(role, content, source = null, saveToFirebase = true) {
     if (source) messageData.source = source;
     
     window.fbSaveVisionAIMessage(userEmail, SESSION_ID, messageData)
+      .then(() => console.log('[Chat] Message saved to Firebase'))
       .catch(err => console.warn('[Chat] Failed to save message:', err));
   }
   
