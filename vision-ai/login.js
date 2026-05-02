@@ -1,5 +1,6 @@
 const SESSION_KEY = "waec_session";
 const GOOGLE_CLIENT_ID = "378999569796-v8bj9miq61sggvpea5sbslc24dr9t71s.apps.googleusercontent.com";
+let googleInitialized = false;
 
 // Check if already logged in
 function checkExistingSession() {
@@ -35,6 +36,11 @@ function showSuccess(message) {
 
 // Initialize Google Sign-In
 function initializeGoogleSignIn() {
+  if (googleInitialized) {
+    console.log('Google Sign-In already initialized');
+    return;
+  }
+  
   if (typeof google !== 'undefined' && google.accounts) {
     google.accounts.id.initialize({
       client_id: GOOGLE_CLIENT_ID,
@@ -42,6 +48,7 @@ function initializeGoogleSignIn() {
       auto_select: false,
       cancel_on_tap_outside: true
     });
+    googleInitialized = true;
     console.log('Google Sign-In initialized');
   } else {
     console.error('Google Sign-In library not loaded');
