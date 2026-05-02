@@ -10,7 +10,7 @@ export class VisionAI {
   constructor(options = {}) {
     this.sessions = new Map(); // Store conversation history
     this.groqApiKey = options.groqApiKey || process.env.GROQ_API_KEY;
-    this.groqModel = options.groqModel || 'llama-3.1-70b-versatile'; // Stable Groq model
+    this.groqModel = options.groqModel || 'llama-3.3-70b-versatile'; // Current Groq model
     this.useGroq = !!this.groqApiKey;
     
     // Log initialization
