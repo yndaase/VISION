@@ -61,10 +61,7 @@ function triggerGoogleSignIn() {
   try {
     if (typeof google !== 'undefined' && google.accounts) {
       google.accounts.id.prompt((notification) => {
-        if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
-          // Fallback: Show One Tap dialog
-          console.log('One Tap not displayed, showing popup');
-        }
+        // One Tap prompt handling - silent fallback
       });
     } else {
       showError('Google Sign-In is not ready. Please refresh the page.');
