@@ -41,7 +41,9 @@ export default async function handler(req, res) {
   try {
     // Log API key status (without exposing the key)
     const hasApiKey = !!process.env.GROQ_API_KEY;
+    const keyPrefix = process.env.GROQ_API_KEY ? process.env.GROQ_API_KEY.substring(0, 7) : 'none';
     console.log('[API/chat] Groq API Key configured:', hasApiKey);
+    console.log('[API/chat] Key prefix:', keyPrefix); // Shows first 7 chars to verify it's correct
     
     const engine = getEngine();
     const result = await engine.query(query.trim(), sessionId || 'anon');

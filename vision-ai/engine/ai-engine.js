@@ -115,6 +115,13 @@ export class VisionAI {
       throw new Error('Groq API key not configured');
     }
 
+    // Validate API key format
+    if (!this.groqApiKey.startsWith('gsk_')) {
+      console.error('[Groq] API key does not start with gsk_ - Invalid format!');
+      throw new Error('Invalid Groq API key format');
+    }
+
+    console.log('[Groq] API key format valid (starts with gsk_)');
     console.log('[Groq] Attempting API call with model:', this.groqModel);
 
     // Get conversation history (last 10 messages for context)
@@ -187,7 +194,7 @@ Always be helpful, accurate, and educational. If you're unsure, say so and sugge
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
-        console.error('[Groq] API error:', errorData);
+        console.error('[Groq] API error response:', JSON.stringify(errorData));
         throw new Error(`Groq API error: ${response.status} - ${errorData.error?.message || 'Unknown error'}`);
       }
 
