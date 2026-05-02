@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Vision AI — WASSCE Intelligence Engine</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <script>
+    // Auth Guard - Redirect to login if not authenticated
+    (function() {
+      const SESSION_KEY = "waec_session";
+      const session = sessionStorage.getItem(SESSION_KEY) || localStorage.getItem(SESSION_KEY);
+      if (!session) {
+        window.location.href = "/vision-ai-login.html";
+      }
+    })();
+  </script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:          #ffffff;
+      --bg-card:     #f8f9fa;
+      --bg-input:    #ffffff;
+      --border:      #e0e0e0;
+      --primary:     #FFC107;
+      --primary-dark:#F9A825;
+      --primary-glow:rgba(255,193,7,0.2);
+      --accent:      #FF9800;
+      --text:        #2c3e50;
+      --text-muted:  #6c757d;
+      --user-bubble: #FFF8E1;
+      --ai-bubble:   #f8f9fa;
+      --success:     #4CAF50;
+      --warning:     #FF9800;
+      --radius:      12px;
+      --font:        'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      --mono:        'JetBrains Mono', 'Courier New', monospace;
+    }
+
+    html, body { height: 100%; overflow: hidden; background: var(--bg); font-family: var(--font); color: var(--text); }
+
+    /* ── Layout ─────────────────────────────────────────────────── */
+    .app { display: flex; flex-direction: column; height: 100vh; max-width: 900px; margin: 0 auto; padding: 0 16px; }
+
+    /* ── Header ─────────────────────────────────────────────────── */
+    header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 18px 0 14px; border-bottom: 1px solid var(--border);
+      flex-shrink: 0; background: var(--bg);
+    }
+    .logo {
+      display: flex; align-items: center; gap: 12px;
+    }
+    .logo-icon {
+      width: 38px; height: 38px;
+      background: var(--primary);
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 800; font-size: 1.1rem; color: var(--text);
+      box-shadow: 0 2px 8px var(--primary-glow);
+    }
+    .logo-text { font-size: 1.1rem; font-weight: 700; letter-spacing: -0.02em; color: var(--text); }
+    .logo-text span { color: var(--primary); }
+    .status-chip {
+      display: flex; align-items: center; gap: 6px;
+      background: rgba(76,175,80,0.1);
+      border: 1px solid rgba(76,175,80,0.2);
+      border-radius: 20px; padding: 6px 14px;
+      font-size: 0.75rem; font-weight: 600; color: var(--success);
+    }
+    .status-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--success); animation: pulse 2s infinite; }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+
+    /* User Profile Section */
+    .user-profile {
+      display: flex; align-items: center; gap: 10px;
+      padding: 8px 12px; background: var(--bg-card);
+      border: 1px solid var(--border); border-radius: 20px;
+      cursor: pointer; transition: all 0.2s;
+      position: relative;
+    }
+    .user-profile:hover {
+      border-color: var(--primary);
+      box-shadow: 0 2px 8px var(--primary-glow);
+    }
+    .user-avatar {
+      width: 32px; height: 32px; border-radius: 50%;
+      background: var(--primary); display: flex;
+      align-items: center; justify-content: center;
+      font-weight: 700; font-size: 0.85rem; color: var(--text);
+      overflow: hidden;
+    }
+    .user-avatar img {
+      width: 100%; height: 100%; object-fit: cover;
+    }
+    .user-name {
+      font-size: 0.85rem; font-weight: 600; color: var(--text);
+      max-width: 120px; overflow: hidden; text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .user-dropdown {
+      display: none; position: absolute; top: calc(100% + 8px);
+      right: 0; min-width: 200px; background: var(--bg-card);
+      border: 1px solid var(--border); border-radius: var(--radius);
+      box-shadow: 0 4px 16px rgba(0,0,0,0.1); z-index: 1000;
+      overflow: hidden; animation: fadeDown 0.2s ease;
+    }
+    .user-dropdown.show { display: block; }
+    @keyframes fadeDown {
+      from { opacity: 0; transform: translateY(-8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .dropdown-item {
+      display: flex; align-items: center; gap: 10px;
+      padding: 12px 16px; font-size: 0.85rem; color: var(--text);
+      text-decoration: none; cursor: pointer;
+      transition: background 0.15s;
+    }
+    .dropdown-item:hover {
+      background: var(--primary-dim, rgba(255,193,7,0.1));
+    }
+    .dropdown-item.danger {
+      color: #f44336;
+    }
+    .dropdown-item.danger:hover {
+      background: rgba(244,67,54,0.1);
+    }
+    .dropdown-divider {
+      height: 1px; background: var(--border); margin: 4px 0;
+    }
+
+    /* ── Subject Pills ───────────────────────────────────────────── */
+    .subject-bar {
+      display: flex; gap: 8px; overflow-x: auto; padding: 14px 0 10px;
+      flex-shrink: 0; scrollbar-width: none; background: var(--bg);
+    }
+    .subject-bar::-webkit-scrollbar { display: none; }
+    .subject-pill {
+      display: flex; align-items: center; gap: 6px;
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: 20px; padding: 6px 16px;
+      font-size: 0.8rem; font-weight: 600; color: var(--text-muted);
+      white-space: nowrap; cursor: pointer;
+      transition: all 0.2s;
+    }
+    .subject-pill:hover, .subject-pill.active {
+      border-color: var(--primary);
+      color: var(--text);
+      background: var(--primary);
+      box-shadow: 0 2px 8px var(--primary-glow);
+    }
+
+    /* ── Chat Window ─────────────────────────────────────────────── */
+    .chat-window {
+      flex: 1; overflow-y: auto; padding: 20px 0;
+      scrollbar-width: thin; scrollbar-color: var(--border) transparent;
+      background: var(--bg);
+    }
+    .chat-window::-webkit-scrollbar { width: 6px; }
+    .chat-window::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+    /* ── Empty State ─────────────────────────────────────────────── */
+    .empty-state {
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      height: 100%; gap: 24px; text-align: center; padding: 40px;
+    }
+    .empty-icon {
+      width: 72px; height: 72px;
+      background: var(--primary);
+      border-radius: 16px; display: flex; align-items: center; justify-content: center;
+      font-size: 2rem; box-shadow: 0 4px 16px var(--primary-glow);
+      animation: float 3s ease-in-out infinite;
+    }
+    @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
+    .empty-title { font-size: 1.5rem; font-weight: 700; color: var(--text); }
+    .empty-sub { color: var(--text-muted); font-size: 0.95rem; max-width: 400px; line-height: 1.6; }
+    .suggestion-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; width: 100%; max-width: 520px; }
+    .suggestion-card {
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: 12px; padding: 14px 16px;
+      font-size: 0.85rem; color: var(--text-muted);
+      cursor: pointer; text-align: left; transition: all 0.2s;
+    }
+    .suggestion-card:hover { 
+      border-color: var(--primary); 
+      color: var(--text); 
+      background: #FFFBF0;
+      box-shadow: 0 2px 8px var(--primary-glow);
+    }
+    .suggestion-card strong { color: var(--text); display: block; margin-bottom: 4px; font-size: 0.9rem; }
+
+    /* ── Messages ────────────────────────────────────────────────── */
+    .message { display: flex; gap: 12px; margin-bottom: 20px; animation: msgIn 0.3s ease; }
+    @keyframes msgIn { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
+    .message.user { flex-direction: row-reverse; }
+
+    .avatar {
+      width: 36px; height: 36px; border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.85rem; font-weight: 700; flex-shrink: 0;
+    }
+    .avatar.ai { background: var(--primary); color: var(--text); }
+    .avatar.user { background: var(--user-bubble); color: var(--text); border: 1px solid var(--primary); }
+
+    .bubble {
+      max-width: 75%; padding: 14px 18px; border-radius: var(--radius);
+      font-size: 0.92rem; line-height: 1.7;
+    }
+    .message.user .bubble {
+      background: var(--user-bubble); border: 1px solid var(--primary);
+      border-top-right-radius: 4px; color: var(--text);
+    }
+    .message.ai .bubble {
+      background: var(--ai-bubble); border: 1px solid var(--border);
+      border-top-left-radius: 4px; color: var(--text);
+    }
+
+    /* Markdown-like formatting */
+    .bubble strong { font-weight: 700; color: var(--text); }
+    .bubble em { font-style: italic; color: var(--accent); }
+    .bubble code {
+      font-family: var(--mono); font-size: 0.85rem;
+      background: rgba(255,193,7,0.1); padding: 2px 6px;
+      border-radius: 4px; color: var(--text);
+    }
+    .bubble pre {
+      background: #f8f9fa; border: 1px solid var(--border);
+      border-radius: 10px; padding: 14px; overflow-x: auto;
+      font-family: var(--mono); font-size: 0.85rem; margin: 10px 0;
+    }
+    .bubble ul, .bubble ol { padding-left: 20px; margin: 8px 0; }
+    .bubble li { margin-bottom: 4px; }
+    .bubble a { color: var(--accent); text-decoration: none; font-weight: 600; }
+    .bubble a:hover { text-decoration: underline; }
+    .bubble hr { border: none; border-top: 1px solid var(--border); margin: 12px 0; }
+
+    /* Source badge */
+    .source-badge {
+      display: inline-flex; align-items: center; gap: 4px;
+      margin-top: 10px; font-size: 0.72rem; font-weight: 600;
+      padding: 4px 12px; border-radius: 20px;
+    }
+    .source-badge.kb { background: rgba(255,193,7,0.15); color: var(--primary-dark); border: 1px solid rgba(255,193,7,0.3); }
+    .source-badge.web { background: rgba(255,152,0,0.15); color: var(--accent); border: 1px solid rgba(255,152,0,0.3); }
+    .source-badge.math { background: rgba(76,175,80,0.15); color: var(--success); border: 1px solid rgba(76,175,80,0.3); }
+
+    /* Typing indicator */
+    .typing { display: flex; gap: 5px; align-items: center; padding: 14px 18px; }
+    .typing span {
+      width: 7px; height: 7px; border-radius: 50%; background: var(--text-muted);
+      animation: typing 1.2s infinite;
+    }
+    .typing span:nth-child(2) { animation-delay: 0.2s; }
+    .typing span:nth-child(3) { animation-delay: 0.4s; }
+    @keyframes typing { 0%,60%,100%{transform:translateY(0)} 30%{transform:translateY(-6px)} }
+
+    /* ── Input Area ──────────────────────────────────────────────── */
+    .input-area {
+      padding: 16px 0 20px; border-top: 1px solid var(--border);
+      flex-shrink: 0; background: var(--bg);
+    }
+    .input-row {
+      display: flex; gap: 10px; align-items: flex-end;
+      background: var(--bg-input); border: 2px solid var(--border);
+      border-radius: var(--radius); padding: 10px 12px;
+      transition: border-color 0.2s;
+    }
+    .input-row:focus-within { border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-glow); }
+    #queryInput {
+      flex: 1; background: transparent; border: none; outline: none;
+      color: var(--text); font-family: var(--font); font-size: 0.92rem;
+      line-height: 1.5; resize: none; max-height: 140px; min-height: 24px;
+    }
+    #queryInput::placeholder { color: var(--text-muted); }
+    .send-btn {
+      width: 40px; height: 40px; border: none; border-radius: 10px;
+      background: var(--primary); color: var(--text); cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: all 0.2s; flex-shrink: 0; font-weight: 700;
+    }
+    .send-btn:hover:not(:disabled) { background: var(--primary-dark); transform: scale(1.05); box-shadow: 0 4px 12px var(--primary-glow); }
+    .send-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+    .input-hint { font-size: 0.72rem; color: var(--text-muted); margin-top: 8px; text-align: center; }
+
+    /* ── Responsive ──────────────────────────────────────────────── */
+    @media (max-width: 600px) {
+      .suggestion-grid { grid-template-columns: 1fr; }
+      .bubble { max-width: 90%; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Load Firebase before auth.js -->
+  <script type="module" src="firebase.js"></script>
+<div class="app">
+
+  <!-- Header -->
+  <header>
+    <div class="logo">
+      <div class="logo-icon">V</div>
+      <div class="logo-text">Vision <span>AI</span></div>
+    </div>
+    <div style="display: flex; align-items: center; gap: 12px;">
+      <div class="status-chip">
+        <div class="status-dot"></div>
+        Engine Online
+      </div>
+      <div class="user-profile" id="userProfile" onclick="toggleUserDropdown()">
+        <div class="user-avatar" id="userAvatar">
+          <span id="userInitials">U</span>
+        </div>
+        <span class="user-name" id="userName">User</span>
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <path d="M6 9l6 6 6-6"/>
+        </svg>
+        <div class="user-dropdown" id="userDropdown">
+          <a href="/dashboard" class="dropdown-item">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+            </svg>
+            Dashboard
+          </a>
+          <a href="/ai-learning" class="dropdown-item">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M19 13l-1.26-2.74L15 9l2.74-1.26L19 5l1.26 2.74L23 9l-2.74 1.26L19 13z"/>
+            </svg>
+            AI Learning Hub
+          </a>
+          <div class="dropdown-divider"></div>
+          <a href="#" class="dropdown-item danger" onclick="handleLogout(); return false;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+              <polyline points="16 17 21 12 16 7"/>
+              <line x1="21" y1="12" x2="9" y2="12"/>
+            </svg>
+            Logout
+          </a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Subject Bar -->
+  <div class="subject-bar">
+    <div class="subject-pill active" onclick="setSubject('')">✦ All</div>
+    <div class="subject-pill" onclick="setSubject('core mathematics')">📐 Core Maths</div>
+    <div class="subject-pill" onclick="setSubject('english language')">📝 English</div>
+    <div class="subject-pill" onclick="setSubject('integrated science')">🔬 Science</div>
+    <div class="subject-pill" onclick="setSubject('economics')">📊 Economics</div>
+    <div class="subject-pill" onclick="setSubject('social studies')">🌍 Social Studies</div>
+    <div class="subject-pill" onclick="setSubject('elective mathematics')">∫ Elective Maths</div>
+    <div class="subject-pill" onclick="setSubject('history')">🏛️ History</div>
+  </div>
+
+  <!-- Chat Window -->
+  <div class="chat-window" id="chatWindow">
+    <div class="empty-state" id="emptyState">
+      <div class="empty-icon">🧠</div>
+      <div class="empty-title">Vision AI</div>
+      <div class="empty-sub">Your WASSCE intelligence engine. Ask any exam question, math problem, or topic — I'll answer from my knowledge base or search the web.</div>
+      <div class="suggestion-grid">
+        <div class="suggestion-card" onclick="ask('What is the quadratic formula?')"><strong>📐 Quadratic Formula</strong>Explain the formula and when to use it</div>
+        <div class="suggestion-card" onclick="ask('Solve: 3x + 9 = 24')"><strong>🔢 Equation Solving</strong>Step-by-step algebra solution</div>
+        <div class="suggestion-card" onclick="ask('Explain photosynthesis for WASSCE')"><strong>🌱 Photosynthesis</strong>Full explanation with equation</div>
+        <div class="suggestion-card" onclick="ask('When did Ghana gain independence?')"><strong>🇬🇭 Ghana History</strong>Key dates and facts</div>
+        <div class="suggestion-card" onclick="ask('What are the laws of indices?')"><strong>⚡ Laws of Indices</strong>All rules with examples</div>
+        <div class="suggestion-card" onclick="ask('How to write a formal letter for WASSCE')"><strong>✉️ Formal Letter</strong>Format and structure</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Input Area -->
+  <div class="input-area">
+    <div class="input-row">
+      <textarea id="queryInput" rows="1" placeholder="Ask any WASSCE question, math problem, or topic..." onkeydown="handleKey(event)" oninput="autoResize(this)"></textarea>
+      <button class="send-btn" id="sendBtn" onclick="sendQuery()" title="Send">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M22 2L11 13"/><path d="M22 2L15 22 11 13 2 9l20-7z"/></svg>
+      </button>
+    </div>
+    <div class="input-hint">Built from scratch · BM25 Retrieval + Math Engine + Google Search</div>
+  </div>
+</div>
+
+<script>
+  const SESSION_ID = 'session_' + Math.random().toString(36).slice(2);
+  const SESSION_KEY = "waec_session";
+  let subjectContext = '';
+  let isLoading = false;
+
+  // Load user profile
+  function loadUserProfile() {
+    const session = sessionStorage.getItem(SESSION_KEY) || localStorage.getItem(SESSION_KEY);
+    if (!session) {
+      window.location.href = '/vision-ai-login.html';
+      return;
+    }
+
+    try {
+      const user = JSON.parse(session);
+      const userName = document.getElementById('userName');
+      const userInitials = document.getElementById('userInitials');
+      const userAvatar = document.getElementById('userAvatar');
+
+      if (userName) userName.textContent = user.name || 'User';
+      
+      // Set initials
+      if (userInitials) {
+        const initials = (user.name || 'U').split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
+        userInitials.textContent = initials;
+      }
+
+      // Set avatar image if available (Google users)
+      if (user.picture && userAvatar) {
+        // Create img element only if we have a valid picture URL
+        const img = document.createElement('img');
+        img.src = user.picture;
+        img.alt = user.name || 'User';
+        img.style.width = '100%';
+        img.style.height = '100%';
+        img.style.objectFit = 'cover';
+        img.onerror = function() {
+          // If image fails to load, remove it and show initials
+          this.remove();
+          if (userInitials) userInitials.style.display = 'block';
+        };
+        img.onload = function() {
+          // Hide initials when image loads successfully
+          if (userInitials) userInitials.style.display = 'none';
+        };
+        userAvatar.appendChild(img);
+      }
+    } catch (e) {
+      console.error('Error loading user profile:', e);
+      window.location.href = '/vision-ai-login.html';
+    }
+  }
+
+  // Toggle user dropdown
+  function toggleUserDropdown() {
+    const dropdown = document.getElementById('userDropdown');
+    dropdown.classList.toggle('show');
+  }
+
+  // Close dropdown when clicking outside
+  document.addEventListener('click', (e) => {
+    const userProfile = document.getElementById('userProfile');
+    const dropdown = document.getElementById('userDropdown');
+    if (!userProfile.contains(e.target)) {
+      dropdown.classList.remove('show');
+    }
+  });
+
+  // Logout function
+  function handleLogout() {
+    sessionStorage.removeItem(SESSION_KEY);
+    localStorage.removeItem(SESSION_KEY);
+    window.location.href = '/vision-ai-login.html';
+  }
+
+  // Load chat history from Firebase
+  async function loadChatHistory() {
+    const session = sessionStorage.getItem(SESSION_KEY) || localStorage.getItem(SESSION_KEY);
+    if (!session) return;
+
+    try {
+      const user = JSON.parse(session);
+      if (typeof window.fbLoadVisionAIHistory === 'function') {
+        const messages = await window.fbLoadVisionAIHistory(user.email, SESSION_ID);
+        if (messages && messages.length > 0) {
+          hideEmpty();
+          messages.forEach(msg => {
+            appendMessage(msg.role, renderMarkdown(msg.content), msg.source || null);
+          });
+        }
+      }
+    } catch (e) {
+      console.warn('Failed to load chat history:', e);
+    }
+  }
+
+  // Initialize user profile and chat history on load
+  document.addEventListener('DOMContentLoaded', () => {
+    loadUserProfile();
+    // Load chat history after a short delay to ensure Firebase is ready
+    setTimeout(loadChatHistory, 500);
+  });
+
+  function setSubject(subject) {
+    subjectContext = subject;
+    document.querySelectorAll('.subject-pill').forEach(p => p.classList.remove('active'));
+    event.target.classList.add('active');
+  }
+
+  function ask(text) {
+    document.getElementById('queryInput').value = text;
+    sendQuery();
+  }
+
+  function handleKey(e) {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      sendQuery();
+    }
+  }
+
+  function autoResize(el) {
+    el.style.height = 'auto';
+    el.style.height = Math.min(el.scrollHeight, 140) + 'px';
+  }
+
+  function hideEmpty() {
+    const empty = document.getElementById('emptyState');
+    if (empty) empty.remove();
+  }
+
+  function scrollToBottom() {
+    const cw = document.getElementById('chatWindow');
+    cw.scrollTop = cw.scrollHeight;
+  }
+
+  function appendMessage(role, html, source) {
+    hideEmpty();
+    const cw = document.getElementById('chatWindow');
+    const div = document.createElement('div');
+    div.className = `message ${role}`;
+    div.innerHTML = `
+      <div class="avatar ${role}">${role === 'ai' ? 'V' : 'Y'}</div>
+      <div class="bubble">
+        ${html}
+        ${source ? renderSourceBadge(source) : ''}
+      </div>
+    `;
+    cw.appendChild(div);
+    scrollToBottom();
+    return div;
+  }
+
+  function renderSourceBadge(source) {
+    const map = {
+      'knowledge-base': ['kb', '📚 Knowledge Base'],
+      'web-search':     ['web', '🔍 Web Search'],
+      'math-engine':    ['math', '🔢 Math Engine'],
+      'system':         ['kb', '🤖 Vision AI'],
+      'fallback':       ['kb', '💡 Vision AI'],
+    };
+    const [cls, label] = map[source] || ['kb', source];
+    return `<div class="source-badge ${cls}">${label}</div>`;
+  }
+
+  function showTyping() {
+    hideEmpty();
+    const cw = document.getElementById('chatWindow');
+    const div = document.createElement('div');
+    div.className = 'message ai';
+    div.id = 'typingIndicator';
+    div.innerHTML = `
+      <div class="avatar ai">V</div>
+      <div class="bubble">
+        <div class="typing"><span></span><span></span><span></span></div>
+      </div>`;
+    cw.appendChild(div);
+    scrollToBottom();
+  }
+
+  function removeTyping() {
+    document.getElementById('typingIndicator')?.remove();
+  }
+
+  /**
+   * Very lightweight Markdown → HTML renderer (built from scratch)
+   */
+  function renderMarkdown(text) {
+    return text
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+      .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+      .replace(/\*(.+?)\*/g, '<em>$1</em>')
+      .replace(/`(.+?)`/g, '<code>$1</code>')
+      .replace(/\[(.+?)\]\((.+?)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>')
+      .replace(/^#{1,3}\s+(.+)$/gm, '<strong style="font-size:1.05em;display:block;margin:8px 0 4px">$1</strong>')
+      .replace(/^---$/gm, '<hr/>')
+      .replace(/^[-•]\s+(.+)$/gm, '<li>$1</li>')
+      .replace(/(<li>.*<\/li>)+/gs, '<ul>$&</ul>')
+      .replace(/\n\n/g, '</p><p style="margin-top:8px">')
+      .replace(/\n/g, '<br>');
+  }
+
+  async function sendQuery() {
+    if (isLoading) return;
+    const input = document.getElementById('queryInput');
+    const sendBtn = document.getElementById('sendBtn');
+    let query = input.value.trim();
+    if (!query) return;
+
+    // Get user session for Firebase sync
+    const session = sessionStorage.getItem(SESSION_KEY) || localStorage.getItem(SESSION_KEY);
+    let userEmail = null;
+    try {
+      const user = JSON.parse(session);
+      userEmail = user.email;
+    } catch (e) {}
+
+    // Prepend subject context if set
+    if (subjectContext) query = `[${subjectContext}] ${query}`;
+
+    // Show user message
+    const userMessage = input.value.trim();
+    appendMessage('user', renderMarkdown(userMessage), null);
+    input.value = '';
+    input.style.height = 'auto';
+
+    // Save user message to Firebase
+    if (userEmail && typeof window.fbSaveVisionAIMessage === 'function') {
+      window.fbSaveVisionAIMessage(userEmail, SESSION_ID, {
+        role: 'user',
+        content: userMessage,
+        timestamp: Date.now()
+      }).catch(e => console.warn('Failed to save user message:', e));
+    }
+
+    // Show typing
+    isLoading = true;
+    sendBtn.disabled = true;
+    showTyping();
+
+    try {
+      const res = await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ query, sessionId: SESSION_ID }),
+      });
+
+      const data = await res.json();
+      removeTyping();
+
+      if (data.error) {
+        appendMessage('ai', `<span style="color:#f87171">Error: ${data.error}</span>`, null);
+      } else {
+        appendMessage('ai', renderMarkdown(data.answer), data.source);
+        
+        // Save AI response to Firebase
+        if (userEmail && typeof window.fbSaveVisionAIMessage === 'function') {
+          window.fbSaveVisionAIMessage(userEmail, SESSION_ID, {
+            role: 'ai',
+            content: data.answer,
+            source: data.source,
+            timestamp: Date.now()
+          }).catch(e => console.warn('Failed to save AI message:', e));
+        }
+      }
+    } catch (err) {
+      removeTyping();
+      appendMessage('ai', '<span style="color:#f87171">Could not reach Vision AI server. Make sure the server is running.</span>', null);
+    } finally {
+      isLoading = false;
+      sendBtn.disabled = false;
+      input.focus();
+    }
+  }
+</script>
+</body>
+</html>
