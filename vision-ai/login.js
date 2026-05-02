@@ -58,12 +58,15 @@ function initializeGoogleSignIn() {
 
 // Handle Google Sign-In button click
 function triggerGoogleSignIn() {
+  console.log('[Login] Google Sign-In button clicked');
   try {
     if (typeof google !== 'undefined' && google.accounts) {
+      console.log('[Login] Triggering Google prompt');
       google.accounts.id.prompt((notification) => {
-        // One Tap prompt handling - silent fallback
+        console.log('[Login] Prompt notification:', notification);
       });
     } else {
+      console.error('[Login] Google Sign-In not ready');
       showError('Google Sign-In is not ready. Please refresh the page.');
     }
   } catch (error) {
