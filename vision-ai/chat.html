@@ -5,13 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Vision AI — WASSCE Intelligence Engine</title>
   <meta name="description" content="AI-powered learning assistant for WASSCE students. Get instant answers, step-by-step solutions, and personalized study help." />
-  <link rel="canonical" href="https://ai.visionedu.online/" />
+  <link rel="canonical" href="https://ai.visionedu.online/chat" />
   <link rel="icon" type="image/png" href="https://visionedu.online/favicon.png" />
   
   <!-- Open Graph -->
   <meta property="og:title" content="Vision AI — WASSCE Intelligence Engine" />
   <meta property="og:description" content="AI-powered learning assistant for WASSCE students" />
-  <meta property="og:url" content="https://ai.visionedu.online/" />
+  <meta property="og:url" content="https://ai.visionedu.online/chat" />
   <meta property="og:image" content="https://visionedu.online/assets/logo.png" />
   <meta property="og:type" content="website" />
   
@@ -23,7 +23,7 @@
       const SESSION_KEY = "waec_session";
       const session = sessionStorage.getItem(SESSION_KEY) || localStorage.getItem(SESSION_KEY);
       if (!session) {
-        window.location.href = "/login.html";
+        window.location.href = "/login";
       }
     })();
   </script>
@@ -54,17 +54,26 @@
           <path d="M6 9l6 6 6-6"/>
         </svg>
         <div class="user-dropdown" id="userDropdown">
-          <a href="https://visionedu.online/dashboard" class="dropdown-item">
+          <a href="/" class="dropdown-item">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
             </svg>
-            Dashboard
+            Home
           </a>
-          <a href="https://visionedu.online/ai-learning" class="dropdown-item">
+          <a href="https://visionedu.online/dashboard" class="dropdown-item" target="_blank">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="3" width="7" height="7"/>
+              <rect x="14" y="3" width="7" height="7"/>
+              <rect x="14" y="14" width="7" height="7"/>
+              <rect x="3" y="14" width="7" height="7"/>
+            </svg>
+            Main Dashboard
+          </a>
+          <a href="https://visionedu.online/ai-learning" class="dropdown-item" target="_blank">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <path d="M19 13l-1.26-2.74L15 9l2.74-1.26L19 5l1.26 2.74L23 9l-2.74 1.26L19 13z"/>
             </svg>
-            AI Learning Hub
+            Learning Hub
           </a>
           <div class="dropdown-divider"></div>
           <a href="#" class="dropdown-item danger" onclick="handleLogout(); return false;">
