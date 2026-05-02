@@ -17,6 +17,14 @@
       "dest": "/api/$1"
     },
     {
+      "src": "/chat",
+      "dest": "/chat.html"
+    },
+    {
+      "src": "/login",
+      "dest": "/login.html"
+    },
+    {
       "src": "/(.*)",
       "dest": "/$1"
     }

@@ -7,7 +7,7 @@ function checkExistingSession() {
     try {
       const user = JSON.parse(session);
       if (user && user.email) {
-        window.location.href = '/';
+        window.location.href = '/chat';
         return true;
       }
     } catch (e) {
@@ -60,7 +60,7 @@ async function handleGoogleCredential(response) {
     showSuccess('Welcome, ' + user.name + '! Redirecting to Vision AI...');
     
     setTimeout(() => {
-      window.location.href = '/';
+      window.location.href = '/chat';
     }, 1000);
   } catch (e) {
     console.error('Google Sign-In error:', e);
@@ -104,7 +104,7 @@ async function handleEmailLogin(e) {
         
         showSuccess('Login successful! Redirecting...');
         setTimeout(() => {
-          window.location.href = '/';
+          window.location.href = '/chat';
         }, 1000);
       } else {
         showError('Invalid email or password.');

@@ -16,111 +16,368 @@
   <meta property="og:type" content="website" />
   
   <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
-  <script>
-    // Auth Guard - Redirect to login if not authenticated
-    (function() {
-      const SESSION_KEY = "waec_session";
-      const session = sessionStorage.getItem(SESSION_KEY) || localStorage.getItem(SESSION_KEY);
-      if (!session) {
-        window.location.href = "/login.html";
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    /* Animated background orbs */
+    .bg-orb {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(80px);
+      opacity: 0.3;
+      animation: float 20s infinite ease-in-out;
+      z-index: 0;
+    }
+
+    .bg-orb-1 {
+      width: 500px;
+      height: 500px;
+      background: #f093fb;
+      top: -10%;
+      left: -10%;
+      animation-delay: 0s;
+    }
+
+    .bg-orb-2 {
+      width: 400px;
+      height: 400px;
+      background: #4facfe;
+      bottom: -10%;
+      right: -10%;
+      animation-delay: 7s;
+    }
+
+    .bg-orb-3 {
+      width: 350px;
+      height: 350px;
+      background: #43e97b;
+      top: 50%;
+      left: 50%;
+      animation-delay: 14s;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      33% { transform: translate(30px, -30px) scale(1.1); }
+      66% { transform: translate(-20px, 20px) scale(0.9); }
+    }
+
+    .container {
+      position: relative;
+      z-index: 1;
+      max-width: 1200px;
+      width: 90%;
+      margin: 0 auto;
+      padding: 40px 20px;
+    }
+
+    .hero {
+      text-align: center;
+      color: white;
+      margin-bottom: 60px;
+    }
+
+    .logo-large {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 15px;
+      margin-bottom: 30px;
+    }
+
+    .logo-icon-large {
+      width: 80px;
+      height: 80px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 48px;
+      font-weight: 800;
+      color: white;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+    }
+
+    .logo-text-large {
+      font-size: 56px;
+      font-weight: 800;
+      letter-spacing: -2px;
+    }
+
+    .logo-text-large span {
+      background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero h1 {
+      font-size: 48px;
+      font-weight: 700;
+      margin-bottom: 20px;
+      line-height: 1.2;
+    }
+
+    .hero p {
+      font-size: 20px;
+      opacity: 0.9;
+      max-width: 600px;
+      margin: 0 auto 40px;
+      line-height: 1.6;
+    }
+
+    .cta-buttons {
+      display: flex;
+      gap: 20px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      padding: 16px 40px;
+      border-radius: 12px;
+      font-size: 18px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.3s ease;
+      cursor: pointer;
+      border: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .btn-primary {
+      background: white;
+      color: #667eea;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+    }
+
+    .btn-secondary {
+      background: rgba(255,255,255,0.2);
+      color: white;
+      backdrop-filter: blur(10px);
+      border: 2px solid rgba(255,255,255,0.3);
+    }
+
+    .btn-secondary:hover {
+      background: rgba(255,255,255,0.3);
+      transform: translateY(-2px);
+    }
+
+    .features {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 30px;
+      margin-top: 60px;
+    }
+
+    .feature-card {
+      background: rgba(255,255,255,0.15);
+      backdrop-filter: blur(10px);
+      border-radius: 20px;
+      padding: 30px;
+      border: 1px solid rgba(255,255,255,0.2);
+      transition: all 0.3s ease;
+    }
+
+    .feature-card:hover {
+      transform: translateY(-5px);
+      background: rgba(255,255,255,0.2);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+    }
+
+    .feature-icon {
+      font-size: 48px;
+      margin-bottom: 20px;
+    }
+
+    .feature-card h3 {
+      color: white;
+      font-size: 22px;
+      font-weight: 700;
+      margin-bottom: 12px;
+    }
+
+    .feature-card p {
+      color: rgba(255,255,255,0.9);
+      font-size: 16px;
+      line-height: 1.6;
+    }
+
+    .stats {
+      display: flex;
+      justify-content: center;
+      gap: 60px;
+      margin-top: 60px;
+      flex-wrap: wrap;
+    }
+
+    .stat {
+      text-align: center;
+      color: white;
+    }
+
+    .stat-number {
+      font-size: 48px;
+      font-weight: 800;
+      margin-bottom: 8px;
+    }
+
+    .stat-label {
+      font-size: 16px;
+      opacity: 0.9;
+    }
+
+    @media (max-width: 768px) {
+      .logo-text-large {
+        font-size: 40px;
       }
-    })();
-  </script>
-  <link rel="stylesheet" href="styles.css" />
+
+      .logo-icon-large {
+        width: 60px;
+        height: 60px;
+        font-size: 36px;
+      }
+
+      .hero h1 {
+        font-size: 32px;
+      }
+
+      .hero p {
+        font-size: 18px;
+      }
+
+      .btn {
+        padding: 14px 30px;
+        font-size: 16px;
+      }
+
+      .features {
+        grid-template-columns: 1fr;
+      }
+
+      .stats {
+        gap: 40px;
+      }
+
+      .stat-number {
+        font-size: 36px;
+      }
+    }
+  </style>
 </head>
 <body>
-  <!-- Load Firebase before other scripts -->
-  <script type="module" src="firebase-config.js"></script>
-  
-<div class="app">
-  <!-- Header -->
-  <header>
-    <div class="logo">
-      <div class="logo-icon">V</div>
-      <div class="logo-text">Vision <span>AI</span></div>
-    </div>
-    <div style="display: flex; align-items: center; gap: 12px;">
-      <div class="status-chip">
-        <div class="status-dot"></div>
-        Engine Online
+  <span class="bg-orb bg-orb-1"></span>
+  <span class="bg-orb bg-orb-2"></span>
+  <span class="bg-orb bg-orb-3"></span>
+
+  <div class="container">
+    <div class="hero">
+      <div class="logo-large">
+        <div class="logo-icon-large">V</div>
+        <div class="logo-text-large">Vision <span>AI</span></div>
       </div>
-      <div class="user-profile" id="userProfile" onclick="toggleUserDropdown()">
-        <div class="user-avatar" id="userAvatar">
-          <span id="userInitials">U</span>
-        </div>
-        <span class="user-name" id="userName">User</span>
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-          <path d="M6 9l6 6 6-6"/>
-        </svg>
-        <div class="user-dropdown" id="userDropdown">
-          <a href="https://visionedu.online/dashboard" class="dropdown-item">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
-            </svg>
-            Dashboard
-          </a>
-          <a href="https://visionedu.online/ai-learning" class="dropdown-item">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M19 13l-1.26-2.74L15 9l2.74-1.26L19 5l1.26 2.74L23 9l-2.74 1.26L19 13z"/>
-            </svg>
-            AI Learning Hub
-          </a>
-          <div class="dropdown-divider"></div>
-          <a href="#" class="dropdown-item danger" onclick="handleLogout(); return false;">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
-              <polyline points="16 17 21 12 16 7"/>
-              <line x1="21" y1="12" x2="9" y2="12"/>
-            </svg>
-            Logout
-          </a>
-        </div>
+
+      <h1>Your WASSCE Intelligence Engine</h1>
+      <p>Get instant answers, step-by-step solutions, and personalized study help. Built specifically for Ghanaian students preparing for WASSCE exams.</p>
+
+      <div class="cta-buttons">
+        <a href="/chat" class="btn btn-primary">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M19 13l-1.26-2.74L15 9l2.74-1.26L19 5l1.26 2.74L23 9l-2.74 1.26L19 13z"/>
+            <path d="M9 13l-1.26-2.74L5 9l2.74-1.26L9 5l1.26 2.74L13 9l-2.74 1.26L9 13z"/>
+          </svg>
+          Start Learning
+        </a>
+        <a href="https://visionedu.online" class="btn btn-secondary">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+          </svg>
+          Main Platform
+        </a>
       </div>
     </div>
-  </header>
 
-  <!-- Subject Bar -->
-  <div class="subject-bar">
-    <div class="subject-pill active" onclick="setSubject('')">✦ All</div>
-    <div class="subject-pill" onclick="setSubject('core mathematics')">📐 Core Maths</div>
-    <div class="subject-pill" onclick="setSubject('english language')">📝 English</div>
-    <div class="subject-pill" onclick="setSubject('integrated science')">🔬 Science</div>
-    <div class="subject-pill" onclick="setSubject('economics')">📊 Economics</div>
-    <div class="subject-pill" onclick="setSubject('social studies')">🌍 Social Studies</div>
-    <div class="subject-pill" onclick="setSubject('elective mathematics')">∫ Elective Maths</div>
-    <div class="subject-pill" onclick="setSubject('history')">🏛️ History</div>
-  </div>
+    <div class="features">
+      <div class="feature-card">
+        <div class="feature-icon">📐</div>
+        <h3>Mathematics Solver</h3>
+        <p>Solve equations step-by-step. From basic arithmetic to quadratic equations, get detailed solutions instantly.</p>
+      </div>
 
-  <!-- Chat Window -->
-  <div class="chat-window" id="chatWindow">
-    <div class="empty-state" id="emptyState">
-      <div class="empty-icon">🧠</div>
-      <div class="empty-title">Vision AI</div>
-      <div class="empty-sub">Your WASSCE intelligence engine. Ask any exam question, math problem, or topic — I'll answer from my knowledge base or search the web.</div>
-      <div class="suggestion-grid">
-        <div class="suggestion-card" onclick="ask('What is the quadratic formula?')"><strong>📐 Quadratic Formula</strong>Explain the formula and when to use it</div>
-        <div class="suggestion-card" onclick="ask('Solve: 3x + 9 = 24')"><strong>🔢 Equation Solving</strong>Step-by-step algebra solution</div>
-        <div class="suggestion-card" onclick="ask('Explain photosynthesis for WASSCE')"><strong>🌱 Photosynthesis</strong>Full explanation with equation</div>
-        <div class="suggestion-card" onclick="ask('When did Ghana gain independence?')"><strong>🇬🇭 Ghana History</strong>Key dates and facts</div>
-        <div class="suggestion-card" onclick="ask('What are the laws of indices?')"><strong>⚡ Laws of Indices</strong>All rules with examples</div>
-        <div class="suggestion-card" onclick="ask('How to write a formal letter for WASSCE')"><strong>✉️ Formal Letter</strong>Format and structure</div>
+      <div class="feature-card">
+        <div class="feature-icon">📚</div>
+        <h3>WASSCE Curriculum</h3>
+        <p>Complete coverage of Mathematics, English, Science, Social Studies, and Economics topics.</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon">⚡</div>
+        <h3>Instant Answers</h3>
+        <p>No waiting. Get responses in under 200ms. Works offline with no API limits or costs.</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon">🎯</div>
+        <h3>Study Tips</h3>
+        <p>Exam strategies, study techniques, and personalized guidance for WASSCE success.</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon">🔒</div>
+        <h3>100% Free</h3>
+        <p>No subscriptions, no hidden fees. Unlimited queries for all students.</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon">📱</div>
+        <h3>Mobile Ready</h3>
+        <p>Works perfectly on any device. Study anywhere, anytime.</p>
+      </div>
+    </div>
+
+    <div class="stats">
+      <div class="stat">
+        <div class="stat-number">11+</div>
+        <div class="stat-label">Topics Covered</div>
+      </div>
+      <div class="stat">
+        <div class="stat-number">5</div>
+        <div class="stat-label">Core Subjects</div>
+      </div>
+      <div class="stat">
+        <div class="stat-number">∞</div>
+        <div class="stat-label">Free Queries</div>
+      </div>
+      <div class="stat">
+        <div class="stat-number">&lt;200ms</div>
+        <div class="stat-label">Response Time</div>
       </div>
     </div>
   </div>
-
-  <!-- Input Area -->
-  <div class="input-area">
-    <div class="input-row">
-      <textarea id="queryInput" rows="1" placeholder="Ask any WASSCE question, math problem, or topic..." onkeydown="handleKey(event)" oninput="autoResize(this)"></textarea>
-      <button class="send-btn" id="sendBtn" onclick="sendQuery()" title="Send">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M22 2L11 13"/><path d="M22 2L15 22 11 13 2 9l20-7z"/></svg>
-      </button>
-    </div>
-    <div class="input-hint">Built from scratch · BM25 Retrieval + Math Engine + Google Search</div>
-  </div>
-</div>
-
-<script src="app.js"></script>
 </body>
 </html>
