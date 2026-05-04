@@ -46,7 +46,8 @@ function initializeGoogleSignIn() {
       client_id: GOOGLE_CLIENT_ID,
       callback: handleGoogleCredential,
       auto_select: false,
-      cancel_on_tap_outside: true
+      cancel_on_tap_outside: true,
+      use_fedcm_for_prompt: true // Opt-in to FedCM to avoid deprecation warnings
     });
     
     // Create custom styled button instead of Google's default
@@ -62,32 +63,36 @@ function initializeGoogleSignIn() {
         Continue with Google
       `;
       
-      // Add click handler to trigger Google Sign-In
+      // Add click handler to trigger Google Sign-In popup directly
       buttonDiv.onclick = () => {
         console.log('[Login] Custom Google button clicked');
-        google.accounts.id.prompt((notification) => {
-          console.log('[Login] Prompt notification:', notification);
-          if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
-            // If One Tap doesn't show, fall back to popup
-            console.log('[Login] One Tap not displayed, showing popup');
-            // We need to use a different approach - render a hidden button and click it
-            const tempDiv = document.createElement('div');
-            tempDiv.style.display = 'none';
-            document.body.appendChild(tempDiv);
-            google.accounts.id.renderButton(tempDiv, {
-              type: 'standard',
-              theme: 'outline',
-              size: 'large'
-            });
-            // Click the rendered button
-            setTimeout(() => {
-              const gsiButton = tempDiv.querySelector('[role="button"]');
-              if (gsiButton) {
-                gsiButton.click();
-              }
-            }, 100);
-          }
+        // Create a hidden div to render Google's button and trigger it
+        const tempDiv = document.createElement('div');
+        tempDiv.style.position = 'absolute';
+        tempDiv.style.top = '-9999px';
+        tempDiv.style.left = '-9999px';
+        document.body.appendChild(tempDiv);
+        
+        // Render Google's button in the hidden div
+        google.accounts.id.renderButton(tempDiv, {
+          type: 'standard',
+          theme: 'outline',
+          size: 'large',
+          text: 'continue_with',
+          shape: 'rectangular'
         });
+        
+        // Click the rendered button to trigger sign-in
+        setTimeout(() => {
+          const gsiButton = tempDiv.querySelector('[role="button"]');
+          if (gsiButton) {
+            gsiButton.click();
+            // Clean up after a delay
+            setTimeout(() => {
+              document.body.removeChild(tempDiv);
+            }, 1000);
+          }
+        }, 100);
       };
       
       console.log('[Login] Custom Google button created');
