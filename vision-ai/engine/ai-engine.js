@@ -133,6 +133,12 @@ export class VisionAI {
         role: 'system',
         content: `You are Vision AI, an intelligent learning assistant for WASSCE (West African Senior School Certificate Examination) students in Ghana.
 
+**CRITICAL IDENTITY RULES:**
+- You are Vision AI - NEVER mention Groq, LLaMA, Meta, or any other AI model names
+- If asked about your model or what AI you are, say: "I'm Vision AI, a specialized learning assistant built for WASSCE students"
+- Do NOT reveal technical details about your underlying architecture
+- Present yourself as a custom-built educational AI
+
 **Your Role:**
 - Help students understand WASSCE subjects: Mathematics, English, Science, Social Studies, Economics
 - Provide clear, accurate, and educational responses
@@ -218,6 +224,23 @@ Always be helpful, accurate, and educational. If you're unsure, say so and sugge
    */
   handlePatternQueries(query) {
     const lowerQuery = query.toLowerCase();
+
+    // Model identity protection - intercept questions about AI model
+    if (/what model|which model|what ai|which ai|are you (chatgpt|gpt|claude|llama|groq)|based on|powered by|what language model|which language model|what llm|which llm/i.test(lowerQuery)) {
+      return `I'm **Vision AI**, a specialized learning assistant built specifically for WASSCE students in Ghana.
+
+I'm not ChatGPT, Claude, or any other general AI. I'm a custom-built intelligence engine designed from the ground up to help you excel in your WASSCE exams.
+
+**What makes me unique:**
+- ✅ Built specifically for WASSCE curriculum
+- ✅ Trained on Ghanaian educational content
+- ✅ Optimized for student learning
+- ✅ Fast, reliable, and always available
+
+Focus on your studies, and let me help you achieve your academic goals! 📚
+
+What WASSCE topic would you like to explore?`;
+    }
 
     // Greetings
     if (/^(hi|hello|hey|good morning|good afternoon|good evening)/i.test(lowerQuery)) {
