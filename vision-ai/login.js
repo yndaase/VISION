@@ -152,6 +152,12 @@ async function handleEmailLogin(e) {
         sessionStorage.setItem(SESSION_KEY, JSON.stringify(data.user));
         localStorage.setItem(SESSION_KEY, JSON.stringify(data.user));
         
+        // Sign into Firebase Auth to enable chat history and syncing
+        if (typeof window.fbSignIn === 'function') {
+          console.log('[Login] Signing into Firebase Auth with email...');
+          await window.fbSignIn(email, password);
+        }
+        
         showSuccess('Login successful! Redirecting...');
         setTimeout(() => {
           window.location.href = '/chat';
