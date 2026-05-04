@@ -1,5 +1,5 @@
 const SESSION_KEY = "waec_session";
-const GOOGLE_CLIENT_ID = "324420775871-o8anc82qu2aut8mmcdujbo6g0hgs22ll.apps.googleusercontent.com";
+const GOOGLE_CLIENT_ID = "378999569796-v8bj9miq61sggvpea5sbslc24dr9t71s.apps.googleusercontent.com";
 let googleInitialized = false;
 
 // Check if already logged in

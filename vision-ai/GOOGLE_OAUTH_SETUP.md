@@ -121,7 +121,7 @@ After saving:
 
 **Google Client ID:**
 ```
-324420775871-o8anc82qu2aut8mmcdujbo6g0hgs22ll.apps.googleusercontent.com
+378999569796-v8bj9miq61sggvpea5sbslc24dr9t71s.apps.googleusercontent.com
 ```
 
 **Required Authorized JavaScript Origins:**
