@@ -435,6 +435,10 @@ window.syncStateToCloud = async function(email) {
 
   try {
     await waitForAuth();
+    if (!auth.currentUser) {
+      console.warn('[Firebase] syncStateToCloud aborted: User not authenticated');
+      return;
+    }
     
     const statsKey = 'waec_stats_' + email;
     const streakKey = 'vision_streak_' + email;
