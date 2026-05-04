@@ -95,25 +95,38 @@ async function handleGoogleCredential(response) {
     localStorage.setItem(SESSION_KEY, JSON.stringify(user));
 
     // Sign into Firebase Auth with Google credential
+    let firebaseAuthSuccess = false;
     if (typeof window.fbSignInWithGoogle === 'function') {
       console.log('[Login] Signing into Firebase Auth...');
-      const fbResult = await window.fbSignInWithGoogle(response.credential);
-      if (fbResult.success) {
-        console.log('[Login] Firebase Auth successful');
-      } else {
-        console.warn('[Login] Firebase Auth failed:', fbResult.error);
+      try {
+        const fbResult = await window.fbSignInWithGoogle(response.credential);
+        if (fbResult.success) {
+          console.log('[Login] Firebase Auth successful:', fbResult.user.email);
+          firebaseAuthSuccess = true;
+          
+          // Wait a bit for Firebase Auth state to propagate
+          await new Promise(resolve => setTimeout(resolve, 500));
+        } else {
+          console.warn('[Login] Firebase Auth failed:', fbResult.error);
+        }
+      } catch (fbError) {
+        console.error('[Login] Firebase Auth error:', fbError);
       }
     } else {
-      console.warn('[Login] Firebase Auth not available');
+      console.warn('[Login] fbSignInWithGoogle not available - firebase.js may not be loaded');
     }
 
-    showSuccess('Welcome, ' + user.name + '! Redirecting to Vision AI...');
+    const successMessage = firebaseAuthSuccess 
+      ? 'Welcome, ' + user.name + '! Firebase Auth complete. Redirecting...'
+      : 'Welcome, ' + user.name + '! Redirecting to Vision AI...';
+    
+    showSuccess(successMessage);
     
     setTimeout(() => {
       window.location.href = '/chat';
     }, 1000);
   } catch (e) {
-    console.error('Google Sign-In error:', e);
+    console.error('[Login] Google Sign-In error:', e);
     showError('Google sign-in failed. Please try again.');
   }
 }
@@ -184,6 +197,16 @@ async function handleEmailLogin(e) {
 document.addEventListener('DOMContentLoaded', () => {
   if (!checkExistingSession()) {
     console.log('[Login] Vision AI Login - Ready');
+    
+    // Check if firebase.js loaded
+    setTimeout(() => {
+      if (typeof window.fbSignInWithGoogle === 'function') {
+        console.log('[Login] Firebase Auth functions available ✓');
+      } else {
+        console.warn('[Login] Firebase Auth functions NOT available - firebase.js may not have loaded');
+      }
+    }, 1500);
+    
     // Initialize Google Sign-In after page loads
     setTimeout(initializeGoogleSignIn, 1000);
   }
