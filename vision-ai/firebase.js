@@ -17,7 +17,10 @@ import {
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
   signInWithCredential,
-  GoogleAuthProvider
+  GoogleAuthProvider,
+  setPersistence,
+  browserLocalPersistence,
+  onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 import { 
   getStorage, 
@@ -41,6 +44,24 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const auth = getAuth(app);
 const storage = getStorage(app);
+
+// Set auth persistence to LOCAL (survives page refresh and browser restart)
+setPersistence(auth, browserLocalPersistence)
+  .then(() => {
+    console.log('[Firebase] Auth persistence set to LOCAL');
+  })
+  .catch((error) => {
+    console.error('[Firebase] Failed to set auth persistence:', error);
+  });
+
+// Listen for auth state changes
+onAuthStateChanged(auth, (user) => {
+  if (user) {
+    console.log('[Firebase] Auth state changed: User signed in:', user.email);
+  } else {
+    console.log('[Firebase] Auth state changed: User signed out');
+  }
+});
 
 window.fbAuth = auth;
 window.fbStorage = storage;

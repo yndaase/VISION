@@ -128,22 +128,38 @@ async function handleGoogleCredential(response) {
     let firebaseAuthSuccess = false;
     if (typeof window.fbSignInWithGoogle === 'function') {
       console.log('[Login] Signing into Firebase Auth...');
+      console.log('[Login] Google credential length:', response.credential.length);
       try {
         const fbResult = await window.fbSignInWithGoogle(response.credential);
+        console.log('[Login] Firebase Auth result:', fbResult);
         if (fbResult.success) {
           console.log('[Login] Firebase Auth successful:', fbResult.user.email);
           firebaseAuthSuccess = true;
           
+          // Verify auth state is set
+          if (window.fbAuth && window.fbAuth.currentUser) {
+            console.log('[Login] ✓ Firebase Auth currentUser confirmed:', window.fbAuth.currentUser.email);
+          } else {
+            console.warn('[Login] ⚠ Firebase Auth succeeded but currentUser is null');
+          }
+          
           // Wait a bit for Firebase Auth state to propagate
           await new Promise(resolve => setTimeout(resolve, 500));
+          
+          // Check again after wait
+          if (window.fbAuth && window.fbAuth.currentUser) {
+            console.log('[Login] ✓ Firebase Auth still valid after wait');
+          } else {
+            console.warn('[Login] ⚠ Firebase Auth lost after wait');
+          }
         } else {
-          console.warn('[Login] Firebase Auth failed:', fbResult.error);
+          console.error('[Login] Firebase Auth failed:', fbResult.error);
         }
       } catch (fbError) {
-        console.error('[Login] Firebase Auth error:', fbError);
+        console.error('[Login] Firebase Auth exception:', fbError);
       }
     } else {
-      console.warn('[Login] fbSignInWithGoogle not available - firebase.js may not be loaded');
+      console.error('[Login] fbSignInWithGoogle not available - firebase.js may not be loaded');
     }
 
     const successMessage = firebaseAuthSuccess 
