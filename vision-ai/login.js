@@ -124,53 +124,61 @@ async function handleGoogleCredential(response) {
     sessionStorage.setItem(SESSION_KEY, JSON.stringify(user));
     localStorage.setItem(SESSION_KEY, JSON.stringify(user));
 
-    // Sign into Firebase Auth with Google credential
+    // Sign into Firebase Auth with Google credential - THIS IS CRITICAL
     let firebaseAuthSuccess = false;
     if (typeof window.fbSignInWithGoogle === 'function') {
       console.log('[Login] Signing into Firebase Auth...');
-      console.log('[Login] Google credential length:', response.credential.length);
+      console.log('[Login] Google ID token length:', response.credential.length);
+      
       try {
         const fbResult = await window.fbSignInWithGoogle(response.credential);
         console.log('[Login] Firebase Auth result:', fbResult);
+        
         if (fbResult.success) {
-          console.log('[Login] Firebase Auth successful:', fbResult.user.email);
+          console.log('[Login] ✅ Firebase Auth successful:', fbResult.user.email);
           firebaseAuthSuccess = true;
           
-          // Verify auth state is set
-          if (window.fbAuth && window.fbAuth.currentUser) {
-            console.log('[Login] ✓ Firebase Auth currentUser confirmed:', window.fbAuth.currentUser.email);
-          } else {
-            console.warn('[Login] ⚠ Firebase Auth succeeded but currentUser is null');
-          }
+          // Wait for auth state to fully propagate
+          await new Promise(resolve => setTimeout(resolve, 1000));
           
-          // Wait a bit for Firebase Auth state to propagate
-          await new Promise(resolve => setTimeout(resolve, 500));
-          
-          // Check again after wait
+          // Verify auth state is persisted
           if (window.fbAuth && window.fbAuth.currentUser) {
-            console.log('[Login] ✓ Firebase Auth still valid after wait');
+            console.log('[Login] ✅ Firebase Auth currentUser confirmed:', window.fbAuth.currentUser.email);
+            
+            // Double-check persistence is set
+            console.log('[Login] ✅ Firebase Auth persistence:', window.fbAuth.currentUser.uid);
           } else {
-            console.warn('[Login] ⚠ Firebase Auth lost after wait');
+            console.error('[Login] ❌ Firebase Auth succeeded but currentUser is null - this is a bug!');
+            showError('Authentication succeeded but session not persisted. Please try again.');
+            return;
           }
         } else {
-          console.error('[Login] Firebase Auth failed:', fbResult.error);
+          console.error('[Login] ❌ Firebase Auth failed:', fbResult.error);
+          showError('Firebase authentication failed: ' + fbResult.error);
+          return;
         }
       } catch (fbError) {
-        console.error('[Login] Firebase Auth exception:', fbError);
+        console.error('[Login] ❌ Firebase Auth exception:', fbError);
+        showError('Firebase authentication error. Please try again.');
+        return;
       }
     } else {
-      console.error('[Login] fbSignInWithGoogle not available - firebase.js may not be loaded');
+      console.error('[Login] ❌ fbSignInWithGoogle not available - firebase.js may not be loaded');
+      showError('Firebase not loaded. Please refresh and try again.');
+      return;
     }
 
-    const successMessage = firebaseAuthSuccess 
-      ? 'Welcome, ' + user.name + '! Firebase Auth complete. Redirecting...'
-      : 'Welcome, ' + user.name + '! Redirecting to Vision AI...';
+    if (!firebaseAuthSuccess) {
+      showError('Authentication incomplete. Please try again.');
+      return;
+    }
     
-    showSuccess(successMessage);
+    showSuccess('Welcome, ' + user.name + '! Redirecting...');
     
+    // Redirect after ensuring Firebase Auth is ready
     setTimeout(() => {
       window.location.href = '/chat';
-    }, 1000);
+    }, 1500);
   } catch (e) {
     console.error('[Login] Google Sign-In error:', e);
     showError('Google sign-in failed. Please try again.');

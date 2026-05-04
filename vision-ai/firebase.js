@@ -229,12 +229,23 @@ export const fbSignIn = window.fbSignIn;
  */
 window.fbSignInWithGoogle = async function(idToken) {
   try {
+    console.log('[Firebase] Attempting Google Auth with token...');
     const credential = GoogleAuthProvider.credential(idToken);
     const result = await signInWithCredential(auth, credential);
-    console.log("[Firebase] Google Auth successful:", result.user.email);
-    return { success: true, user: result.user };
+    
+    // Wait for persistence to be confirmed
+    await new Promise(resolve => setTimeout(resolve, 500));
+    
+    // Verify the user is actually signed in
+    if (auth.currentUser && auth.currentUser.email === result.user.email) {
+      console.log("[Firebase] ✅ Google Auth successful and persisted:", result.user.email);
+      return { success: true, user: result.user };
+    } else {
+      console.error("[Firebase] ❌ Google Auth succeeded but persistence failed");
+      return { success: false, error: "Auth persistence failed" };
+    }
   } catch (error) {
-    console.warn("[Firebase] Google Auth failed:", error.message);
+    console.warn("[Firebase] ❌ Google Auth failed:", error.message);
     return { success: false, error: error.message };
   }
 };
