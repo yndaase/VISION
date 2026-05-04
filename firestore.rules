@@ -39,6 +39,11 @@ service cloud.firestore {
       
       // No one can delete users (except through admin console)
       allow delete: if false;
+      
+      // User sessions subcollection
+      match /sessions/{sessionId} {
+        allow read, write: if isSignedIn() && request.auth.token.email.toLowerCase() == email.toLowerCase();
+      }
     }
 
     // Parent Users collection

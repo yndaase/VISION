@@ -109,7 +109,9 @@ window.fbGetUser = async function(email, collectionName = 'users') {
     }
     return null;
   } catch(err) {
-    console.warn(`[Firebase] fbGetUser(${collectionName}) failed:`, err.message);
+    if (!err.message?.includes('permission') && !err.message?.includes('Missing or insufficient permissions')) {
+      console.warn(`[Firebase] fbGetUser(${collectionName}) failed:`, err.message);
+    }
     return null;
   }
 };
@@ -432,6 +434,8 @@ window.syncStateToCloud = async function(email) {
   if (!email) return;
 
   try {
+    await waitForAuth();
+    
     const statsKey = 'waec_stats_' + email;
     const streakKey = 'vision_streak_' + email;
     const mockKey = 'vision_last_mock_result';
