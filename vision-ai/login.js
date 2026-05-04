@@ -1,5 +1,6 @@
 const SESSION_KEY = "waec_session";
-const GOOGLE_CLIENT_ID = "378999569796-v8bj9miq61sggvpea5sbslc24dr9t71s.apps.googleusercontent.com";
+// Using Firebase's OAuth client ID (from Firebase Console)
+const GOOGLE_CLIENT_ID = "324420775871-p2qf8e50vbk0rgf8qf1o5i2459ihpuoq.apps.googleusercontent.com";
 let googleInitialized = false;
 
 // Check if already logged in
