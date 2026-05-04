@@ -157,6 +157,25 @@ window.fbUpdateUser = async function(email, fields, collectionName = 'users') {
 export const fbUpdateUser = window.fbUpdateUser;
 
 /**
+ * Sign up a new user to Firebase Auth.
+ */
+window.fbSignUp = async function(email, password) {
+  try {
+    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+    console.log("[Firebase] Signed up as:", userCredential.user.email);
+    return { success: true, user: userCredential.user };
+  } catch (error) {
+    if (error.code === 'auth/email-already-in-use') {
+      console.log("[Firebase] Account exists in Auth, falling back to Sign-In...");
+      return await window.fbSignIn(email, password);
+    }
+    console.warn("[Firebase] Auth Sign-Up failed:", error.message);
+    return { success: false, error: error.message };
+  }
+};
+export const fbSignUp = window.fbSignUp;
+
+/**
  * Sign in to Firebase Auth.
  */
 window.fbSignIn = async function(email, password) {

@@ -993,17 +993,21 @@ async function handleSignup(e) {
   }
   if (!valid) return;
 
-  // --- SILENT AUTH BRIDGE FOR SIGNUP ---
-  if (typeof window.fbSignIn === 'function') {
-    // fbSignIn auto-creates the account if it doesn't exist in Firebase Auth
+  // --- FIREBASE AUTH BRIDGE FOR SIGNUP ---
+  if (typeof window.fbSignUp === 'function') {
+    await window.fbSignUp(email, pass);
+  } else if (typeof window.fbSignIn === 'function') {
     await window.fbSignIn(email, pass);
   }
 
 
-  // Check Firestore first, then local cache
-  const existingCloud = await fbGetUserWithFallback(email);
-  const existingLocal = getUsers().find(u => u.email === email);
-  if (existingCloud || existingLocal) {
+  // Check Firestore purely for existence (bypass local storage to prevent conflicts)
+  let existingCloud = null;
+  if (typeof window.fbGetUser === 'function') {
+    existingCloud = await window.fbGetUser(email);
+  }
+  
+  if (existingCloud) {
     markInputError("signupEmail", "errSignupEmail", "An account with this email already exists.");
     return;
   }
