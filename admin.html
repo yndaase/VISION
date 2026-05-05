@@ -1142,6 +1142,10 @@
               // MFA TRIGGER: Send code to recovery email
               const recoveryEmail = "mensuohyaw@gmail.com";
               pendingAdminEmail = email; // Store admin email for Firebase sign-in after OTP
+              
+              // Store password temporarily for Firebase Auth (will be cleared after use)
+              sessionStorage.setItem('temp_admin_pass', pass);
+              
               loginBtn.innerText = "SENDING CODE...";
 
               try {
@@ -1241,36 +1245,49 @@
                 
                 if (typeof window.fbSignIn === 'function' && pendingAdminEmail) {
                     try {
-                        // Try to sign in with Firebase (password should match what's in Firebase Auth)
-                        const signInRes = await window.fbSignIn(pendingAdminEmail, "Ndaase@2009");
+                        // Get the password from the login form (stored temporarily)
+                        const adminPassword = sessionStorage.getItem('temp_admin_pass');
                         
-                        if (signInRes && signInRes.success) {
-                            console.log("[Admin] ✅ Firebase Auth successful");
-                            
-                            // CRITICAL: Wait for auth state to propagate before saving to Firestore
-                            await new Promise(resolve => setTimeout(resolve, 1500));
-                            
-                            // Ensure admin user document exists in Firestore
-                            if (typeof window.fbSaveUser === 'function') {
-                                console.log("[Admin] Syncing admin user document to Firestore...");
-                                await window.fbSaveUser({
-                                    name: "Yaw Ndaase",
-                                    email: pendingAdminEmail,
-                                    emailLower: pendingAdminEmail.toLowerCase(),
-                                    role: "admin",
-                                    provider: "email",
-                                    lastUpdated: new Date().toISOString()
-                                });
-                                console.log("[Admin] ✅ Admin user document synced to Firestore");
-                            }
-                        } else {
-                            console.warn("[Admin] ⚠️ Firebase Auth failed:", signInRes?.error);
+                        if (!adminPassword) {
+                            console.warn("[Admin] ⚠️ Admin password not available for Firebase Auth");
                             console.warn("[Admin] Continuing with local admin session only.");
-                            console.warn("[Admin] Note: Firestore features may not work without Firebase Auth.");
+                        } else {
+                            // Try to sign in with Firebase using the same password
+                            const signInRes = await window.fbSignIn(pendingAdminEmail, adminPassword);
+                            
+                            if (signInRes && signInRes.success) {
+                                console.log("[Admin] ✅ Firebase Auth successful");
+                                
+                                // CRITICAL: Wait for auth state to propagate before saving to Firestore
+                                await new Promise(resolve => setTimeout(resolve, 1500));
+                                
+                                // Ensure admin user document exists in Firestore
+                                if (typeof window.fbSaveUser === 'function') {
+                                    console.log("[Admin] Syncing admin user document to Firestore...");
+                                    await window.fbSaveUser({
+                                        name: "Yaw Ndaase",
+                                        email: pendingAdminEmail,
+                                        emailLower: pendingAdminEmail.toLowerCase(),
+                                        role: "admin",
+                                        provider: "email",
+                                        lastUpdated: new Date().toISOString()
+                                    });
+                                    console.log("[Admin] ✅ Admin user document synced to Firestore");
+                                }
+                            } else {
+                                console.warn("[Admin] ⚠️ Firebase Auth failed:", signInRes?.error);
+                                console.warn("[Admin] This means your Firebase Auth password is different from your local password.");
+                                console.warn("[Admin] Continuing with local admin session only.");
+                                console.warn("[Admin] Note: Firestore features may not work without Firebase Auth.");
+                            }
+                            
+                            // Clear the temporary password
+                            sessionStorage.removeItem('temp_admin_pass');
                         }
                     } catch (fbError) {
                         console.error("[Admin] ❌ Firebase Auth error:", fbError);
                         console.warn("[Admin] Continuing with local admin session only.");
+                        sessionStorage.removeItem('temp_admin_pass');
                     }
                 } else {
                     console.warn("[Admin] Firebase sign-in function not available");
