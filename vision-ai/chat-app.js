@@ -395,7 +395,11 @@ function addMessage(role, content, source = null, saveToFirebase = true) {
     if (source) messageData.source = source;
     
     window.fbSaveVisionAIMessage(userEmail, SESSION_ID, messageData)
-      .then(() => console.log('[Chat] Message saved to Firebase'))
+      .then(() => {
+        console.log('[Chat] Message saved to Firebase');
+        // Reload sessions to update sidebar
+        loadChatSessions();
+      })
       .catch(err => console.warn('[Chat] Failed to save message:', err));
   }
   
