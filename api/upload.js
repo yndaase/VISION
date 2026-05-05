@@ -57,10 +57,26 @@ export default async function handler(req, res) {
 
       // Get file buffer from request body
       const chunks = [];
-      for await (const chunk of req) {
-        chunks.push(chunk);
+      let totalSize = 0;
+      const MAX_SIZE = 4.5 * 1024 * 1024; // 4.5MB limit for Vercel Hobby plan
+      
+      try {
+        for await (const chunk of req) {
+          totalSize += chunk.length;
+          if (totalSize > MAX_SIZE) {
+            return res.status(413).json({ 
+              error: 'File too large. Maximum size is 4MB on current plan.' 
+            });
+          }
+          chunks.push(chunk);
+        }
+      } catch (err) {
+        console.error('[Upload API] Error reading request body:', err.message);
+        return res.status(400).json({ error: 'Failed to read file data' });
       }
+      
       const fileBuffer = Buffer.concat(chunks);
+      console.log(`[Upload API] Uploading ${fileKey} (${fileBuffer.length} bytes)`);
 
       // Upload to R2
       const command = new PutObjectCommand({
@@ -71,6 +87,7 @@ export default async function handler(req, res) {
       });
 
       await r2Client.send(command);
+      console.log(`[Upload API] Successfully uploaded to R2: ${fileKey}`);
       return res.status(200).json({ success: true, fileKey });
     }
 

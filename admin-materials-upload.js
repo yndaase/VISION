@@ -50,10 +50,10 @@ function initializeUploadArea() {
 
 // Handle file selection
 function handleFileSelect(file) {
-  // Validate file size (50MB max)
-  const maxSize = 50 * 1024 * 1024;
+  // Validate file size (4MB max for API proxy upload)
+  const maxSize = 4 * 1024 * 1024; // 4MB limit for Vercel Hobby plan
   if (file.size > maxSize) {
-    showAlert('error', 'File size exceeds 50MB limit');
+    showAlert('error', 'File size exceeds 4MB limit. Please use a smaller file or upgrade to Pro plan for larger uploads.');
     return;
   }
 
@@ -143,44 +143,40 @@ async function uploadMaterial() {
     const adminSession = sessionStorage.getItem(ADMIN_SESSION_KEY);
     const authHeader = `Bearer ${adminSession || ''}`;
 
-    // 1. Upload to Cloudflare R2 directly from client using a pre-signed URL
+    // 1. Upload to Cloudflare R2 through API proxy (bypasses CORS)
     progressText.textContent = 'Preparing upload...';
     progressFill.style.width = '10%';
 
     const timestamp = Date.now();
     const fileKey = `materials/${subject}/${timestamp}_${selectedFile.name}`;
     
-    // Get the upload URL from the backend
-    const urlResponse = await fetch(`/api/upload?action=get-upload-url&fileKey=${encodeURIComponent(fileKey)}&contentType=${encodeURIComponent(selectedFile.type)}`, {
-      method: 'GET',
-      headers: {
-        'Authorization': authHeader
-      }
-    });
-    
-    if (!urlResponse.ok) {
-      const errorData = await urlResponse.json().catch(() => ({ error: 'Unknown error' }));
-      console.error('[Upload] Failed to get upload URL:', errorData);
-      throw new Error(errorData.error || 'Failed to get upload URL');
-    }
-    const { uploadUrl } = await urlResponse.json();
-
-    // Upload the file directly to R2
+    // Upload file through API proxy (bypasses CORS issues)
     progressText.textContent = 'Uploading file to storage...';
-    progressFill.style.width = '50%';
+    progressFill.style.width = '30%';
 
-    const r2Response = await fetch(uploadUrl, {
+    const r2Response = await fetch(`/api/upload?action=upload&fileKey=${encodeURIComponent(fileKey)}&contentType=${encodeURIComponent(selectedFile.type)}`, {
       method: 'PUT',
       body: selectedFile,
       headers: {
+        'Authorization': authHeader,
         'Content-Type': selectedFile.type
       }
     });
 
     if (!r2Response.ok) {
-      console.error('[Upload] R2 upload failed. Status:', r2Response.status);
-      throw new Error('Failed to upload file to Cloudflare R2. Please configure CORS on R2 bucket.');
+      const errorData = await r2Response.json().catch(() => ({ error: 'Unknown error' }));
+      console.error('[Upload] R2 upload failed:', errorData);
+      
+      // Handle specific error codes
+      if (r2Response.status === 413) {
+        throw new Error('File too large. Maximum size is 4MB. Please use a smaller file.');
+      }
+      
+      throw new Error(errorData.error || 'Failed to upload file to R2');
     }
+    
+    console.log('[Upload] File uploaded successfully to R2');
+    progressFill.style.width = '70%';
     
     progressFill.style.width = '70%';
     progressText.textContent = 'Saving metadata...';
@@ -235,7 +231,7 @@ async function uploadMaterial() {
     showAlert('error', 'Upload failed: ' + error.message);
     
     uploadBtn.disabled = false;
-    uploadBtn.textContent = 'Upload to Vercel Blob';
+    uploadBtn.textContent = 'Upload to Cloudflare R2';
     progressContainer.style.display = 'none';
     progressFill.style.width = '0%';
   }
