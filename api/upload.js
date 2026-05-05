@@ -32,7 +32,7 @@ const db = admin.firestore();
 export default async function handler(req, res) {
   // CORS headers
   res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
 
   if (req.method === 'OPTIONS') {
@@ -50,7 +50,31 @@ export default async function handler(req, res) {
 
     const { action } = req.query;
 
-    // 1. GET: Generate pre-signed URL for upload
+    // 1. PUT: Upload file directly through API (bypasses CORS)
+    if (req.method === 'PUT' && action === 'upload') {
+      const { fileKey, contentType } = req.query;
+      if (!fileKey) return res.status(400).json({ error: 'fileKey required' });
+
+      // Get file buffer from request body
+      const chunks = [];
+      for await (const chunk of req) {
+        chunks.push(chunk);
+      }
+      const fileBuffer = Buffer.concat(chunks);
+
+      // Upload to R2
+      const command = new PutObjectCommand({
+        Bucket: BUCKET_NAME,
+        Key: fileKey,
+        Body: fileBuffer,
+        ContentType: contentType || 'application/octet-stream',
+      });
+
+      await r2Client.send(command);
+      return res.status(200).json({ success: true, fileKey });
+    }
+
+    // 2. GET: Generate pre-signed URL for upload (legacy - kept for compatibility)
     if (req.method === 'GET' && action === 'get-upload-url') {
       const { fileKey, contentType } = req.query;
       if (!fileKey) return res.status(400).json({ error: 'fileKey required' });

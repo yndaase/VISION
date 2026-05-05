@@ -150,34 +150,24 @@ async function uploadMaterial() {
     const timestamp = Date.now();
     const fileKey = `materials/${subject}/${timestamp}_${selectedFile.name}`;
     
-    // Get the upload URL from the backend
-    const urlResponse = await fetch(`/api/upload?action=get-upload-url&fileKey=${encodeURIComponent(fileKey)}&contentType=${encodeURIComponent(selectedFile.type)}`, {
-      method: 'GET',
-      headers: {
-        'Authorization': authHeader
-      }
-    });
-    
-    if (!urlResponse.ok) {
-      const errorData = await urlResponse.json().catch(() => ({ error: 'Unknown error' }));
-      console.error('[Upload] Failed to get upload URL:', errorData);
-      throw new Error(errorData.error || 'Failed to get upload URL');
-    }
-    const { uploadUrl } = await urlResponse.json();
-
-    // Upload the file directly to R2
+    // Upload file through API (bypasses CORS issues)
     progressText.textContent = 'Uploading file to storage...';
     progressFill.style.width = '50%';
 
-    const r2Response = await fetch(uploadUrl, {
+    const uploadResponse = await fetch(`/api/upload?action=upload&fileKey=${encodeURIComponent(fileKey)}&contentType=${encodeURIComponent(selectedFile.type)}`, {
       method: 'PUT',
       body: selectedFile,
       headers: {
+        'Authorization': authHeader,
         'Content-Type': selectedFile.type
       }
     });
 
-    if (!r2Response.ok) throw new Error('Failed to upload file to Cloudflare R2');
+    if (!uploadResponse.ok) {
+      const errorData = await uploadResponse.json().catch(() => ({ error: 'Unknown error' }));
+      console.error('[Upload] Failed to upload file:', errorData);
+      throw new Error(errorData.error || 'Failed to upload file to storage');
+    }
     
     progressFill.style.width = '70%';
     progressText.textContent = 'Saving metadata...';
