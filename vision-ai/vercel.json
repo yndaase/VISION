@@ -22,6 +22,19 @@
   ],
   "headers": [
     {
+      "source": "/e65d13f8505645a4adebfc3b905bc240.txt",
+      "headers": [
+        {
+          "key": "Content-Type",
+          "value": "text/plain; charset=utf-8"
+        },
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=86400"
+        }
+      ]
+    },
+    {
       "source": "/sitemap.xml",
       "headers": [
         {
