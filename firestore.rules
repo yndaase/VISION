@@ -50,6 +50,12 @@ service cloud.firestore {
       allow create, update, delete: if isAdmin();
     }
     
+    // Learning Materials collection (metadata only - files in R2)
+    match /learning_materials/{materialId} {
+      allow read: if isSignedIn();
+      allow create, update, delete: if isAdmin();
+    }
+    
     // WAEC Past Questions collection (metadata only - files in R2)
     match /waec_questions/{questionId} {
       allow read: if isSignedIn();
