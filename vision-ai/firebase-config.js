@@ -19,13 +19,13 @@ import {
 } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyCCLvmFR4NU6aIbDc-75EsBL-K9pqlNa5E",
-  authDomain: "vision-education-8a794.firebaseapp.com",
-  projectId: "vision-education-8a794",
-  storageBucket: "vision-education-8a794.appspot.com",
-  messagingSenderId: "324420775871",
-  appId: "1:324420775871:web:b0371a1561be77b085fb0a",
-  measurementId: "G-CCQSKNZKKW"
+  apiKey: "AIzaSyAD7pcqfK7xZ21mmfjI8aFrMqqOJWaJ5q8",
+  authDomain: "vision-edu-491909.firebaseapp.com",
+  projectId: "vision-edu-491909",
+  storageBucket: "vision-edu-491909.firebasestorage.app",
+  messagingSenderId: "378999569796",
+  appId: "1:378999569796:web:795c728984977ba397b1d1",
+  measurementId: "G-8EEL8JP4DV"
 };
 
 // Initialize Firebase only if not already initialized

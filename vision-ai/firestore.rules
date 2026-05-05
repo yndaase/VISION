@@ -1,0 +1,18 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Vision AI Chat History
+    // Users can only read/write their own chat data
+    match /vision_ai_chats/{userId}/sessions/{sessionId}/{document=**} {
+      allow read, write: if request.auth != null 
+                         && request.auth.token.email.lower() == userId;
+    }
+    
+    // Deny all other access by default
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
