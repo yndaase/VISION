@@ -624,10 +624,17 @@ window.fbDeleteMaterial = async function(id) {
 window.fbSaveBroadcast = async function(broadcast) {
   if (!broadcast || !broadcast.id) return;
   try {
+    await waitForAuth();
+    if (!auth.currentUser) {
+      console.warn('[Firebase] Cannot save broadcast - user not authenticated');
+      return;
+    }
     await setDoc(doc(db, "broadcasts", broadcast.id), broadcast);
     console.log('[Firebase] Broadcast saved:', broadcast.title);
   } catch(err) {
-    console.error('[Firebase] fbSaveBroadcast failed:', err.message);
+    if (!err.message?.includes('permission') && !err.message?.includes('Missing or insufficient permissions')) {
+      console.error('[Firebase] fbSaveBroadcast failed:', err.message);
+    }
   }
 };
 
@@ -636,13 +643,23 @@ window.fbSaveBroadcast = async function(broadcast) {
  */
 window.fbGetBroadcasts = async function() {
   try {
+    // Wait for auth to be ready before reading from Firestore
+    await waitForAuth();
+    if (!auth.currentUser) {
+      // Silently skip if user is not authenticated
+      return [];
+    }
+    
     const snapshot = await getDocs(collection(db, "broadcasts"));
     const list = [];
     snapshot.forEach(d => list.push(d.data()));
     // Sort by date descending
     return list.sort((a, b) => new Date(b.date) - new Date(a.date));
   } catch(err) {
-    console.error('[Firebase] fbGetBroadcasts failed:', err.message);
+    // Silently fail if permissions are missing - this is expected on public pages
+    if (!err.message?.includes('permission') && !err.message?.includes('Missing or insufficient permissions')) {
+      console.error('[Firebase] fbGetBroadcasts failed:', err.message);
+    }
     return [];
   }
 };
@@ -653,10 +670,17 @@ window.fbGetBroadcasts = async function() {
 window.fbDeleteBroadcast = async function(id) {
   if (!id) return;
   try {
+    await waitForAuth();
+    if (!auth.currentUser) {
+      console.warn('[Firebase] Cannot delete broadcast - user not authenticated');
+      return;
+    }
     await deleteDoc(doc(db, "broadcasts", id));
     console.log('[Firebase] Broadcast deleted:', id);
   } catch(err) {
-    console.error('[Firebase] fbDeleteBroadcast failed:', err.message);
+    if (!err.message?.includes('permission') && !err.message?.includes('Missing or insufficient permissions')) {
+      console.error('[Firebase] fbDeleteBroadcast failed:', err.message);
+    }
   }
 };
 
