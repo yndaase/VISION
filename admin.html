@@ -1240,7 +1240,7 @@
             const res = await response.json();
 
             if (res.success && res.valid) {
-                console.log("[Admin] OTP verified successfully");
+                console.log("[Admin] ✅ OTP verified successfully");
                 
                 // Set admin session immediately
                 sessionStorage.setItem(ADMIN_SESSION_KEY, Date.now());
@@ -1252,18 +1252,18 @@
                     const adminPassword = sessionStorage.getItem('temp_admin_pass');
                     
                     if (adminPassword) {
-                        console.log("[Admin] Attempting Firebase Auth in background...");
+                        console.log("[Admin] 🔐 Attempting Firebase Auth...");
                         
                         // Don't await - let it run in background
                         window.fbSignIn(pendingAdminEmail, adminPassword).then(async (signInRes) => {
                             if (signInRes && signInRes.success) {
                                 console.log("[Admin] ✅ Firebase Auth successful");
                                 
-                                // Wait for auth state
-                                await new Promise(resolve => setTimeout(resolve, 1500));
+                                // Wait for auth state to propagate
+                                await new Promise(resolve => setTimeout(resolve, 1000));
                                 
-                                // Save admin document
-                                if (typeof window.fbSaveUser === 'function') {
+                                // Save admin document to Firestore
+                                if (typeof window.fbSaveUser === 'function' && window.fbAuth?.currentUser) {
                                     await window.fbSaveUser({
                                         name: "Yaw Ndaase",
                                         email: pendingAdminEmail,
@@ -1272,18 +1272,22 @@
                                         provider: "email",
                                         lastUpdated: new Date().toISOString()
                                     });
-                                    console.log("[Admin] ✅ Admin user document synced to Firestore");
+                                    console.log("[Admin] ✅ Admin profile synced to Firestore");
                                 }
                             } else {
-                                console.warn("[Admin] ⚠️ Firebase Auth failed:", signInRes?.error);
-                                console.warn("[Admin] You need to create a Firebase Auth account for:", pendingAdminEmail);
-                                console.warn("[Admin] Go to Firebase Console → Authentication → Add User");
+                                console.warn("[Admin] ⚠️ Firebase Auth failed:", signInRes?.error || "Unknown error");
+                                console.info("[Admin] 💡 To enable Firestore features:");
+                                console.info("[Admin]    1. Go to Firebase Console → Authentication");
+                                console.info("[Admin]    2. Add user:", pendingAdminEmail);
+                                console.info("[Admin]    3. Use the same password as local login");
                             }
                         }).catch((fbError) => {
-                            console.error("[Admin] ❌ Firebase Auth error:", fbError);
+                            console.error("[Admin] ❌ Firebase Auth error:", fbError.message);
                         }).finally(() => {
                             sessionStorage.removeItem('temp_admin_pass');
                         });
+                    } else {
+                        console.warn("[Admin] ⚠️ No password stored for Firebase Auth");
                     }
                 }
                 

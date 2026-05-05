@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Firebase Separation Verification</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 2rem;
+      color: #fff;
+    }
+    .container { max-width: 800px; margin: 0 auto; }
+    h1 { font-size: 2rem; margin-bottom: 1rem; text-align: center; }
+    .card {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      border-radius: 16px;
+      padding: 2rem;
+      margin-bottom: 1.5rem;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    .status { display: flex; align-items: center; gap: 1rem; margin: 1rem 0; }
+    .icon { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; }
+    .pass { background: #10b981; }
+    .fail { background: #ef4444; }
+    .pending { background: rgba(255, 255, 255, 0.2); }
+    .code { background: rgba(0, 0, 0, 0.3); padding: 1rem; border-radius: 8px; font-family: monospace; font-size: 0.9rem; margin: 0.5rem 0; overflow-x: auto; }
+    .btn { background: #10b981; border: none; color: #fff; padding: 1rem 2rem; border-radius: 8px; cursor: pointer; font-size: 1rem; margin: 0.5rem; }
+    .btn:hover { background: #059669; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🔍 Firebase Separation Verification</h1>
+    
+    <div class="card">
+      <h2>Main Site Configuration</h2>
+      <div class="status">
+        <div class="icon pending" id="mainIcon">⏳</div>
+        <div>
+          <strong>Project ID:</strong> <span id="mainProject">Checking...</span><br>
+          <strong>Expected:</strong> vision-education-main
+        </div>
+      </div>
+      <button class="btn" onclick="checkMainSite()">Check Main Site</button>
+      <div class="code" id="mainResult" style="display: none;"></div>
+    </div>
+    
+    <div class="card">
+      <h2>Vision AI Configuration</h2>
+      <div class="status">
+        <div class="icon pending" id="aiIcon">⏳</div>
+        <div>
+          <strong>Project ID:</strong> <span id="aiProject">Checking...</span><br>
+          <strong>Expected:</strong> vision-edu-491909
+        </div>
+      </div>
+      <button class="btn" onclick="checkVisionAI()">Check Vision AI</button>
+      <div class="code" id="aiResult" style="display: none;"></div>
+    </div>
+    
+    <div class="card">
+      <h2>Separation Status</h2>
+      <div class="status">
+        <div class="icon pending" id="separationIcon">⏳</div>
+        <div id="separationStatus">
+          <strong>Status:</strong> Not verified yet
+        </div>
+      </div>
+      <button class="btn" onclick="verifyAll()">Verify All</button>
+    </div>
+  </div>
+  
+  <script>
+    async function checkMainSite() {
+      try {
+        const response = await fetch('/firebase.js');
+        const code = await response.text();
+        
+        const projectMatch = code.match(/projectId:\s*["']([^"']+)["']/);
+        const project = projectMatch ? projectMatch[1] : 'Not found';
+        
+        document.getElementById('mainProject').textContent = project;
+        document.getElementById('mainResult').textContent = code.substring(0, 500) + '...';
+        document.getElementById('mainResult').style.display = 'block';
+        
+        if (project === 'vision-education-main') {
+          document.getElementById('mainIcon').className = 'icon pass';
+          document.getElementById('mainIcon').textContent = '✅';
+        } else {
+          document.getElementById('mainIcon').className = 'icon fail';
+          document.getElementById('mainIcon').textContent = '❌';
+        }
+      } catch (err) {
+        document.getElementById('mainProject').textContent = 'Error: ' + err.message;
+        document.getElementById('mainIcon').className = 'icon fail';
+        document.getElementById('mainIcon').textContent = '❌';
+      }
+    }
+    
+    async function checkVisionAI() {
+      try {
+        const response = await fetch('/vision-ai/firebase.js');
+        const code = await response.text();
+        
+        const projectMatch = code.match(/projectId:\s*["']([^"']+)["']/);
+        const project = projectMatch ? projectMatch[1] : 'Not found';
+        
+        document.getElementById('aiProject').textContent = project;
+        document.getElementById('aiResult').textContent = code.substring(0, 500) + '...';
+        document.getElementById('aiResult').style.display = 'block';
+        
+        if (project === 'vision-edu-491909') {
+          document.getElementById('aiIcon').className = 'icon pass';
+          document.getElementById('aiIcon').textContent = '✅';
+        } else {
+          document.getElementById('aiIcon').className = 'icon fail';
+          document.getElementById('aiIcon').textContent = '❌';
+        }
+      } catch (err) {
+        document.getElementById('aiProject').textContent = 'Error: ' + err.message;
+        document.getElementById('aiIcon').className = 'icon fail';
+        document.getElementById('aiIcon').textContent = '❌';
+      }
+    }
+    
+    async function verifyAll() {
+      await checkMainSite();
+      await checkVisionAI();
+      
+      setTimeout(() => {
+        const mainProject = document.getElementById('mainProject').textContent;
+        const aiProject = document.getElementById('aiProject').textContent;
+        
+        if (mainProject === 'vision-education-main' && aiProject === 'vision-edu-491909') {
+          document.getElementById('separationIcon').className = 'icon pass';
+          document.getElementById('separationIcon').textContent = '✅';
+          document.getElementById('separationStatus').innerHTML = `
+            <strong>Status:</strong> ✅ Perfect Separation!<br>
+            <small>Main site and Vision AI are using separate Firebase projects.</small>
+          `;
+        } else {
+          document.getElementById('separationIcon').className = 'icon fail';
+          document.getElementById('separationIcon').textContent = '❌';
+          document.getElementById('separationStatus').innerHTML = `
+            <strong>Status:</strong> ❌ Configuration Issue<br>
+            <small>Projects are not properly separated. Check the results above.</small>
+          `;
+        }
+      }, 500);
+    }
+  </script>
+</body>
+</html>

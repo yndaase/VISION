@@ -126,13 +126,20 @@ document.addEventListener("DOMContentLoaded", () => {
 
   //  Background Sync for Materials
   if (typeof syncMaterials === 'function') {
+      console.log('[Dashboard] Starting materials sync...');
       syncMaterials().then(() => {
+          console.log('[Dashboard] Materials sync complete, rendering...');
+          if (typeof renderDashMaterials === 'function') renderDashMaterials();
+      }).catch(err => {
+          console.error('[Dashboard] Materials sync failed:', err);
+          // Still try to render from cache
           if (typeof renderDashMaterials === 'function') renderDashMaterials();
       });
+  } else {
+      console.warn('[Dashboard] syncMaterials function not available');
+      // Render from cache if sync function doesn't exist
+      if (typeof renderDashMaterials === 'function') renderDashMaterials();
   }
-  
-  // Initial render
-  if (typeof renderDashMaterials === 'function') renderDashMaterials();
 
   //  Background Sync for User Profile (Verification, Role, etc.)
   if (session.email && typeof fbGetUserWithFallback === 'function') {

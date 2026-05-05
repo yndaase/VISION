@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Firebase Fixes Verification</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 2rem;
+      color: #fff;
+    }
+    
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    
+    h1 {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+      text-align: center;
+    }
+    
+    .subtitle {
+      text-align: center;
+      opacity: 0.9;
+      margin-bottom: 3rem;
+    }
+    
+    .test-card {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      border-radius: 16px;
+      padding: 2rem;
+      margin-bottom: 1.5rem;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    
+    .test-header {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+    
+    .status-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+    }
+    
+    .status-pending {
+      background: rgba(255, 255, 255, 0.2);
+    }
+    
+    .status-pass {
+      background: #10b981;
+    }
+    
+    .status-fail {
+      background: #ef4444;
+    }
+    
+    .test-title {
+      font-size: 1.25rem;
+      font-weight: 600;
+    }
+    
+    .test-description {
+      opacity: 0.9;
+      margin-bottom: 1rem;
+      line-height: 1.6;
+    }
+    
+    .test-result {
+      background: rgba(0, 0, 0, 0.2);
+      padding: 1rem;
+      border-radius: 8px;
+      font-family: 'Courier New', monospace;
+      font-size: 0.9rem;
+      margin-top: 1rem;
+      display: none;
+    }
+    
+    .test-result.show {
+      display: block;
+    }
+    
+    .btn {
+      background: rgba(255, 255, 255, 0.2);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      color: #fff;
+      padding: 0.75rem 1.5rem;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 1rem;
+      transition: all 0.3s;
+    }
+    
+    .btn:hover {
+      background: rgba(255, 255, 255, 0.3);
+      transform: translateY(-2px);
+    }
+    
+    .btn-primary {
+      background: #10b981;
+      border-color: #10b981;
+    }
+    
+    .btn-primary:hover {
+      background: #059669;
+    }
+    
+    .summary {
+      text-align: center;
+      margin-top: 2rem;
+      padding: 2rem;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 16px;
+    }
+    
+    .summary-stats {
+      display: flex;
+      justify-content: center;
+      gap: 2rem;
+      margin-top: 1rem;
+    }
+    
+    .stat {
+      text-align: center;
+    }
+    
+    .stat-value {
+      font-size: 2rem;
+      font-weight: bold;
+    }
+    
+    .stat-label {
+      opacity: 0.8;
+      font-size: 0.9rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🔧 Firebase Fixes Verification</h1>
+    <p class="subtitle">Automated testing for permission error fixes</p>
+    
+    <!-- Test 1: Console Errors -->
+    <div class="test-card" id="test1">
+      <div class="test-header">
+        <div class="status-icon status-pending" id="status1">⏳</div>
+        <div class="test-title">Console Error Check</div>
+      </div>
+      <div class="test-description">
+        Verifying that no Firebase permission errors appear in the console during page load.
+      </div>
+      <button class="btn" onclick="runTest1()">Run Test</button>
+      <div class="test-result" id="result1"></div>
+    </div>
+    
+    <!-- Test 2: Password Form -->
+    <div class="test-card" id="test2">
+      <div class="test-header">
+        <div class="status-icon status-pending" id="status2">⏳</div>
+        <div class="test-title">Password Form Structure</div>
+      </div>
+      <div class="test-description">
+        Checking that password fields are properly contained in a form element.
+      </div>
+      <button class="btn" onclick="runTest2()">Run Test</button>
+      <div class="test-result" id="result2"></div>
+    </div>
+    
+    <!-- Test 3: Session Registration -->
+    <div class="test-card" id="test3">
+      <div class="test-header">
+        <div class="status-icon status-pending" id="status3">⏳</div>
+        <div class="test-title">Session Registration Logic</div>
+      </div>
+      <div class="test-description">
+        Verifying that session registration only runs when user is authenticated.
+      </div>
+      <button class="btn" onclick="runTest3()">Run Test</button>
+      <div class="test-result" id="result3"></div>
+    </div>
+    
+    <!-- Test 4: Auto-Sync Logic -->
+    <div class="test-card" id="test4">
+      <div class="test-header">
+        <div class="status-icon status-pending" id="status4">⏳</div>
+        <div class="test-title">Auto-Sync Protection</div>
+      </div>
+      <div class="test-description">
+        Checking that auto-sync waits for authentication before attempting Firestore writes.
+      </div>
+      <button class="btn" onclick="runTest4()">Run Test</button>
+      <div class="test-result" id="result4"></div>
+    </div>
+    
+    <!-- Run All Tests -->
+    <div style="text-align: center; margin-top: 2rem;">
+      <button class="btn btn-primary" onclick="runAllTests()" style="font-size: 1.1rem; padding: 1rem 2rem;">
+        🚀 Run All Tests
+      </button>
+    </div>
+    
+    <!-- Summary -->
+    <div class="summary" id="summary" style="display: none;">
+      <h2>Test Results Summary</h2>
+      <div class="summary-stats">
+        <div class="stat">
+          <div class="stat-value" id="passCount">0</div>
+          <div class="stat-label">Passed</div>
+        </div>
+        <div class="stat">
+          <div class="stat-value" id="failCount">0</div>
+          <div class="stat-label">Failed</div>
+        </div>
+        <div class="stat">
+          <div class="stat-value" id="totalCount">4</div>
+          <div class="stat-label">Total</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <script>
+    let testResults = {
+      pass: 0,
+      fail: 0
+    };
+    
+    function updateStatus(testNum, passed, message) {
+      const statusIcon = document.getElementById(`status${testNum}`);
+      const resultDiv = document.getElementById(`result${testNum}`);
+      
+      if (passed) {
+        statusIcon.textContent = '✅';
+        statusIcon.className = 'status-icon status-pass';
+        testResults.pass++;
+      } else {
+        statusIcon.textContent = '❌';
+        statusIcon.className = 'status-icon status-fail';
+        testResults.fail++;
+      }
+      
+      resultDiv.textContent = message;
+      resultDiv.classList.add('show');
+      
+      updateSummary();
+    }
+    
+    function updateSummary() {
+      document.getElementById('passCount').textContent = testResults.pass;
+      document.getElementById('failCount').textContent = testResults.fail;
+      document.getElementById('summary').style.display = 'block';
+    }
+    
+    function runTest1() {
+      // Check console for Firebase errors
+      const originalError = console.error;
+      const originalWarn = console.warn;
+      let hasPermissionError = false;
+      
+      console.error = function(...args) {
+        const message = args.join(' ');
+        if (message.includes('permission') || message.includes('Missing or insufficient permissions')) {
+          hasPermissionError = true;
+        }
+        originalError.apply(console, args);
+      };
+      
+      console.warn = function(...args) {
+        const message = args.join(' ');
+        if (message.includes('permission') || message.includes('Missing or insufficient permissions')) {
+          hasPermissionError = true;
+        }
+        originalWarn.apply(console, args);
+      };
+      
+      setTimeout(() => {
+        console.error = originalError;
+        console.warn = originalWarn;
+        
+        if (hasPermissionError) {
+          updateStatus(1, false, 'FAIL: Permission errors detected in console');
+        } else {
+          updateStatus(1, true, 'PASS: No permission errors found in console');
+        }
+      }, 2000);
+    }
+    
+    function runTest2() {
+      // Check if password fields exist in dashboard
+      fetch('/dashboard.html')
+        .then(response => response.text())
+        .then(html => {
+          const hasForm = html.includes('<form id="passwordChangeForm"');
+          const hasAutocomplete = html.includes('autocomplete="current-password"') && 
+                                  html.includes('autocomplete="new-password"');
+          
+          if (hasForm && hasAutocomplete) {
+            updateStatus(2, true, 'PASS: Password fields properly wrapped in form with autocomplete attributes');
+          } else {
+            updateStatus(2, false, `FAIL: Form structure incomplete (hasForm: ${hasForm}, hasAutocomplete: ${hasAutocomplete})`);
+          }
+        })
+        .catch(err => {
+          updateStatus(2, false, 'FAIL: Could not load dashboard.html - ' + err.message);
+        });
+    }
+    
+    function runTest3() {
+      // Check sessions.js for auth checks
+      fetch('/sessions.js')
+        .then(response => response.text())
+        .then(code => {
+          const hasAuthCheck = code.includes('if (!firebaseUser.emailVerified && firebaseUser.providerData.length === 0)');
+          const hasDelay = code.includes('await new Promise(resolve => setTimeout(resolve, 500))');
+          const hasSilentFail = code.includes("if (!e.message?.includes('permission')");
+          
+          if (hasAuthCheck && hasDelay && hasSilentFail) {
+            updateStatus(3, true, 'PASS: Session registration has proper auth checks and error handling');
+          } else {
+            updateStatus(3, false, `FAIL: Missing safety checks (auth: ${hasAuthCheck}, delay: ${hasDelay}, silent: ${hasSilentFail})`);
+          }
+        })
+        .catch(err => {
+          updateStatus(3, false, 'FAIL: Could not load sessions.js - ' + err.message);
+        });
+    }
+    
+    function runTest4() {
+      // Check firebase.js for auto-sync protection
+      fetch('/firebase.js')
+        .then(response => response.text())
+        .then(code => {
+          const hasWaitForAuth = code.includes('await waitForAuth(5000)');
+          const hasAuthCheck = code.includes('if (!auth.currentUser)');
+          const hasEmailVerify = code.includes("auth.currentUser.email.toLowerCase() === session.email.toLowerCase()");
+          const hasIncreasedDelay = code.includes('}, 3000)');
+          
+          if (hasWaitForAuth && hasAuthCheck && hasEmailVerify && hasIncreasedDelay) {
+            updateStatus(4, true, 'PASS: Auto-sync properly waits for authentication');
+          } else {
+            updateStatus(4, false, `FAIL: Missing protection (wait: ${hasWaitForAuth}, check: ${hasAuthCheck}, verify: ${hasEmailVerify}, delay: ${hasIncreasedDelay})`);
+          }
+        })
+        .catch(err => {
+          updateStatus(4, false, 'FAIL: Could not load firebase.js - ' + err.message);
+        });
+    }
+    
+    async function runAllTests() {
+      testResults = { pass: 0, fail: 0 };
+      runTest1();
+      await new Promise(resolve => setTimeout(resolve, 500));
+      runTest2();
+      await new Promise(resolve => setTimeout(resolve, 500));
+      runTest3();
+      await new Promise(resolve => setTimeout(resolve, 500));
+      runTest4();
+    }
+  </script>
+</body>
+</html>

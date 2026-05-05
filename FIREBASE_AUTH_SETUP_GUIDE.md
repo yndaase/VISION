@@ -15,7 +15,7 @@
 ## Why Firebase Auth Failed
 
 The error `auth/invalid-credential` means:
-- Your admin email (`mensuohyaw@gmail.com`) doesn't have a Firebase Auth account yet
+- Your admin email (`admin@visionedu.online`) doesn't have a Firebase Auth account yet
 - OR the password doesn't match
 
 ## How to Fix (Create Firebase Auth Account)
@@ -28,7 +28,7 @@ The error `auth/invalid-credential` means:
 4. **Click "Users" tab**
 5. **Click "Add User"**
 6. **Enter**:
-   - Email: `mensuohyaw@gmail.com`
+   - Email: `admin@visionedu.online`
    - Password: `[YOUR_ADMIN_PASSWORD]` (same as local login)
 7. **Click "Add User"**
 
@@ -50,7 +50,7 @@ Where `users.json` contains:
 {
   "users": [{
     "localId": "admin-user-id",
-    "email": "mensuohyaw@gmail.com",
+    "email": "admin@visionedu.online",
     "emailVerified": true,
     "passwordHash": "[hash]",
     "salt": "[salt]",
@@ -122,7 +122,7 @@ Where `users.json` contains:
 [Admin] OTP verified successfully
 [Admin] Attempting Firebase Auth in background...
 [Admin] ⚠️ Firebase Auth failed: Firebase: Error (auth/invalid-credential)
-[Admin] You need to create a Firebase Auth account for: mensuohyaw@gmail.com
+[Admin] You need to create a Firebase Auth account for: admin@visionedu.online
 [Admin] Go to Firebase Console → Authentication → Add User
 ```
 
@@ -130,7 +130,7 @@ Where `users.json` contains:
 
 **To enable all Firebase features:**
 
-1. Create Firebase Auth account for `mensuohyaw@gmail.com`
+1. Create Firebase Auth account for `admin@visionedu.online`
 2. Use the SAME password as your local admin login
 3. Log out and log back in
 4. Firebase Auth will succeed

@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Welcome Name Diagnostic</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background: #1a1a2e;
+            color: #fff;
+        }
+        .test-section {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .success { color: #10b981; }
+        .error { color: #ef4444; }
+        .info { color: #60a5fa; }
+        button {
+            background: #6366f1;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #4f46e5;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔍 Welcome Name Diagnostic Tool</h1>
+    
+    <div class="test-section">
+        <h2>Test 1: Check Session Data</h2>
+        <button onclick="test1()">Run Test 1</button>
+        <pre id="test1-result"></pre>
+    </div>
+
+    <div class="test-section">
+        <h2>Test 2: Check Welcome Element</h2>
+        <button onclick="test2()">Run Test 2</button>
+        <pre id="test2-result"></pre>
+    </div>
+
+    <div class="test-section">
+        <h2>Test 3: Force Set Name</h2>
+        <button onclick="test3()">Run Test 3</button>
+        <pre id="test3-result"></pre>
+    </div>
+
+    <div class="test-section">
+        <h2>Test 4: Visual Check</h2>
+        <p>This is how your welcome section should look:</p>
+        <div style="background: rgba(255,255,255,0.03); padding: 30px; border-radius: 16px; margin: 20px 0;">
+            <h1 style="font-size: 2.5rem; font-weight: 800; line-height: 1.2;">
+                Welcome,<br>
+                <span style="color: #6366f1; display: inline-block;">Yaw</span>
+            </h1>
+        </div>
+        <p class="info">If you don't see "Yaw" on a new line below "Welcome," there's a CSS issue.</p>
+    </div>
+
+    <script>
+        function test1() {
+            const result = document.getElementById('test1-result');
+            try {
+                const session = JSON.parse(sessionStorage.getItem('waec_session') || localStorage.getItem('waec_session'));
+                if (!session) {
+                    result.innerHTML = '<span class="error">❌ No session found! You need to log in first.</span>';
+                    return;
+                }
+                result.innerHTML = `<span class="success">✅ Session found!</span>\n\n` +
+                    `Email: ${session.email}\n` +
+                    `Name: ${session.name}\n` +
+                    `Provider: ${session.provider}\n` +
+                    `Role: ${session.role}\n\n` +
+                    `First Name: ${session.name ? session.name.split(' ')[0] : 'N/A'}`;
+            } catch (e) {
+                result.innerHTML = `<span class="error">❌ Error: ${e.message}</span>`;
+            }
+        }
+
+        function test2() {
+            const result = document.getElementById('test2-result');
+            try {
+                // Open dashboard in new tab
+                window.open('/dashboard', '_blank');
+                result.innerHTML = '<span class="info">📋 Dashboard opened in new tab.\n\nOpen browser console (F12) and run:\n\n' +
+                    'console.log("Element:", document.getElementById("welcomeName"));\n' +
+                    'console.log("Text:", document.getElementById("welcomeName")?.textContent);\n' +
+                    'console.log("Visible:", window.getComputedStyle(document.getElementById("welcomeName")).display);\n' +
+                    'console.log("Color:", window.getComputedStyle(document.getElementById("welcomeName")).color);</span>';
+            } catch (e) {
+                result.innerHTML = `<span class="error">❌ Error: ${e.message}</span>`;
+            }
+        }
+
+        function test3() {
+            const result = document.getElementById('test3-result');
+            try {
+                const session = JSON.parse(sessionStorage.getItem('waec_session') || localStorage.getItem('waec_session'));
+                if (!session || !session.name) {
+                    result.innerHTML = '<span class="error">❌ No session or name found!</span>';
+                    return;
+                }
+                
+                // Open dashboard and inject fix
+                const win = window.open('/dashboard', '_blank');
+                setTimeout(() => {
+                    try {
+                        const firstName = session.name.split(' ')[0];
+                        win.document.getElementById('welcomeName').textContent = firstName;
+                        win.document.getElementById('welcomeName').style.color = '#6366f1';
+                        win.document.getElementById('welcomeName').style.fontSize = '2.5rem';
+                        result.innerHTML = `<span class="success">✅ Forced name to: ${firstName}\n\nCheck the dashboard tab!</span>`;
+                    } catch (e) {
+                        result.innerHTML = `<span class="error">❌ Could not inject: ${e.message}\n\nTry running this in the dashboard console instead:\n\n` +
+                            `document.getElementById('welcomeName').textContent = '${session.name.split(' ')[0]}';</span>`;
+                    }
+                }, 2000);
+                
+                result.innerHTML = '<span class="info">⏳ Opening dashboard and injecting fix...</span>';
+            } catch (e) {
+                result.innerHTML = `<span class="error">❌ Error: ${e.message}</span>`;
+            }
+        }
+    </script>
+</body>
+</html>

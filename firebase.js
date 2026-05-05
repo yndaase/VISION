@@ -66,33 +66,48 @@ function candidateEmailKeys(email) {
 
 /**
  * Helper to wait for Firebase Auth to initialize if it's currently null
+ * Uses a shared promise to prevent multiple simultaneous waits
  */
-async function waitForAuth(timeoutMs = 5000) {
+let authWaitPromise = null;
+async function waitForAuth(timeoutMs = 3000) {
+  // If already authenticated, return immediately
   if (auth.currentUser) return auth.currentUser;
   
-  console.log('[Firebase] Waiting for auth state...');
+  // If already waiting, return the existing promise
+  if (authWaitPromise) return authWaitPromise;
   
-  return new Promise((resolve) => {
+  // Create new wait promise
+  authWaitPromise = new Promise((resolve) => {
     const start = Date.now();
+    let resolved = false;
+    
     const unsubscribe = auth.onAuthStateChanged((user) => {
+      if (resolved) return;
+      
       if (user) {
-        console.log('[Firebase] Auth state ready:', user.email);
+        resolved = true;
         unsubscribe();
+        authWaitPromise = null;
         resolve(user);
       } else if (Date.now() - start > timeoutMs) {
-        console.warn('[Firebase] Auth state timeout');
+        resolved = true;
         unsubscribe();
+        authWaitPromise = null;
         resolve(null);
       }
     });
     
     // Safety timeout
     setTimeout(() => {
-      console.warn('[Firebase] Auth wait timeout reached');
+      if (resolved) return;
+      resolved = true;
       unsubscribe();
+      authWaitPromise = null;
       resolve(auth.currentUser);
     }, timeoutMs);
   });
+  
+  return authWaitPromise;
 }
 
 /* ─────────────────────────────────────────────────────────────
@@ -108,10 +123,14 @@ async function waitForAuth(timeoutMs = 5000) {
  */
 window.fbGetUser = async function(email, collectionName = 'users') {
   if (!email) return null;
+  
+  // Quick check: if no auth user, don't try to read from Firestore
+  if (!auth.currentUser) {
+    return null;
+  }
+  
   try {
     const keys = candidateEmailKeys(email);
-    // Ensure auth is ready before trying to read from a protected collection
-    await waitForAuth();
     
     for (const key of keys) {
       const docSnap = await getDoc(doc(db, collectionName, key));
@@ -134,14 +153,14 @@ export const fbGetUser = window.fbGetUser;
  */
 window.fbSaveUser = async function(user, collectionName = 'users') {
   if (!user || !user.email) return;
+  
+  // Quick check: if no auth user, don't even try to wait
+  if (!auth.currentUser) {
+    // Silently skip - this is expected when Firebase Auth isn't set up
+    return;
+  }
+  
   try {
-    // CRITICAL: Wait for Firebase Auth to be ready before writing to Firestore
-    await waitForAuth();
-    if (!auth.currentUser) {
-      console.warn(`[Firebase] Cannot save user to ${collectionName} - Firebase Auth not ready`);
-      return;
-    }
-    
     const key = resolveEmailKey(user.email);
     const payload = { ...user, email: key, emailLower: user.email.toLowerCase(), lastUpdated: new Date().toISOString() };
     await setDoc(doc(db, collectionName, key), payload, { merge: true });
@@ -458,14 +477,13 @@ window.fbGetPlan = async function(email) {
  */
 window.syncStateToCloud = async function(email) {
   if (!email) return;
+  
+  // Quick check: if no auth user, don't try to sync
+  if (!auth.currentUser) {
+    return;
+  }
 
   try {
-    await waitForAuth();
-    if (!auth.currentUser) {
-      // Silently skip sync if user is not authenticated - this is expected behavior
-      return;
-    }
-    
     const statsKey = 'waec_stats_' + email;
     const streakKey = 'vision_streak_' + email;
     const mockKey = 'vision_last_mock_result';
@@ -619,6 +637,109 @@ window.fbGetMaterials = async function() {
 };
 
 /**
+ * Sync materials from Firestore to localStorage for offline access.
+ * This function is called on dashboard load to ensure students see the latest materials.
+ */
+window.syncMaterials = async function() {
+  try {
+    console.log('[Firebase] Syncing materials from Firestore...');
+    const cloudMaterials = await window.fbGetMaterials();
+    
+    if (cloudMaterials && cloudMaterials.length > 0) {
+      // Save to localStorage
+      localStorage.setItem('vision_materials', JSON.stringify(cloudMaterials));
+      console.log(`[Firebase] ✅ Synced ${cloudMaterials.length} materials to localStorage`);
+      return cloudMaterials;
+    } else {
+      console.log('[Firebase] No materials found in Firestore');
+      return [];
+    }
+  } catch(err) {
+    console.error('[Firebase] syncMaterials failed:', err.message);
+    // Return cached materials if sync fails
+    try {
+      const cached = localStorage.getItem('vision_materials');
+      return cached ? JSON.parse(cached) : [];
+    } catch(e) {
+      return [];
+    }
+  }
+};
+export const syncMaterials = window.syncMaterials;
+
+/**
+ * Get materials from localStorage cache (populated by syncMaterials).
+ * This is a synchronous function for use in dashboard rendering.
+ */
+window.getMaterials = function() {
+  try {
+    const cached = localStorage.getItem('vision_materials');
+    const materials = cached ? JSON.parse(cached) : [];
+    console.log(`[Materials] Loaded ${materials.length} materials from cache`);
+    return materials;
+  } catch(e) {
+    console.error('[Materials] Failed to load from cache:', e.message);
+    return [];
+  }
+};
+export const getMaterials = window.getMaterials;
+
+/**
+ * Debug function to test materials sync
+ */
+window.testMaterialsSync = async function() {
+  console.log('=== MATERIALS SYNC TEST ===');
+  
+  // Test 1: Check if functions exist
+  console.log('1. Function availability:');
+  console.log('   - fbGetMaterials:', typeof window.fbGetMaterials);
+  console.log('   - syncMaterials:', typeof window.syncMaterials);
+  console.log('   - getMaterials:', typeof window.getMaterials);
+  
+  // Test 2: Check Firestore
+  console.log('\n2. Fetching from Firestore...');
+  try {
+    const cloudMaterials = await window.fbGetMaterials();
+    console.log(`   ✅ Found ${cloudMaterials.length} materials in Firestore`);
+    if (cloudMaterials.length > 0) {
+      console.log('   First material:', cloudMaterials[0]);
+    }
+  } catch(err) {
+    console.error('   ❌ Firestore fetch failed:', err.message);
+  }
+  
+  // Test 3: Check localStorage
+  console.log('\n3. Checking localStorage...');
+  const cached = localStorage.getItem('vision_materials');
+  if (cached) {
+    const materials = JSON.parse(cached);
+    console.log(`   ✅ Found ${materials.length} materials in cache`);
+    if (materials.length > 0) {
+      console.log('   First material:', materials[0]);
+    }
+  } else {
+    console.log('   ❌ No materials in cache');
+  }
+  
+  // Test 4: Sync
+  console.log('\n4. Running sync...');
+  try {
+    const synced = await window.syncMaterials();
+    console.log(`   ✅ Synced ${synced.length} materials`);
+  } catch(err) {
+    console.error('   ❌ Sync failed:', err.message);
+  }
+  
+  // Test 5: Get materials
+  console.log('\n5. Getting materials...');
+  const materials = window.getMaterials();
+  console.log(`   ✅ getMaterials() returned ${materials.length} materials`);
+  
+  console.log('\n=== TEST COMPLETE ===');
+  return materials;
+};
+
+/**
  * Delete a material from Firestore.
  */
 window.fbDeleteMaterial = async function(id) {
@@ -662,14 +783,12 @@ window.fbSaveBroadcast = async function(broadcast) {
  * Get the latest broadcasts from Firestore.
  */
 window.fbGetBroadcasts = async function() {
+  // Quick check: if no auth user, don't try to read from Firestore
+  if (!auth.currentUser) {
+    return [];
+  }
+  
   try {
-    // Wait for auth to be ready before reading from Firestore
-    await waitForAuth();
-    if (!auth.currentUser) {
-      // Silently skip if user is not authenticated
-      return [];
-    }
-    
     const snapshot = await getDocs(collection(db, "broadcasts"));
     const list = [];
     snapshot.forEach(d => list.push(d.data()));
