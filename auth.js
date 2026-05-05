@@ -735,16 +735,20 @@ async function handleGoogleCredential(response) {
       sub: payload.sub,
     };
 
-    // Upsert user in Firestore + local cache
+    // --- FIREBASE AUTH BRIDGE FOR GOOGLE (MUST BE FIRST) ---
+    // Authenticate with Firebase BEFORE trying to save to Firestore
+    if (typeof window.fbSignInWithGoogle === 'function') {
+      const authResult = await window.fbSignInWithGoogle(response.credential);
+      if (!authResult || !authResult.success) {
+        console.warn('[Auth] Firebase Google Auth failed:', authResult?.error);
+      }
+    }
+
+    // Upsert user in Firestore + local cache (AFTER Firebase Auth)
     await fbSaveUserAndCache(user);
 
     setSession(user);
     showAuthSuccess("Welcome, " + user.name + "! ");
-    
-    // --- FIREBASE AUTH BRIDGE FOR GOOGLE ---
-    if (typeof window.fbSignInWithGoogle === 'function') {
-      await window.fbSignInWithGoogle(response.credential);
-    }
     
     // Pull latest role/subscription/verification from Firestore
     const cloudUser = await fbGetUserWithFallback(user.email);
