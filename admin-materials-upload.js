@@ -150,23 +150,36 @@ async function uploadMaterial() {
     const timestamp = Date.now();
     const fileKey = `materials/${subject}/${timestamp}_${selectedFile.name}`;
     
-    // Upload file through API (bypasses CORS issues)
+    // Get the upload URL from the backend
+    const urlResponse = await fetch(`/api/upload?action=get-upload-url&fileKey=${encodeURIComponent(fileKey)}&contentType=${encodeURIComponent(selectedFile.type)}`, {
+      method: 'GET',
+      headers: {
+        'Authorization': authHeader
+      }
+    });
+    
+    if (!urlResponse.ok) {
+      const errorData = await urlResponse.json().catch(() => ({ error: 'Unknown error' }));
+      console.error('[Upload] Failed to get upload URL:', errorData);
+      throw new Error(errorData.error || 'Failed to get upload URL');
+    }
+    const { uploadUrl } = await urlResponse.json();
+
+    // Upload the file directly to R2
     progressText.textContent = 'Uploading file to storage...';
     progressFill.style.width = '50%';
 
-    const uploadResponse = await fetch(`/api/upload?action=upload&fileKey=${encodeURIComponent(fileKey)}&contentType=${encodeURIComponent(selectedFile.type)}`, {
+    const r2Response = await fetch(uploadUrl, {
       method: 'PUT',
       body: selectedFile,
       headers: {
-        'Authorization': authHeader,
         'Content-Type': selectedFile.type
       }
     });
 
-    if (!uploadResponse.ok) {
-      const errorData = await uploadResponse.json().catch(() => ({ error: 'Unknown error' }));
-      console.error('[Upload] Failed to upload file:', errorData);
-      throw new Error(errorData.error || 'Failed to upload file to storage');
+    if (!r2Response.ok) {
+      console.error('[Upload] R2 upload failed. Status:', r2Response.status);
+      throw new Error('Failed to upload file to Cloudflare R2. Please configure CORS on R2 bucket.');
     }
     
     progressFill.style.width = '70%';
