@@ -228,7 +228,7 @@ html:not([data-theme="dark"]) body.dashboard-page {
   box-shadow: 0 0 6px rgba(251,191,36,0.6);
 }
 .welcome-heading { color: #1a1a2e; }
-.welcome-name    { color: #6366f1; font-weight: 800; }
+.welcome-name    { color: #6366f1 !important; font-weight: 800 !important; }
 .welcome-sub     { color: #64748b; }
 
 /* Stat chips */
@@ -685,7 +685,7 @@ html:not([data-theme="dark"]) ::-webkit-scrollbar-thumb:hover { background: #94a
   color: #64748b;
 }
 [data-theme="dark"] .welcome-heading { color: #f1f5f9; }
-[data-theme="dark"] .welcome-name    { color: #818cf8; font-weight: 800; }
+[data-theme="dark"] .welcome-name    { color: #818cf8 !important; font-weight: 800 !important; }
 [data-theme="dark"] .welcome-sub     { color: #64748b; }
 
 /* ── Stat chips ── */

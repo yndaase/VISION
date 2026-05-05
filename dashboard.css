@@ -726,6 +726,9 @@
 .welcome-name {
   display: inline-block;
   position: relative;
+  color: #6366f1 !important;
+  font-weight: 800 !important;
+  font-size: inherit;
 }
 
 .welcome-name::after {
