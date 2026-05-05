@@ -1,5 +1,5 @@
 const SESSION_KEY = "waec_session";
-const SESSION_ID = 'session_' + Math.random().toString(36).slice(2);
+let SESSION_ID = 'session_' + Math.random().toString(36).slice(2);
 let currentSubject = '';
 let isLoading = false;
 let userEmail = null;
@@ -131,6 +131,10 @@ function handleLogout() {
 
 // Start new chat
 function startNewChat() {
+  // Generate new session ID
+  SESSION_ID = 'session_' + Math.random().toString(36).slice(2);
+  console.log('[Chat] Starting new chat with session ID:', SESSION_ID);
+  
   const messages = document.getElementById('messages');
   const emptyState = document.getElementById('emptyState');
   
