@@ -193,9 +193,10 @@ async function uploadMaterial() {
       subject: subject,
       type: materialType,
       fileName: selectedFile.name,
-      size: formatFileSize(selectedFile.size), // Add formatted size
+      size: formatFileSize(selectedFile.size),
       fileSize: selectedFile.size,
-      blobUrl: fileKey, // Store the R2 key
+      url: fileKey, // R2 key for download API
+      blobUrl: fileKey, // Keep for backward compatibility
       uploadedAt: new Date().toISOString(),
       uploadedBy: sessionStorage.getItem('vision_admin_email') || 'admin'
     };
