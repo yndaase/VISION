@@ -831,12 +831,21 @@
     window.renderUsers = async function() {
       const tbody = document.getElementById("allUsersTbody");
       if (!tbody) return;
-      tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;padding:2rem;color:var(--admin-text-muted);">Accessing ${currentViewCollection.toUpperCase()} dataset...</td></tr>`;
+      tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:2rem;color:var(--admin-text-muted);">Accessing ${currentViewCollection.toUpperCase()} dataset...</td></tr>`;
+
+      // Check if Firebase Auth is ready
+      if (typeof window.fbGetAllUsers === 'function') {
+        // Wait a moment for Firebase Auth to be ready
+        await new Promise(resolve => setTimeout(resolve, 500));
+      }
 
       let users = [];
       if (typeof window.fbGetAllUsers === 'function') {
         try {
+          console.log(`[Admin] Loading users from ${currentViewCollection}...`);
           users = await window.fbGetAllUsers(currentViewCollection);
+          console.log(`[Admin] Loaded ${users.length} users from Firestore`);
+          
           if (users && users.length > 0) {
             if (currentViewCollection === 'users') {
                 const localUsers = getUsers();
@@ -850,13 +859,16 @@
                 localStorage.setItem('waec_users', JSON.stringify(users));
             }
           } else {
+            console.warn(`[Admin] No users found in Firestore ${currentViewCollection}, using local cache`);
             if (currentViewCollection === 'users') users = getUsers();
           }
         } catch(e) {
-          console.warn("[Admin] Firestore fetch failed:", e);
+          console.error("[Admin] Firestore fetch failed:", e);
+          console.warn("[Admin] Falling back to local cache");
           if (currentViewCollection === 'users') users = getUsers();
         }
       } else {
+        console.warn("[Admin] fbGetAllUsers not available, using local cache");
         if (currentViewCollection === 'users') users = getUsers();
       }
 
@@ -1209,21 +1221,40 @@
             const res = await response.json();
 
             if (res.success && res.valid) {
-                // SILENT SIGN-IN to establish request.auth for Firestore Security Rules
+                // CRITICAL: Authenticate with Firebase to enable Firestore access
+                console.log("[Admin] OTP verified. Authenticating with Firebase...");
+                
                 if (typeof window.fbSignIn === 'function' && pendingAdminEmail) {
-                    const signInRes = await window.fbSignIn(pendingAdminEmail, "Ndaase@2009");
-                    if (!signInRes || !signInRes.success) {
-                        console.warn("[Admin] Firebase Auth sign-in failed. Continuing with Admin session only.");
-                    } else if (typeof window.fbSaveUser === 'function') {
-                        await window.fbSaveUser({
-                            name: "Admin User",
-                            email: pendingAdminEmail,
-                            role: "admin",
-                            provider: "email",
-                            status: "active",
-                            createdAt: Date.now()
-                        });
+                    try {
+                        // Try to sign in with Firebase (password should match what's in Firebase Auth)
+                        const signInRes = await window.fbSignIn(pendingAdminEmail, "Ndaase@2009");
+                        
+                        if (signInRes && signInRes.success) {
+                            console.log("[Admin] ✅ Firebase Auth successful");
+                            
+                            // Ensure admin user document exists in Firestore
+                            if (typeof window.fbSaveUser === 'function') {
+                                await window.fbSaveUser({
+                                    name: "Yaw Ndaase",
+                                    email: pendingAdminEmail,
+                                    emailLower: pendingAdminEmail.toLowerCase(),
+                                    role: "admin",
+                                    provider: "email",
+                                    lastUpdated: new Date().toISOString()
+                                });
+                                console.log("[Admin] ✅ Admin user document synced to Firestore");
+                            }
+                        } else {
+                            console.warn("[Admin] ⚠️ Firebase Auth failed:", signInRes?.error);
+                            console.warn("[Admin] Continuing with local admin session only.");
+                            console.warn("[Admin] Note: Firestore features may not work without Firebase Auth.");
+                        }
+                    } catch (fbError) {
+                        console.error("[Admin] ❌ Firebase Auth error:", fbError);
+                        console.warn("[Admin] Continuing with local admin session only.");
                     }
+                } else {
+                    console.warn("[Admin] Firebase sign-in function not available");
                 }
 
                 sessionStorage.setItem(ADMIN_SESSION_KEY, Date.now());
