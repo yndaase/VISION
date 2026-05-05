@@ -1,8 +1,25 @@
 {
-  "cleanUrls": true,
+  "cleanUrls": false,
   "trailingSlash": false,
   "buildCommand": null,
   "outputDirectory": ".",
+  "routes": [
+    {
+      "src": "^/$",
+      "dest": "/index.html",
+      "status": 200
+    },
+    {
+      "src": "^/login$",
+      "dest": "/login.html",
+      "status": 200
+    },
+    {
+      "src": "^/chat$",
+      "dest": "/chat.html",
+      "status": 200
+    }
+  ],
   "headers": [
     {
       "source": "/sitemap.xml",
