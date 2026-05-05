@@ -85,6 +85,21 @@
     }
     .input:focus { border-color: var(--admin-primary); box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1); }
     
+    /* OTP Input - Force visibility */
+    #adminOTP {
+      color: #000 !important;
+      background: #ffffff !important;
+      border: 2px solid var(--admin-primary) !important;
+      font-weight: 800 !important;
+      font-size: 1.4rem !important;
+      letter-spacing: 0.3em !important;
+      text-align: center !important;
+      font-family: 'JetBrains Mono', monospace !important;
+    }
+    #adminOTP::placeholder {
+      color: rgba(0, 0, 0, 0.3) !important;
+    }
+    
     select.input {
         appearance: none;
         background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23ffffff'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
@@ -271,7 +286,7 @@
                 A 6-digit code has been sent to your recovery email.
             </div>
             <div class="field">
-                <input type="text" id="adminOTP" class="input" placeholder="ENTER 6-DIGIT CODE" maxlength="6" style="letter-spacing: 0.3em; text-align: center; font-weight: 800; font-size: 1.3rem; font-family: 'JetBrains Mono', monospace; color: #fff !important; background: rgba(255,255,255,0.08) !important;" />
+                <input type="text" id="adminOTP" class="input" placeholder="ENTER 6-DIGIT CODE" maxlength="6" />
             </div>
             <p id="otpErr" style="color: var(--admin-danger); font-size: 0.8rem; margin-bottom: 1rem; display: none;">Invalid verification code. Access Denied.</p>
             <button class="btn-auth" id="verifyBtn">VERIFY CODE</button>
