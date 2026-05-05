@@ -1,6 +1,6 @@
 const SESSION_KEY = "waec_session";
-// Using Firebase's OAuth client ID (from Firebase Console)
-const GOOGLE_CLIENT_ID = "324420775871-p2qf8e50vbk0rgf8qf1o5i2459ihpuoq.apps.googleusercontent.com";
+// OAuth client from vision-education-8a794 project (same as Firebase)
+const GOOGLE_CLIENT_ID = "378999569796-9d1hl8t92n6og15ufhnofiilhb5l4uhb.apps.googleusercontent.com";
 let googleInitialized = false;
 
 // Check if already logged in
