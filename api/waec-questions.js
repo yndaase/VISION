@@ -177,7 +177,16 @@ export default async function handler(req, res) {
       return res.status(405).json({ error: 'Method not allowed' });
     }
   } catch (error) {
-    console.error('API Error:', error);
+    console.error('[WAEC API] Unhandled error:', error);
+    // Return mock data for GET requests as graceful fallback
+    if (req.method === 'GET' && !req.query.action) {
+      return res.status(200).json({
+        success: true,
+        questions: mockQuestions,
+        total: mockQuestions.length,
+        warning: 'Using fallback data due to error'
+      });
+    }
     return res.status(500).json({ 
       error: 'Internal server error',
       message: error.message 
@@ -191,12 +200,21 @@ async function handleGetQuestions(req, res) {
     const { subject, year, paperType } = req.query;
 
     let questions = [];
+    
+    // Try Firestore first, but gracefully fall back to mock data
     if (db) {
-      const snapshot = await db.collection('waec_questions').get();
-      snapshot.forEach(doc => {
-        questions.push(doc.data());
-      });
+      try {
+        const snapshot = await db.collection('waec_questions').get();
+        snapshot.forEach(doc => {
+          questions.push(doc.data());
+        });
+        console.log(`[WAEC API] Loaded ${questions.length} questions from Firestore`);
+      } catch (dbError) {
+        console.error('[WAEC API] Firestore error, using mock data:', dbError.message);
+        questions = [...mockQuestions];
+      }
     } else {
+      console.log('[WAEC API] No DB connection, using mock data');
       questions = [...mockQuestions]; // Fallback if DB not connected
     }
 
@@ -221,10 +239,13 @@ async function handleGetQuestions(req, res) {
       total: questions.length
     });
   } catch (error) {
-    console.error('Error fetching questions:', error);
-    return res.status(500).json({ 
-      error: 'Failed to fetch questions',
-      message: error.message 
+    console.error('[WAEC API] Error fetching questions:', error);
+    // Return mock data as last resort
+    return res.status(200).json({
+      success: true,
+      questions: mockQuestions,
+      total: mockQuestions.length,
+      warning: 'Using fallback data'
     });
   }
 }
