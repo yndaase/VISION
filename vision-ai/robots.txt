@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Allow: /login
+Disallow: /chat
+Disallow: /api/
+
+Sitemap: https://ai.visionedu.online/sitemap.xml
