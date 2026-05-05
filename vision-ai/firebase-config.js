@@ -10,9 +10,6 @@ import {
   setDoc,
   getDoc,
   collection,
-  query,
-  orderBy,
-  limit,
   getDocs,
   addDoc,
   deleteDoc
@@ -103,9 +100,9 @@ window.fbGetVisionAISessions = async function(userEmail) {
   try {
     const emailKey = userEmail.toLowerCase();
     const sessionsRef = collection(db, "vision_ai_chats", emailKey, "sessions");
-    const q = query(sessionsRef, orderBy("lastUpdated", "desc"), limit(50));
     
-    const snapshot = await getDocs(q);
+    // Simple query without orderBy to avoid index requirement
+    const snapshot = await getDocs(sessionsRef);
     const sessions = [];
     snapshot.forEach(doc => {
       sessions.push({ 
@@ -114,8 +111,18 @@ window.fbGetVisionAISessions = async function(userEmail) {
       });
     });
     
-    console.log(`[Firebase] Loaded ${sessions.length} sessions`);
-    return sessions;
+    // Sort in JavaScript instead of Firestore
+    sessions.sort((a, b) => {
+      const dateA = new Date(a.lastUpdated || 0);
+      const dateB = new Date(b.lastUpdated || 0);
+      return dateB - dateA; // Descending order
+    });
+    
+    // Limit to 50
+    const limited = sessions.slice(0, 50);
+    
+    console.log(`[Firebase] Loaded ${limited.length} sessions`);
+    return limited;
   } catch(err) {
     console.warn('[Firebase] fbGetVisionAISessions failed:', err.message);
     return [];
