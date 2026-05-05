@@ -129,7 +129,7 @@ async function handleRiscReceiver(req, res) {
       }
     }
 
-    const CLIENT_ID = process.env.GOOGLE_CLIENT_ID || '378999569796-v8bj9miq61sggvpea5sbslc24dr9t71s.apps.googleusercontent.com';
+    const CLIENT_ID = process.env.GOOGLE_CLIENT_ID || '1085532052475-as6ksbb60tvs4cbs4in93bppjhhjsrqe.apps.googleusercontent.com';
     const { payload: decoded } = await jose.jwtVerify(token, JWKS, { 
       issuer: 'https://accounts.google.com/', 
       audience: CLIENT_ID 
