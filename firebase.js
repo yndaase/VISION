@@ -613,11 +613,20 @@ export const fbGetLinkCode = _fbGetLinkCode;
  */
 window.fbSaveMaterial = async function(mat) {
   if (!mat || !mat.id) return;
+  
+  // Check if user is authenticated
+  if (!auth.currentUser) {
+    console.warn('[Firebase] Cannot save material - user not authenticated');
+    console.warn('[Firebase] Admin must be signed into Firebase Auth');
+    return;
+  }
+  
   try {
     await setDoc(doc(db, "learning_materials", mat.id), mat, { merge: true });
-    console.log('[Firebase] Material saved:', mat.title);
+    console.log('[Firebase] ✅ Material saved to Firestore:', mat.title);
   } catch(err) {
-    console.error('[Firebase] fbSaveMaterial failed:', err.message);
+    console.error('[Firebase] ❌ fbSaveMaterial failed:', err.message);
+    console.error('[Firebase] Material data:', mat);
   }
 };
 
@@ -740,18 +749,29 @@ window.testMaterialsSync = async function() {
 };
 
 /**
- * Delete a material from Firestore.
+ * Delete a material from Firestore and R2.
  */
 window.fbDeleteMaterial = async function(id) {
   if (!id) return;
+  
+  // Check if user is authenticated
+  if (!auth.currentUser) {
+    console.warn('[Firebase] Cannot delete material - user not authenticated');
+    console.warn('[Firebase] Admin must be signed into Firebase Auth');
+    return;
+  }
+  
   try {
     const response = await fetch(`/api/upload?materialId=${encodeURIComponent(id)}`, {
       method: 'DELETE'
     });
-    if (!response.ok) throw new Error('Cloud storage deletion failed');
-    console.log('[Firebase] Material deleted via API (including R2 cleanup):', id);
+    if (!response.ok) {
+      const error = await response.json().catch(() => ({ error: 'Unknown error' }));
+      throw new Error(error.error || 'Cloud storage deletion failed');
+    }
+    console.log('[Firebase] ✅ Material deleted (R2 + Firestore):', id);
   } catch(err) {
-    console.error('[Firebase] fbDeleteMaterial failed:', err.message);
+    console.error('[Firebase] ❌ fbDeleteMaterial failed:', err.message);
   }
 };
 
