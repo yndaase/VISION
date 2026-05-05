@@ -1467,8 +1467,18 @@ async function adminInit() {
     createdAt: Date.now()
   };
 
-  if (typeof window.fbSaveUser === 'function') {
-    window.fbSaveUser(parentAccount, 'parent_users').catch(e => console.warn('[Firebase] parent seed failed:', e));
+  // Only seed parent account to Firestore when Firebase Auth user is signed in
+  // This prevents "Missing or insufficient permissions" errors on page load
+  if (typeof window.fbSaveUser === 'function' && typeof window.fbAuth !== 'undefined') {
+    const auth = window.fbAuth;
+    if (auth && auth.currentUser) {
+      window.fbSaveUser(parentAccount, 'parent_users').catch(e => {
+        // Silently suppress permission errors - expected when not authenticated
+        if (!e.message?.includes('permission') && !e.message?.includes('Missing or insufficient permissions')) {
+          console.warn('[Firebase] parent seed failed:', e);
+        }
+      });
+    }
   }
 }
 
