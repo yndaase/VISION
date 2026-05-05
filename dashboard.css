@@ -729,6 +729,10 @@
   color: #6366f1 !important;
   font-weight: 800 !important;
   font-size: inherit;
+  -webkit-text-fill-color: #6366f1 !important;
+  background: none !important;
+  -webkit-background-clip: unset !important;
+  background-clip: unset !important;
 }
 
 .welcome-name::after {
