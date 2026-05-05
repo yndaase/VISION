@@ -28,8 +28,11 @@ async function fbSaveUserAndCache(user) {
   const idx = users.findIndex(u => u.email === user.email);
   if (idx === -1) users.push(user); else users[idx] = { ...users[idx], ...user };
   localStorage.setItem(AUTH_KEY, JSON.stringify(users));
-  // 2. Push to Firestore
+  
+  // 2. Push to Firestore (with auth state propagation delay)
   if (typeof window.fbSaveUser === 'function') {
+    // Add a small delay to ensure Firebase Auth state has propagated to Firestore rules
+    await new Promise(resolve => setTimeout(resolve, 1000));
     await window.fbSaveUser(user);
   }
 }

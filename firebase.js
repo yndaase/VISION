@@ -125,12 +125,22 @@ export const fbGetUser = window.fbGetUser;
 window.fbSaveUser = async function(user, collectionName = 'users') {
   if (!user || !user.email) return;
   try {
+    // CRITICAL: Wait for Firebase Auth to be ready before writing to Firestore
+    await waitForAuth();
+    if (!auth.currentUser) {
+      console.warn(`[Firebase] Cannot save user to ${collectionName} - Firebase Auth not ready`);
+      return;
+    }
+    
     const key = resolveEmailKey(user.email);
     const payload = { ...user, email: key, emailLower: user.email.toLowerCase(), lastUpdated: new Date().toISOString() };
     await setDoc(doc(db, collectionName, key), payload, { merge: true });
     console.log(`[Firebase] User saved to ${collectionName}: ${key}`);
   } catch(err) {
-    console.warn(`[Firebase] fbSaveUser(${collectionName}) failed:`, err.message);
+    // Silently suppress permission errors - expected when not authenticated
+    if (!err.message?.includes('permission') && !err.message?.includes('Missing or insufficient permissions')) {
+      console.warn(`[Firebase] fbSaveUser(${collectionName}) failed:`, err.message);
+    }
   }
 };
 export const fbSaveUser = window.fbSaveUser;
