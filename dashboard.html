@@ -981,13 +981,13 @@
 
           <div class="settings-section-card">
             <h2 class="settings-h2">Credential Rotation</h2>
-            <div style="display: flex; flex-direction: column; gap: 12px;">
-              <input class="setting-input" type="password" id="setCurrentPass" placeholder="Current Security Password" style="background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.1); padding: 12px; border-radius: 10px; color: #fff;">
-              <input class="setting-input" type="password" id="setNewPass" placeholder="New Password (Min 6)" style="background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.1); padding: 12px; border-radius: 10px; color: #fff;">
-              <input class="setting-input" type="password" id="setConfirmPass" placeholder="Confirm New Password" style="background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.1); padding: 12px; border-radius: 10px; color: #fff;">
+            <form id="passwordChangeForm" onsubmit="event.preventDefault(); unifiedChangePassword();" style="display: flex; flex-direction: column; gap: 12px;">
+              <input class="setting-input" type="password" id="setCurrentPass" placeholder="Current Security Password" autocomplete="current-password" style="background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.1); padding: 12px; border-radius: 10px; color: #fff;">
+              <input class="setting-input" type="password" id="setNewPass" placeholder="New Password (Min 6)" autocomplete="new-password" style="background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.1); padding: 12px; border-radius: 10px; color: #fff;">
+              <input class="setting-input" type="password" id="setConfirmPass" placeholder="Confirm New Password" autocomplete="new-password" style="background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.1); padding: 12px; border-radius: 10px; color: #fff;">
               <div id="passChangeMsg" class="pass-change-msg" style="display: none; padding: 10px; border-radius: 8px;"></div>
-              <button class="hero-btn-primary" onclick="unifiedChangePassword()" style="margin-top: 8px; width: fit-content; padding: 12px 24px; height: auto;">Rotate Credentials</button>
-            </div>
+              <button type="submit" class="hero-btn-primary" style="margin-top: 8px; width: fit-content; padding: 12px 24px; height: auto;">Rotate Credentials</button>
+            </form>
           </div>
 
           <div class="settings-section-card" style="margin-top: 1.5rem;">

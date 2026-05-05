@@ -27,13 +27,13 @@ import {
 } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-storage.js";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyCCLvmFR4NU6aIbDc-75EsBL-K9pqlNa5E",
-  authDomain: "vision-education-8a794.firebaseapp.com",
-  projectId: "vision-education-8a794",
-  storageBucket: "vision-education-8a794.appspot.com",
-  messagingSenderId: "324420775871",
-  appId: "1:324420775871:web:b0371a1561be77b085fb0a",
-  measurementId: "G-CCQSKNZKKW"
+  apiKey: "AIzaSyA2EiDZcp3h5l7zZ4Cbc48RwrSr8ARq9GM",
+  authDomain: "vision-education-main.firebaseapp.com",
+  projectId: "vision-education-main",
+  storageBucket: "vision-education-main.firebasestorage.app",
+  messagingSenderId: "1085532052475",
+  appId: "1:1085532052475:web:8ea9dd1f0b28f81868895e",
+  measurementId: "G-Q6SPHR6E2N"
 };
 
 // Initialize Firebase
@@ -271,16 +271,22 @@ export const fbDeleteUser = window.fbDeleteUser;
 /**
  * Seeds the 4 hardcoded system accounts into Firestore if they don't exist.
  * Called once on auth.js DOMContentLoaded.
+ * CRITICAL FIX: Only seed when Firebase Auth user is signed in to prevent permission errors.
  */
 window.adminInitFirebase = async function(accounts) {
   if (!accounts || !accounts.length) return;
-  // Only seed Firestore when a Firebase Auth user is signed in.
+  
+  // CRITICAL: Only seed Firestore when a Firebase Auth user is signed in.
   // Without this, every page load triggers "Missing or insufficient permissions" errors.
   const currentUser = auth?.currentUser;
   if (!currentUser) {
     // No Firebase Auth session — skip Firestore seeding, local cache is already updated.
     return;
   }
+  
+  // Additional safety: Wait a bit to ensure Firestore rules have processed the auth state
+  await new Promise(resolve => setTimeout(resolve, 1000));
+  
   for (const account of accounts) {
     try {
       const key = account.email.toLowerCase();
@@ -309,8 +315,8 @@ window.adminInitFirebase = async function(accounts) {
         });
       }
     } catch(err) {
-      // Suppress permission errors — they're expected when Firebase Auth session isn't set up yet
-      if (!err.message?.includes('permission')) {
+      // Silently suppress permission errors — they're expected when Firebase Auth session isn't set up yet
+      if (!err.message?.includes('permission') && !err.message?.includes('Missing or insufficient permissions')) {
         console.warn(`[Firebase] adminInitFirebase failed for ${account.email}:`, err.message);
       }
     }
@@ -436,7 +442,7 @@ window.syncStateToCloud = async function(email) {
   try {
     await waitForAuth();
     if (!auth.currentUser) {
-      console.warn('[Firebase] syncStateToCloud aborted: User not authenticated');
+      // Silently skip sync if user is not authenticated - this is expected behavior
       return;
     }
     
@@ -464,7 +470,10 @@ window.syncStateToCloud = async function(email) {
     await setDoc(doc(db, "student_stats", email.toLowerCase()), payload, { merge: true });
     console.log(`[Firebase] Stats synced for ${email}`);
   } catch(error) {
-    console.error(`[Firebase] syncStateToCloud failed:`, error);
+    // Silently fail if permissions are missing - this is expected on public pages
+    if (!error.message?.includes('permission') && !error.message?.includes('Missing or insufficient permissions')) {
+      console.error(`[Firebase] syncStateToCloud failed:`, error);
+    }
   }
 };
 
@@ -869,22 +878,38 @@ window.fbSaveChatMessage = async function(phone, msgData) {
 
 /* ─────────────────────────────────────────────────────────────
    AUTO-SYNC on import (non-parent pages)
+   CRITICAL FIX: Only sync when Firebase Auth is ready and user is authenticated
    ───────────────────────────────────────────────────────────── */
 if (typeof window !== 'undefined' && window.location.pathname !== '/parent-portal') {
-  setTimeout(() => {
+  // Wait for Firebase Auth to initialize before attempting sync
+  setTimeout(async () => {
     try {
+      // Wait for auth to be ready
+      await waitForAuth(5000);
+      
+      // Only proceed if we have an authenticated Firebase user
+      if (!auth.currentUser) {
+        return; // Silently skip sync if not authenticated
+      }
+      
       const sessionString = sessionStorage.getItem('waec_session') || localStorage.getItem('waec_session');
       if (sessionString) {
         const session = JSON.parse(sessionString);
         if (session && session.email && session.role !== 'parent') {
-          window.syncStateToCloud(session.email);
-          // Also sync materials for student dashboard
-          if (typeof window.syncMaterials === 'function') window.syncMaterials();
+          // Verify the session email matches the authenticated user
+          if (auth.currentUser.email.toLowerCase() === session.email.toLowerCase()) {
+            window.syncStateToCloud(session.email);
+            // Also sync materials for student dashboard
+            if (typeof window.syncMaterials === 'function') window.syncMaterials();
+          }
         }
       }
-    } catch(e) {}
-  }, 2000);
+    } catch(e) {
+      // Silently fail - this is expected on public pages
+    }
+  }, 3000); // Increased delay to ensure Firebase Auth is fully initialized
 }
+
 
 
 

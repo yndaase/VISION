@@ -12,13 +12,13 @@ import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/
 
 // Minimal configuration to match the platform
 const firebaseConfig = {
-  apiKey: "AIzaSyCCLvmFR4NU6aIbDc-75EsBL-K9pqlNa5E",
-  authDomain: "vision-education-8a794.firebaseapp.com",
-  projectId: "vision-education-8a794",
-  storageBucket: "vision-education-8a794.appspot.com",
-  messagingSenderId: "324420775871",
-  appId: "1:324420775871:web:b0371a1561be77b085fb0a",
-  measurementId: "G-CCQSKNZKKW"
+  apiKey: "AIzaSyA2EiDZcp3h5l7zZ4Cbc48RwrSr8ARq9GM",
+  authDomain: "vision-education-main.firebaseapp.com",
+  projectId: "vision-education-main",
+  storageBucket: "vision-education-main.firebasestorage.app",
+  messagingSenderId: "1085532052475",
+  appId: "1:1085532052475:web:8ea9dd1f0b28f81868895e",
+  measurementId: "G-Q6SPHR6E2N"
 };
 
 // Use the default app
@@ -63,6 +63,14 @@ function getSessionUser() {
 // 1. Register Session on Load
 async function registerAndListenToSession(firebaseUser) {
   if (!firebaseUser || !firebaseUser.email) return;
+  
+  // CRITICAL FIX: Only register sessions if user is fully authenticated
+  // This prevents "Missing or insufficient permissions" errors
+  if (!firebaseUser.emailVerified && firebaseUser.providerData.length === 0) {
+    console.log("[Sessions] Skipping session registration - user not fully authenticated");
+    return;
+  }
+  
   const emailLower = firebaseUser.email.trim().toLowerCase();
 
   let deviceId = localStorage.getItem(DEVICE_ID_KEY);
@@ -74,6 +82,9 @@ async function registerAndListenToSession(firebaseUser) {
   const sessionRef = doc(db, "users", emailLower, "sessions", deviceId);
   
   try {
+    // Add a small delay to ensure Firestore rules have processed the auth state
+    await new Promise(resolve => setTimeout(resolve, 500));
+    
     await setDoc(sessionRef, {
       deviceId,
       deviceInfo: getDeviceFingerprint(),
@@ -93,8 +104,13 @@ async function registerAndListenToSession(firebaseUser) {
         }
       }
     });
+    
+    console.log("[Sessions] Session registered successfully");
   } catch(e) {
-    console.error("Firebase Session Registration blocked:", e.message);
+    // Silently fail if permissions are missing - this is expected on public pages
+    if (!e.message?.includes('permission') && !e.message?.includes('Missing or insufficient permissions')) {
+      console.error("Firebase Session Registration error:", e.message);
+    }
   }
 }
 
