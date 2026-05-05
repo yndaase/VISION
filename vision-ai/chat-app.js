@@ -175,12 +175,19 @@ async function loadChatHistory() {
 // Load chat sessions for sidebar
 async function loadChatSessions() {
   if (!userEmail || typeof window.fbGetVisionAISessions !== 'function') {
+    console.warn('[Chat] Cannot load sessions - userEmail or function missing');
     return;
   }
   
   try {
+    console.log('[Chat] Loading sessions for:', userEmail);
     const sessions = await window.fbGetVisionAISessions(userEmail);
-    if (!sessions || sessions.length === 0) return;
+    console.log('[Chat] Sessions loaded:', sessions);
+    
+    if (!sessions || sessions.length === 0) {
+      console.log('[Chat] No sessions found');
+      return;
+    }
     
     const now = new Date();
     const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
