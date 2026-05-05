@@ -7,6 +7,14 @@ document.addEventListener("DOMContentLoaded", () => {
   //  Auth guard
   const session = checkAuth(); // redirects to login.html if null
   if (!session) return;
+  
+  // DEBUG: Log session data
+  console.log("[Dashboard] Session loaded:", {
+    email: session.email,
+    name: session.name,
+    provider: session.provider,
+    role: session.role
+  });
 
   //  Populate user chip
   const navAvatar = document.getElementById("navAvatar");
@@ -46,9 +54,16 @@ document.addEventListener("DOMContentLoaded", () => {
   const welcomeName = document.getElementById("welcomeName");
   const welcomeGreeting = document.getElementById("welcomeGreeting");
 
+  console.log("[Dashboard] Welcome elements:", {
+    welcomeName: welcomeName,
+    welcomeGreeting: welcomeGreeting,
+    sessionName: session.name
+  });
+
   if (welcomeName) {
     const firstName = session.name ? session.name.split(" ")[0] : "Student";
     welcomeName.textContent = firstName;
+    console.log("[Dashboard] ✅ Set welcome name to:", firstName);
 
     // Add PRO badge to hero if applicable
     if (session.role === "pro") {
@@ -60,6 +75,8 @@ document.addEventListener("DOMContentLoaded", () => {
       heroBadge.textContent = "PRO";
       welcomeName.after(heroBadge);
     }
+  } else {
+    console.error("[Dashboard] ❌ welcomeName element not found!");
   }
 
   if (welcomeGreeting) {
@@ -117,7 +134,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // Initial render
   if (typeof renderDashMaterials === 'function') renderDashMaterials();
 
-  // Background Sync for User Profile (Verification, Role, etc.)
+  //  Background Sync for User Profile (Verification, Role, etc.)
   if (session.email && typeof fbGetUserWithFallback === 'function') {
       fbGetUserWithFallback(session.email).then(cloudUser => {
           if (cloudUser) {
@@ -131,6 +148,19 @@ document.addEventListener("DOMContentLoaded", () => {
           }
       }).catch(e => console.warn("Failed to sync user profile in background", e));
   }
+
+  // FALLBACK: Re-check welcome name after 1 second (in case of timing issues)
+  setTimeout(() => {
+    const welcomeNameCheck = document.getElementById("welcomeName");
+    if (welcomeNameCheck && (!welcomeNameCheck.textContent || welcomeNameCheck.textContent === "Student")) {
+      const currentSession = getSession();
+      if (currentSession && currentSession.name) {
+        const firstName = currentSession.name.split(" ")[0];
+        welcomeNameCheck.textContent = firstName;
+        console.log("[Dashboard] 🔄 Fallback: Set welcome name to:", firstName);
+      }
+    }
+  }, 1000);
 
 });
 
