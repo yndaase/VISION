@@ -133,7 +133,7 @@ export default async function handler(req, res) {
       return res.status(200).json({ success: true, id: metadata.id });
     }
 
-    // 4. DELETE: Remove material from R2
+    // 4. DELETE: Remove material from R2 and Firestore
     if (req.method === 'DELETE') {
       const { materialId } = req.query;
       if (!materialId) return res.status(400).json({ error: 'Material ID required' });
@@ -142,19 +142,27 @@ export default async function handler(req, res) {
       if (!doc.exists) return res.status(404).json({ error: 'Material not found' });
 
       const material = doc.data();
-      if (material.url) {
+      // Check both 'url' and 'blobUrl' for backward compatibility
+      const fileKey = material.url || material.blobUrl;
+      
+      if (fileKey) {
         try {
           const command = new DeleteObjectCommand({
             Bucket: BUCKET_NAME,
-            Key: material.url,
+            Key: fileKey,
           });
           await r2Client.send(command);
+          console.log('[Upload API] Deleted from R2:', fileKey);
         } catch (r2Err) {
-          console.error('Error deleting from R2:', r2Err);
+          console.error('[Upload API] Error deleting from R2:', r2Err.message);
+          // Continue to delete from Firestore even if R2 delete fails
         }
+      } else {
+        console.warn('[Upload API] No file key found for material:', materialId);
       }
 
       await db.collection('learning_materials').doc(materialId).delete();
+      console.log('[Upload API] Deleted from Firestore:', materialId);
       return res.status(200).json({ success: true });
     }
 
