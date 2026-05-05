@@ -239,7 +239,12 @@ async function loadChatSessions() {
 
 // Load a specific session
 async function loadSession(sessionId) {
-  if (!userEmail || !sessionId) return;
+  console.log('[Chat] Loading session:', sessionId);
+  
+  if (!userEmail || !sessionId) {
+    console.warn('[Chat] Cannot load session - missing userEmail or sessionId');
+    return;
+  }
   
   try {
     // Clear current chat
@@ -248,7 +253,10 @@ async function loadSession(sessionId) {
     hideEmptyState();
     
     // Load session messages
+    console.log('[Chat] Fetching messages for session:', sessionId);
     const sessionMessages = await window.fbLoadVisionAIHistory(userEmail, sessionId);
+    console.log('[Chat] Session messages loaded:', sessionMessages);
+    
     if (sessionMessages && sessionMessages.length > 0) {
       sessionMessages.forEach(msg => {
         if (msg.role === 'user') {
@@ -257,6 +265,9 @@ async function loadSession(sessionId) {
           addMessage('assistant', msg.content, msg.source, false);
         }
       });
+      console.log('[Chat] Displayed', sessionMessages.length, 'messages');
+    } else {
+      console.warn('[Chat] No messages found for session:', sessionId);
     }
     
     // Close sidebar on mobile
