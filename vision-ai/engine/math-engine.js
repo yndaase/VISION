@@ -69,23 +69,30 @@ export class MathEngine {
     const a = parseFloat(num1);
     const b = parseFloat(num2);
     let result;
+    let operatorSymbol = operator;
 
     switch (operator) {
       case '+': result = a + b; break;
       case '-': result = a - b; break;
-      case '*': result = a * b; break;
-      case '/': result = b !== 0 ? a / b : 'undefined (division by zero)'; break;
+      case '*': 
+        result = a * b;
+        operatorSymbol = '×';
+        break;
+      case '/': 
+        result = b !== 0 ? a / b : 'undefined (division by zero)';
+        operatorSymbol = '÷';
+        break;
       default: return null;
     }
 
     return {
       answer: `**Solution:**
 
-${a} ${operator} ${b} = **${result}**
+${a} ${operatorSymbol} ${b} = **${result}**
 
 **Step-by-step:**
 1. Identify the numbers: ${a} and ${b}
-2. Apply the operation: ${operator}
+2. Apply the operation: ${operatorSymbol}
 3. Result: ${result}`,
       source: 'math-engine'
     };
@@ -143,22 +150,22 @@ ${a === 1 ? '' : a}(${x}) ${operator} ${b} = ${a * x} ${operator} ${b} = ${c} �
    * Check if quadratic equation
    */
   static isQuadraticEquation(query) {
-    return /x[²2]|x\^2|quadratic/.test(query);
+    return /x[²2]|x\*\*2|quadratic/.test(query);
   }
 
   /**
    * Solve quadratic equation (simplified)
    */
   static solveQuadraticEquation(query) {
-    // Match patterns like "x² + 5x + 6 = 0" or "2x^2 - 3x - 2 = 0"
-    const match = query.match(/(\d*)x[²\^]?2?\s*([\+\-])\s*(\d+)x\s*([\+\-])\s*(\d+)\s*=\s*0/);
+    // Match patterns like "x² + 5x + 6 = 0" or "2x² - 3x - 2 = 0"
+    const match = query.match(/(\d*)x[²2]?\s*([\+\-])\s*(\d+)x\s*([\+\-])\s*(\d+)\s*=\s*0/);
     if (!match) {
       return {
         answer: `**Quadratic Equation Formula**
 
 For equations of the form: ax² + bx + c = 0
 
-**Formula:** x = (-b ± √(b² - 4ac)) / 2a
+**Formula:** x = (-b ± √(b² - 4ac)) / (2a)
 
 **Steps:**
 1. Identify a, b, and c
@@ -168,9 +175,12 @@ For equations of the form: ax² + bx + c = 0
 
 **Example:** x² + 5x + 6 = 0
 - a = 1, b = 5, c = 6
-- Discriminant = 25 - 24 = 1
+- Discriminant = 5² - 4(1)(6) = 25 - 24 = 1
+- x = (-5 ± √1) / (2 × 1)
 - x = (-5 ± 1) / 2
-- x = -2 or x = -3`,
+- x₁ = -2 or x₂ = -3
+
+**Remember:** NEVER use the ^ symbol! Always use ² for squared.`,
         source: 'math-engine'
       };
     }
@@ -189,9 +199,19 @@ For equations of the form: ax² + bx + c = 0
 
 **Given:** ${a === 1 ? '' : a}x² ${sign1} ${b}x ${sign2} ${c} = 0
 
-**Discriminant:** b² - 4ac = ${bVal}² - 4(${a})(${cVal}) = ${discriminant}
+**Step 1:** Identify coefficients
+- a = ${a}
+- b = ${bVal}
+- c = ${cVal}
 
-**Result:** No real solutions (discriminant is negative)`,
+**Step 2:** Calculate discriminant
+Discriminant = b² - 4ac
+= (${bVal})² - 4(${a})(${cVal})
+= ${bVal * bVal} - ${4 * a * cVal}
+= ${discriminant}
+
+**Result:** No real solutions ❌
+(The discriminant is negative, so the solutions are complex/imaginary numbers)`,
         source: 'math-engine'
       };
     }
@@ -205,21 +225,37 @@ For equations of the form: ax² + bx + c = 0
 
 **Given:** ${a === 1 ? '' : a}x² ${sign1} ${b}x ${sign2} ${c} = 0
 
-**Using Quadratic Formula:** x = (-b ± √(b² - 4ac)) / 2a
+**Using Quadratic Formula:** x = (-b ± √(b² - 4ac)) / (2a)
 
 **Step 1:** Identify coefficients
-- a = ${a}, b = ${bVal}, c = ${cVal}
+- a = ${a}
+- b = ${bVal}
+- c = ${cVal}
 
 **Step 2:** Calculate discriminant
-b² - 4ac = ${bVal}² - 4(${a})(${cVal}) = ${discriminant}
+Discriminant = b² - 4ac
+= (${bVal})² - 4(${a})(${cVal})
+= ${bVal * bVal} - ${4 * a * cVal}
+= ${discriminant}
 
 **Step 3:** Apply formula
-x = (${-bVal} ± √${discriminant}) / ${2 * a}
+x = (-b ± √(discriminant)) / (2a)
+x = (${-bVal} ± √${discriminant}) / (2 × ${a})
 x = (${-bVal} ± ${sqrtDisc.toFixed(2)}) / ${2 * a}
 
-**Solutions:**
-- x₁ = **${x1.toFixed(2)}**
-- x₂ = **${x2.toFixed(2)}**`,
+**Step 4:** Calculate both solutions
+
+**Solution 1:**
+x₁ = (${-bVal} + ${sqrtDisc.toFixed(2)}) / ${2 * a}
+x₁ = ${(-bVal + sqrtDisc).toFixed(2)} / ${2 * a}
+x₁ = **${x1.toFixed(2)}** ✓
+
+**Solution 2:**
+x₂ = (${-bVal} - ${sqrtDisc.toFixed(2)}) / ${2 * a}
+x₂ = ${(-bVal - sqrtDisc).toFixed(2)} / ${2 * a}
+x₂ = **${x2.toFixed(2)}** ✓
+
+**Final Answer:** x = ${x1.toFixed(2)} or x = ${x2.toFixed(2)}`,
       source: 'math-engine'
     };
   }
@@ -240,19 +276,31 @@ x = (${-bVal} ± ${sqrtDisc.toFixed(2)}) / ${2 * a}
     if (!match) return null;
 
     const [, percent, number] = match;
-    const result = (parseFloat(percent) / 100) * parseFloat(number);
+    const percentNum = parseFloat(percent);
+    const baseNum = parseFloat(number);
+    const result = (percentNum / 100) * baseNum;
+
+    // Check if result is a clean number or needs decimal places
+    const displayResult = Number.isInteger(result) ? result : result.toFixed(2);
 
     return {
       answer: `**Percentage Calculation**
 
 **Question:** What is ${percent}% of ${number}?
 
-**Formula:** (Percentage / 100) × Number
+**Formula:** (Percentage ÷ 100) × Number
 
 **Solution:**
-(${percent} / 100) × ${number} = ${result}
+Step 1: Convert percentage to decimal
+${percent}% = ${percent} ÷ 100 = ${percentNum / 100}
 
-**Answer:** **${result}**`,
+Step 2: Multiply by the number
+${percentNum / 100} × ${baseNum} = ${displayResult}
+
+**Answer:** **${displayResult}** ✓
+
+**Alternative Method (Fraction):**
+${percent}/100 × ${number} = ${displayResult}`,
       source: 'math-engine'
     };
   }

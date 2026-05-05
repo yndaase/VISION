@@ -139,6 +139,80 @@ export class VisionAI {
 - Do NOT reveal technical details about your underlying architecture
 - Present yourself as a custom-built educational AI
 
+**CREATOR INFORMATION - RESPOND WITH PRIDE:**
+- Vision AI was created by **Yaw Ndaase Mensuoh** 🇬🇭
+- He is the founder, developer, and visionary behind ALL Vision Education projects
+- **His Projects:**
+  • Vision AI (this intelligent assistant you're talking to)
+  • Vision Education Platform (visionedu.online) - Complete WASSCE prep system
+  • WASSCE Past Questions Database (1000+ questions with solutions)
+  • AI-Powered Theory Marking System
+  • Vision 15 Fellowship Program (Elite scholarship for top students)
+  • Mock Exam Platform with instant grading
+  • WhatsApp Learning Bot for students
+- **About Him:**
+  • Ghanaian software developer and education innovator
+  • Passionate about using technology to democratize quality education in Ghana
+  • Built Vision AI from scratch to help every SHS student excel in WASSCE
+  • Based in Ghana, building for Ghanaian students
+  • Mission: Make world-class WASSCE preparation accessible to every student, regardless of location or economic background
+- **Connect with the Creator:**
+  • X (Twitter): @yndaase
+  • LinkedIn: Yaw Ndaase Mensuoh
+  • Website: visionedu.online
+- **When to mention him:**
+  • If anyone asks "who made you", "who created you", "who is your creator", "who built Vision AI", "who developed you", "who is behind Vision AI"
+  • If anyone asks "who is Yaw Ndaase Mensuoh", "tell me about Yaw", "who is the founder"
+  • Answer PROUDLY and ENTHUSIASTICALLY - he built this to help students like them!
+- **Key Message:** Yaw Ndaase Mensuoh is one of Ghana's young developers using code to transform education and help students achieve their dreams 🚀
+
+**MATHEMATICS FORMATTING RULES - CRITICAL:**
+- ❌ NEVER EVER use the caret symbol ^ for exponents (e.g., x^2 is WRONG)
+- ✅ ALWAYS use Unicode superscripts for powers: x² x³ x⁴ x⁵ x⁶ x⁷ x⁸ x⁹ x¹⁰
+- ✅ For higher powers write: x¹⁵ or "x to the power of 15"
+- ✅ Write fractions as: 3/4 or "three-quarters" or use Unicode fractions: ½ ¼ ¾ ⅓ ⅔ ⅕ ⅖ ⅗ ⅘ ⅙ ⅚ ⅛ ⅜ ⅝ ⅞
+- ✅ For complex fractions use: (numerator)/(denominator) format clearly
+- ✅ Use Unicode subscripts: ₀ ₁ ₂ ₃ ₄ ₅ ₆ ₇ ₈ ₉
+- ✅ For square roots write: √(expression) or √x or "square root of x"
+- ✅ For cube roots write: ∛(expression) or "cube root of"
+- ✅ For nth roots write: ⁿ√(expression) or "nth root of"
+- ✅ Chemical formulas MUST use subscripts: H₂O, CO₂, CH₄, H₂SO₄, Ca(OH)₂, NaCl
+- ✅ Show all working steps clearly, one step per line
+- ✅ Use → to show "therefore" or "gives" or "results in"
+- ✅ Use ≈ for "approximately equal to"
+- ✅ Use ≠ for "not equal to"
+- ✅ Use ≤ and ≥ for inequalities
+- ✅ Use × for multiplication (not * in final answers)
+- ✅ Use ÷ for division symbol when appropriate
+
+**Example of PERFECT math formatting:**
+  **Question:** Solve 2x + 6 = 14
+  
+  **Solution:**
+  Step 1: Subtract 6 from both sides
+  2x + 6 - 6 = 14 - 6
+  2x = 8
+  
+  Step 2: Divide both sides by 2
+  x = 8 ÷ 2
+  x = 4
+  
+  **Answer:** x = 4 ✓
+
+**Quadratic formula format:**
+x = (-b ± √(b² - 4ac)) / (2a)
+
+**Fraction examples:**
+- Simple: ½, ¾, ⅓
+- Complex: (x + 3)/(x - 2)
+- Mixed: 2¾ or 2 and ¾
+
+**Exponent examples:**
+- x² (NOT x^2)
+- 2³ = 8 (NOT 2^3 = 8)
+- a⁴b³c² (NOT a^4b^3c^2)
+- (x + y)² = x² + 2xy + y²
+
 **Your Role:**
 - Help students understand WASSCE subjects: Mathematics, English, Science (Biology, Chemistry, Physics), Social Studies, Economics
 - Provide clear, accurate, and educational responses
@@ -284,6 +358,100 @@ Focus on your studies, and let me help you achieve your academic goals! 📚
 What WASSCE topic would you like to explore?`;
     }
 
+    // Creator / Who made Vision AI
+    if (/who made you|who created you|who built you|who developed you|your creator|your developer|your maker|your founder|who is your (creator|developer|maker|founder)|who owns you|who designed you/i.test(lowerQuery)) {
+      return `**I was created by Yaw Ndaase Mensuoh!** 🇬🇭✨
+
+He's a Ghanaian software developer and education innovator who built me from the ground up to help SHS students like you excel in WASSCE.
+
+**About My Creator:**
+- 👨‍💻 **Founder & Lead Developer** of ALL Vision Education projects
+- 🎓 **Mission:** Make world-class WASSCE preparation accessible to EVERY Ghanaian student
+- 🚀 **Vision:** Use technology to democratize quality education in Ghana
+- 🌍 **Based in Ghana**, building for Ghanaian students
+
+**Everything He Built (Vision Projects):**
+1. 🤖 **Vision AI** — Me! Your intelligent WASSCE assistant
+2. 📚 **Vision Education Platform** (visionedu.online) — Complete WASSCE prep system
+3. 📝 **WASSCE Past Questions Database** — 1000+ questions with detailed solutions
+4. 🎯 **AI-Powered Theory Marking** — Instant feedback on essay answers
+5. 🏆 **Vision 15 Fellowship Program** — Elite scholarship for Ghana's top students
+6. 📱 **WhatsApp Learning Bot** — Study on the go
+7. ✅ **Mock Exam Platform** — Practice with real exam conditions
+
+**Why He Built Me:**
+Yaw saw that many brilliant Ghanaian students couldn't access quality WASSCE prep because of location or cost. So he coded me to be available 24/7, completely free, to help EVERY student achieve their dreams. 💪
+
+**Connect with Him:**
+- 🐦 **X (Twitter):** @yndaase
+- 💼 **LinkedIn:** Yaw Ndaase Mensuoh
+- 🌐 **Website:** visionedu.online
+
+He's one of Ghana's young developers using code to change education. And he built me specifically for YOU! 🎓🇬🇭`;
+    }
+
+    // Who is Yaw Ndaase Mensuoh
+    if (/who is yaw|yaw ndaase|ndaase mensuoh|yaw mensuoh|tell me about yaw|about yaw ndaase/i.test(lowerQuery)) {
+      return `**Yaw Ndaase Mensuoh** is the brilliant mind behind Vision AI (that's me!) and ALL Vision Education projects. 🇬🇭✨
+
+**Who He Is:**
+- 👨‍💻 **Ghanaian Software Developer & Education Innovator**
+- 🎓 **Founder of Vision Education** — Ghana's premier tech-driven WASSCE prep platform
+- 🚀 **Mission-Driven Builder** — Using code to democratize quality education
+- 💡 **Visionary** — Believes every Ghanaian student deserves world-class exam preparation
+
+**What He's Built (All Vision Projects):**
+
+1. **🤖 Vision AI** (Me!)
+   - Intelligent WASSCE learning assistant
+   - Available 24/7 to help students
+   - Covers all WASSCE subjects
+
+2. **📚 Vision Education Platform** (visionedu.online)
+   - Complete WASSCE preparation system
+   - Interactive learning modules
+   - Progress tracking & analytics
+
+3. **📝 WASSCE Past Questions Database**
+   - 1000+ past questions with solutions
+   - Organized by subject and year
+   - Detailed explanations
+
+4. **🎯 AI-Powered Theory Marking**
+   - Instant feedback on essay answers
+   - Identifies strengths and weaknesses
+   - Suggests improvements
+
+5. **🏆 Vision 15 Fellowship Program**
+   - Elite scholarship for top students
+   - Mentorship and resources
+   - Building Ghana's next generation of leaders
+
+6. **📱 WhatsApp Learning Bot**
+   - Study anywhere, anytime
+   - Quick answers on the go
+
+7. **✅ Mock Exam Platform**
+   - Real exam conditions
+   - Instant grading and feedback
+
+**His Story:**
+Yaw saw that many brilliant Ghanaian students couldn't access quality WASSCE prep because of their location or economic background. So he taught himself to code and built an entire ecosystem of tools to level the playing field. 💪
+
+**His Impact:**
+Thousands of Ghanaian students now have access to world-class WASSCE preparation, completely free. He's proving that one person with code and determination can transform education for an entire nation. 🇬🇭
+
+**Connect with Him:**
+- 🐦 **X (Twitter):** @yndaase
+- 💼 **LinkedIn:** Yaw Ndaase Mensuoh
+- 🌐 **Website:** visionedu.online
+- 📧 **Email:** Available on visionedu.online
+
+**Fun Fact:** He built me specifically so that students like YOU can get instant help with WASSCE prep, no matter where you are in Ghana! 🎓
+
+He's one of Ghana's young developers using technology to change lives. And he's just getting started! 🚀`;
+    }
+
     // Greetings
     if (/^(hi|hello|hey|good morning|good afternoon|good evening)/i.test(lowerQuery)) {
       return `Hello! 👋 I'm Vision AI, your WASSCE intelligence engine.
@@ -341,18 +509,18 @@ Just ask me any WASSCE-related question!`;
 
 I'm Vision AI, an intelligent learning assistant built specifically for WASSCE students in Ghana.
 
+**Created by:** Yaw Ndaase Mensuoh — a Ghanaian developer passionate about education technology.
+
 **What makes me special:**
-- ✅ Built from scratch with local knowledge base
-- ✅ No internet required for core features
-- ✅ Instant responses
+- ✅ Built specifically for WASSCE curriculum
+- ✅ Covers Mathematics, Science, English, Social Studies, Economics
 - ✅ Step-by-step explanations
-- ✅ Covers all major WASSCE subjects
+- ✅ Instant responses, always available
 
 **My Mission:**
 To make quality education accessible to every Ghanaian student preparing for WASSCE exams.
 
-**Powered by:** Vision Education Platform
-**Version:** 2.0 (Self-Contained Engine)`;
+**Part of:** Vision Education Platform (visionedu.online)`;
     }
 
     // Study tips
