@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>About - Vision AI | Free AI Learning Assistant for WASSCE Students</title>
+  <meta name="description" content="Learn about Vision AI - our mission to democratize quality education for WASSCE students across West Africa. Free AI-powered learning for everyone.">
+  <meta name="keywords" content="About Vision AI, WASSCE education, AI learning mission, VisionEdu, Ghana education">
+  <link rel="canonical" href="https://ai.visionedu.online/about">
+  <link rel="icon" type="image/png" href="https://visionedu.online/favicon.png">
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: linear-gradient(135deg, #e0f7fa 0%, #fff9c4 50%, #ffe0b2 100%);
+      min-height: 100vh;
+    }
+
+    /* Navigation */
+    nav {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      padding: 20px 0;
+      box-shadow: 0 2px 20px rgba(0,0,0,0.05);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .nav-container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+    }
+
+    .logo-icon {
+      width: 50px;
+      height: 50px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      font-weight: 800;
+      color: white;
+      box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+    }
+
+    .logo-text {
+      font-size: 28px;
+      font-weight: 700;
+      color: #2d3748;
+    }
+
+    .logo-text span {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 40px;
+      align-items: center;
+      list-style: none;
+    }
+
+    .nav-links a {
+      text-decoration: none;
+      color: #4a5568;
+      font-weight: 500;
+      font-size: 16px;
+      transition: color 0.3s;
+      position: relative;
+    }
+
+    .nav-links a:hover {
+      color: #667eea;
+    }
+
+    .nav-links a.active {
+      color: #667eea;
+    }
+
+    .nav-links a.active::after {
+      content: '';
+      position: absolute;
+      bottom: -5px;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border-radius: 2px;
+    }
+
+    .btn-start {
+      padding: 12px 28px;
+      border-radius: 8px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.3s;
+      font-size: 15px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+    }
+
+    .btn-start:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
+    }
+
+    /* Hero Section */
+    .hero {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 80px 40px 60px;
+      text-align: center;
+    }
+
+    .hero h1 {
+      font-size: 56px;
+      font-weight: 800;
+      color: #2d3748;
+      margin-bottom: 20px;
+      line-height: 1.2;
+    }
+
+    .hero h1 .highlight {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero p {
+      font-size: 20px;
+      color: #4a5568;
+      max-width: 700px;
+      margin: 0 auto;
+      line-height: 1.6;
+    }
+
+    /* Content Section */
+    .content-section {
+      max-width: 1000px;
+      margin: 60px auto;
+      padding: 0 40px;
+    }
+
+    .content-box {
+      background: white;
+      border-radius: 20px;
+      padding: 50px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+      margin-bottom: 40px;
+    }
+
+    .content-box h2 {
+      font-size: 36px;
+      font-weight: 700;
+      color: #2d3748;
+      margin-bottom: 20px;
+    }
+
+    .content-box h3 {
+      font-size: 24px;
+      font-weight: 600;
+      color: #2d3748;
+      margin-top: 30px;
+      margin-bottom: 15px;
+    }
+
+    .content-box p {
+      font-size: 17px;
+      color: #4a5568;
+      line-height: 1.8;
+      margin-bottom: 20px;
+    }
+
+    .content-box ul {
+      list-style: none;
+      padding: 0;
+      margin: 20px 0;
+    }
+
+    .content-box ul li {
+      padding: 12px 0;
+      color: #4a5568;
+      font-size: 17px;
+      display: flex;
+      align-items: flex-start;
+      gap: 15px;
+      line-height: 1.6;
+    }
+
+    .content-box ul li::before {
+      content: '✓';
+      color: #4caf50;
+      font-weight: bold;
+      font-size: 20px;
+      flex-shrink: 0;
+    }
+
+    /* Stats Section */
+    .stats-section {
+      max-width: 1200px;
+      margin: 80px auto;
+      padding: 60px 40px;
+      background: white;
+      border-radius: 30px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.08);
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 40px;
+      text-align: center;
+    }
+
+    .stat-item {
+      padding: 20px;
+    }
+
+    .stat-number {
+      font-size: 48px;
+      font-weight: 800;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 10px;
+    }
+
+    .stat-label {
+      font-size: 16px;
+      color: #718096;
+      font-weight: 500;
+    }
+
+    /* Values Section */
+    .values-section {
+      max-width: 1200px;
+      margin: 80px auto;
+      padding: 0 40px;
+    }
+
+    .values-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 30px;
+      margin-top: 40px;
+    }
+
+    .value-card {
+      background: white;
+      border-radius: 20px;
+      padding: 40px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+      text-align: center;
+    }
+
+    .value-icon {
+      font-size: 60px;
+      margin-bottom: 20px;
+    }
+
+    .value-card h3 {
+      font-size: 24px;
+      font-weight: 700;
+      color: #2d3748;
+      margin-bottom: 15px;
+    }
+
+    .value-card p {
+      font-size: 16px;
+      color: #718096;
+      line-height: 1.7;
+    }
+
+    /* CTA Section */
+    .cta-section {
+      max-width: 1200px;
+      margin: 80px auto;
+      padding: 60px 40px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border-radius: 30px;
+      text-align: center;
+      color: white;
+    }
+
+    .cta-section h2 {
+      font-size: 42px;
+      font-weight: 800;
+      margin-bottom: 20px;
+    }
+
+    .cta-section p {
+      font-size: 20px;
+      margin-bottom: 40px;
+      opacity: 0.9;
+    }
+
+    .cta-button {
+      display: inline-block;
+      padding: 18px 50px;
+      background: white;
+      color: #667eea;
+      border-radius: 12px;
+      font-weight: 700;
+      font-size: 18px;
+      text-decoration: none;
+      transition: all 0.3s;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    }
+
+    .cta-button:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+    }
+
+    /* Footer */
+    footer {
+      background: #2d3748;
+      color: white;
+      padding: 40px;
+      text-align: center;
+      margin-top: 80px;
+    }
+
+    footer nav {
+      background: transparent;
+      box-shadow: none;
+      padding: 0;
+      margin-bottom: 20px;
+    }
+
+    footer a {
+      color: #667eea;
+      text-decoration: none;
+      margin: 0 15px;
+      font-weight: 600;
+    }
+
+    footer p {
+      font-size: 15px;
+      opacity: 0.8;
+      margin-top: 10px;
+    }
+
+    /* Mobile Responsive */
+    @media (max-width: 768px) {
+      .nav-links {
+        display: none;
+      }
+
+      .hero h1 {
+        font-size: 36px;
+      }
+
+      .hero p {
+        font-size: 16px;
+      }
+
+      .content-box {
+        padding: 30px 25px;
+      }
+
+      .content-box h2 {
+        font-size: 28px;
+      }
+
+      .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .values-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .cta-section h2 {
+        font-size: 32px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Navigation -->
+  <nav>
+    <div class="nav-container">
+      <a href="/" class="logo">
+        <div class="logo-icon">V</div>
+        <div class="logo-text">Vision <span>AI</span></div>
+      </a>
+      
+      <ul class="nav-links">
+        <li><a href="/">Home</a></li>
+        <li><a href="/features">Features</a></li>
+        <li><a href="/about" class="active">About</a></li>
+        <li><a href="https://visionedu.online" target="_blank">Main Platform</a></li>
+      </ul>
+
+      <a href="/chat" class="btn-start">Get Started</a>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <h1>About <span class="highlight">Vision AI</span></h1>
+    <p>Democratizing quality education for WASSCE students across West Africa through the power of artificial intelligence.</p>
+  </section>
+
+  <!-- Mission Section -->
+  <section class="content-section">
+    <div class="content-box">
+      <h2>Our Mission</h2>
+      <p>
+        Vision AI was created with a simple but powerful mission: <strong>to make quality education accessible to every WASSCE student, regardless of their location or financial situation.</strong>
+      </p>
+      <p>
+        We believe that every student deserves access to personalized learning support. Traditional tutoring is expensive and not available to everyone. That's why we built Vision AI - a free, AI-powered learning assistant that's available 24/7 to help students succeed.
+      </p>
+      <p>
+        Our platform combines advanced artificial intelligence with deep knowledge of the WASSCE curriculum to provide instant, accurate answers and step-by-step explanations across all major subjects.
+      </p>
+    </div>
+
+    <div class="content-box">
+      <h2>What is Vision AI?</h2>
+      <p>
+        Vision AI is a free, AI-powered learning assistant specifically designed for students preparing for the West African Senior School Certificate Examination (WASSCE). Our platform provides:
+      </p>
+      <ul>
+        <li><strong>Instant Answers:</strong> Get responses to your questions in under 200 milliseconds</li>
+        <li><strong>Step-by-Step Solutions:</strong> Understand the process, not just the answer</li>
+        <li><strong>Multi-Subject Support:</strong> Coverage of Mathematics, English, Science, Social Studies, and Economics</li>
+        <li><strong>24/7 Availability:</strong> Study anytime, anywhere, at your own pace</li>
+        <li><strong>Completely Free:</strong> No hidden costs, no subscriptions, unlimited questions</li>
+      </ul>
+    </div>
+
+    <div class="content-box">
+      <h2>How It Works</h2>
+      <h3>1. Advanced AI Technology</h3>
+      <p>
+        Vision AI uses state-of-the-art artificial intelligence to understand your questions and provide accurate, helpful answers. Our AI engine combines:
+      </p>
+      <ul>
+        <li>Mathematical problem-solving capabilities for equations and calculations</li>
+        <li>Natural language processing to understand questions in plain English</li>
+        <li>Comprehensive knowledge base aligned with the WASSCE curriculum</li>
+        <li>Context-aware responses that adapt to your learning needs</li>
+      </ul>
+
+      <h3>2. Multi-Tier Intelligence System</h3>
+      <p>
+        When you ask a question, Vision AI processes it through multiple specialized engines:
+      </p>
+      <ul>
+        <li><strong>Math Engine:</strong> Solves mathematical equations and provides step-by-step solutions</li>
+        <li><strong>AI Engine:</strong> Handles complex questions requiring reasoning and explanation</li>
+        <li><strong>Knowledge Base:</strong> Provides curriculum-specific information and study tips</li>
+        <li><strong>Pattern Recognition:</strong> Identifies common question types and provides targeted help</li>
+      </ul>
+
+      <h3>3. Continuous Learning</h3>
+      <p>
+        Vision AI learns from every interaction to provide better, more accurate responses over time. We continuously update our knowledge base and improve our AI models to serve you better.
+      </p>
+    </div>
+
+    <div class="content-box">
+      <h2>Why We Built Vision AI</h2>
+      <p>
+        Education inequality is a major challenge in West Africa. Many students don't have access to:
+      </p>
+      <ul>
+        <li>Quality teachers and tutors</li>
+        <li>Expensive textbooks and study materials</li>
+        <li>Private tutoring sessions</li>
+        <li>Internet resources and online courses</li>
+      </ul>
+      <p>
+        Vision AI addresses these challenges by providing free, unlimited access to a personal AI tutor that's available anytime, anywhere. Whether you're in a major city or a rural village, as long as you have internet access, you can use Vision AI to improve your learning.
+      </p>
+    </div>
+
+    <div class="content-box">
+      <h2>Part of Vision Education</h2>
+      <p>
+        Vision AI is part of the <strong>Vision Education</strong> platform, a comprehensive educational ecosystem designed to support students throughout their academic journey. Our main platform at <a href="https://visionedu.online" target="_blank" style="color: #667eea; font-weight: 600;">visionedu.online</a> offers:
+      </p>
+      <ul>
+        <li>WASSCE past questions and answers</li>
+        <li>Study materials and notes</li>
+        <li>Practice tests and quizzes</li>
+        <li>Progress tracking and analytics</li>
+        <li>Community forums and peer support</li>
+      </ul>
+      <p>
+        Together, Vision Education and Vision AI provide a complete learning solution for WASSCE students.
+      </p>
+    </div>
+  </section>
+
+  <!-- Stats Section -->
+  <section class="stats-section">
+    <div class="stats-grid">
+      <div class="stat-item">
+        <div class="stat-number">11+</div>
+        <div class="stat-label">Topics Covered</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-number">5</div>
+        <div class="stat-label">Core Subjects</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-number">∞</div>
+        <div class="stat-label">Free Queries</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-number">&lt;200ms</div>
+        <div class="stat-label">Response Time</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-number">24/7</div>
+        <div class="stat-label">Always Available</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-number">100%</div>
+        <div class="stat-label">Free Forever</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Values Section -->
+  <section class="values-section">
+    <div style="text-align: center; margin-bottom: 40px;">
+      <h2 style="font-size: 42px; font-weight: 800; color: #2d3748; margin-bottom: 15px;">Our Core Values</h2>
+      <p style="font-size: 18px; color: #718096; max-width: 600px; margin: 0 auto;">The principles that guide everything we do</p>
+    </div>
+
+    <div class="values-grid">
+      <div class="value-card">
+        <div class="value-icon">🎓</div>
+        <h3>Education for All</h3>
+        <p>We believe quality education should be accessible to everyone, regardless of their financial situation or location.</p>
+      </div>
+
+      <div class="value-card">
+        <div class="value-icon">💡</div>
+        <h3>Innovation</h3>
+        <p>We leverage cutting-edge AI technology to create innovative solutions that make learning easier and more effective.</p>
+      </div>
+
+      <div class="value-card">
+        <div class="value-icon">🤝</div>
+        <h3>Student-Centered</h3>
+        <p>Every decision we make is guided by what's best for students. Your success is our success.</p>
+      </div>
+
+      <div class="value-card">
+        <div class="value-icon">🔒</div>
+        <h3>Privacy & Security</h3>
+        <p>We protect your data with enterprise-grade security and never sell your information to third parties.</p>
+      </div>
+
+      <div class="value-card">
+        <div class="value-icon">⚡</div>
+        <h3>Excellence</h3>
+        <p>We strive for excellence in everything we do, from the accuracy of our answers to the quality of our user experience.</p>
+      </div>
+
+      <div class="value-card">
+        <div class="value-icon">🌍</div>
+        <h3>Community</h3>
+        <p>We're building a community of learners who support and inspire each other to achieve their goals.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Section -->
+  <section class="cta-section">
+    <h2>Join Thousands of Students</h2>
+    <p>Start your journey to WASSCE success with Vision AI today. It's free, it's easy, and it works.</p>
+    <a href="/chat" class="cta-button">Get Started for Free →</a>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <nav>
+      <a href="/">Home</a>
+      <span style="color: rgba(255,255,255,0.3);">|</span>
+      <a href="/features">Features</a>
+      <span style="color: rgba(255,255,255,0.3);">|</span>
+      <a href="/about">About</a>
+      <span style="color: rgba(255,255,255,0.3);">|</span>
+      <a href="/login">Login</a>
+      <span style="color: rgba(255,255,255,0.3);">|</span>
+      <a href="/chat">Get Started</a>
+      <span style="color: rgba(255,255,255,0.3);">|</span>
+      <a href="https://visionedu.online" target="_blank">Main Platform</a>
+    </nav>
+    <p>Built with ❤️ for WASSCE Students | <a href="https://visionedu.online" target="_blank">Vision Education</a></p>
+    <p style="margin-top: 10px; font-size: 13px;">© 2026 Vision AI. All rights reserved.</p>
+  </footer>
+</body>
+</html>

@@ -10,6 +10,16 @@
       "status": 200
     },
     {
+      "src": "^/features$",
+      "dest": "/features.html",
+      "status": 200
+    },
+    {
+      "src": "^/about$",
+      "dest": "/about.html",
+      "status": 200
+    },
+    {
       "src": "^/login$",
       "dest": "/login.html",
       "status": 200

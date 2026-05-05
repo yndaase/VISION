@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Features - Vision AI | Free AI Learning Assistant for WASSCE</title>
+  <meta name="description" content="Discover all the powerful features of Vision AI - instant answers, step-by-step solutions, multi-subject support, and more. 100% free for WASSCE students.">
+  <meta name="keywords" content="Vision AI features, WASSCE AI tutor, AI learning tools, math solver, study assistant">
+  <link rel="canonical" href="https://ai.visionedu.online/features">
+  <link rel="icon" type="image/png" href="https://visionedu.online/favicon.png">
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: linear-gradient(135deg, #e0f7fa 0%, #fff9c4 50%, #ffe0b2 100%);
+      min-height: 100vh;
+    }
+
+    /* Navigation */
+    nav {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      padding: 20px 0;
+      box-shadow: 0 2px 20px rgba(0,0,0,0.05);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .nav-container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+    }
+
+    .logo-icon {
+      width: 50px;
+      height: 50px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      font-weight: 800;
+      color: white;
+      box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+    }
+
+    .logo-text {
+      font-size: 28px;
+      font-weight: 700;
+      color: #2d3748;
+    }
+
+    .logo-text span {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 40px;
+      align-items: center;
+      list-style: none;
+    }
+
+    .nav-links a {
+      text-decoration: none;
+      color: #4a5568;
+      font-weight: 500;
+      font-size: 16px;
+      transition: color 0.3s;
+      position: relative;
+    }
+
+    .nav-links a:hover {
+      color: #667eea;
+    }
+
+    .nav-links a.active {
+      color: #667eea;
+    }
+
+    .nav-links a.active::after {
+      content: '';
+      position: absolute;
+      bottom: -5px;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border-radius: 2px;
+    }
+
+    .btn-start {
+      padding: 12px 28px;
+      border-radius: 8px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.3s;
+      font-size: 15px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+    }
+
+    .btn-start:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
+    }
+
+    /* Hero Section */
+    .hero {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 80px 40px 60px;
+      text-align: center;
+    }
+
+    .hero h1 {
+      font-size: 56px;
+      font-weight: 800;
+      color: #2d3748;
+      margin-bottom: 20px;
+      line-height: 1.2;
+    }
+
+    .hero h1 .highlight {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero p {
+      font-size: 20px;
+      color: #4a5568;
+      max-width: 700px;
+      margin: 0 auto 40px;
+      line-height: 1.6;
+    }
+
+    /* Features Grid */
+    .features-section {
+      max-width: 1400px;
+      margin: 0 auto 80px;
+      padding: 0 40px;
+    }
+
+    .section-title {
+      text-align: center;
+      margin-bottom: 60px;
+    }
+
+    .section-badge {
+      display: inline-block;
+      background: rgba(102, 126, 234, 0.1);
+      color: #667eea;
+      padding: 8px 20px;
+      border-radius: 20px;
+      font-weight: 600;
+      font-size: 14px;
+      margin-bottom: 15px;
+    }
+
+    .section-title h2 {
+      font-size: 42px;
+      font-weight: 800;
+      color: #2d3748;
+      margin-bottom: 15px;
+    }
+
+    .section-title p {
+      font-size: 18px;
+      color: #718096;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+      gap: 30px;
+      margin-bottom: 60px;
+    }
+
+    .feature-card {
+      background: white;
+      border-radius: 20px;
+      padding: 40px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+      transition: all 0.3s;
+      border: 2px solid transparent;
+    }
+
+    .feature-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 15px 40px rgba(0,0,0,0.12);
+      border-color: #667eea;
+    }
+
+    .feature-icon {
+      width: 80px;
+      height: 80px;
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 40px;
+      margin-bottom: 25px;
+    }
+
+    .feature-icon-1 { background: linear-gradient(135deg, #ff9800 0%, #ff5722 100%); }
+    .feature-icon-2 { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+    .feature-icon-3 { background: linear-gradient(135deg, #4caf50 0%, #2e7d32 100%); }
+    .feature-icon-4 { background: linear-gradient(135deg, #2196f3 0%, #1565c0 100%); }
+    .feature-icon-5 { background: linear-gradient(135deg, #f44336 0%, #c62828 100%); }
+    .feature-icon-6 { background: linear-gradient(135deg, #9c27b0 0%, #6a1b9a 100%); }
+    .feature-icon-7 { background: linear-gradient(135deg, #00bcd4 0%, #0097a7 100%); }
+    .feature-icon-8 { background: linear-gradient(135deg, #ff5722 0%, #d84315 100%); }
+
+    .feature-card h3 {
+      font-size: 24px;
+      font-weight: 700;
+      color: #2d3748;
+      margin-bottom: 15px;
+    }
+
+    .feature-card p {
+      font-size: 16px;
+      color: #718096;
+      line-height: 1.7;
+      margin-bottom: 20px;
+    }
+
+    .feature-list {
+      list-style: none;
+      padding: 0;
+    }
+
+    .feature-list li {
+      padding: 8px 0;
+      color: #4a5568;
+      font-size: 15px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .feature-list li::before {
+      content: '✓';
+      color: #4caf50;
+      font-weight: bold;
+      font-size: 18px;
+    }
+
+    /* CTA Section */
+    .cta-section {
+      max-width: 1200px;
+      margin: 80px auto;
+      padding: 60px 40px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border-radius: 30px;
+      text-align: center;
+      color: white;
+    }
+
+    .cta-section h2 {
+      font-size: 42px;
+      font-weight: 800;
+      margin-bottom: 20px;
+    }
+
+    .cta-section p {
+      font-size: 20px;
+      margin-bottom: 40px;
+      opacity: 0.9;
+    }
+
+    .cta-button {
+      display: inline-block;
+      padding: 18px 50px;
+      background: white;
+      color: #667eea;
+      border-radius: 12px;
+      font-weight: 700;
+      font-size: 18px;
+      text-decoration: none;
+      transition: all 0.3s;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    }
+
+    .cta-button:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+    }
+
+    /* Footer */
+    footer {
+      background: #2d3748;
+      color: white;
+      padding: 40px;
+      text-align: center;
+      margin-top: 80px;
+    }
+
+    footer nav {
+      background: transparent;
+      box-shadow: none;
+      padding: 0;
+      margin-bottom: 20px;
+    }
+
+    footer a {
+      color: #667eea;
+      text-decoration: none;
+      margin: 0 15px;
+      font-weight: 600;
+    }
+
+    footer p {
+      font-size: 15px;
+      opacity: 0.8;
+      margin-top: 10px;
+    }
+
+    /* Mobile Responsive */
+    @media (max-width: 768px) {
+      .nav-links {
+        display: none;
+      }
+
+      .hero h1 {
+        font-size: 36px;
+      }
+
+      .hero p {
+        font-size: 16px;
+      }
+
+      .features-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .section-title h2 {
+        font-size: 32px;
+      }
+
+      .cta-section h2 {
+        font-size: 32px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Navigation -->
+  <nav>
+    <div class="nav-container">
+      <a href="/" class="logo">
+        <div class="logo-icon">V</div>
+        <div class="logo-text">Vision <span>AI</span></div>
+      </a>
+      
+      <ul class="nav-links">
+        <li><a href="/">Home</a></li>
+        <li><a href="/features" class="active">Features</a></li>
+        <li><a href="/about">About</a></li>
+        <li><a href="https://visionedu.online" target="_blank">Main Platform</a></li>
+      </ul>
+
+      <a href="/chat" class="btn-start">Get Started</a>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <h1>Powerful Features for <span class="highlight">WASSCE Success</span></h1>
+    <p>Everything you need to excel in your studies. Free, unlimited, and designed specifically for West African students.</p>
+  </section>
+
+  <!-- Core Features -->
+  <section class="features-section">
+    <div class="section-title">
+      <div class="section-badge">Core Features</div>
+      <h2>What Makes Vision AI Special</h2>
+      <p>Comprehensive tools designed to help you learn faster and understand better</p>
+    </div>
+
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon feature-icon-1">📐</div>
+        <h3>Advanced Math Solver</h3>
+        <p>Solve complex mathematical problems with step-by-step explanations.</p>
+        <ul class="feature-list">
+          <li>Algebra and equations</li>
+          <li>Geometry and trigonometry</li>
+          <li>Calculus and statistics</li>
+          <li>Word problems</li>
+          <li>Detailed solution steps</li>
+        </ul>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon feature-icon-2">🤖</div>
+        <h3>AI-Powered Intelligence</h3>
+        <p>Advanced AI that understands context and provides accurate answers.</p>
+        <ul class="feature-list">
+          <li>Natural language understanding</li>
+          <li>Context-aware responses</li>
+          <li>Multi-turn conversations</li>
+          <li>Learns from interactions</li>
+          <li>Instant response time</li>
+        </ul>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon feature-icon-3">📚</div>
+        <h3>Multi-Subject Support</h3>
+        <p>Complete coverage of all WASSCE subjects in one platform.</p>
+        <ul class="feature-list">
+          <li>Mathematics</li>
+          <li>English Language</li>
+          <li>Integrated Science</li>
+          <li>Social Studies</li>
+          <li>Economics</li>
+        </ul>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon feature-icon-4">⚡</div>
+        <h3>Lightning Fast</h3>
+        <p>Get answers in under 200 milliseconds. No waiting, just learning.</p>
+        <ul class="feature-list">
+          <li>Instant responses</li>
+          <li>No loading delays</li>
+          <li>Works offline-ready</li>
+          <li>Optimized performance</li>
+          <li>Always available</li>
+        </ul>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon feature-icon-5">💯</div>
+        <h3>100% Free Forever</h3>
+        <p>No hidden costs, no subscriptions, no limits. Completely free.</p>
+        <ul class="feature-list">
+          <li>Unlimited questions</li>
+          <li>No credit card required</li>
+          <li>No ads or distractions</li>
+          <li>Full feature access</li>
+          <li>Free forever</li>
+        </ul>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon feature-icon-6">💾</div>
+        <h3>Chat History</h3>
+        <p>Save and revisit your conversations anytime, anywhere.</p>
+        <ul class="feature-list">
+          <li>Automatic saving</li>
+          <li>Organized by date</li>
+          <li>Search past chats</li>
+          <li>Export conversations</li>
+          <li>Cloud sync</li>
+        </ul>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon feature-icon-7">🎯</div>
+        <h3>Subject Filtering</h3>
+        <p>Focus on specific subjects for more accurate, targeted answers.</p>
+        <ul class="feature-list">
+          <li>Quick subject selection</li>
+          <li>Context-aware responses</li>
+          <li>Subject-specific tips</li>
+          <li>Curriculum aligned</li>
+          <li>Easy switching</li>
+        </ul>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon feature-icon-8">🔒</div>
+        <h3>Secure & Private</h3>
+        <p>Your data is protected with enterprise-grade security.</p>
+        <ul class="feature-list">
+          <li>Google Sign-In</li>
+          <li>Encrypted connections</li>
+          <li>Private conversations</li>
+          <li>No data selling</li>
+          <li>GDPR compliant</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- Additional Features -->
+  <section class="features-section">
+    <div class="section-title">
+      <div class="section-badge">More Features</div>
+      <h2>Even More Reasons to Love Vision AI</h2>
+      <p>We're constantly adding new features to help you succeed</p>
+    </div>
+
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon feature-icon-3">📱</div>
+        <h3>Mobile Friendly</h3>
+        <p>Study on any device - phone, tablet, or computer. Fully responsive design that works everywhere.</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon feature-icon-4">🌙</div>
+        <h3>24/7 Availability</h3>
+        <p>Study anytime, day or night. Vision AI never sleeps, so you can learn at your own pace.</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon feature-icon-1">🎓</div>
+        <h3>Exam Preparation</h3>
+        <p>Get tips, strategies, and practice questions specifically designed for WASSCE exams.</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon feature-icon-2">🔄</div>
+        <h3>Regular Updates</h3>
+        <p>We continuously improve Vision AI with new features, better accuracy, and more content.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Section -->
+  <section class="cta-section">
+    <h2>Ready to Start Learning?</h2>
+    <p>Join thousands of WASSCE students already using Vision AI to improve their grades.</p>
+    <a href="/chat" class="cta-button">Get Started for Free →</a>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <nav>
+      <a href="/">Home</a>
+      <span style="color: rgba(255,255,255,0.3);">|</span>
+      <a href="/features">Features</a>
+      <span style="color: rgba(255,255,255,0.3);">|</span>
+      <a href="/about">About</a>
+      <span style="color: rgba(255,255,255,0.3);">|</span>
+      <a href="/login">Login</a>
+      <span style="color: rgba(255,255,255,0.3);">|</span>
+      <a href="/chat">Get Started</a>
+      <span style="color: rgba(255,255,255,0.3);">|</span>
+      <a href="https://visionedu.online" target="_blank">Main Platform</a>
+    </nav>
+    <p>Built with ❤️ for WASSCE Students | <a href="https://visionedu.online" target="_blank">Vision Education</a></p>
+    <p style="margin-top: 10px; font-size: 13px;">© 2026 Vision AI. All rights reserved.</p>
+  </footer>
+</body>
+</html>
