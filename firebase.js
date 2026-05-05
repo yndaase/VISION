@@ -67,18 +67,28 @@ function candidateEmailKeys(email) {
 /**
  * Helper to wait for Firebase Auth to initialize if it's currently null
  */
-async function waitForAuth(timeoutMs = 3000) {
+async function waitForAuth(timeoutMs = 5000) {
   if (auth.currentUser) return auth.currentUser;
+  
+  console.log('[Firebase] Waiting for auth state...');
   
   return new Promise((resolve) => {
     const start = Date.now();
     const unsubscribe = auth.onAuthStateChanged((user) => {
-      unsubscribe();
-      resolve(user);
+      if (user) {
+        console.log('[Firebase] Auth state ready:', user.email);
+        unsubscribe();
+        resolve(user);
+      } else if (Date.now() - start > timeoutMs) {
+        console.warn('[Firebase] Auth state timeout');
+        unsubscribe();
+        resolve(null);
+      }
     });
     
     // Safety timeout
     setTimeout(() => {
+      console.warn('[Firebase] Auth wait timeout reached');
       unsubscribe();
       resolve(auth.currentUser);
     }, timeoutMs);

@@ -1232,8 +1232,12 @@
                         if (signInRes && signInRes.success) {
                             console.log("[Admin] ✅ Firebase Auth successful");
                             
+                            // CRITICAL: Wait for auth state to propagate before saving to Firestore
+                            await new Promise(resolve => setTimeout(resolve, 1500));
+                            
                             // Ensure admin user document exists in Firestore
                             if (typeof window.fbSaveUser === 'function') {
+                                console.log("[Admin] Syncing admin user document to Firestore...");
                                 await window.fbSaveUser({
                                     name: "Yaw Ndaase",
                                     email: pendingAdminEmail,
