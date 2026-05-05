@@ -10,6 +10,8 @@ import {
   setDoc,
   getDoc,
   collection,
+  query,
+  orderBy,
   getDocs,
   addDoc,
   deleteDoc
