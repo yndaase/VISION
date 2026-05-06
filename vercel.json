@@ -1,5 +1,5 @@
 {
-  "cleanUrls": false,
+  "cleanUrls": true,
   "trailingSlash": false,
   "functions": {
     "api/upload.js": {
@@ -7,7 +7,13 @@
       "memory": 1024
     }
   },
-  "redirects": [],
+  "redirects": [
+    { 
+      "source": "/((?!api).*)\.html", 
+      "destination": "/$1", 
+      "permanent": true 
+    }
+  ],
   "github": {
     "silent": true
   },
