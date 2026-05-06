@@ -3,13 +3,13 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Vision AI - Your Trusted 24/7 WASSCE Tutor</title>
-  <meta name="description" content="Achieve exam success with Ghana's free AI assistant. 100% free, unlimited questions, works offline, instant expert responses." />
+  <title>Vision AI - Intelligent WASSCE Tutoring for Ghana's Future</title>
+  <meta name="description" content="Unlock your potential with intelligent WASSCE tutoring. Personalized AI guidance for Senior High School exams in Ghana." />
   <link rel="canonical" href="https://ai.visionedu.online/" />
   <link rel="icon" type="image/png" href="https://visionedu.online/favicon.png" />
   
   <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
   
   <style>
     * {
@@ -19,64 +19,49 @@
     }
 
     body {
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-      background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 50%, #f8fafc 100%);
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: #f8f9fa;
       color: #1a1a1a;
-      line-height: 1.6;
-      position: relative;
-      min-height: 100vh;
-    }
-
-    body::before {
-      content: '';
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-image: 
-        radial-gradient(circle at 20% 50%, rgba(102, 126, 234, 0.05) 0%, transparent 50%),
-        radial-gradient(circle at 80% 80%, rgba(118, 75, 162, 0.05) 0%, transparent 50%),
-        radial-gradient(circle at 40% 20%, rgba(76, 175, 80, 0.03) 0%, transparent 50%);
-      pointer-events: none;
-      z-index: -1;
     }
 
     /* Navigation */
     nav {
       background: white;
-      border: 2px solid #e5e7eb;
-      border-radius: 16px;
-      margin: 20px;
-      padding: 16px 32px;
+      padding: 16px 0;
+      border-bottom: 1px solid #e5e7eb;
+    }
+
+    .nav-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 24px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
     }
 
     .logo {
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 10px;
       text-decoration: none;
       color: #1a1a1a;
     }
 
     .logo-icon {
-      width: 40px;
-      height: 40px;
-      background: #1a1a1a;
-      border-radius: 8px;
+      width: 32px;
+      height: 32px;
+      background: #1e3a8a;
+      border-radius: 6px;
       display: flex;
       align-items: center;
       justify-content: center;
       color: white;
-      font-size: 20px;
+      font-size: 18px;
     }
 
     .logo-text {
-      font-size: 22px;
+      font-size: 20px;
       font-weight: 700;
     }
 
@@ -90,8 +75,8 @@
     .nav-links a {
       text-decoration: none;
       color: #4b5563;
-      font-weight: 500;
       font-size: 15px;
+      font-weight: 500;
       transition: color 0.2s;
     }
 
@@ -100,289 +85,196 @@
     }
 
     .login-btn {
-      background: #1a1a1a;
+      background: #1e3a8a;
       color: white;
-      padding: 10px 24px;
+      padding: 10px 20px;
       border-radius: 8px;
       text-decoration: none;
-      font-weight: 600;
       font-size: 14px;
-      transition: all 0.2s;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: background 0.2s;
     }
 
     .login-btn:hover {
-      background: #2d2d2d;
-      transform: translateY(-1px);
+      background: #1e40af;
     }
 
     /* Hero Section */
     .hero {
-      background: white;
-      border: 2px solid #e5e7eb;
-      border-radius: 16px;
-      margin: 20px;
-      padding: 60px 40px;
+      background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+      padding: 80px 24px;
+    }
+
+    .hero-container {
+      max-width: 1200px;
+      margin: 0 auto;
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 60px;
       align-items: center;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .hero::before {
-      content: '';
-      position: absolute;
-      top: -50%;
-      right: -10%;
-      width: 500px;
-      height: 500px;
-      background: radial-gradient(circle, rgba(102, 126, 234, 0.08) 0%, transparent 70%);
-      border-radius: 50%;
-      pointer-events: none;
-    }
-
-    .hero::after {
-      content: '';
-      position: absolute;
-      bottom: -30%;
-      left: -5%;
-      width: 400px;
-      height: 400px;
-      background: radial-gradient(circle, rgba(76, 175, 80, 0.06) 0%, transparent 70%);
-      border-radius: 50%;
-      pointer-events: none;
     }
 
     .hero-content h1 {
       font-size: 48px;
-      font-weight: 800;
+      font-weight: 900;
       line-height: 1.2;
-      margin-bottom: 24px;
-      color: #1a1a1a;
-      position: relative;
-      z-index: 1;
+      margin-bottom: 20px;
+      color: #0f172a;
     }
 
-    .cta-button {
-      background: #1a1a1a;
-      color: white;
-      padding: 16px 32px;
+    .hero-content p {
+      font-size: 18px;
+      color: #475569;
+      line-height: 1.6;
+      margin-bottom: 32px;
+    }
+
+    .google-btn {
+      background: white;
+      border: 1px solid #e5e7eb;
+      padding: 12px 24px;
       border-radius: 8px;
-      text-decoration: none;
+      font-size: 15px;
       font-weight: 600;
-      font-size: 16px;
       display: inline-flex;
       align-items: center;
-      gap: 8px;
+      gap: 10px;
+      cursor: pointer;
       transition: all 0.2s;
-      position: relative;
-      z-index: 1;
-    }
-
-    .cta-button:hover {
-      background: #2d2d2d;
-      transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-    }
-
-    /* Dashboard Preview */
-    .dashboard-preview {
-      background: #f8f9fa;
-      border: 2px solid #e5e7eb;
-      border-radius: 12px;
-      padding: 20px;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-    }
-
-    .dashboard-header {
-      background: #1a1a1a;
-      color: white;
-      padding: 12px 16px;
-      border-radius: 8px 8px 0 0;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 16px;
-    }
-
-    .dashboard-title {
-      font-size: 14px;
-      font-weight: 600;
-    }
-
-    .dashboard-content {
-      background: white;
-      border-radius: 0 0 8px 8px;
-      padding: 20px;
-      min-height: 300px;
-    }
-
-    .math-problem {
-      font-family: 'Courier New', monospace;
-      font-size: 14px;
-      line-height: 1.8;
-      color: #4b5563;
-      margin-bottom: 16px;
-    }
-
-    .explanation-box {
-      background: #f8f9fa;
-      border-left: 4px solid #1a1a1a;
-      padding: 16px;
-      border-radius: 4px;
-      margin-top: 12px;
-    }
-
-    .explanation-title {
-      font-weight: 700;
-      font-size: 13px;
-      margin-bottom: 8px;
+      text-decoration: none;
       color: #1a1a1a;
     }
 
-    .explanation-text {
-      font-size: 13px;
-      color: #6b7280;
-      line-height: 1.6;
+    .google-btn:hover {
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      transform: translateY(-1px);
     }
 
-    /* Feature Cards */
-    .features {
-      display: grid;
-      grid-template-columns: repeat(5, 1fr);
-      gap: 16px;
-      margin: 20px;
+    .google-icon {
+      width: 20px;
+      height: 20px;
     }
 
-    .feature-card {
-      background: white;
-      border: 2px solid #e5e7eb;
-      border-radius: 12px;
-      padding: 24px;
-      text-align: center;
-      transition: all 0.2s;
+    /* Phone Mockup */
+    .phone-mockup {
       position: relative;
+      max-width: 400px;
+      margin: 0 auto;
+    }
+
+    .phone-frame {
+      background: #1e293b;
+      border-radius: 40px;
+      padding: 12px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    }
+
+    .phone-screen {
+      background: white;
+      border-radius: 32px;
       overflow: hidden;
     }
 
-    .feature-card::before {
-      content: '';
-      position: absolute;
-      top: -50%;
-      right: -50%;
-      width: 100%;
-      height: 100%;
-      background: radial-gradient(circle, rgba(102, 126, 234, 0.03) 0%, transparent 70%);
-      border-radius: 50%;
-      pointer-events: none;
-      transition: all 0.3s;
+    .phone-header {
+      background: #1e3a8a;
+      color: white;
+      padding: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
     }
 
-    .feature-card:hover::before {
-      top: -30%;
-      right: -30%;
-      background: radial-gradient(circle, rgba(102, 126, 234, 0.06) 0%, transparent 70%);
+    .phone-time {
+      font-size: 14px;
+      font-weight: 600;
     }
 
-    .feature-card:hover {
-      border-color: #1a1a1a;
-      transform: translateY(-4px);
-      box-shadow: 0 8px 24px rgba(0,0,0,0.1);
-    }
-
-    .feature-icon {
-      font-size: 36px;
-      margin-bottom: 16px;
-      position: relative;
-      z-index: 1;
-    }
-
-    .feature-title {
+    .phone-title {
+      text-align: center;
       font-size: 16px;
       font-weight: 700;
-      margin-bottom: 8px;
+      padding: 12px;
+      background: white;
       color: #1a1a1a;
-      position: relative;
-      z-index: 1;
     }
 
-    .feature-desc {
+    .phone-content {
+      padding: 20px;
+      background: #f8f9fa;
+      min-height: 400px;
+    }
+
+    .chat-bubble {
+      background: #dbeafe;
+      padding: 16px;
+      border-radius: 12px;
+      margin-bottom: 12px;
+    }
+
+    .chat-title {
       font-size: 13px;
-      color: #6b7280;
-      line-height: 1.5;
-      position: relative;
-      z-index: 1;
+      font-weight: 700;
+      margin-bottom: 8px;
     }
 
-    /* Subject Categories */
+    .math-text {
+      font-family: 'Courier New', monospace;
+      font-size: 12px;
+      line-height: 1.6;
+      color: #374151;
+    }
+
+    /* Subjects Section */
     .subjects-section {
-      margin: 40px 20px 20px;
-      position: relative;
-    }
-
-    .subjects-section::before {
-      content: '';
-      position: absolute;
-      top: -100px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 600px;
-      height: 600px;
-      background: radial-gradient(circle, rgba(118, 75, 162, 0.04) 0%, transparent 70%);
-      border-radius: 50%;
-      pointer-events: none;
-      z-index: -1;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 80px 24px;
     }
 
     .section-title {
-      font-size: 28px;
+      font-size: 32px;
       font-weight: 800;
-      margin-bottom: 24px;
-      color: #1a1a1a;
+      margin-bottom: 40px;
+      color: #0f172a;
     }
 
     .subjects-grid {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
-      gap: 20px;
+      gap: 24px;
     }
 
     .subject-card {
       background: white;
-      border: 2px solid #e5e7eb;
+      border: 1px solid #e5e7eb;
       border-radius: 12px;
-      overflow: hidden;
+      padding: 24px;
       transition: all 0.2s;
       cursor: pointer;
     }
 
     .subject-card:hover {
-      border-color: #1a1a1a;
-      transform: translateY(-4px);
       box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+      transform: translateY(-4px);
     }
 
-    .subject-image {
-      width: 100%;
-      height: 180px;
-      object-fit: cover;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    }
-
-    .subject-content {
-      padding: 20px;
+    .subject-icon {
+      font-size: 40px;
+      margin-bottom: 16px;
     }
 
     .subject-name {
       font-size: 18px;
       font-weight: 700;
       margin-bottom: 8px;
-      color: #1a1a1a;
+      color: #0f172a;
     }
 
-    .subject-details {
-      font-size: 13px;
+    .subject-desc {
+      font-size: 14px;
       color: #6b7280;
       line-height: 1.5;
     }
@@ -390,10 +282,8 @@
     /* Footer */
     footer {
       background: white;
-      border: 2px solid #e5e7eb;
-      border-radius: 16px;
-      margin: 20px;
-      padding: 32px;
+      border-top: 1px solid #e5e7eb;
+      padding: 40px 24px;
       text-align: center;
     }
 
@@ -402,20 +292,10 @@
       color: #6b7280;
     }
 
-    footer a {
-      color: #1a1a1a;
-      text-decoration: none;
-      font-weight: 600;
-    }
-
     /* Mobile Responsive */
     @media (max-width: 1024px) {
-      .hero {
+      .hero-container {
         grid-template-columns: 1fr;
-      }
-
-      .features {
-        grid-template-columns: repeat(2, 1fr);
       }
 
       .subjects-grid {
@@ -424,21 +304,12 @@
     }
 
     @media (max-width: 768px) {
-      nav {
-        flex-direction: column;
-        gap: 16px;
-      }
-
       .nav-links {
         display: none;
       }
 
       .hero-content h1 {
-        font-size: 32px;
-      }
-
-      .features {
-        grid-template-columns: 1fr;
+        font-size: 36px;
       }
 
       .subjects-grid {
@@ -450,179 +321,126 @@
 <body>
   <!-- Navigation -->
   <nav>
-    <a href="/" class="logo">
-      <div class="logo-icon">👁️</div>
-      <div class="logo-text">Vision AI</div>
-    </a>
-    
-    <ul class="nav-links">
-      <li><a href="/">Home</a></li>
-      <li><a href="#subjects">Subjects</a></li>
-      <li><a href="/features.html">Features</a></li>
-      <li><a href="/pricing">Pricing</a></li>
-    </ul>
+    <div class="nav-container">
+      <a href="/" class="logo">
+        <div class="logo-icon">📚</div>
+        <div class="logo-text">Vision AI</div>
+      </a>
+      
+      <ul class="nav-links">
+        <li><a href="#courses">Courses</a></li>
+        <li><a href="#how-it-works">How It Works</a></li>
+        <li><a href="/pricing">Pricing</a></li>
+        <li><a href="#about">About Us</a></li>
+        <li><a href="#resources">Resources</a></li>
+      </ul>
 
-    <a href="/login" class="login-btn">Login</a>
+      <a href="/login" class="login-btn">
+        <svg class="google-icon" viewBox="0 0 24 24">
+          <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+          <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+          <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+          <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+        </svg>
+        Log in with Google
+      </a>
+    </div>
   </nav>
 
   <!-- Hero Section -->
   <section class="hero">
-    <div class="hero-content">
-      <h1>Vision AI: Your Trusted, 24/7 WASSCE Tutor - Achieve Exam Success with Ghana's Free AI Assistant</h1>
-      
-      <a href="/chat" class="cta-button">
-        Get Started - Sign in with Google
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M5 12h14M12 5l7 7-7 7"/>
-        </svg>
-      </a>
-    </div>
-
-    <div class="dashboard-preview">
-      <div class="dashboard-header">
-        <div class="dashboard-title">👁️ Vision AI - Dashboard</div>
-        <div style="font-size: 12px;">Welcome</div>
-      </div>
-      <div class="dashboard-content">
-        <div style="font-weight: 600; margin-bottom: 12px;">Solve a sample WASSCE math problem:</div>
-        <div class="math-problem">
-          x² - 2x² + 4 - 5x = 0<br>
-          = -x² - 5x + 4 = 0<br>
-          = -x² = 0
-        </div>
+    <div class="hero-container">
+      <div class="hero-content">
+        <h1>Unlock Your Potential: Intelligent WASSCE Tutoring for Ghana's Future</h1>
+        <p>Personalized AI guidance to ace your Senior High School exams. Smart, accessible, and designed for your success.</p>
         
-        <div class="explanation-box">
-          <div class="explanation-title">Explanation 1</div>
-          <div class="explanation-text">
-            Combine like terms: Identify and combine the x² terms in the equation.
-          </div>
-        </div>
+        <a href="/login" class="google-btn">
+          <svg class="google-icon" viewBox="0 0 24 24">
+            <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+            <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+            <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+            <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+          </svg>
+          Log in with Google
+        </a>
+      </div>
 
-        <div class="explanation-box" style="margin-top: 12px;">
-          <div class="explanation-title">Explanation 2</div>
-          <div class="explanation-text">
-            Simplify the equation: Rearrange the equation to solve for the step-by-step solution.
-          </div>
-        </div>
-
-        <div class="explanation-box" style="margin-top: 12px;">
-          <div class="explanation-title">Explanation 3</div>
-          <div class="explanation-text">
-            Solve for x: Use the quadratic formula or factorization to find the values of x.
+      <div class="phone-mockup">
+        <div class="phone-frame">
+          <div class="phone-screen">
+            <div class="phone-header">
+              <div class="phone-time">9:41</div>
+              <div>Vision AI</div>
+              <div>📶 🔋</div>
+            </div>
+            <div class="phone-title">Intelligent AI chat bot</div>
+            <div class="phone-content">
+              <div class="chat-bubble">
+                <div class="chat-title">Solving a complex quadratic equation</div>
+                <div class="math-text">
+                  x² - 2x² + 4 - 5x = 0<br>
+                  step by step:<br>
+                  • x² - 5x - 1 annotation<br>
+                  • x² - 4 - 1 annotation<br>
+                  • x = √5
+                </div>
+              </div>
+              <div style="margin-top: 16px;">
+                <div style="font-size: 13px; font-weight: 700; margin-bottom: 8px;">Explanation</div>
+                <div style="background: white; padding: 12px; border-radius: 8px; margin-bottom: 8px;">
+                  <div style="font-weight: 600; font-size: 12px; margin-bottom: 4px;">Explanation 1</div>
+                  <div style="font-size: 11px; color: #6b7280;">Combine like terms and simplify the equation step by step</div>
+                </div>
+                <div style="background: white; padding: 12px; border-radius: 8px; margin-bottom: 8px;">
+                  <div style="font-weight: 600; font-size: 12px; margin-bottom: 4px;">Explanation 2</div>
+                  <div style="font-size: 11px; color: #6b7280;">Apply the quadratic formula to solve for x</div>
+                </div>
+                <div style="background: white; padding: 12px; border-radius: 8px;">
+                  <div style="font-weight: 600; font-size: 12px; margin-bottom: 4px;">Explanation 3</div>
+                  <div style="font-size: 11px; color: #6b7280;">Simplify the final answer and verify the solution</div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- Feature Cards -->
-  <section class="features">
-    <div class="feature-card">
-      <div class="feature-icon">∞</div>
-      <div class="feature-title">100% Free, Unlimited Questions</div>
-      <div class="feature-desc">Free forever, unlimited questions and answers.</div>
-    </div>
-
-    <div class="feature-card">
-      <div class="feature-icon">📡</div>
-      <div class="feature-title">Works Offline, Study Anytime</div>
-      <div class="feature-desc">Study offline, works without internet, study anytime.</div>
-    </div>
-
-    <div class="feature-card">
-      <div class="feature-icon">⚡</div>
-      <div class="feature-title">Instant Expert Responses (&lt;100ms)</div>
-      <div class="feature-desc">Instant expert response and step-by-step solutions (&lt;100ms).</div>
-    </div>
-
-    <div class="feature-card">
-      <div class="feature-icon">✓</div>
-      <div class="feature-title">WASSCE & WAEC Syllabus Aligned</div>
-      <div class="feature-desc">Government-set syllabus aligned, and don institutional standard.</div>
-    </div>
-
-    <div class="feature-card">
-      <div class="feature-icon">🌍</div>
-      <div class="feature-title">WASSCE Steppy Step Syllabus Explanations</div>
-      <div class="feature-desc">Development's step methods of context and concretes and explanations</div>
-    </div>
-  </section>
-
-  <!-- Subject Categories -->
-  <section class="subjects-section" id="subjects">
-    <h2 class="section-title">Subject Categories</h2>
+  <!-- Subjects Section -->
+  <section class="subjects-section">
+    <h2 class="section-title">Master Key WASSCE Subjects</h2>
     
     <div class="subjects-grid">
-      <div class="subject-card" onclick="window.location.href='/chat'">
-        <div class="subject-image" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); display: flex; align-items: center; justify-content: center; font-size: 64px;">📐</div>
-        <div class="subject-content">
-          <div class="subject-name">Core Mathematics</div>
-          <div class="subject-details">Curriculum Detailors: Mathematics</div>
-        </div>
+      <div class="subject-card" onclick="window.location.href='/dashboard'">
+        <div class="subject-icon">📐</div>
+        <div class="subject-name">Maths</div>
+        <div class="subject-desc">Expert algebra, geometry, and calculus support</div>
       </div>
 
-      <div class="subject-card" onclick="window.location.href='/chat'">
-        <div class="subject-image" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); display: flex; align-items: center; justify-content: center; font-size: 64px;">📚</div>
-        <div class="subject-content">
-          <div class="subject-name">English Language</div>
-          <div class="subject-details">Curriculum Detailors: English Language</div>
-        </div>
+      <div class="subject-card" onclick="window.location.href='/dashboard'">
+        <div class="subject-icon">📖</div>
+        <div class="subject-name">English Language</div>
+        <div class="subject-desc">Comprehensive grammar, comprehension, and essay skills</div>
       </div>
 
-      <div class="subject-card" onclick="window.location.href='/chat'">
-        <div class="subject-image" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); display: flex; align-items: center; justify-content: center; font-size: 64px;">🔬</div>
-        <div class="subject-content">
-          <div class="subject-name">Integrated Science</div>
-          <div class="subject-details">Curriculum Detailors: Integrated Science</div>
-        </div>
+      <div class="subject-card" onclick="window.location.href='/dashboard'">
+        <div class="subject-icon">🔬</div>
+        <div class="subject-name">Integrated Science</div>
+        <div class="subject-desc">Integrated fiem, and atomological support</div>
       </div>
 
-      <div class="subject-card" onclick="window.location.href='/chat'">
-        <div class="subject-image" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); display: flex; align-items: center; justify-content: center; font-size: 64px;">🌍</div>
-        <div class="subject-content">
-          <div class="subject-name">Social Studies</div>
-          <div class="subject-details">Curriculum Detailors: Social Studies</div>
-        </div>
-      </div>
-
-      <div class="subject-card" onclick="window.location.href='/chat'">
-        <div class="subject-image" style="background: linear-gradient(135deg, #30cfd0 0%, #330867 100%); display: flex; align-items: center; justify-content: center; font-size: 64px;">💰</div>
-        <div class="subject-content">
-          <div class="subject-name">Economics</div>
-          <div class="subject-details">Curriculum Detailors: Economics</div>
-        </div>
-      </div>
-
-      <div class="subject-card" onclick="window.location.href='/chat'">
-        <div class="subject-image" style="background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%); display: flex; align-items: center; justify-content: center; font-size: 64px;">💻</div>
-        <div class="subject-content">
-          <div class="subject-name">Computer Science</div>
-          <div class="subject-details">Curriculum Detailors: Computer Science</div>
-        </div>
-      </div>
-
-      <div class="subject-card" onclick="window.location.href='/chat'">
-        <div class="subject-image" style="background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%); display: flex; align-items: center; justify-content: center; font-size: 64px;">🎨</div>
-        <div class="subject-content">
-          <div class="subject-name">Visual Arts</div>
-          <div class="subject-details">Curriculum Detailors: Visual Arts</div>
-        </div>
-      </div>
-
-      <div class="subject-card" onclick="window.location.href='/chat'">
-        <div class="subject-image" style="background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%); display: flex; align-items: center; justify-content: center; font-size: 64px;">📖</div>
-        <div class="subject-content">
-          <div class="subject-name">Literature</div>
-          <div class="subject-details">Curriculum Detailors: Literature</div>
-        </div>
+      <div class="subject-card" onclick="window.location.href='/dashboard'">
+        <div class="subject-icon">🌍</div>
+        <div class="subject-name">Social Studies</div>
+        <div class="subject-desc">Expert studies, trorhsi studies and handswiske social support</div>
       </div>
     </div>
   </section>
 
   <!-- Footer -->
   <footer>
-    <p>Built with ❤️ for WASSCE Students | <a href="https://visionedu.online" target="_blank">Vision Education</a></p>
-    <p style="margin-top: 10px;">© 2026 Vision AI. All rights reserved.</p>
+    <p>© 2026 Vision AI. Built with ❤️ for WASSCE Students | <a href="https://visionedu.online" style="color: #1e3a8a; text-decoration: none; font-weight: 600;">Vision Education</a></p>
   </footer>
 </body>
 </html>
