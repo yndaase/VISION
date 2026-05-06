@@ -15,11 +15,6 @@
       "status": 200
     },
     {
-      "src": "^/pricing$",
-      "dest": "/pricing.html",
-      "status": 200
-    },
-    {
       "src": "^/about$",
       "dest": "/about.html",
       "status": 200
