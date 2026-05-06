@@ -1,0 +1,206 @@
+/* ═══════════════════════════════════════════
+   SPOTLIGHT / FOCUS EFFECT
+   Creates a dimmed overlay with bright headline
+   ═══════════════════════════════════════════ */
+
+/* Spotlight Container - Fixed overlay */
+.spotlight-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none; /* Allows clicking through to content below */
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    animation: spotlightFadeIn 1s ease-out 0.5s forwards;
+}
+
+@keyframes spotlightFadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+/* Dark Overlay with Cut-out Effect */
+.spotlight-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8); /* Semi-transparent dark overlay */
+    
+    /* Create the cut-out effect using clip-path */
+    clip-path: polygon(
+        /* Outer rectangle (entire screen) */
+        0% 0%,
+        0% 100%,
+        100% 100%,
+        100% 0%,
+        0% 0%,
+        
+        /* Inner rectangle (cut-out area) - centered window */
+        calc(50% - 450px) calc(50% - 100px),
+        calc(50% - 450px) calc(50% + 100px),
+        calc(50% + 450px) calc(50% + 100px),
+        calc(50% + 450px) calc(50% - 100px),
+        calc(50% - 450px) calc(50% - 100px)
+    );
+}
+
+/* Spotlight Headline (appears bright in the cut-out) */
+.spotlight-headline {
+    position: relative;
+    z-index: 10000;
+    font-size: 6rem;
+    font-weight: 900;
+    color: #ffffff;
+    text-align: center;
+    margin: 0;
+    padding: 30px 50px;
+    letter-spacing: -3px;
+    font-family: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    text-shadow: 
+        0 0 30px rgba(255, 255, 255, 0.6),
+        0 0 60px rgba(255, 255, 255, 0.4),
+        0 0 90px rgba(102, 126, 234, 0.3),
+        0 6px 12px rgba(0, 0, 0, 0.4);
+    animation: spotlightPulse 4s ease-in-out infinite;
+    pointer-events: auto; /* Make headline clickable if needed */
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    filter: drop-shadow(0 0 20px rgba(255, 255, 255, 0.5));
+}
+
+/* Pulse animation for extra emphasis */
+@keyframes spotlightPulse {
+    0%, 100% {
+        text-shadow: 
+            0 0 30px rgba(255, 255, 255, 0.6),
+            0 0 60px rgba(255, 255, 255, 0.4),
+            0 0 90px rgba(102, 126, 234, 0.3),
+            0 6px 12px rgba(0, 0, 0, 0.4);
+        transform: scale(1);
+    }
+    50% {
+        text-shadow: 
+            0 0 40px rgba(255, 255, 255, 0.8),
+            0 0 80px rgba(255, 255, 255, 0.6),
+            0 0 120px rgba(102, 126, 234, 0.5),
+            0 6px 12px rgba(0, 0, 0, 0.4);
+        transform: scale(1.02);
+    }
+}
+
+/* Responsive adjustments for tablets */
+@media (max-width: 1024px) {
+    .spotlight-headline {
+        font-size: 4.5rem;
+        padding: 25px 40px;
+        letter-spacing: -2px;
+    }
+    
+    .spotlight-overlay {
+        clip-path: polygon(
+            0% 0%,
+            0% 100%,
+            100% 100%,
+            100% 0%,
+            0% 0%,
+            
+            /* Smaller cut-out for tablets */
+            calc(50% - 350px) calc(50% - 80px),
+            calc(50% - 350px) calc(50% + 80px),
+            calc(50% + 350px) calc(50% + 80px),
+            calc(50% + 350px) calc(50% - 80px),
+            calc(50% - 350px) calc(50% - 80px)
+        );
+    }
+}
+
+/* Responsive adjustments for mobile */
+@media (max-width: 768px) {
+    .spotlight-headline {
+        font-size: 3rem;
+        padding: 20px 30px;
+        letter-spacing: -1.5px;
+    }
+    
+    .spotlight-overlay {
+        clip-path: polygon(
+            0% 0%,
+            0% 100%,
+            100% 100%,
+            100% 0%,
+            0% 0%,
+            
+            /* Smaller cut-out for mobile */
+            5% calc(50% - 70px),
+            5% calc(50% + 70px),
+            95% calc(50% + 70px),
+            95% calc(50% - 70px),
+            5% calc(50% - 70px)
+        );
+    }
+}
+
+@media (max-width: 480px) {
+    .spotlight-headline {
+        font-size: 2.2rem;
+        letter-spacing: -1px;
+        padding: 15px 20px;
+    }
+    
+    .spotlight-overlay {
+        clip-path: polygon(
+            0% 0%,
+            0% 100%,
+            100% 100%,
+            100% 0%,
+            0% 0%,
+            
+            /* Even smaller cut-out for small mobile */
+            3% calc(50% - 60px),
+            3% calc(50% + 60px),
+            97% calc(50% + 60px),
+            97% calc(50% - 60px),
+            3% calc(50% - 60px)
+        );
+    }
+}
+
+/* Optional: Add a subtle border glow around the cut-out */
+.spotlight-headline::before {
+    content: '';
+    position: absolute;
+    top: -10px;
+    left: -10px;
+    right: -10px;
+    bottom: -10px;
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.3), rgba(118, 75, 162, 0.3));
+    border-radius: 20px;
+    z-index: -1;
+    filter: blur(20px);
+    opacity: 0.6;
+    animation: glowPulse 4s ease-in-out infinite;
+}
+
+@keyframes glowPulse {
+    0%, 100% {
+        opacity: 0.6;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 0.9;
+        transform: scale(1.05);
+    }
+}
