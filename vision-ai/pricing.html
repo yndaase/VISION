@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pricing | Vision AI - WASSCE Learning Assistant</title>
+  <meta name="description" content="Choose the perfect plan for your WASSCE preparation. Free forever plan available. Premium features for serious students." />
+  <link rel="canonical" href="https://ai.visionedu.online/pricing" />
+  <link rel="icon" type="image/png" href="https://visionedu.online/favicon.png" />
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: linear-gradient(135deg, #e0f7fa 0%, #fff9c4 50%, #ffe0b2 100%);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* Navigation */
+    nav {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      padding: 20px 0;
+      box-shadow: 0 2px 20px rgba(0,0,0,0.05);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .nav-container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+    }
+
+    .logo-icon {
+      width: 50px;
+      height: 50px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      font-weight: 800;
+      color: white;
+      box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+    }
+
+    .logo-text {
+      font-size: 28px;
+      font-weight: 700;
+      color: #2d3748;
+    }
+
+    .logo-text span {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 40px;
+      align-items: center;
+      list-style: none;
+    }
+
+    .nav-links a {
+      text-decoration: none;
+      color: #4a5568;
+      font-weight: 500;
+      font-size: 16px;
+      transition: color 0.3s;
+    }
+
+    .nav-links a:hover {
+      color: #667eea;
+    }
+
+    .nav-links a.active {
+      color: #667eea;
+    }
+
+    /* Hero Section */
+    .pricing-hero {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 80px 40px 60px;
+      text-align: center;
+    }
+
+    .pricing-hero h1 {
+      font-size: 56px;
+      font-weight: 800;
+      line-height: 1.2;
+      margin-bottom: 20px;
+      color: #2d3748;
+    }
+
+    .pricing-hero h1 span {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .pricing-hero p {
+      font-size: 18px;
+      color: #4a5568;
+      max-width: 600px;
+      margin: 0 auto 40px;
+    }
+
+    .badge {
+      display: inline-block;
+      background: linear-gradient(135deg, #4caf50 0%, #2e7d32 100%);
+      color: white;
+      padding: 8px 20px;
+      border-radius: 20px;
+      font-weight: 600;
+      font-size: 14px;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+    }
+
+    /* Pricing Cards */
+    .pricing-grid {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 40px 80px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 30px;
+    }
+
+    .pricing-card {
+      background: white;
+      border-radius: 24px;
+      padding: 40px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.08);
+      transition: all 0.3s;
+      border: 3px solid transparent;
+      position: relative;
+    }
+
+    .pricing-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+    }
+
+    .pricing-card.featured {
+      border-color: #667eea;
+      transform: scale(1.05);
+    }
+
+    .pricing-card.featured::before {
+      content: 'MOST POPULAR';
+      position: absolute;
+      top: -15px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 6px 20px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 1px;
+    }
+
+    .plan-name {
+      font-size: 24px;
+      font-weight: 700;
+      color: #2d3748;
+      margin-bottom: 10px;
+    }
+
+    .plan-description {
+      font-size: 14px;
+      color: #718096;
+      margin-bottom: 25px;
+      min-height: 40px;
+    }
+
+    .plan-price {
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .currency {
+      font-size: 24px;
+      font-weight: 700;
+      color: #2d3748;
+    }
+
+    .amount {
+      font-size: 56px;
+      font-weight: 900;
+      color: #2d3748;
+      line-height: 1;
+    }
+
+    .period {
+      font-size: 16px;
+      color: #718096;
+      font-weight: 500;
+    }
+
+    .plan-billing {
+      font-size: 13px;
+      color: #718096;
+      margin-bottom: 30px;
+    }
+
+    .plan-features {
+      list-style: none;
+      margin-bottom: 30px;
+    }
+
+    .plan-features li {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 0;
+      font-size: 15px;
+      color: #4a5568;
+    }
+
+    .check-icon {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #4caf50 0%, #2e7d32 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 14px;
+      flex-shrink: 0;
+    }
+
+    .plan-button {
+      width: 100%;
+      padding: 16px;
+      border-radius: 12px;
+      font-weight: 600;
+      font-size: 16px;
+      border: none;
+      cursor: pointer;
+      transition: all 0.3s;
+      text-decoration: none;
+      display: inline-block;
+      text-align: center;
+    }
+
+    .plan-button-primary {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+    }
+
+    .plan-button-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(102, 126, 234, 0.5);
+    }
+
+    .plan-button-secondary {
+      background: white;
+      color: #667eea;
+      border: 2px solid #667eea;
+    }
+
+    .plan-button-secondary:hover {
+      background: #667eea;
+      color: white;
+    }
+
+    /* FAQ Section */
+    .faq-section {
+      max-width: 900px;
+      margin: 0 auto 80px;
+      padding: 0 40px;
+    }
+
+    .faq-title {
+      font-size: 42px;
+      font-weight: 800;
+      text-align: center;
+      color: #2d3748;
+      margin-bottom: 50px;
+    }
+
+    .faq-item {
+      background: white;
+      border-radius: 16px;
+      padding: 30px;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.06);
+    }
+
+    .faq-question {
+      font-size: 18px;
+      font-weight: 700;
+      color: #2d3748;
+      margin-bottom: 12px;
+    }
+
+    .faq-answer {
+      font-size: 15px;
+      color: #4a5568;
+      line-height: 1.7;
+    }
+
+    /* Footer */
+    footer {
+      background: #2d3748;
+      color: white;
+      padding: 40px;
+      text-align: center;
+    }
+
+    footer p {
+      font-size: 15px;
+      opacity: 0.8;
+    }
+
+    footer a {
+      color: #667eea;
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    /* Mobile Responsive */
+    @media (max-width: 768px) {
+      .nav-container {
+        padding: 0 20px;
+      }
+
+      .nav-links {
+        display: none;
+      }
+
+      .pricing-hero h1 {
+        font-size: 36px;
+      }
+
+      .pricing-grid {
+        grid-template-columns: 1fr;
+        padding: 0 20px 60px;
+      }
+
+      .pricing-card.featured {
+        transform: scale(1);
+      }
+
+      .faq-title {
+        font-size: 32px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Navigation -->
+  <nav>
+    <div class="nav-container">
+      <a href="/" class="logo">
+        <div class="logo-icon">V</div>
+        <div class="logo-text">Vision <span>AI</span></div>
+      </a>
+      
+      <ul class="nav-links">
+        <li><a href="/">Home</a></li>
+        <li><a href="/features.html">Features</a></li>
+        <li><a href="/pricing" class="active">Pricing</a></li>
+        <li><a href="https://visionedu.online" target="_blank">Main Platform</a></li>
+      </ul>
+
+      <div>
+        <a href="/chat" style="padding: 12px 28px; border-radius: 8px; font-weight: 600; text-decoration: none; font-size: 15px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);">Get Started</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="pricing-hero">
+    <div class="badge">💎 Simple, Transparent Pricing</div>
+    <h1>Choose Your <span>Learning Plan</span></h1>
+    <p>Start free forever. Upgrade when you need advanced features. No hidden fees, cancel anytime.</p>
+  </section>
+
+  <!-- Pricing Cards -->
+  <section class="pricing-grid">
+    <!-- Free Plan -->
+    <div class="pricing-card">
+      <div class="plan-name">Free</div>
+      <div class="plan-description">Perfect for getting started with AI learning</div>
+      
+      <div class="plan-price">
+        <span class="currency">GH₵</span>
+        <span class="amount">0</span>
+        <span class="period">/forever</span>
+      </div>
+      <div class="plan-billing">No credit card required</div>
+
+      <ul class="plan-features">
+        <li><span class="check-icon">✓</span> 50 AI questions per day</li>
+        <li><span class="check-icon">✓</span> Basic math solver</li>
+        <li><span class="check-icon">✓</span> WASSCE curriculum access</li>
+        <li><span class="check-icon">✓</span> Study tips & guidance</li>
+        <li><span class="check-icon">✓</span> Mobile responsive</li>
+      </ul>
+
+      <a href="/chat" class="plan-button plan-button-secondary">Start Free</a>
+    </div>
+
+    <!-- Pro Plan -->
+    <div class="pricing-card featured">
+      <div class="plan-name">Pro</div>
+      <div class="plan-description">For serious students preparing for WASSCE</div>
+      
+      <div class="plan-price">
+        <span class="currency">GH₵</span>
+        <span class="amount">49</span>
+        <span class="period">/month</span>
+      </div>
+      <div class="plan-billing">Billed monthly, cancel anytime</div>
+
+      <ul class="plan-features">
+        <li><span class="check-icon">✓</span> Unlimited AI questions</li>
+        <li><span class="check-icon">✓</span> Advanced math solver</li>
+        <li><span class="check-icon">✓</span> Priority response speed</li>
+        <li><span class="check-icon">✓</span> Detailed explanations</li>
+        <li><span class="check-icon">✓</span> Chat history saved</li>
+        <li><span class="check-icon">✓</span> Practice questions</li>
+        <li><span class="check-icon">✓</span> Progress tracking</li>
+        <li><span class="check-icon">✓</span> Email support</li>
+      </ul>
+
+      <button class="plan-button plan-button-primary" onclick="initiatePurchase('vision-ai-pro', 49, 'Vision AI Pro - Monthly')">
+        Upgrade to Pro
+      </button>
+    </div>
+
+    <!-- Annual Plan -->
+    <div class="pricing-card">
+      <div class="plan-name">Pro Annual</div>
+      <div class="plan-description">Best value - Save 2 months!</div>
+      
+      <div class="plan-price">
+        <span class="currency">GH₵</span>
+        <span class="amount">490</span>
+        <span class="period">/year</span>
+      </div>
+      <div class="plan-billing">GH₵40.83/month - Save GH₵98</div>
+
+      <ul class="plan-features">
+        <li><span class="check-icon">✓</span> Everything in Pro</li>
+        <li><span class="check-icon">✓</span> 2 months free</li>
+        <li><span class="check-icon">✓</span> Priority support</li>
+        <li><span class="check-icon">✓</span> Early access to features</li>
+        <li><span class="check-icon">✓</span> Personalized study plans</li>
+        <li><span class="check-icon">✓</span> Mock exam access</li>
+        <li><span class="check-icon">✓</span> Certificate of completion</li>
+        <li><span class="check-icon">✓</span> Lifetime updates</li>
+      </ul>
+
+      <button class="plan-button plan-button-primary" onclick="initiatePurchase('vision-ai-annual', 490, 'Vision AI Pro - Annual')">
+        Get Annual Plan
+      </button>
+    </div>
+  </section>
+
+  <!-- FAQ Section -->
+  <section class="faq-section">
+    <h2 class="faq-title">Frequently Asked Questions</h2>
+
+    <div class="faq-item">
+      <div class="faq-question">Is the free plan really free forever?</div>
+      <div class="faq-answer">Yes! The free plan is completely free with no time limit. You get 50 AI questions per day, which is perfect for casual learning. No credit card required.</div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-question">Can I cancel my subscription anytime?</div>
+      <div class="faq-answer">Absolutely! You can cancel your Pro subscription at any time from your dashboard. No questions asked, no cancellation fees.</div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-question">What payment methods do you accept?</div>
+      <div class="faq-answer">We accept all major payment methods through Paystack including Mobile Money (MTN, Vodafone, AirtelTigo), Visa, Mastercard, and bank transfers.</div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-question">Do you offer student discounts?</div>
+      <div class="faq-answer">Yes! Contact us at support@visionedu.online with your student ID for special pricing. We also offer group discounts for schools.</div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-question">What happens if I exceed the free plan limit?</div>
+      <div class="faq-answer">If you reach the 50 questions per day limit on the free plan, you'll be prompted to upgrade to Pro for unlimited access. Your limit resets every 24 hours.</div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-question">Can I upgrade or downgrade my plan?</div>
+      <div class="faq-answer">Yes! You can upgrade from Free to Pro anytime. If you downgrade from Pro to Free, you'll keep Pro features until the end of your billing period.</div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <p>Built with ❤️ for WASSCE Students | <a href="https://visionedu.online" target="_blank">Vision Education</a></p>
+    <p style="margin-top: 10px; font-size: 13px;">© 2026 Vision AI. All rights reserved.</p>
+  </footer>
+
+  <!-- Paystack Integration -->
+  <script src="https://js.paystack.co/v2/inline.js"></script>
+  <script>
+    async function initiatePurchase(itemId, amount, itemName) {
+      // Get user email from session
+      const session = JSON.parse(sessionStorage.getItem('waec_session') || localStorage.getItem('waec_session') || '{}');
+      const userEmail = session.email;
+
+      if (!userEmail) {
+        alert('Please log in first to purchase a plan');
+        window.location.href = '/login';
+        return;
+      }
+
+      try {
+        // Initialize payment with Paystack API
+        const response = await fetch('https://visionedu.online/api/paystack', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            type: 'init',
+            email: userEmail,
+            amount: amount,
+            metadata: {
+              item_id: itemId,
+              item_name: itemName,
+              user_email: userEmail,
+              platform: 'vision-ai'
+            }
+          })
+        });
+
+        const data = await response.json();
+
+        if (data.authorization_url) {
+          // Store purchase info
+          localStorage.setItem('pending_purchase_id', itemId);
+          localStorage.setItem('pending_purchase_name', itemName);
+          localStorage.setItem('pending_purchase_amount', amount);
+
+          // Redirect to Paystack checkout
+          window.location.href = data.authorization_url;
+        } else {
+          alert('Payment initialization failed. Please try again.');
+        }
+      } catch (error) {
+        console.error('Payment error:', error);
+        alert('An error occurred. Please try again.');
+      }
+    }
+
+    // Verify payment on return from Paystack
+    window.addEventListener('DOMContentLoaded', async () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      const reference = urlParams.get('reference');
+
+      if (reference) {
+        try {
+          const response = await fetch('https://visionedu.online/api/paystack', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              type: 'verify',
+              reference: reference
+            })
+          });
+
+          const data = await response.json();
+
+          if (data.success) {
+            // Payment successful
+            const itemName = localStorage.getItem('pending_purchase_name');
+            alert(`Payment successful! Welcome to ${itemName}`);
+            
+            // Clear pending purchase data
+            localStorage.removeItem('pending_purchase_id');
+            localStorage.removeItem('pending_purchase_name');
+            localStorage.removeItem('pending_purchase_amount');
+
+            // Redirect to chat
+            window.location.href = '/chat';
+          } else {
+            alert('Payment verification failed. Please contact support.');
+          }
+        } catch (error) {
+          console.error('Verification error:', error);
+          alert('An error occurred during verification. Please contact support.');
+        }
+      }
+    });
+  </script>
+</body>
+</html>
