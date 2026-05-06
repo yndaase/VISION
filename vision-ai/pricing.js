@@ -60,8 +60,8 @@ async function initiatePayment(email, amount, description) {
     proBtn.textContent = 'Processing...';
     proBtn.disabled = true;
 
-    // Call backend to initialize payment
-    const response = await fetch('https://visionedu.online/api/paystack', {
+    // Call Vision AI's own API endpoint
+    const response = await fetch('/api/paystack', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -120,7 +120,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
 async function verifyPayment(reference) {
   try {
-    const response = await fetch('https://visionedu.online/api/paystack', {
+    const response = await fetch('/api/paystack', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
