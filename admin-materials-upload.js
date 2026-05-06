@@ -50,10 +50,10 @@ function initializeUploadArea() {
 
 // Handle file selection
 function handleFileSelect(file) {
-  // Validate file size (4MB max for API proxy upload)
-  const maxSize = 4 * 1024 * 1024; // 4MB limit for Vercel Hobby plan
+  // Validate file size (50MB max)
+  const maxSize = 50 * 1024 * 1024; // 50MB limit
   if (file.size > maxSize) {
-    showAlert('error', 'File size exceeds 4MB limit. Please use a smaller file or upgrade to Pro plan for larger uploads.');
+    showAlert('error', 'File size exceeds 50MB limit. Please use a smaller file.');
     return;
   }
 
@@ -143,39 +143,95 @@ async function uploadMaterial() {
     const adminSession = sessionStorage.getItem(ADMIN_SESSION_KEY);
     const authHeader = `Bearer ${adminSession || ''}`;
 
-    // 1. Upload to Cloudflare R2 through API proxy (bypasses CORS)
+    // 1. Smart Upload Router: Choose method based on file size
     progressText.textContent = 'Preparing upload...';
     progressFill.style.width = '10%';
 
     const timestamp = Date.now();
     const fileKey = `materials/${subject}/${timestamp}_${selectedFile.name}`;
     
-    // Upload file through API proxy (bypasses CORS issues)
-    progressText.textContent = 'Uploading file to storage...';
-    progressFill.style.width = '30%';
-
-    const r2Response = await fetch(`/api/upload?action=upload&fileKey=${encodeURIComponent(fileKey)}&contentType=${encodeURIComponent(selectedFile.type)}`, {
-      method: 'PUT',
-      body: selectedFile,
-      headers: {
-        'Authorization': authHeader,
-        'Content-Type': selectedFile.type
-      }
-    });
-
-    if (!r2Response.ok) {
-      const errorData = await r2Response.json().catch(() => ({ error: 'Unknown error' }));
-      console.error('[Upload] R2 upload failed:', errorData);
+    // Determine upload method
+    const API_PROXY_LIMIT = 4 * 1024 * 1024; // 4MB
+    const useDirectUpload = selectedFile.size >= API_PROXY_LIMIT;
+    
+    let uploadSuccess = false;
+    
+    if (useDirectUpload) {
+      // Large file: Try direct upload to R2 first (no size limit)
+      console.log(`[Upload] Large file (${formatFileSize(selectedFile.size)}), using direct R2 upload`);
+      progressText.textContent = 'Uploading large file directly to R2...';
+      progressFill.style.width = '20%';
       
-      // Handle specific error codes
-      if (r2Response.status === 413) {
-        throw new Error('File too large. Maximum size is 4MB. Please use a smaller file.');
+      try {
+        // Get pre-signed URL
+        const urlResponse = await fetch(`/api/upload?action=get-upload-url&fileKey=${encodeURIComponent(fileKey)}&contentType=${encodeURIComponent(selectedFile.type)}`, {
+          method: 'GET',
+          headers: { 'Authorization': authHeader }
+        });
+        
+        if (urlResponse.ok) {
+          const { uploadUrl } = await urlResponse.json();
+          
+          // Upload directly to R2
+          progressText.textContent = 'Uploading to storage...';
+          progressFill.style.width = '50%';
+          
+          const r2Response = await fetch(uploadUrl, {
+            method: 'PUT',
+            body: selectedFile,
+            headers: {
+              'Content-Type': selectedFile.type
+            }
+          });
+          
+          if (r2Response.ok) {
+            console.log('[Upload] ✅ Direct R2 upload successful');
+            uploadSuccess = true;
+          } else {
+            console.warn('[Upload] ⚠️ Direct R2 upload failed, will try API proxy');
+          }
+        }
+      } catch (directError) {
+        console.warn('[Upload] ⚠️ Direct upload error:', directError.message);
       }
-      
-      throw new Error(errorData.error || 'Failed to upload file to R2');
     }
     
-    console.log('[Upload] File uploaded successfully to R2');
+    // Fallback: Use API proxy for small files or if direct upload failed
+    if (!uploadSuccess) {
+      if (selectedFile.size >= API_PROXY_LIMIT) {
+        console.log('[Upload] Falling back to API proxy (may fail if file > 4.5MB)');
+        progressText.textContent = 'Retrying via API proxy...';
+      } else {
+        console.log(`[Upload] Small file (${formatFileSize(selectedFile.size)}), using API proxy`);
+        progressText.textContent = 'Uploading file to storage...';
+      }
+      
+      progressFill.style.width = '30%';
+
+      const r2Response = await fetch(`/api/upload?action=upload&fileKey=${encodeURIComponent(fileKey)}&contentType=${encodeURIComponent(selectedFile.type)}`, {
+        method: 'PUT',
+        body: selectedFile,
+        headers: {
+          'Authorization': authHeader,
+          'Content-Type': selectedFile.type
+        }
+      });
+
+      if (!r2Response.ok) {
+        const errorData = await r2Response.json().catch(() => ({ error: 'Unknown error' }));
+        console.error('[Upload] ❌ API proxy upload failed:', errorData);
+        
+        // Handle specific error codes
+        if (r2Response.status === 413) {
+          throw new Error('File too large for API proxy (>4.5MB). Direct R2 upload also failed. Please check CORS configuration in Cloudflare R2 dashboard.');
+        }
+        
+        throw new Error(errorData.error || 'Failed to upload file to R2');
+      }
+      
+      console.log('[Upload] ✅ API proxy upload successful');
+    }
+    
     progressFill.style.width = '70%';
     
     progressFill.style.width = '70%';
