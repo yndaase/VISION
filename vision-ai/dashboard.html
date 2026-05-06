@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard - Vision AI</title>
+  <link rel="icon" type="image/png" href="https://visionedu.online/favicon.png" />
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  
+  <script>
+    // Auth Guard
+    (function() {
+      const SESSION_KEY = "waec_session";
+      const session = sessionStorage.getItem(SESSION_KEY) || localStorage.getItem(SESSION_KEY);
+      if (!session) {
+        window.location.href = "/login";
+      }
+    })();
+  </script>
+  
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: #f5f7fa;
+      color: #1a1a1a;
+      display: flex;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      width: 240px;
+      background: #1e293b;
+      color: white;
+      display: flex;
+      flex-direction: column;
+      border-right: 1px solid #334155;
+    }
+
+    .sidebar-header {
+      padding: 20px;
+      border-bottom: 1px solid #334155;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .logo-icon {
+      width: 36px;
+      height: 36px;
+      background: white;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+    }
+
+    .logo-text {
+      font-size: 20px;
+      font-weight: 700;
+    }
+
+    .sidebar-nav {
+      flex: 1;
+      padding: 16px 0;
+      overflow-y: auto;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 20px;
+      color: #94a3b8;
+      text-decoration: none;
+      transition: all 0.2s;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    .nav-item:hover {
+      background: #334155;
+      color: white;
+    }
+
+    .nav-item.active {
+      background: #334155;
+      color: white;
+      border-left: 3px solid #3b82f6;
+    }
+
+    .nav-item svg {
+      width: 20px;
+      height: 20px;
+    }
+
+    .nav-section {
+      padding: 20px 20px 8px;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: #64748b;
+    }
+
+    .submenu {
+      padding-left: 52px;
+    }
+
+    /* Main Content */
+    .main-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    /* Top Bar */
+    .top-bar {
+      background: white;
+      border-bottom: 1px solid #e5e7eb;
+      padding: 16px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .search-bar {
+      flex: 1;
+      max-width: 400px;
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 10px 16px 10px 40px;
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      font-size: 14px;
+      background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="%23999" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>') no-repeat 12px center;
+    }
+
+    .search-input:focus {
+      outline: none;
+      border-color: #3b82f6;
+    }
+
+    .top-bar-right {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .notification-btn {
+      position: relative;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 8px;
+      border-radius: 8px;
+      transition: background 0.2s;
+    }
+
+    .notification-btn:hover {
+      background: #f3f4f6;
+    }
+
+    .notification-badge {
+      position: absolute;
+      top: 6px;
+      right: 6px;
+      width: 8px;
+      height: 8px;
+      background: #ef4444;
+      border-radius: 50%;
+    }
+
+    .user-menu {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .user-menu:hover {
+      background: #f3f4f6;
+    }
+
+    .user-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: #3b82f6;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: 600;
+      font-size: 14px;
+    }
+
+    .user-name {
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    /* Content Area */
+    .content-area {
+      flex: 1;
+      overflow-y: auto;
+      padding: 24px;
+    }
+
+    .welcome-section {
+      background: white;
+      border: 1px solid #e5e7eb;
+      border-radius: 12px;
+      padding: 32px;
+      margin-bottom: 24px;
+    }
+
+    .welcome-section h1 {
+      font-size: 28px;
+      font-weight: 800;
+      margin-bottom: 8px;
+    }
+
+    .welcome-section p {
+      font-size: 16px;
+      color: #6b7280;
+    }
+
+    /* Chat Section */
+    .chat-section {
+      background: white;
+      border: 1px solid #e5e7eb;
+      border-radius: 12px;
+      padding: 24px;
+      margin-bottom: 24px;
+    }
+
+    .chat-header {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 20px;
+    }
+
+    .chat-messages {
+      max-height: 400px;
+      overflow-y: auto;
+      margin-bottom: 20px;
+    }
+
+    .message {
+      margin-bottom: 20px;
+    }
+
+    .message-user {
+      background: #1e293b;
+      color: white;
+      padding: 12px 16px;
+      border-radius: 12px;
+      display: inline-block;
+      max-width: 80%;
+      margin-left: auto;
+      float: right;
+      clear: both;
+    }
+
+    .message-ai {
+      background: #f3f4f6;
+      padding: 16px;
+      border-radius: 12px;
+      margin-bottom: 12px;
+      clear: both;
+    }
+
+    .message-ai-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .ai-avatar {
+      width: 32px;
+      height: 32px;
+      background: #1e293b;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 16px;
+    }
+
+    .message-content {
+      font-size: 14px;
+      line-height: 1.6;
+      color: #374151;
+    }
+
+    .solution-steps {
+      margin-top: 16px;
+    }
+
+    .step {
+      margin-bottom: 12px;
+    }
+
+    .step-title {
+      font-weight: 700;
+      font-size: 13px;
+      margin-bottom: 6px;
+      color: #1a1a1a;
+    }
+
+    .step-content {
+      font-size: 13px;
+      color: #6b7280;
+      padding-left: 16px;
+    }
+
+    .math-formula {
+      font-family: 'Courier New', monospace;
+      background: white;
+      padding: 8px 12px;
+      border-radius: 6px;
+      margin: 8px 0;
+      border-left: 3px solid #3b82f6;
+    }
+
+    /* Input Area */
+    .chat-input-area {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .chat-input {
+      flex: 1;
+      padding: 12px 16px;
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      font-size: 14px;
+      font-family: inherit;
+    }
+
+    .chat-input:focus {
+      outline: none;
+      border-color: #3b82f6;
+    }
+
+    .send-btn {
+      background: #1e293b;
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .send-btn:hover {
+      background: #334155;
+    }
+
+    /* Sidebar Widgets */
+    .sidebar-widgets {
+      display: grid;
+      grid-template-columns: 300px;
+      gap: 20px;
+      position: fixed;
+      right: 24px;
+      top: 88px;
+      max-height: calc(100vh - 112px);
+      overflow-y: auto;
+    }
+
+    .widget {
+      background: white;
+      border: 1px solid #e5e7eb;
+      border-radius: 12px;
+      padding: 20px;
+    }
+
+    .widget-title {
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 16px;
+    }
+
+    .widget-list {
+      list-style: none;
+    }
+
+    .widget-list li {
+      padding: 8px 0;
+      font-size: 14px;
+      color: #6b7280;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .widget-list li::before {
+      content: '•';
+      color: #3b82f6;
+      font-weight: bold;
+    }
+
+    .activity-item {
+      padding: 12px 0;
+      border-bottom: 1px solid #f3f4f6;
+      font-size: 13px;
+    }
+
+    .activity-item:last-child {
+      border-bottom: none;
+    }
+
+    .activity-title {
+      font-weight: 600;
+      color: #1a1a1a;
+      margin-bottom: 4px;
+    }
+
+    .activity-time {
+      color: #9ca3af;
+      font-size: 12px;
+    }
+
+    .quick-access-list {
+      list-style: none;
+    }
+
+    .quick-access-list li {
+      padding: 10px 0;
+      font-size: 14px;
+      color: #374151;
+      font-weight: 500;
+      cursor: pointer;
+      transition: color 0.2s;
+    }
+
+    .quick-access-list li:hover {
+      color: #3b82f6;
+    }
+
+    /* Mobile Responsive */
+    @media (max-width: 1200px) {
+      .sidebar-widgets {
+        display: none;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .sidebar {
+        position: fixed;
+        left: -240px;
+        height: 100vh;
+        z-index: 1000;
+        transition: left 0.3s;
+      }
+
+      .sidebar.open {
+        left: 0;
+      }
+
+      .content-area {
+        padding: 16px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <div class="logo">
+        <div class="logo-icon">👁️</div>
+        <div class="logo-text">Vision AI</div>
+      </div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <a href="/dashboard" class="nav-item active">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
+          <rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/>
+        </svg>
+        Dashboard
+      </a>
+
+      <a href="/chat" class="nav-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+        </svg>
+        Chat
+      </a>
+
+      <div class="nav-section">Subjects</div>
+
+      <a href="#" class="nav-item submenu">Math</a>
+      <a href="#" class="nav-item submenu">English</a>
+      <a href="#" class="nav-item submenu">Integrated Science</a>
+      <a href="#" class="nav-item submenu">Social Studies</a>
+      <a href="#" class="nav-item submenu">Economics</a>
+
+      <div class="nav-section">More</div>
+
+      <a href="#" class="nav-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+        </svg>
+        History
+      </a>
+
+      <a href="#" class="nav-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="3"/><path d="M12 1v6m0 6v6M5.64 5.64l4.24 4.24m4.24 4.24l4.24 4.24M1 12h6m6 0h6M5.64 18.36l4.24-4.24m4.24-4.24l4.24-4.24"/>
+        </svg>
+        Settings
+      </a>
+    </nav>
+  </aside>
+
+  <!-- Main Content -->
+  <div class="main-content">
+    <!-- Top Bar -->
+    <div class="top-bar">
+      <div class="search-bar">
+        <input type="text" class="search-input" placeholder="Search" />
+      </div>
+
+      <div class="top-bar-right">
+        <button class="notification-btn">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+            <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+          </svg>
+          <span class="notification-badge"></span>
+        </button>
+
+        <div class="user-menu">
+          <div class="user-avatar" id="userAvatar">K</div>
+          <div class="user-name" id="userName">Kojo</div>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="6 9 12 15 18 9"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- Content Area -->
+    <div class="content-area">
+      <div style="max-width: 900px;">
+        <!-- Welcome Section -->
+        <div class="welcome-section">
+          <h1>Hello, <span id="welcomeName">Kojo</span>!</h1>
+          <p>Your WASSCE prep is looking strong. Ask Vision AI anything.</p>
+        </div>
+
+        <!-- Chat Section -->
+        <div class="chat-section">
+          <div class="chat-header">AI Chat</div>
+
+          <div class="chat-messages" id="chatMessages">
+            <!-- Sample Message -->
+            <div class="message">
+              <div class="message-user">
+                Can you provide a step-by-step solution for 2x² + 5x - 3 = 0?
+              </div>
+            </div>
+
+            <div class="message">
+              <div class="message-ai">
+                <div class="message-ai-header">
+                  <div class="ai-avatar">👁️</div>
+                  <strong>Vision AI</strong>
+                </div>
+                <div class="message-content">
+                  Can you provide a step-by-step solution for 2x² + 5x - 3 = 0? Gets logical solutions for integrations, and the flowing question.
+
+                  <div class="solution-steps">
+                    <div class="step">
+                      <div class="step-title">1. Logical Steps</div>
+                      <div class="step-content">
+                        <div class="math-formula">1. Solve that 2x - 3 = 0</div>
+                        <div class="math-formula">2. Place that 3x - 3 = 0</div>
+                        <div class="math-formula">3. Solve the (2x - 15)) = 0</div>
+                        <div class="math-formula">4. Solve the cos2x + 1 = 0</div>
+                      </div>
+                    </div>
+
+                    <div class="step">
+                      <div class="step-title">2. Evaluated Heading</div>
+                      <div class="step-content">
+                        <div class="math-formula">1. 2x² + 5x = 0</div>
+                        <div class="math-formula">2. 2x² - 3x = 0</div>
+                        <div class="math-formula">3. Dolve the intep-by-step solutio at 2a² + 5x - 3 = 0.</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="chat-input-area">
+            <input type="text" class="chat-input" placeholder="Type your question..." id="chatInput" />
+            <button class="send-btn" onclick="sendMessage()">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sidebar Widgets -->
+  <div class="sidebar-widgets">
+    <div class="widget">
+      <div class="widget-title">Upcoming Topics</div>
+      <ul class="widget-list">
+        <li>Math</li>
+        <li>English</li>
+        <li>Integrated Science</li>
+        <li>Social Studies</li>
+        <li>Economics</li>
+      </ul>
+    </div>
+
+    <div class="widget">
+      <div class="widget-title">Recent Activity Feed</div>
+      <div>
+        <div class="activity-item">
+          <div class="activity-title">Practiced Quadratic Equations</div>
+          <div class="activity-time">1h ago</div>
+        </div>
+        <div class="activity-item">
+          <div class="activity-title">Read "Essay Writing"</div>
+          <div class="activity-time">3h ago</div>
+        </div>
+        <div class="activity-item">
+          <div class="activity-title">Read "Essay Writing"</div>
+          <div class="activity-time">3h ago</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="widget">
+      <div class="widget-title">Quick access to the most-used subject modules</div>
+      <ul class="quick-access-list">
+        <li>Math</li>
+        <li>English</li>
+        <li>Integrated Science</li>
+        <li>Social Studies</li>
+        <li>Economics</li>
+      </ul>
+    </div>
+  </div>
+
+  <script>
+    // Load user info
+    const session = JSON.parse(sessionStorage.getItem('waec_session') || localStorage.getItem('waec_session') || '{}');
+    if (session.name) {
+      document.getElementById('userName').textContent = session.name.split(' ')[0];
+      document.getElementById('welcomeName').textContent = session.name.split(' ')[0];
+      document.getElementById('userAvatar').textContent = session.name.charAt(0).toUpperCase();
+    }
+
+    function sendMessage() {
+      const input = document.getElementById('chatInput');
+      const message = input.value.trim();
+      if (!message) return;
+
+      // Add user message
+      const messagesDiv = document.getElementById('chatMessages');
+      const userMsg = document.createElement('div');
+      userMsg.className = 'message';
+      userMsg.innerHTML = `<div class="message-user">${message}</div>`;
+      messagesDiv.appendChild(userMsg);
+
+      input.value = '';
+      messagesDiv.scrollTop = messagesDiv.scrollHeight;
+
+      // TODO: Send to AI API
+    }
+
+    // Enter key to send
+    document.getElementById('chatInput').addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') sendMessage();
+    });
+  </script>
+</body>
+</html>
