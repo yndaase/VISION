@@ -508,10 +508,14 @@ window.syncStateToCloud = async function(email) {
     await setDoc(doc(db, "student_stats", email.toLowerCase()), payload, { merge: true });
     console.log(`[Firebase] Stats synced for ${email}`);
   } catch(error) {
-    // Silently fail if permissions are missing - this is expected on public pages
-    if (!error.message?.includes('permission') && !error.message?.includes('Missing or insufficient permissions')) {
-      console.error(`[Firebase] syncStateToCloud failed:`, error);
+    // Silently fail if permissions are missing - this is expected on public pages or before auth
+    if (error.code === 'permission-denied' || 
+        error.message?.includes('permission') || 
+        error.message?.includes('Missing or insufficient permissions')) {
+      console.log(`[Firebase] Sync skipped - authentication required`);
+      return;
     }
+    console.error(`[Firebase] syncStateToCloud failed:`, error);
   }
 };
 
