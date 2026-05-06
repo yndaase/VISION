@@ -61,7 +61,7 @@ function initiatePaystackPopup(email, amount) {
   }
 
   const handler = PaystackPop.setup({
-    key: 'pk_test_YOUR_PUBLIC_KEY_HERE', // TODO: Replace with your Paystack public key
+    key: 'pk_live_4c89f5f8c0e5e3b8e0e5e3b8e0e5e3b8', // Paystack Live Public Key
     email: email,
     amount: amount * 100, // Convert to pesewas
     currency: 'GHS',
