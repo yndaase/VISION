@@ -32,7 +32,7 @@ function getSession() {
   }
 }
 
-// Handle Pro upgrade
+// Handle Pro upgrade with Paystack Popup
 async function handleUpgrade() {
   const session = getSession();
   
@@ -47,111 +47,50 @@ async function handleUpgrade() {
     return;
   }
 
-  // Initiate Paystack payment
-  await initiatePayment(session.email, 30.00, 'Vision AI Pro Subscription');
+  // Use Paystack Popup directly
+  initiatePaystackPopup(session.email, 30.00);
 }
 
-// Initialize Paystack payment
-async function initiatePayment(email, amount, description) {
-  try {
-    // Show loading state
-    const proBtn = document.getElementById('proBtn');
-    const originalText = proBtn.textContent;
-    proBtn.textContent = 'Processing...';
-    proBtn.disabled = true;
+// Initialize Paystack Popup (no backend needed)
+function initiatePaystackPopup(email, amount) {
+  // Check if Paystack is loaded
+  if (typeof PaystackPop === 'undefined') {
+    alert('Payment system is loading. Please try again in a moment.');
+    setTimeout(() => location.reload(), 1000);
+    return;
+  }
 
-    // Call Vision AI's own API endpoint
-    const response = await fetch('/api/paystack', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        type: 'init',
-        email: email,
-        amount: amount,
-        metadata: {
-          product: 'vision_ai_pro',
-          description: description,
-          custom_fields: [
-            {
-              display_name: 'Product',
-              variable_name: 'product',
-              value: 'Vision AI Pro'
-            }
-          ]
+  const handler = PaystackPop.setup({
+    key: 'pk_test_YOUR_PUBLIC_KEY_HERE', // TODO: Replace with your Paystack public key
+    email: email,
+    amount: amount * 100, // Convert to pesewas
+    currency: 'GHS',
+    ref: 'VAI_' + Math.floor((Math.random() * 1000000000) + 1),
+    metadata: {
+      custom_fields: [
+        {
+          display_name: "Product",
+          variable_name: "product",
+          value: "Vision AI Pro"
         }
-      })
-    });
-
-    const data = await response.json();
-
-    if (data.authorization_url && data.reference) {
-      // Store reference for verification
-      sessionStorage.setItem('payment_reference', data.reference);
+      ]
+    },
+    callback: function(response) {
+      // Payment successful
+      upgradeUserToPro({
+        reference: response.reference,
+        status: 'success'
+      });
       
-      // Redirect to Paystack payment page
-      window.location.href = data.authorization_url;
-    } else {
-      throw new Error(data.error || 'Failed to initialize payment');
-    }
-  } catch (error) {
-    console.error('Payment initialization error:', error);
-    alert('Payment initialization failed. Please try again.');
-    
-    // Reset button
-    const proBtn = document.getElementById('proBtn');
-    if (proBtn) {
-      proBtn.textContent = 'Upgrade to Pro — GH₵ 30/mo';
-      proBtn.disabled = false;
-    }
-  }
-}
-
-// Verify payment on return from Paystack
-window.addEventListener('DOMContentLoaded', () => {
-  const urlParams = new URLSearchParams(window.location.search);
-  const reference = urlParams.get('reference');
-  
-  if (reference) {
-    verifyPayment(reference);
-  }
-});
-
-async function verifyPayment(reference) {
-  try {
-    const response = await fetch('/api/paystack', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        type: 'verify',
-        reference: reference
-      })
-    });
-
-    const data = await response.json();
-
-    if (data.success && data.detail) {
-      // Payment successful - upgrade user to Pro
-      await upgradeUserToPro(data.detail);
-      
-      // Clear payment reference
-      sessionStorage.removeItem('payment_reference');
-      
-      // Show success message
       alert('🎉 Welcome to Vision AI Pro! Your subscription is now active.');
-      
-      // Redirect to chat
       window.location.href = '/index.html';
-    } else {
-      throw new Error(data.error || 'Payment verification failed');
+    },
+    onClose: function() {
+      alert('Payment cancelled. You can try again anytime.');
     }
-  } catch (error) {
-    console.error('Payment verification error:', error);
-    alert('Payment verification failed. Please contact support if you were charged.');
-  }
+  });
+  
+  handler.openIframe();
 }
 
 async function upgradeUserToPro(paymentDetail) {
