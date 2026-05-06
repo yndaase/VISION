@@ -3,6 +3,19 @@
    Populates welcome section, stats, user chip
    ===================================================== */
 
+// Subject metadata for materials organization
+const SUBJECTS_META = [
+  { id: "core-maths", name: "Core Mathematics", icon: "📐" },
+  { id: "english", name: "English Language", icon: "📖" },
+  { id: "social", name: "Social Studies", icon: "🌍" },
+  { id: "physics", name: "Physics", icon: "⚛️" },
+  { id: "chemistry", name: "Chemistry", icon: "🧪" },
+  { id: "biology", name: "Biology", icon: "🧬" },
+  { id: "economics", name: "Economics", icon: "💰" },
+  { id: "cs", name: "Computer Science", icon: "💻" },
+  { id: "science", name: "Integrated Science", icon: "🔬" }
+];
+
 document.addEventListener("DOMContentLoaded", () => {
   //  Auth guard
   const session = checkAuth(); // redirects to login.html if null
