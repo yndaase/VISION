@@ -33,11 +33,6 @@
       "src": "^/chat$",
       "dest": "/chat.html",
       "status": 200
-    },
-    {
-      "src": "^/dashboard$",
-      "dest": "/dashboard.html",
-      "status": 200
     }
   ],
   "headers": [
