@@ -123,13 +123,17 @@ window.handleEnterpriseLogin = async function(event) {
   submitBtn.innerHTML = '<span>Authenticating...</span>';
   
   try {
-    // Attempt Firebase authentication first
+    // Attempt Firebase authentication first (but don't fail if it doesn't work)
     let authResult = null;
     if (typeof window.fbSignIn === 'function') {
-      authResult = await window.fbSignIn(email, password);
-      
-      if (!authResult || !authResult.success) {
-        throw new Error('Invalid credentials');
+      try {
+        authResult = await window.fbSignIn(email, password);
+        if (authResult && authResult.success) {
+          console.log('[Enterprise Login] Firebase Auth successful');
+        }
+      } catch (fbError) {
+        console.warn('[Enterprise Login] Firebase Auth failed, will verify manually:', fbError.message);
+        // Continue - we'll verify password manually below
       }
     }
     
@@ -149,14 +153,15 @@ window.handleEnterpriseLogin = async function(event) {
       throw new Error('Account not found');
     }
     
-    // Verify password (if Firebase auth didn't already)
-    if (!authResult) {
+    // Verify password manually if Firebase Auth didn't work
+    if (!authResult || !authResult.success) {
       const inputHash = await sha256(password);
       const legacyHash = simpleHash(password);
       
       if (user.hash !== inputHash && user.hash !== legacyHash) {
         throw new Error('Invalid credentials');
       }
+      console.log('[Enterprise Login] Password verified manually');
     }
     
     // CRITICAL: Block regular students from enterprise portal
