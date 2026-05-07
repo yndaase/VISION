@@ -78,10 +78,15 @@ window.handleEnterpriseLogin = async function(event) {
   event.preventDefault();
   clearEnterpriseErrors();
   
-  const institutionCode = document.getElementById('institutionCode')?.value.trim().toUpperCase();
+  const institutionCodeInput = document.getElementById('institutionCode');
+  const institutionCode = institutionCodeInput?.value.trim().toUpperCase() || '';
   const email = document.getElementById('entEmail').value.trim().toLowerCase();
   const password = document.getElementById('entPassword').value;
   const rememberMe = document.getElementById('rememberMe').checked;
+  
+  console.log('[Enterprise Login] Selected role:', selectedRole);
+  console.log('[Enterprise Login] Email:', email);
+  console.log('[Enterprise Login] Institution code:', institutionCode || '(not required for admin)');
   
   let valid = true;
   
@@ -171,31 +176,39 @@ window.handleEnterpriseLogin = async function(event) {
     }
     
     // Verify role matches selected role
+    console.log('[Enterprise Login] User role:', user.role, '| Selected role:', selectedRole);
+    
     if (selectedRole === 'admin' && user.role !== 'enterprise' && user.role !== 'admin') {
-      throw new Error('This account does not have admin privileges');
+      throw new Error('This account does not have admin privileges. Your role is: ' + user.role);
     }
     
     if (selectedRole === 'teacher' && user.role !== 'teacher' && user.role !== 'enterprise' && user.role !== 'admin') {
-      throw new Error('This account does not have teacher privileges');
+      throw new Error('This account does not have teacher privileges. Your role is: ' + user.role);
     }
     
     // Accept enterprise-student role explicitly
     if (selectedRole === 'enterprise-student' && user.role !== 'enterprise-student') {
-      throw new Error('This account does not have enterprise student privileges');
+      throw new Error('This account does not have enterprise student privileges. Your role is: ' + user.role);
     }
     
     // Verify institution code (required for teachers and students, NOT for admins)
     // Sub-task 3.1: Ensure enterprise-student accounts have institutionId/schoolCode
     if (selectedRole !== 'admin') {
+      console.log('[Enterprise Login] Verifying institution code for non-admin role');
+      console.log('[Enterprise Login] User institutionId:', user.institutionId);
+      console.log('[Enterprise Login] User schoolCode:', user.schoolCode);
+      console.log('[Enterprise Login] Input institution code:', institutionCode);
+      
       if (!user.institutionId && !user.schoolCode) {
         throw new Error('This account is not linked to an institution');
       }
       
       const userInstitutionCode = (user.institutionId || user.schoolCode || '').toUpperCase();
       if (userInstitutionCode !== institutionCode) {
-        throw new Error('Invalid institution code');
+        throw new Error('Invalid institution code. Expected: ' + userInstitutionCode);
       }
     } else {
+      console.log('[Enterprise Login] Admin role - skipping institution code verification');
       // For admins, just verify they have an institutionId (but don't require code input)
       if (user.role === 'enterprise' && !user.institutionId && !user.schoolCode) {
         throw new Error('This enterprise account is not properly configured. Please contact support.');
