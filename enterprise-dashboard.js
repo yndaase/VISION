@@ -111,7 +111,13 @@ async function loadDashboardData() {
     // Filter enterprise students for this institution
     students = allUsers.filter(u => {
       const isEnterpriseStudent = u.role === 'enterprise-student';
-      const matchesInstitution = u.institutionId === session.institutionId || u.schoolCode === session.institutionId;
+      
+      // Check multiple possible institution identifiers for compatibility
+      const matchesInstitution = 
+        u.institutionId === session.institutionId || 
+        u.schoolCode === session.institutionId ||
+        u.institutionId === session.schoolCode ||
+        u.schoolCode === session.schoolCode;
       
       if (isEnterpriseStudent) {
         console.log('[Enterprise Dashboard] Student check:', {
@@ -119,6 +125,8 @@ async function loadDashboardData() {
           role: u.role,
           institutionId: u.institutionId,
           schoolCode: u.schoolCode,
+          sessionInstitutionId: session.institutionId,
+          sessionSchoolCode: session.schoolCode,
           matches: matchesInstitution
         });
       }
@@ -132,7 +140,13 @@ async function loadDashboardData() {
     teachers = allUsers.filter(u => {
       const isTeacher = u.role === 'teacher';
       const isEnterpriseAdmin = u.role === 'enterprise';
-      const matchesInstitution = u.institutionId === session.institutionId || u.schoolCode === session.institutionId;
+      
+      // Check multiple possible institution identifiers for compatibility
+      const matchesInstitution = 
+        u.institutionId === session.institutionId || 
+        u.schoolCode === session.institutionId ||
+        u.institutionId === session.schoolCode ||
+        u.schoolCode === session.schoolCode;
       
       if (isTeacher || isEnterpriseAdmin) {
         console.log('[Enterprise Dashboard] Teacher/Admin check:', {
@@ -140,6 +154,8 @@ async function loadDashboardData() {
           role: u.role,
           institutionId: u.institutionId,
           schoolCode: u.schoolCode,
+          sessionInstitutionId: session.institutionId,
+          sessionSchoolCode: session.schoolCode,
           matches: matchesInstitution
         });
       }
@@ -490,8 +506,9 @@ window.showAddStudentModal = async function() {
       hash: hash,
       role: 'enterprise-student',
       institutionId: session.institutionId,
-      institutionName: session.schoolName || 'Institution',
+      institutionName: session.schoolName || session.institutionName || 'Institution',
       schoolCode: session.schoolCode || session.institutionId,
+      schoolName: session.schoolName || session.institutionName || 'Institution',
       class: studentClass,
       provider: 'email',
       createdAt: Date.now(),
@@ -619,9 +636,9 @@ window.showAddTeacherModal = async function() {
       hash: hash,
       role: 'teacher',
       institutionId: session.institutionId,
-      institutionName: session.schoolName || 'Institution',
-      schoolName: session.schoolName || 'Institution',
+      institutionName: session.schoolName || session.institutionName || 'Institution',
       schoolCode: session.schoolCode || session.institutionId,
+      schoolName: session.schoolName || session.institutionName || 'Institution',
       subject: subject,
       provider: 'email',
       createdAt: Date.now(),
