@@ -4,327 +4,19 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Pricing | Vision Education</title>
-  <meta name="description" content="Transparent pricing for Vision Education's 2026 WASSCE prep platform. Free for all students, Pro for serious learners, Enterprise for schools." />
+  <meta name="description" content="Transparent pricing for Vision Education's 2026 WASSCE prep platform. Individual and Enterprise plans available." />
   <link rel="canonical" href="https://visionedu.online/pricing" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  
+  <!-- Swiper CSS for slider -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+  
   <script src="theme.js"></script>
   <link rel="stylesheet" href="theme.css" />
   <link rel="stylesheet" href="global-site.css" />
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
-      font-family: 'Outfit', sans-serif;
-      background: var(--bg);
-      color: var(--text-primary);
-      min-height: 100vh;
-      overflow-x: hidden;
-    }
-
-    .pr-nav {
-      position: fixed; top: 0; left: 0; right: 0; z-index: 900;
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 0 2rem; height: 64px;
-      background: var(--bg-header);
-      backdrop-filter: blur(20px);
-      border-bottom: 1px solid var(--border);
-    }
-    .pr-nav-brand {
-      display: flex; align-items: center; gap: 10px;
-      text-decoration: none;
-    }
-    .pr-nav-brand-name {
-      font-size: 1rem; font-weight: 800; color: var(--text-primary);
-    }
-    .pr-nav-brand-name span { color: var(--gold); }
-    .pr-nav-back {
-      display: inline-flex; align-items: center; gap: 8px;
-      font-size: 0.82rem; font-weight: 600; color: var(--text-muted);
-      text-decoration: none; padding: 7px 14px;
-      border: 1px solid var(--border);
-      border-radius: 8px; transition: all 0.2s; background: transparent;
-    }
-    .pr-nav-back:hover { color: var(--text-primary); border-color: var(--border-bright); }
-
-    .pr-hero {
-      padding: 110px 2rem 70px;
-      text-align: center; position: relative; overflow: hidden;
-    }
-    .pr-hero::before {
-      content: ''; position: absolute; inset: 0; pointer-events: none;
-      background:
-        radial-gradient(ellipse 60% 40% at 50% 0%, var(--primary-dim), transparent);
-    }
-    .pr-hero-label {
-      display: inline-flex; align-items: center; gap: 8px;
-      font-size: 0.68rem; font-weight: 800; letter-spacing: 0.14em;
-      text-transform: uppercase; color: var(--gold); margin-bottom: 1.25rem;
-    }
-    .pr-hero-label::before { content:''; width:24px; height:2px; background:var(--gold); border-radius:2px; }
-    .pr-hero h1 {
-      font-size: clamp(2.4rem, 6vw, 4rem); font-weight: 900;
-      letter-spacing: -0.04em; line-height: 1.1;
-      color: var(--text-primary); margin-bottom: 1rem;
-    }
-    .pr-hero h1 span { color: var(--gold); }
-    .pr-hero-sub { font-size: 1.05rem; color: var(--text-muted); max-width: 520px; margin: 0 auto; line-height: 1.75; }
-
-    /* ── Toggle (Monthly / Annual placeholder) ──── */
-    .pr-toggle-row {
-      display: flex; justify-content: center;
-      margin: 2.5rem 0 0;
-    }
-    .pr-toggle-pill {
-      display: inline-flex; align-items: center; gap: 6px;
-      background: rgba(34,197,94,0.1);
-      border: 1px solid rgba(34,197,94,0.25);
-      color: #4ade80; font-size: 0.75rem; font-weight: 700;
-      padding: 8px 20px; border-radius: 100px;
-      letter-spacing: 0.05em;
-    }
-    .pr-toggle-dot {
-      width: 7px; height: 7px; border-radius: 50%;
-      background: #22c55e;
-      animation: pricingPulse 2s ease-in-out infinite;
-    }
-    @keyframes pricingPulse {
-      0%,100% { opacity:1; transform:scale(1); }
-      50% { opacity:0.4; transform:scale(0.65); }
-    }
-
-    /* ── Grid ─────────────────────────────────────── */
-    .pr-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 1.25rem;
-      max-width: 1160px;
-      margin: 4rem auto;
-      padding: 0 2rem;
-      align-items: start;
-    }
-
-    .pr-card {
-      background: var(--bg-card);
-      border: 1.5px solid var(--border);
-      border-radius: 24px; padding: 2.5rem;
-      display: flex; flex-direction: column; gap: 0;
-      position: relative; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      overflow: hidden;
-      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-    }
-    .pr-card:hover {
-      border-color: var(--border-accent);
-      transform: translateY(-6px);
-      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-    }
-    .pr-card.featured {
-      border-color: var(--primary);
-      box-shadow: 0 10px 15px -3px rgba(99, 102, 241, 0.1), 0 4px 6px -2px rgba(99, 102, 241, 0.05);
-    }
-    .pr-card.featured:hover {
-      box-shadow: 0 25px 50px -12px rgba(99, 102, 241, 0.25);
-    }
-    /* Gradient top border */
-    .pr-card::before {
-      content: '';
-      position: absolute; top: 0; left: 0; right: 0;
-      height: 2px;
-      background: var(--card-top, rgba(255,255,255,0.04));
-      border-radius: 20px 20px 0 0;
-    }
-    .pr-card.standard::before { background: var(--border); }
-    .pr-card.featured::before {
-      background: linear-gradient(90deg, #6366f1, #818cf8, #a5b4fc);
-    }
-    .pr-card.enterprise::before {
-      background: linear-gradient(90deg, #fbbf24, #f59e0b);
-    }
-
-    /* Badge */
-    .pr-badge {
-      display: inline-flex; align-items: center; gap: 6px;
-      font-size: 0.65rem; font-weight: 800; letter-spacing: 0.12em;
-      text-transform: uppercase; padding: 5px 14px;
-      border-radius: 100px; margin-bottom: 1.5rem;
-      width: fit-content;
-    }
-    .pr-badge.free    { background: rgba(34,197,94,0.1);  color: #4ade80;  border: 1px solid rgba(34,197,94,0.2); }
-    .pr-badge.pro     { background: rgba(99,102,241,0.12); color: #818cf8;  border: 1px solid rgba(99,102,241,0.25); }
-    .pr-badge.ent     { background: rgba(251,191,36,0.1);  color: #fbbf24;  border: 1px solid rgba(251,191,36,0.2); }
-
-    /* Recommended ribbon */
-    .pr-ribbon {
-      position: absolute; top: 16px; right: 16px;
-      background: rgba(99,102,241,0.15);
-      border: 1px solid rgba(99,102,241,0.3);
-      color: #818cf8;
-      font-size: 0.6rem; font-weight: 800; letter-spacing: 0.1em;
-      text-transform: uppercase; padding: 4px 12px;
-      border-radius: 100px;
-    }
-
-    /* Tier name */
-    .pr-tier-name {
-      font-size: 1.3rem; font-weight: 800;
-      color: var(--text-primary); letter-spacing: -0.02em;
-      margin-bottom: 0.4rem;
-    }
-
-    /* Price */
-    .pr-price {
-      display: flex; align-items: baseline; gap: 6px;
-      margin: 1rem 0 0.6rem;
-    }
-    .pr-price-currency {
-      font-size: 1.1rem; font-weight: 700; color: var(--text-muted);
-      align-self: flex-start; margin-top: 6px;
-    }
-    .pr-price-amount {
-      font-size: 3.4rem; font-weight: 900;
-      letter-spacing: -0.05em; color: var(--text-primary);
-      line-height: 1;
-    }
-    .pr-price-period {
-      font-size: 0.82rem; color: var(--text-muted); font-weight: 500;
-      align-self: flex-end; padding-bottom: 6px;
-    }
-
-    /* Desc */
-    .pr-desc {
-      font-size: 0.88rem; color: var(--text-secondary);
-      line-height: 1.65; margin-bottom: 1.75rem;
-      min-height: 42px;
-    }
-
-    /* Divider */
-    .pr-divider {
-      height: 1px; background: var(--border);
-      margin-bottom: 1.5rem;
-    }
-
-    /* Feature list */
-    .pr-features {
-      list-style: none; padding: 0;
-      display: flex; flex-direction: column; gap: 14px;
-      margin-bottom: 2rem; flex: 1;
-    }
-    .pr-feature { display: flex; align-items: flex-start; gap: 12px; font-size: 0.88rem; color: var(--text-secondary); line-height: 1.6; }
-    .pr-feature strong { color: var(--text-primary); font-weight: 700; }
-    .pr-feature.dim { color: var(--border-bright); opacity: 0.6; }
-    
-    .pr-feature-check {
-      width: 20px; height: 20px; min-width: 20px;
-      border-radius: 6px;
-      display: flex; align-items: center; justify-content: center;
-      flex-shrink: 0;
-      margin-top: 2px;
-    }
-    .pr-feature-check.on {
-      background: rgba(34, 197, 94, 0.15);
-      color: #22c55e;
-    }
-    .pr-feature-check.off {
-      background: rgba(148, 163, 184, 0.1);
-      color: var(--border-bright);
-    }
-
-    /* CTA */
-    .pr-cta {
-      display: block; width: 100%;
-      padding: 13px 20px; border-radius: 10px;
-      text-align: center; font-size: 0.9rem; font-weight: 700;
-      text-decoration: none; border: none; cursor: pointer;
-      font-family: 'Outfit', sans-serif;
-      transition: all 0.2s;
-    }
-    .pr-cta.primary {
-      background: linear-gradient(135deg, #6366f1, #818cf8);
-      color: #fff;
-      box-shadow: 0 4px 18px rgba(99,102,241,0.3);
-    }
-    .pr-cta.primary:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 10px 28px rgba(99,102,241,0.45);
-    }
-    .pr-cta.ghost {
-      background: transparent;
-      color: var(--text-muted);
-      border: 1px solid var(--border);
-    }
-    .pr-cta.ghost:hover {
-      background: var(--primary-dim);
-      color: var(--text-primary);
-      border-color: var(--border-bright);
-    }
-    .pr-cta.gold {
-      background: linear-gradient(135deg, #fbbf24, #f59e0b);
-      color: #0a0d14;
-    }
-    .pr-cta.gold:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 10px 28px rgba(251,191,36,0.35);
-    }
-    .pr-cta-note {
-      text-align: center; font-size: 0.72rem; color: var(--text-muted);
-      margin-top: 10px; font-weight: 500;
-    }
-
-    /* ── FAQ / Guarantee Band ─────────────────────── */
-    .pr-trust-band {
-      max-width: 900px; margin: 0 auto 5rem;
-      padding: 0 2rem;
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 1rem;
-    }
-    .pr-trust-item {
-      background: var(--bg-card);
-      border: 1.5px solid var(--border);
-      border-radius: 14px; padding: 1.5rem;
-      display: flex; gap: 1rem; align-items: flex-start; transition: all 0.2s;
-    }
-    .pr-trust-item:hover { border-color: var(--gold); transform: translateY(-2px); }
-    .pr-trust-icon {
-      width: 38px; height: 38px; border-radius: 10px;
-      background: var(--primary-dim); border: 1px solid var(--border-accent);
-      display: flex; align-items: center; justify-content: center;
-      flex-shrink: 0; color: var(--gold);
-    }
-    .pr-trust-title { font-size: 0.86rem; font-weight: 700; color: var(--text-primary); margin-bottom: 4px; }
-    .pr-trust-desc { font-size: 0.78rem; color: var(--text-muted); line-height: 1.55; }
-
-    /* ── FAQ ──────────────────────────────────────── */
-    .pr-faq-section {
-      max-width: 720px; margin: 0 auto 5rem;
-      padding: 0 2rem;
-    }
-    .pr-faq-heading {
-      font-size: 1.6rem; font-weight: 800; letter-spacing: -0.03em;
-      color: var(--text-primary); margin-bottom: 1.5rem; text-align: center;
-    }
-    .pr-faq-item {
-      background: var(--bg-card); border: 1.5px solid var(--border);
-      border-radius: 12px; padding: 1.25rem 1.5rem;
-      margin-bottom: 0.75rem; cursor: pointer; transition: border-color 0.2s;
-    }
-    .pr-faq-item:hover { border-color: var(--gold); }
-    .pr-faq-q { font-size: 0.9rem; font-weight: 700; color: var(--text-primary); display: flex; justify-content: space-between; align-items: center; gap: 1rem; }
-    .pr-faq-a { font-size: 0.85rem; color: var(--text-muted); line-height: 1.7; margin-top: 0.75rem; display: none; }
-    .pr-faq-item.open .pr-faq-a { display: block; }
-    .pr-faq-chevron { flex-shrink: 0; transition: transform 0.2s; color: var(--text-muted); }
-    .pr-faq-item.open .pr-faq-chevron { transform: rotate(180deg); }
-
-    .pr-footer { border-top: 1px solid var(--border); padding: 2.5rem 2rem; text-align: center; background: var(--bg); }
-    .pr-footer p { font-size: 0.78rem; color: var(--text-muted); line-height: 1.8; }
-    .pr-footer a { color: var(--text-muted); text-decoration: none; }
-    .pr-footer a:hover { color: var(--gold); }
-
-    @media (max-width: 768px) {
-      .pr-grid { grid-template-columns: 1fr; margin: 2.5rem auto; }
-      .pr-card.featured { transform: none; }
-    }
-  </style>
+  <link rel="stylesheet" href="pricing-new.css" />
 </head>
 
 <body>
@@ -358,319 +50,421 @@
   </nav>
 
   <!-- Hero -->
-  <section class="pr-hero" aria-labelledby="pricing-heading">
+  <section class="pr-hero">
     <div class="pr-hero-label">Pricing</div>
-    <h1 id="pricing-heading">Choose Your<br /><span>Learning Edge</span></h1>
+    <h1>Choose Your<br /><span>Learning Edge</span></h1>
     <p class="pr-hero-sub">
       Elite AI tutoring tailored for the 2026 WASSCE syllabus.
       Transparent pricing — no hidden fees, no lock-in.
     </p>
-    <div class="pr-toggle-row">
-      <div class="pr-toggle-pill">
-        <span class="pr-toggle-dot" aria-hidden="true"></span>
-        Flexible plans designed for every student's journey
-      </div>
-    </div>
   </section>
 
-  <!-- Pricing Grid -->
-  <div class="pr-grid" role="list" aria-label="Pricing plans">
+  <!-- Plan Type Toggle -->
+  <div class="pr-toggle-container">
+    <div class="pr-plan-toggle">
+      <button class="pr-toggle-btn active" data-plan="individual" onclick="switchPlanType('individual')">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        Individual
+      </button>
+      <button class="pr-toggle-btn" data-plan="enterprise" onclick="switchPlanType('enterprise')">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+        Enterprise
+      </button>
+    </div>
+  </div>
 
-    <!-- STANDARD (Free) -->
-    <div class="pr-card standard" role="listitem">
-      <span class="pr-badge free">Standard</span>
-      <div class="pr-tier-name">Free Access</div>
-      <div class="pr-desc">Full preparation for every Ghanaian student. No card required, no expiry.</div>
-      <div class="pr-price">
-        <span class="pr-price-currency">GH₵</span>
-        <span class="pr-price-amount">0</span>
-        <span class="pr-price-period">/forever</span>
+  <!-- Individual Plans Section -->
+  <div class="pr-section" id="individualSection">
+    <div class="pr-grid-individual">
+      
+      <!-- FREE -->
+      <div class="pr-card standard">
+        <span class="pr-badge free">Free</span>
+        <div class="pr-tier-name">Standard Access</div>
+        <div class="pr-desc">Full preparation for every Ghanaian student. No card required.</div>
+        <div class="pr-price">
+          <span class="pr-price-currency">GH₵</span>
+          <span class="pr-price-amount">0</span>
+          <span class="pr-price-period">/forever</span>
+        </div>
+        <div class="pr-divider"></div>
+        <ul class="pr-features">
+          <li class="pr-feature">
+            <span class="pr-feature-check on">✓</span>
+            <span>AI Learning Hub Access</span>
+          </li>
+          <li class="pr-feature">
+            <span class="pr-feature-check on">✓</span>
+            <span>WAEC Past Questions</span>
+          </li>
+          <li class="pr-feature">
+            <span class="pr-feature-check on">✓</span>
+            <span>Progress Tracking</span>
+          </li>
+          <li class="pr-feature">
+            <span class="pr-feature-check on">✓</span>
+            <span>Study Planner</span>
+          </li>
+          <li class="pr-feature dim">
+            <span class="pr-feature-check off">✕</span>
+            <span>Premium AI Tutor</span>
+          </li>
+          <li class="pr-feature dim">
+            <span class="pr-feature-check off">✕</span>
+            <span>All Subjects</span>
+          </li>
+        </ul>
+        <a href="/login.html" class="pr-cta ghost">Start for Free</a>
       </div>
-      <div class="pr-divider"></div>
-      <ul class="pr-features" aria-label="Standard plan features">
-        <li class="pr-feature">
-          <span class="pr-feature-check on" aria-hidden="true">
-            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
-          </span>
-          <span>AI Learning Hub Access</span>
-        </li>
-        <li class="pr-feature">
-          <span class="pr-feature-check on" aria-hidden="true">
-            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
-          </span>
-          <span>WAEC Past Questions Library</span>
-        </li>
-        <li class="pr-feature">
-          <span class="pr-feature-check on" aria-hidden="true">
-            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
-          </span>
-          <span>Progress Tracking Dashboard</span>
-        </li>
-        <li class="pr-feature">
-          <span class="pr-feature-check on" aria-hidden="true">
-            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
-          </span>
-          <span>Study Planner & Calendar</span>
-        </li>
-        <li class="pr-feature dim">
-          <span class="pr-feature-check off" aria-hidden="true">
-            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-          </span>
-          <span>Premium AI Tutor (GPT-4o)</span>
-        </li>
-        <li class="pr-feature dim">
-          <span class="pr-feature-check off" aria-hidden="true">
-            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-          </span>
-          <span>All Subject Access</span>
-        </li>
-      </ul>
-      <a href="/login" class="pr-cta ghost" id="standardCta">Start for Free</a>
+
+      <!-- PRO MONTHLY -->
+      <div class="pr-card featured">
+        <span class="pr-badge pro">Pro</span>
+        <span class="pr-ribbon">Most Popular</span>
+        <div class="pr-tier-name">Pro Monthly</div>
+        <div class="pr-desc">The ultimate Copilot for top-tier WASSCE results.</div>
+        <div class="pr-price">
+          <span class="pr-price-currency">GH₵</span>
+          <span class="pr-price-amount">30</span>
+          <span class="pr-price-period">/month</span>
+        </div>
+        <div class="pr-divider"></div>
+        <ul class="pr-features">
+          <li class="pr-feature">
+            <span class="pr-feature-check on">✓</span>
+            <span><strong>Premium GPT-4o AI</strong></span>
+          </li>
+          <li class="pr-feature">
+            <span class="pr-feature-check on">✓</span>
+            <span><strong>All WASSCE Subjects</strong></span>
+          </li>
+          <li class="pr-feature">
+            <span class="pr-feature-check on">✓</span>
+            <span>Detailed Explanations</span>
+          </li>
+          <li class="pr-feature">
+            <span class="pr-feature-check on">✓</span>
+            <span>Advanced Analytics</span>
+          </li>
+          <li class="pr-feature">
+            <span class="pr-feature-check on">✓</span>
+            <span>Personalized Recommendations</span>
+          </li>
+          <li class="pr-feature">
+            <span class="pr-feature-check on">✓</span>
+            <span>Priority Support</span>
+          </li>
+        </ul>
+        <button onclick="handlePricingUpgrade('monthly')" class="pr-cta primary" id="proMonthlyBtn">
+          Subscribe — GH₵ 30/mo
+        </button>
+        <p class="pr-cta-note">Cancel anytime</p>
+      </div>
+
+      <!-- PRO ANNUAL -->
+      <div class="pr-card annual">
+        <span class="pr-badge annual-badge">Pro Annual</span>
+        <span class="pr-savings-badge">Save 17%</span>
+        <div class="pr-tier-name">Pro Annual</div>
+        <div class="pr-desc">Best value — 2 months free when you pay annually.</div>
+        <div class="pr-price">
+          <span class="pr-price-currency">GH₵</span>
+          <span class="pr-price-amount">300</span>
+          <span class="pr-price-period">/year</span>
+        </div>
+        <div class="pr-price-compare">GH₵ 25/month · Save GH₵ 60</div>
+        <div class="pr-divider"></div>
+        <ul class="pr-features">
+          <li class="pr-feature">
+            <span class="pr-feature-check on">✓</span>
+            <span><strong>Everything in Pro Monthly</strong></span>
+          </li>
+          <li class="pr-feature">
+            <span class="pr-feature-check on">✓</span>
+            <span><strong>2 Months Free</strong></span>
+          </li>
+          <li class="pr-feature">
+            <span class="pr-feature-check on">✓</span>
+            <span>Priority Feature Access</span>
+          </li>
+          <li class="pr-feature">
+            <span class="pr-feature-check on">✓</span>
+            <span>Exclusive Study Materials</span>
+          </li>
+          <li class="pr-feature">
+            <span class="pr-feature-check on">✓</span>
+            <span>Annual Progress Report</span>
+          </li>
+          <li class="pr-feature">
+            <span class="pr-feature-check on">✓</span>
+            <span>VIP Support Channel</span>
+          </li>
+        </ul>
+        <button onclick="handlePricingUpgrade('annual')" class="pr-cta annual-cta" id="proAnnualBtn">
+          Subscribe — GH₵ 300/year
+        </button>
+        <p class="pr-cta-note">Best value · Pay once, learn all year</p>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Enterprise Plans Section -->
+  <div class="pr-section hidden" id="enterpriseSection">
+    <div class="pr-enterprise-intro">
+      <h2>Enterprise Solutions</h2>
+      <p>Comprehensive learning management for schools, institutions, and tutorial centers</p>
     </div>
 
-    <!-- PRO (Vision 30) -->
-    <div class="pr-card featured" role="listitem">
-      <span class="pr-badge pro">Vision Pro</span>
-      <span class="pr-ribbon" aria-label="Recommended plan">Recommended</span>
-      <div class="pr-tier-name">Pro Access</div>
-      <div class="pr-desc">The ultimate Copilot for top-tier WASSCE results. Trusted by serious students.</div>
-      <div class="pr-price">
-        <span class="pr-price-currency">GH₵</span>
-        <span class="pr-price-amount">30</span>
-        <span class="pr-price-period">/month</span>
-      </div>
-      <div class="pr-divider"></div>
-      <ul class="pr-features" aria-label="Pro plan features">
-        <li class="pr-feature">
-          <span class="pr-feature-check on" aria-hidden="true">
-            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
-          </span>
-          <span><strong>Premium GPT-4o AI Tutor</strong> — Advanced assistance</span>
-        </li>
-        <li class="pr-feature">
-          <span class="pr-feature-check on" aria-hidden="true">
-            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
-          </span>
-          <span><strong>All Subjects Access</strong> — Complete WASSCE coverage</span>
-        </li>
-        <li class="pr-feature">
-          <span class="pr-feature-check on" aria-hidden="true">
-            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
-          </span>
-          <span>Detailed Answer Explanations</span>
-        </li>
-        <li class="pr-feature">
-          <span class="pr-feature-check on" aria-hidden="true">
-            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
-          </span>
-          <span>Advanced Performance Analytics</span>
-        </li>
-        <li class="pr-feature">
-          <span class="pr-feature-check on" aria-hidden="true">
-            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
-          </span>
-          <span>Personalized Study Recommendations</span>
-        </li>
-        <li class="pr-feature">
-          <span class="pr-feature-check on" aria-hidden="true">
-            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
-          </span>
-          <span>Downloadable Study Materials</span>
-        </li>
-        <li class="pr-feature">
-          <span class="pr-feature-check on" aria-hidden="true">
-            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
-          </span>
-          <span>Priority Support & Updates</span>
-        </li>
-      </ul>
-      <button onclick="handlePricingUpgrade()" class="pr-cta primary" id="proLink">Subscribe — GH₵ 30/mo</button>
-      <p class="pr-cta-note">Cancel anytime</p>
-    </div>
+    <!-- Swiper Slider -->
+    <div class="swiper enterpriseSwiper">
+      <div class="swiper-wrapper">
+        
+        <!-- STARTER -->
+        <div class="swiper-slide">
+          <div class="pr-card enterprise">
+            <span class="pr-badge ent">Starter</span>
+            <div class="pr-tier-name">Enterprise Starter</div>
+            <div class="pr-desc">Perfect for small tutorial centers and growing schools.</div>
+            <div class="pr-price">
+              <span class="pr-price-currency">GH₵</span>
+              <span class="pr-price-amount">2,500</span>
+              <span class="pr-price-period">/month</span>
+            </div>
+            <div class="pr-student-count">Up to 50 students</div>
+            <div class="pr-divider"></div>
+            <ul class="pr-features">
+              <li class="pr-feature">
+                <span class="pr-feature-check on gold">✓</span>
+                <span>50 Student Accounts</span>
+              </li>
+              <li class="pr-feature">
+                <span class="pr-feature-check on gold">✓</span>
+                <span>5 Teacher Accounts</span>
+              </li>
+              <li class="pr-feature">
+                <span class="pr-feature-check on gold">✓</span>
+                <span>Basic Analytics Dashboard</span>
+              </li>
+              <li class="pr-feature">
+                <span class="pr-feature-check on gold">✓</span>
+                <span>Student Progress Tracking</span>
+              </li>
+              <li class="pr-feature">
+                <span class="pr-feature-check on gold">✓</span>
+                <span>Email Support</span>
+              </li>
+              <li class="pr-feature dim">
+                <span class="pr-feature-check off">✕</span>
+                <span>Custom Branding</span>
+              </li>
+            </ul>
+            <a href="mailto:mensuohyaw@gmail.com?subject=Enterprise Starter Inquiry" class="pr-cta gold">
+              Contact Sales
+            </a>
+          </div>
+        </div>
 
-    <!-- ENTERPRISE -->
-    <div class="pr-card enterprise" role="listitem">
-      <span class="pr-badge ent">Enterprise</span>
-      <div class="pr-tier-name">Institutional Access</div>
-      <div class="pr-desc">Bulk licensing for schools and institutions. Custom pricing, dedicated support.</div>
-      <div class="pr-price">
-        <span class="pr-price-amount" style="font-size:2rem;color:#94a3b8;letter-spacing:-0.02em;">Contact Sales</span>
-        <span class="pr-price-period">/annual</span>
+        <!-- PROFESSIONAL -->
+        <div class="swiper-slide">
+          <div class="pr-card enterprise featured-ent">
+            <span class="pr-badge ent">Professional</span>
+            <span class="pr-ribbon">Recommended</span>
+            <div class="pr-tier-name">Enterprise Professional</div>
+            <div class="pr-desc">Ideal for medium-sized schools with advanced needs.</div>
+            <div class="pr-price">
+              <span class="pr-price-currency">GH₵</span>
+              <span class="pr-price-amount">5,000</span>
+              <span class="pr-price-period">/month</span>
+            </div>
+            <div class="pr-student-count">Up to 200 students</div>
+            <div class="pr-divider"></div>
+            <ul class="pr-features">
+              <li class="pr-feature">
+                <span class="pr-feature-check on gold">✓</span>
+                <span><strong>200 Student Accounts</strong></span>
+              </li>
+              <li class="pr-feature">
+                <span class="pr-feature-check on gold">✓</span>
+                <span><strong>20 Teacher Accounts</strong></span>
+              </li>
+              <li class="pr-feature">
+                <span class="pr-feature-check on gold">✓</span>
+                <span><strong>Advanced Analytics</strong></span>
+              </li>
+              <li class="pr-feature">
+                <span class="pr-feature-check on gold">✓</span>
+                <span><strong>Custom Branding</strong></span>
+              </li>
+              <li class="pr-feature">
+                <span class="pr-feature-check on gold">✓</span>
+                <span>Class Management</span>
+              </li>
+              <li class="pr-feature">
+                <span class="pr-feature-check on gold">✓</span>
+                <span>Priority Support</span>
+              </li>
+            </ul>
+            <a href="mailto:mensuohyaw@gmail.com?subject=Enterprise Professional Inquiry" class="pr-cta gold">
+              Contact Sales
+            </a>
+          </div>
+        </div>
+
+        <!-- PREMIUM -->
+        <div class="swiper-slide">
+          <div class="pr-card enterprise">
+            <span class="pr-badge ent">Premium</span>
+            <div class="pr-tier-name">Enterprise Premium</div>
+            <div class="pr-desc">Complete solution for large schools and institutions.</div>
+            <div class="pr-price">
+              <span class="pr-price-currency">GH₵</span>
+              <span class="pr-price-amount">10,000</span>
+              <span class="pr-price-period">/month</span>
+            </div>
+            <div class="pr-student-count">Up to 500 students</div>
+            <div class="pr-divider"></div>
+            <ul class="pr-features">
+              <li class="pr-feature">
+                <span class="pr-feature-check on gold">✓</span>
+                <span><strong>500 Student Accounts</strong></span>
+              </li>
+              <li class="pr-feature">
+                <span class="pr-feature-check on gold">✓</span>
+                <span><strong>Unlimited Teachers</strong></span>
+              </li>
+              <li class="pr-feature">
+                <span class="pr-feature-check on gold">✓</span>
+                <span><strong>Full White-Label</strong></span>
+              </li>
+              <li class="pr-feature">
+                <span class="pr-feature-check on gold">✓</span>
+                <span><strong>Quiz Creation Tools</strong></span>
+              </li>
+              <li class="pr-feature">
+                <span class="pr-feature-check on gold">✓</span>
+                <span><strong>Excel Export</strong></span>
+              </li>
+              <li class="pr-feature">
+                <span class="pr-feature-check on gold">✓</span>
+                <span>API Access</span>
+              </li>
+              <li class="pr-feature">
+                <span class="pr-feature-check on gold">✓</span>
+                <span>Dedicated Account Manager</span>
+              </li>
+            </ul>
+            <a href="mailto:mensuohyaw@gmail.com?subject=Enterprise Premium Inquiry" class="pr-cta gold">
+              Contact Sales
+            </a>
+          </div>
+        </div>
+
+        <!-- CUSTOM -->
+        <div class="swiper-slide">
+          <div class="pr-card enterprise">
+            <span class="pr-badge ent">Custom</span>
+            <div class="pr-tier-name">Enterprise Custom</div>
+            <div class="pr-desc">Tailored solutions for school districts and universities.</div>
+            <div class="pr-price">
+              <span class="pr-price-amount" style="font-size:2rem;">Contact Sales</span>
+            </div>
+            <div class="pr-student-count">500+ students</div>
+            <div class="pr-divider"></div>
+            <ul class="pr-features">
+              <li class="pr-feature">
+                <span class="pr-feature-check on gold">✓</span>
+                <span><strong>Everything in Premium</strong></span>
+              </li>
+              <li class="pr-feature">
+                <span class="pr-feature-check on gold">✓</span>
+                <span><strong>Custom Features</strong></span>
+              </li>
+              <li class="pr-feature">
+                <span class="pr-feature-check on gold">✓</span>
+                <span><strong>SLA Guarantees</strong></span>
+              </li>
+              <li class="pr-feature">
+                <span class="pr-feature-check on gold">✓</span>
+                <span><strong>On-Site Training</strong></span>
+              </li>
+              <li class="pr-feature">
+                <span class="pr-feature-check on gold">✓</span>
+                <span>Data Residency Options</span>
+              </li>
+              <li class="pr-feature">
+                <span class="pr-feature-check on gold">✓</span>
+                <span>Custom Integrations</span>
+              </li>
+              <li class="pr-feature">
+                <span class="pr-feature-check on gold">✓</span>
+                <span>24/7 Premium Support</span>
+              </li>
+            </ul>
+            <a href="mailto:mensuohyaw@gmail.com?subject=Enterprise Custom Inquiry" class="pr-cta gold">
+              Contact Sales
+            </a>
+          </div>
+        </div>
+
       </div>
-      <div class="pr-divider"></div>
-      <ul class="pr-features" aria-label="Enterprise plan features">
-        <li class="pr-feature">
-          <span class="pr-feature-check on" style="background:rgba(251,191,36,0.1);color:#fbbf24;" aria-hidden="true">
-            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
-          </span>
-          <span>Everything in Pro</span>
-        </li>
-        <li class="pr-feature">
-          <span class="pr-feature-check on" style="background:rgba(251,191,36,0.1);color:#fbbf24;" aria-hidden="true">
-            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
-          </span>
-          <span>Teacher Dashboard &amp; Analytics</span>
-        </li>
-        <li class="pr-feature">
-          <span class="pr-feature-check on" style="background:rgba(251,191,36,0.1);color:#fbbf24;" aria-hidden="true">
-            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
-          </span>
-          <span>Student Management Console</span>
-        </li>
-        <li class="pr-feature">
-          <span class="pr-feature-check on" style="background:rgba(251,191,36,0.1);color:#fbbf24;" aria-hidden="true">
-            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
-          </span>
-          <span>Institution White-labeling</span>
-        </li>
-        <li class="pr-feature">
-          <span class="pr-feature-check on" style="background:rgba(251,191,36,0.1);color:#fbbf24;" aria-hidden="true">
-            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
-          </span>
-          <span>Dedicated School Support Line</span>
-        </li>
-      </ul>
-      <a href="mailto:mensuohyaw@gmail.com?subject=Enterprise Inquiry | Vision Education" class="pr-cta gold" id="enterpriseCta">
-        Contact Sales
-      </a>
-      <p class="pr-cta-note">For schools, districts &amp; tutoring centres</p>
+      
+      <!-- Navigation -->
+      <div class="swiper-button-next"></div>
+      <div class="swiper-button-prev"></div>
+      <div class="swiper-pagination"></div>
     </div>
   </div>
 
   <!-- Trust Band -->
-  <div class="pr-trust-band" role="complementary" aria-label="Trust indicators">
+  <div class="pr-trust-band">
     <div class="pr-trust-item">
-      <div class="pr-trust-icon" aria-hidden="true">
+      <div class="pr-trust-icon">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
       </div>
       <div>
         <div class="pr-trust-title">Secure Payments</div>
-        <div class="pr-trust-desc">Powered by Paystack. All transactions encrypted with bank-grade TLS.</div>
+        <div class="pr-trust-desc">Powered by Paystack. Bank-grade encryption.</div>
       </div>
     </div>
     <div class="pr-trust-item">
-      <div class="pr-trust-icon" aria-hidden="true">
+      <div class="pr-trust-icon">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
       </div>
       <div>
         <div class="pr-trust-title">Cancel Anytime</div>
-        <div class="pr-trust-desc">No minimum term on Pro. Cancel at any time, no questions asked.</div>
+        <div class="pr-trust-desc">No minimum term. Cancel at any time.</div>
       </div>
     </div>
     <div class="pr-trust-item">
-      <div class="pr-trust-icon" aria-hidden="true">
+      <div class="pr-trust-icon">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
       </div>
       <div>
         <div class="pr-trust-title">WAEC Aligned</div>
-        <div class="pr-trust-desc">Every question mapped to the WAEC Chief Examiner's 2025 Report.</div>
-      </div>
-    </div>
-    <div class="pr-trust-item">
-      <div class="pr-trust-icon" aria-hidden="true">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-      </div>
-      <div>
-        <div class="pr-trust-title">Built for Ghana</div>
-        <div class="pr-trust-desc">Tailored specifically for the Ghana SHS curriculum and 2026 WASSCE.</div>
+        <div class="pr-trust-desc">Mapped to 2026 WASSCE syllabus.</div>
       </div>
     </div>
   </div>
 
-  <!-- FAQ -->
-  <section class="pr-faq-section" aria-labelledby="faq-heading">
-    <h2 class="pr-faq-heading" id="faq-heading">Frequently asked questions</h2>
-
-    <div class="pr-faq-item" onclick="toggleFaq(this)">
-      <div class="pr-faq-q">
-        Is the free plan really free forever?
-        <svg class="pr-faq-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
-      </div>
-      <div class="pr-faq-a">Yes — the Standard plan is permanently free. You get access to Core Mathematics practice, mock exams, past questions, AI Learning Hub, and progress tracking with no expiry date and no credit card required.</div>
-    </div>
-
-    <div class="pr-faq-item" onclick="toggleFaq(this)">
-      <div class="pr-faq-q">
-        What additional features does Vision Pro unlock?
-        <svg class="pr-faq-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
-      </div>
-      <div class="pr-faq-a">Vision Pro unlocks premium GPT-4o AI tutoring, access to all WASSCE subjects (not just Core Maths), detailed answer explanations, advanced analytics, personalized study recommendations, and downloadable materials. Perfect for students aiming for top grades.</div>
-    </div>
-
-    <div class="pr-faq-item" onclick="toggleFaq(this)">
-      <div class="pr-faq-q">
-        How does Enterprise pricing work?
-        <svg class="pr-faq-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
-      </div>
-      <div class="pr-faq-a">Enterprise is priced annually based on student seat count. Email us at mensuohyaw@gmail.com with your school name and estimated number of students and we will send a tailored quote within 24 hours.</div>
-    </div>
-
-    <div class="pr-faq-item" onclick="toggleFaq(this)">
-      <div class="pr-faq-q">
-        Can I upgrade or cancel at any time?
-        <svg class="pr-faq-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
-      </div>
-      <div class="pr-faq-a">Yes. Pro is a monthly subscription — you can cancel from your account settings at any time before the next billing date. Your access continues until the end of the paid period.</div>
-    </div>
-  </section>
-
   <!-- Footer -->
-  <footer class="pr-footer" role="contentinfo">
+  <footer class="pr-footer">
     <p>
-      &copy; 2026 Vision Education &nbsp;&middot;&nbsp;
-      <a href="/privacy">Privacy Policy</a> &nbsp;&middot;&nbsp;
-      <a href="/terms">Terms of Service</a> &nbsp;&middot;&nbsp;
+      &copy; 2026 Vision Education &nbsp;·&nbsp;
+      <a href="/privacy">Privacy</a> &nbsp;·&nbsp;
+      <a href="/terms">Terms</a> &nbsp;·&nbsp;
       <a href="mailto:mensuohyaw@gmail.com">Contact</a>
     </p>
     <p style="margin-top:6px;">Empowering Ghanaian Excellence through Technology.</p>
   </footer>
 
+  <!-- Swiper JS -->
+  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+  
   <script type="module" src="firebase.js"></script>
   <script src="auth.js"></script>
   <script src="payment.js"></script>
-  <script>
-    // Check if already Pro
-    window.addEventListener('DOMContentLoaded', () => {
-      const session = typeof getSession === 'function' ? getSession() : null;
-
-      // Smart back button: logged-in users go to dashboard, visitors go home
-      const backBtn = document.getElementById('pricingBackBtn');
-      if (backBtn) {
-        if (session) {
-          backBtn.href = '/dashboard';
-          backBtn.lastChild.textContent = ' Dashboard';
-        } else {
-          backBtn.href = '/';
-          backBtn.lastChild.textContent = ' Home';
-        }
-      }
-
-      if (session && session.role === 'pro') {
-        const btn = document.getElementById('proLink');
-        if (btn) {
-          btn.textContent = 'Current Active Plan';
-          btn.style.background = 'linear-gradient(135deg, #22c55e, #16a34a)';
-          btn.style.boxShadow = '0 4px 18px rgba(34,197,94,0.3)';
-          btn.style.pointerEvents = 'none';
-          btn.style.cursor = 'default';
-        }
-      }
-    });
-
-    async function handlePricingUpgrade() {
-      if (typeof initiatePayment === 'function') {
-        await initiatePayment('vision_pro_access', 30.00, 'Vision Pro Access');
-      } else {
-        alert('Payment system loading... please try again.');
-      }
-    }
-
-    function toggleFaq(el) {
-      const isOpen = el.classList.contains('open');
-      document.querySelectorAll('.pr-faq-item').forEach(i => i.classList.remove('open'));
-      if (!isOpen) el.classList.add('open');
-    }
-  </script>
+  <script src="pricing-new.js"></script>
   <script src="site-nav.js"></script>
 </body>
 </html>

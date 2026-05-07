@@ -1,0 +1,677 @@
+/* Pricing Page Styles */
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Outfit', sans-serif;
+  background: var(--bg);
+  color: var(--text-primary);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* Hero Section */
+.pr-hero {
+  padding: 110px 2rem 50px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.pr-hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(ellipse 60% 40% at 50% 0%, var(--primary-dim), transparent);
+}
+
+.pr-hero-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 1.25rem;
+}
+
+.pr-hero-label::before {
+  content: '';
+  width: 24px;
+  height: 2px;
+  background: var(--gold);
+  border-radius: 2px;
+}
+
+.pr-hero h1 {
+  font-size: clamp(2.4rem, 6vw, 4rem);
+  font-weight: 900;
+  letter-spacing: -0.04em;
+  line-height: 1.1;
+  color: var(--text-primary);
+  margin-bottom: 1rem;
+}
+
+.pr-hero h1 span {
+  color: var(--gold);
+}
+
+.pr-hero-sub {
+  font-size: 1.05rem;
+  color: var(--text-muted);
+  max-width: 520px;
+  margin: 0 auto;
+  line-height: 1.75;
+}
+
+/* Plan Type Toggle */
+.pr-toggle-container {
+  display: flex;
+  justify-content: center;
+  padding: 2rem 2rem 3rem;
+}
+
+.pr-plan-toggle {
+  display: inline-flex;
+  background: var(--bg-card);
+  border: 1.5px solid var(--border);
+  border-radius: 12px;
+  padding: 6px;
+  gap: 6px;
+}
+
+.pr-toggle-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 28px;
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.95rem;
+  font-weight: 700;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.pr-toggle-btn svg {
+  width: 16px;
+  height: 16px;
+}
+
+.pr-toggle-btn.active {
+  background: linear-gradient(135deg, #6366f1, #818cf8);
+  color: #fff;
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+}
+
+.pr-toggle-btn:hover:not(.active) {
+  background: var(--primary-dim);
+  color: var(--text-primary);
+}
+
+/* Section Container */
+.pr-section {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 2rem 4rem;
+  transition: opacity 0.3s, transform 0.3s;
+}
+
+.pr-section.hidden {
+  display: none;
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+/* Individual Plans Grid */
+.pr-grid-individual {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 1.5rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Enterprise Intro */
+.pr-enterprise-intro {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.pr-enterprise-intro h2 {
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  margin-bottom: 0.75rem;
+}
+
+.pr-enterprise-intro p {
+  font-size: 1.05rem;
+  color: var(--text-muted);
+}
+
+/* Swiper Customization */
+.enterpriseSwiper {
+  padding: 2rem 0 4rem;
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+.swiper-slide {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.swiper-button-next,
+.swiper-button-prev {
+  color: var(--gold);
+  width: 44px;
+  height: 44px;
+  background: var(--bg-card);
+  border: 1.5px solid var(--border);
+  border-radius: 50%;
+  transition: all 0.2s;
+}
+
+.swiper-button-next:hover,
+.swiper-button-prev:hover {
+  border-color: var(--gold);
+  background: var(--primary-dim);
+}
+
+.swiper-button-next::after,
+.swiper-button-prev::after {
+  font-size: 18px;
+  font-weight: 900;
+}
+
+.swiper-pagination-bullet {
+  background: var(--border-bright);
+  opacity: 1;
+  width: 10px;
+  height: 10px;
+}
+
+.swiper-pagination-bullet-active {
+  background: var(--gold);
+  width: 24px;
+  border-radius: 5px;
+}
+
+/* Card Styles */
+.pr-card {
+  background: var(--bg-card);
+  border: 1.5px solid var(--border);
+  border-radius: 24px;
+  padding: 2.5rem;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  height: 100%;
+  max-width: 420px;
+  margin: 0 auto;
+}
+
+.pr-card:hover {
+  border-color: var(--border-accent);
+  transform: translateY(-6px);
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+}
+
+.pr-card.featured {
+  border-color: var(--primary);
+  box-shadow: 0 10px 15px -3px rgba(99, 102, 241, 0.1);
+}
+
+.pr-card.featured:hover {
+  box-shadow: 0 25px 50px -12px rgba(99, 102, 241, 0.25);
+}
+
+.pr-card.annual {
+  border-color: #8b5cf6;
+  box-shadow: 0 10px 15px -3px rgba(139, 92, 246, 0.1);
+}
+
+.pr-card.annual:hover {
+  box-shadow: 0 25px 50px -12px rgba(139, 92, 246, 0.25);
+}
+
+.pr-card.enterprise {
+  border-color: #fbbf24;
+  box-shadow: 0 10px 15px -3px rgba(251, 191, 36, 0.1);
+}
+
+.pr-card.enterprise:hover {
+  box-shadow: 0 25px 50px -12px rgba(251, 191, 36, 0.25);
+}
+
+.pr-card.featured-ent {
+  border-color: #f59e0b;
+  box-shadow: 0 15px 20px -5px rgba(245, 158, 11, 0.2);
+}
+
+/* Top border gradient */
+.pr-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  border-radius: 20px 20px 0 0;
+}
+
+.pr-card.standard::before {
+  background: var(--border);
+}
+
+.pr-card.featured::before {
+  background: linear-gradient(90deg, #6366f1, #818cf8, #a5b4fc);
+}
+
+.pr-card.annual::before {
+  background: linear-gradient(90deg, #8b5cf6, #a78bfa, #c4b5fd);
+}
+
+.pr-card.enterprise::before {
+  background: linear-gradient(90deg, #fbbf24, #f59e0b);
+}
+
+/* Badges */
+.pr-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.65rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 5px 14px;
+  border-radius: 100px;
+  margin-bottom: 1.5rem;
+  width: fit-content;
+}
+
+.pr-badge.free {
+  background: rgba(34, 197, 94, 0.1);
+  color: #4ade80;
+  border: 1px solid rgba(34, 197, 94, 0.2);
+}
+
+.pr-badge.pro {
+  background: rgba(99, 102, 241, 0.12);
+  color: #818cf8;
+  border: 1px solid rgba(99, 102, 241, 0.25);
+}
+
+.pr-badge.annual-badge {
+  background: rgba(139, 92, 246, 0.12);
+  color: #a78bfa;
+  border: 1px solid rgba(139, 92, 246, 0.25);
+}
+
+.pr-badge.ent {
+  background: rgba(251, 191, 36, 0.1);
+  color: #fbbf24;
+  border: 1px solid rgba(251, 191, 36, 0.2);
+}
+
+/* Ribbons */
+.pr-ribbon {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: rgba(99, 102, 241, 0.15);
+  border: 1px solid rgba(99, 102, 241, 0.3);
+  color: #818cf8;
+  font-size: 0.6rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 4px 12px;
+  border-radius: 100px;
+}
+
+.pr-savings-badge {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: rgba(34, 197, 94, 0.15);
+  border: 1px solid rgba(34, 197, 94, 0.3);
+  color: #22c55e;
+  font-size: 0.6rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 4px 12px;
+  border-radius: 100px;
+}
+
+/* Tier Name */
+.pr-tier-name {
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  letter-spacing: -0.02em;
+  margin-bottom: 0.4rem;
+}
+
+/* Description */
+.pr-desc {
+  font-size: 0.88rem;
+  color: var(--text-secondary);
+  line-height: 1.65;
+  margin-bottom: 1.75rem;
+  min-height: 42px;
+}
+
+/* Price */
+.pr-price {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  margin: 1rem 0 0.6rem;
+}
+
+.pr-price-currency {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  align-self: flex-start;
+  margin-top: 6px;
+}
+
+.pr-price-amount {
+  font-size: 3.4rem;
+  font-weight: 900;
+  letter-spacing: -0.05em;
+  color: var(--text-primary);
+  line-height: 1;
+}
+
+.pr-price-period {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  font-weight: 500;
+  align-self: flex-end;
+  padding-bottom: 6px;
+}
+
+.pr-price-compare {
+  font-size: 0.85rem;
+  color: #22c55e;
+  font-weight: 600;
+  margin-top: 0.5rem;
+}
+
+.pr-student-count {
+  font-size: 0.9rem;
+  color: var(--gold);
+  font-weight: 700;
+  margin-top: 0.5rem;
+}
+
+/* Divider */
+.pr-divider {
+  height: 1px;
+  background: var(--border);
+  margin: 1.5rem 0;
+}
+
+/* Features */
+.pr-features {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-bottom: 2rem;
+  flex: 1;
+}
+
+.pr-feature {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  font-size: 0.88rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+.pr-feature strong {
+  color: var(--text-primary);
+  font-weight: 700;
+}
+
+.pr-feature.dim {
+  color: var(--border-bright);
+  opacity: 0.6;
+}
+
+.pr-feature-check {
+  width: 20px;
+  height: 20px;
+  min-width: 20px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-top: 2px;
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.pr-feature-check.on {
+  background: rgba(34, 197, 94, 0.15);
+  color: #22c55e;
+}
+
+.pr-feature-check.on.gold {
+  background: rgba(251, 191, 36, 0.15);
+  color: #fbbf24;
+}
+
+.pr-feature-check.off {
+  background: rgba(148, 163, 184, 0.1);
+  color: var(--border-bright);
+}
+
+/* CTA Buttons */
+.pr-cta {
+  display: block;
+  width: 100%;
+  padding: 13px 20px;
+  border-radius: 10px;
+  text-align: center;
+  font-size: 0.9rem;
+  font-weight: 700;
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+  font-family: 'Outfit', sans-serif;
+  transition: all 0.2s;
+}
+
+.pr-cta.primary {
+  background: linear-gradient(135deg, #6366f1, #818cf8);
+  color: #fff;
+  box-shadow: 0 4px 18px rgba(99, 102, 241, 0.3);
+}
+
+.pr-cta.primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 28px rgba(99, 102, 241, 0.45);
+}
+
+.pr-cta.annual-cta {
+  background: linear-gradient(135deg, #8b5cf6, #a78bfa);
+  color: #fff;
+  box-shadow: 0 4px 18px rgba(139, 92, 246, 0.3);
+}
+
+.pr-cta.annual-cta:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 28px rgba(139, 92, 246, 0.45);
+}
+
+.pr-cta.ghost {
+  background: transparent;
+  color: var(--text-muted);
+  border: 1px solid var(--border);
+}
+
+.pr-cta.ghost:hover {
+  background: var(--primary-dim);
+  color: var(--text-primary);
+  border-color: var(--border-bright);
+}
+
+.pr-cta.gold {
+  background: linear-gradient(135deg, #fbbf24, #f59e0b);
+  color: #0a0d14;
+}
+
+.pr-cta.gold:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 28px rgba(251, 191, 36, 0.35);
+}
+
+.pr-cta-note {
+  text-align: center;
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  margin-top: 10px;
+  font-weight: 500;
+}
+
+/* Trust Band */
+.pr-trust-band {
+  max-width: 900px;
+  margin: 3rem auto 5rem;
+  padding: 0 2rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1rem;
+}
+
+.pr-trust-item {
+  background: var(--bg-card);
+  border: 1.5px solid var(--border);
+  border-radius: 14px;
+  padding: 1.5rem;
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+  transition: all 0.2s;
+}
+
+.pr-trust-item:hover {
+  border-color: var(--gold);
+  transform: translateY(-2px);
+}
+
+.pr-trust-icon {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  background: var(--primary-dim);
+  border: 1px solid var(--border-accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: var(--gold);
+}
+
+.pr-trust-title {
+  font-size: 0.86rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 4px;
+}
+
+.pr-trust-desc {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  line-height: 1.55;
+}
+
+/* Footer */
+.pr-footer {
+  border-top: 1px solid var(--border);
+  padding: 2.5rem 2rem;
+  text-align: center;
+  background: var(--bg);
+}
+
+.pr-footer p {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  line-height: 1.8;
+}
+
+.pr-footer a {
+  color: var(--text-muted);
+  text-decoration: none;
+}
+
+.pr-footer a:hover {
+  color: var(--gold);
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .enterpriseSwiper {
+    max-width: 450px;
+  }
+}
+
+@media (max-width: 768px) {
+  .pr-grid-individual {
+    grid-template-columns: 1fr;
+    max-width: 420px;
+    margin: 0 auto;
+  }
+
+  .pr-plan-toggle {
+    flex-direction: column;
+    width: 100%;
+    max-width: 300px;
+  }
+
+  .pr-toggle-btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .enterpriseSwiper {
+    max-width: 380px;
+  }
+
+  .swiper-button-next,
+  .swiper-button-prev {
+    display: none;
+  }
+
+  .pr-hero h1 {
+    font-size: 2.2rem;
+  }
+
+  .pr-trust-band {
+    grid-template-columns: 1fr;
+  }
+}

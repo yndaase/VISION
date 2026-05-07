@@ -32,7 +32,7 @@ https://console.firebase.google.com/project/vision-education-main/settings/gener
 #### Option A: Shows a Location ✅
 Example: `us-central1`, `europe-west1`, `europe-west2`
 
-**Action:** Great! It's already set. Write it here: _______________
+**Action:** Great! It's already set. Write it here: __dufaiult_____________
 
 **Next:** Go to Step 2
 
@@ -221,7 +221,7 @@ You see "Sign-in method" tab and providers
 4. Toggle **"Enable"** to ON
 5. Click **"Save"**
 
-**Enabled?** _______________
+**Enabled?** __yes_____________
 
 ---
 
@@ -238,7 +238,7 @@ You see "Sign-in method" tab and providers
    - `localhost`
 7. Click **"Save"**
 
-**Enabled?** _______________
+**Enabled?** ____yrs___________
 
 **Next:** Go to Step 5
 
@@ -270,7 +270,7 @@ You see storage interface
 4. Click **"Done"**
 5. Wait 30 seconds
 
-**Enabled?** _______________
+**Enabled?** ______is for paid users i cant pay_________
 
 **Next:** Go to Step 6
 
@@ -313,7 +313,7 @@ service firebase.storage {
 }
 ```
 
-**Did it publish successfully?** _______________
+**Did it publish successfully?** ______no_________
 
 **Next:** Go to Step 7
 
