@@ -11,8 +11,16 @@ let classes = [];
 /**
  * Initialize dashboard on page load
  */
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
   loadUserSession();
+  
+  // Wait for Firebase Auth to be ready before loading data
+  if (typeof window.waitForAuth === 'function') {
+    console.log('[Enterprise Dashboard] Waiting for Firebase Auth...');
+    await window.waitForAuth(5000);
+    console.log('[Enterprise Dashboard] Firebase Auth ready');
+  }
+  
   loadDashboardData();
   setupNavigation();
   setupEventListeners();

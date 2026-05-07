@@ -110,6 +110,10 @@ async function waitForAuth(timeoutMs = 3000) {
   return authWaitPromise;
 }
 
+// Export waitForAuth as window function for use in other scripts
+window.waitForAuth = waitForAuth;
+export { waitForAuth };
+
 /* ─────────────────────────────────────────────────────────────
    USER DATABASE  (Firestore collection: "users")
    Document ID = lowercased email address
