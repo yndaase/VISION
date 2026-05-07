@@ -1,0 +1,862 @@
+/* =====================================================
+   TEACHER DASHBOARD STYLES
+   Classroom management interface
+   ===================================================== */
+
+.teacher-dashboard-page {
+  display: flex;
+  min-height: 100vh;
+  background: var(--bg-primary);
+  font-family: 'Outfit', sans-serif;
+}
+
+/* ─────────────────────────────────────────────────────
+   SIDE NAVIGATION
+   ───────────────────────────────────────────────────── */
+.teacher-dash-sidenav {
+  width: 280px;
+  background: var(--bg-card);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  left: 0;
+  top: 0;
+  height: 100vh;
+  z-index: 100;
+}
+
+.teacher-dash-logo {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 2rem 1.5rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.teacher-dash-logo-text {
+  flex: 1;
+}
+
+.teacher-dash-logo-name {
+  font-size: 1rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  line-height: 1.2;
+}
+
+.teacher-dash-logo-subtitle {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.teacher-dash-nav {
+  flex: 1;
+  padding: 1.5rem 1rem;
+  overflow-y: auto;
+}
+
+.teacher-dash-nav-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.875rem 1rem;
+  margin-bottom: 0.5rem;
+  border-radius: 12px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-decoration: none;
+  transition: all 0.2s;
+  position: relative;
+}
+
+.teacher-dash-nav-item:hover {
+  background: rgba(16, 185, 129, 0.08);
+  color: var(--text-primary);
+}
+
+.teacher-dash-nav-item.active {
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: white;
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+}
+
+.teacher-dash-nav-item svg {
+  flex-shrink: 0;
+}
+
+.teacher-dash-badge {
+  margin-left: auto;
+  padding: 0.25rem 0.5rem;
+  background: rgba(16, 185, 129, 0.15);
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #10b981;
+}
+
+.teacher-dash-nav-item.active .teacher-dash-badge {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+}
+
+.teacher-dash-sidenav-footer {
+  padding: 1.5rem 1rem;
+  border-top: 1px solid var(--border);
+}
+
+.teacher-dash-logout-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  width: 100%;
+  padding: 0.875rem 1rem;
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  border-radius: 12px;
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #ef4444;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.teacher-dash-logout-btn:hover {
+  background: rgba(239, 68, 68, 0.15);
+  border-color: #ef4444;
+}
+
+/* ─────────────────────────────────────────────────────
+   MAIN CONTENT
+   ───────────────────────────────────────────────────── */
+.teacher-dash-main {
+  flex: 1;
+  margin-left: 280px;
+  min-height: 100vh;
+}
+
+.teacher-dash-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 2rem 3rem;
+  background: var(--bg-card);
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+
+.teacher-dash-header-left {
+  flex: 1;
+}
+
+.teacher-dash-page-title {
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  margin-bottom: 0.25rem;
+}
+
+.teacher-dash-breadcrumb {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.teacher-dash-header-right {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.teacher-dash-user-menu {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.5rem 1rem;
+  background: rgba(16, 185, 129, 0.08);
+  border-radius: 12px;
+}
+
+.teacher-dash-user-avatar {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #10b981, #059669);
+  border-radius: 10px;
+  font-size: 1rem;
+  font-weight: 800;
+  color: white;
+}
+
+.teacher-dash-user-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.teacher-dash-user-name {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.teacher-dash-user-role {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+/* ─────────────────────────────────────────────────────
+   CONTENT SECTIONS
+   ───────────────────────────────────────────────────── */
+.teacher-dash-content {
+  padding: 3rem;
+}
+
+.teacher-dash-section {
+  display: none;
+}
+
+.teacher-dash-section.active {
+  display: block;
+}
+
+.teacher-dash-section-title {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  margin-bottom: 2rem;
+}
+
+.teacher-dash-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 2rem;
+}
+
+/* ─────────────────────────────────────────────────────
+   WELCOME BANNER
+   ───────────────────────────────────────────────────── */
+.teacher-dash-welcome-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 2rem 2.5rem;
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(5, 150, 105, 0.05));
+  border: 1px solid rgba(16, 185, 129, 0.2);
+  border-radius: 16px;
+  margin-bottom: 3rem;
+}
+
+.teacher-dash-welcome-content h2 {
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  margin-bottom: 0.5rem;
+}
+
+.teacher-dash-welcome-content p {
+  font-size: 1rem;
+  color: var(--text-secondary);
+}
+
+.teacher-dash-welcome-date {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #10b981;
+  padding: 0.75rem 1.25rem;
+  background: rgba(16, 185, 129, 0.1);
+  border-radius: 10px;
+}
+
+/* ─────────────────────────────────────────────────────
+   STATS CARDS
+   ───────────────────────────────────────────────────── */
+.teacher-dash-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.5rem;
+  margin-bottom: 3rem;
+}
+
+.teacher-dash-stat-card {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 2rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  transition: all 0.2s;
+}
+
+.teacher-dash-stat-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+}
+
+.teacher-dash-stat-card.green .teacher-dash-stat-icon {
+  background: rgba(16, 185, 129, 0.1);
+  color: #10b981;
+}
+
+.teacher-dash-stat-card.blue .teacher-dash-stat-icon {
+  background: rgba(59, 130, 246, 0.1);
+  color: #3b82f6;
+}
+
+.teacher-dash-stat-card.purple .teacher-dash-stat-icon {
+  background: rgba(139, 92, 246, 0.1);
+  color: #8b5cf6;
+}
+
+.teacher-dash-stat-card.orange .teacher-dash-stat-icon {
+  background: rgba(249, 115, 22, 0.1);
+  color: #f97316;
+}
+
+.teacher-dash-stat-icon {
+  width: 56px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  flex-shrink: 0;
+}
+
+.teacher-dash-stat-content {
+  flex: 1;
+}
+
+.teacher-dash-stat-label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  margin-bottom: 0.5rem;
+}
+
+.teacher-dash-stat-value {
+  font-size: 2rem;
+  font-weight: 900;
+  color: var(--text-primary);
+  margin-bottom: 0.25rem;
+}
+
+.teacher-dash-stat-change {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.teacher-dash-stat-change.positive {
+  color: #10b981;
+}
+
+/* ─────────────────────────────────────────────────────
+   QUICK ACTIONS
+   ───────────────────────────────────────────────────── */
+.teacher-dash-quick-actions {
+  margin-bottom: 3rem;
+}
+
+.teacher-dash-action-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+}
+
+.teacher-dash-action-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 1.25rem 1.5rem;
+  background: var(--bg-card);
+  border: 2px solid var(--border);
+  border-radius: 12px;
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.teacher-dash-action-btn:hover {
+  background: rgba(16, 185, 129, 0.05);
+  border-color: #10b981;
+  color: #10b981;
+  transform: translateY(-2px);
+}
+
+/* ─────────────────────────────────────────────────────
+   SCHEDULE
+   ───────────────────────────────────────────────────── */
+.teacher-dash-schedule {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 2rem;
+}
+
+.teacher-dash-schedule-empty {
+  text-align: center;
+  padding: 3rem 2rem;
+}
+
+.teacher-dash-schedule-empty svg {
+  color: var(--text-muted);
+  margin-bottom: 1rem;
+}
+
+.teacher-dash-schedule-empty p {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+/* ─────────────────────────────────────────────────────
+   CLASSES GRID
+   ───────────────────────────────────────────────────── */
+.teacher-dash-classes-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+}
+
+.teacher-dash-class-card-empty {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 4rem 2rem;
+  background: var(--bg-card);
+  border: 2px dashed var(--border);
+  border-radius: 16px;
+}
+
+.teacher-dash-class-card-empty svg {
+  color: var(--text-muted);
+  margin-bottom: 1rem;
+}
+
+.teacher-dash-class-card-empty p {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text-secondary);
+  margin-bottom: 1.5rem;
+}
+
+/* ─────────────────────────────────────────────────────
+   FILTERS & SEARCH
+   ───────────────────────────────────────────────────── */
+.teacher-dash-filters {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.teacher-dash-search {
+  flex: 1;
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.teacher-dash-search svg {
+  position: absolute;
+  left: 1rem;
+  color: var(--text-muted);
+  pointer-events: none;
+}
+
+.teacher-dash-search input {
+  width: 100%;
+  padding: 0.875rem 1rem 0.875rem 3rem;
+  background: var(--bg-card);
+  border: 2px solid var(--border);
+  border-radius: 12px;
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.95rem;
+  color: var(--text-primary);
+  transition: all 0.2s;
+}
+
+.teacher-dash-search input:focus {
+  outline: none;
+  border-color: #10b981;
+  background: rgba(16, 185, 129, 0.05);
+}
+
+.teacher-dash-filter-select {
+  padding: 0.875rem 1rem;
+  background: var(--bg-card);
+  border: 2px solid var(--border);
+  border-radius: 12px;
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.teacher-dash-filter-select:focus {
+  outline: none;
+  border-color: #10b981;
+}
+
+/* ─────────────────────────────────────────────────────
+   TABLES
+   ───────────────────────────────────────────────────── */
+.teacher-dash-table-container {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+.teacher-dash-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.teacher-dash-table thead {
+  background: rgba(16, 185, 129, 0.05);
+}
+
+.teacher-dash-table th {
+  padding: 1rem 1.5rem;
+  text-align: left;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.teacher-dash-table td {
+  padding: 1.25rem 1.5rem;
+  border-top: 1px solid var(--border);
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+}
+
+.teacher-dash-table tbody tr:hover {
+  background: rgba(16, 185, 129, 0.03);
+}
+
+.teacher-dash-table-empty {
+  text-align: center;
+  padding: 4rem 2rem !important;
+}
+
+.teacher-dash-table-empty svg {
+  color: var(--text-muted);
+  margin-bottom: 1rem;
+}
+
+.teacher-dash-table-empty p {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text-secondary);
+}
+
+/* ─────────────────────────────────────────────────────
+   BUTTONS
+   ───────────────────────────────────────────────────── */
+.teacher-dash-primary-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.875rem 1.5rem;
+  background: linear-gradient(135deg, #10b981, #059669);
+  border: none;
+  border-radius: 12px;
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: white;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+}
+
+.teacher-dash-primary-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+}
+
+/* ─────────────────────────────────────────────────────
+   PLACEHOLDER
+   ───────────────────────────────────────────────────── */
+.teacher-dash-placeholder {
+  text-align: center;
+  padding: 6rem 2rem;
+  background: var(--bg-card);
+  border: 2px dashed var(--border);
+  border-radius: 16px;
+}
+
+.teacher-dash-placeholder svg {
+  color: var(--text-muted);
+  margin-bottom: 1.5rem;
+}
+
+.teacher-dash-placeholder p {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text-secondary);
+  margin-bottom: 0.5rem;
+}
+
+.teacher-dash-placeholder span {
+  font-size: 0.95rem;
+  color: var(--text-muted);
+  display: block;
+}
+
+/* ─────────────────────────────────────────────────────
+   RESOURCES GRID
+   ───────────────────────────────────────────────────── */
+.teacher-dash-resources-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2rem;
+}
+
+.teacher-dash-resource-card {
+  padding: 2rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  transition: all 0.2s;
+}
+
+.teacher-dash-resource-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+}
+
+.teacher-dash-resource-icon {
+  width: 64px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(16, 185, 129, 0.1);
+  border-radius: 12px;
+  color: #10b981;
+  margin-bottom: 1.5rem;
+}
+
+.teacher-dash-resource-card h3 {
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  margin-bottom: 0.75rem;
+}
+
+.teacher-dash-resource-card p {
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: var(--text-secondary);
+  margin-bottom: 1.5rem;
+}
+
+.teacher-dash-resource-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #10b981;
+  text-decoration: none;
+  transition: opacity 0.2s;
+}
+
+.teacher-dash-resource-link:hover {
+  opacity: 0.8;
+}
+
+/* ─────────────────────────────────────────────────────
+   SETTINGS
+   ───────────────────────────────────────────────────── */
+.teacher-dash-settings-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 2rem;
+}
+
+.teacher-dash-settings-card {
+  padding: 2rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+}
+
+.teacher-dash-settings-card h3 {
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  margin-bottom: 1.5rem;
+}
+
+.teacher-dash-form-group {
+  margin-bottom: 1.5rem;
+}
+
+.teacher-dash-form-group label {
+  display: block;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 0.5rem;
+}
+
+.teacher-dash-form-group input[type="text"],
+.teacher-dash-form-group input[type="email"] {
+  width: 100%;
+  padding: 0.875rem 1rem;
+  background: rgba(255, 255, 255, 0.02);
+  border: 2px solid var(--border);
+  border-radius: 12px;
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.95rem;
+  color: var(--text-primary);
+  transition: all 0.2s;
+}
+
+.teacher-dash-form-group input:focus {
+  outline: none;
+  border-color: #10b981;
+  background: rgba(16, 185, 129, 0.05);
+}
+
+/* Toggle Switch */
+.teacher-dash-toggle {
+  position: relative;
+  display: inline-block;
+  width: 50px;
+  height: 28px;
+}
+
+.teacher-dash-toggle input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.teacher-dash-toggle-slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: var(--border);
+  transition: 0.3s;
+  border-radius: 28px;
+}
+
+.teacher-dash-toggle-slider:before {
+  position: absolute;
+  content: "";
+  height: 20px;
+  width: 20px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  transition: 0.3s;
+  border-radius: 50%;
+}
+
+.teacher-dash-toggle input:checked + .teacher-dash-toggle-slider {
+  background-color: #10b981;
+}
+
+.teacher-dash-toggle input:checked + .teacher-dash-toggle-slider:before {
+  transform: translateX(22px);
+}
+
+/* ─────────────────────────────────────────────────────
+   RESPONSIVE
+   ───────────────────────────────────────────────────── */
+@media (max-width: 1200px) {
+  .teacher-dash-stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .teacher-dash-action-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .teacher-dash-classes-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .teacher-dash-resources-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .teacher-dash-settings-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .teacher-dash-sidenav {
+    transform: translateX(-100%);
+  }
+
+  .teacher-dash-main {
+    margin-left: 0;
+  }
+
+  .teacher-dash-header {
+    padding: 1.5rem;
+  }
+
+  .teacher-dash-content {
+    padding: 1.5rem;
+  }
+
+  .teacher-dash-stats-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .teacher-dash-action-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .teacher-dash-classes-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .teacher-dash-resources-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .teacher-dash-welcome-banner {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .teacher-dash-filters {
+    flex-direction: column;
+  }
+
+  .teacher-dash-search,
+  .teacher-dash-filter-select {
+    width: 100%;
+  }
+}

@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Teacher Portal | Vision Education</title>
+  <meta name="description" content="Teacher login portal for Vision Education - Manage your classes, track student progress, and create assessments." />
+  <link rel="icon" type="image/png" href="favicon.png" />
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  
+  <link rel="stylesheet" href="theme.css" />
+  <link rel="stylesheet" href="teacher-login.css" />
+  <script src="theme.js"></script>
+</head>
+
+<body class="teacher-login-page">
+  <!-- Background -->
+  <div class="teacher-bg">
+    <span class="teacher-orb teacher-orb-1"></span>
+    <span class="teacher-orb teacher-orb-2"></span>
+    <span class="teacher-orb teacher-orb-3"></span>
+    <div class="teacher-grid"></div>
+  </div>
+
+  <!-- Top Navigation -->
+  <nav class="teacher-nav">
+    <a href="/" class="teacher-nav-brand">
+      <img src="assets/logo.png" alt="Vision Education" width="32" height="32">
+      <span>Vision <span class="accent">Education</span></span>
+    </a>
+    <div class="teacher-nav-links">
+      <a href="/enterprise-login.html" class="teacher-nav-link">Admin Portal</a>
+      <a href="/login.html" class="teacher-nav-link">Student Login</a>
+      <button class="theme-toggle-btn" onclick="toggleTheme()" aria-label="Toggle theme">
+        <svg class="theme-icon-dark" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        <svg class="theme-icon-light" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Main Container -->
+  <div class="teacher-container">
+    
+    <!-- Left Panel: Branding -->
+    <aside class="teacher-left">
+      <div class="teacher-left-content">
+        <div class="teacher-badge">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          Teacher Portal
+        </div>
+        
+        <h1 class="teacher-heading">
+          Empower Your<br />
+          <span class="gradient-text">Teaching Journey</span>
+        </h1>
+        
+        <p class="teacher-tagline">
+          Comprehensive classroom management tools designed for Ghanaian educators. Track student progress, create assessments, and deliver personalized learning experiences.
+        </p>
+
+        <div class="teacher-features">
+          <div class="teacher-feature-item">
+            <div class="teacher-feature-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            </div>
+            <div>
+              <div class="teacher-feature-title">Class Management</div>
+              <div class="teacher-feature-desc">Organize students, assign work, track attendance</div>
+            </div>
+          </div>
+
+          <div class="teacher-feature-item">
+            <div class="teacher-feature-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+            </div>
+            <div>
+              <div class="teacher-feature-title">Quiz Creation</div>
+              <div class="teacher-feature-desc">Build custom assessments with AI assistance</div>
+            </div>
+          </div>
+
+          <div class="teacher-feature-item">
+            <div class="teacher-feature-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 3v18h18"/><path d="M18 17V9M13 17V5M8 17v-3"/></svg>
+            </div>
+            <div>
+              <div class="teacher-feature-title">Performance Analytics</div>
+              <div class="teacher-feature-desc">Real-time insights into student progress</div>
+            </div>
+          </div>
+
+          <div class="teacher-feature-item">
+            <div class="teacher-feature-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            </div>
+            <div>
+              <div class="teacher-feature-title">Student Communication</div>
+              <div class="teacher-feature-desc">Direct messaging and feedback tools</div>
+            </div>
+          </div>
+
+          <div class="teacher-feature-item">
+            <div class="teacher-feature-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M19 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2z"/><path d="M3 9h18M9 21V9"/></svg>
+            </div>
+            <div>
+              <div class="teacher-feature-title">Resource Library</div>
+              <div class="teacher-feature-desc">Access WAEC-aligned teaching materials</div>
+            </div>
+          </div>
+
+          <div class="teacher-feature-item">
+            <div class="teacher-feature-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+            </div>
+            <div>
+              <div class="teacher-feature-title">Excel Export</div>
+              <div class="teacher-feature-desc">Download grades and reports instantly</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="teacher-quote">
+          <div class="teacher-quote-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M6 17h3l2-4V7H5v6h3zm8 0h3l2-4V7h-6v6h3z"/></svg>
+          </div>
+          <p class="teacher-quote-text">
+            "Vision Education has transformed how I teach. The analytics help me identify struggling students early, and the quiz builder saves me hours every week."
+          </p>
+          <div class="teacher-quote-author">
+            <strong>Mrs. Akosua Mensah</strong>
+            <span>Mathematics Teacher, Accra Academy</span>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Right Panel: Login Form -->
+    <main class="teacher-right">
+      <div class="teacher-card">
+        
+        <!-- Status Badge -->
+        <div class="teacher-status-badge">
+          <span class="status-dot"></span>
+          <span>Teacher Portal Active</span>
+        </div>
+
+        <!-- Header -->
+        <div class="teacher-card-header">
+          <h2>Welcome Back, Educator</h2>
+          <p>Sign in to access your classroom dashboard</p>
+        </div>
+
+        <!-- Quick Stats Preview (if returning user) -->
+        <div class="teacher-preview" id="teacherPreview" style="display: none;">
+          <div class="teacher-preview-item">
+            <div class="teacher-preview-value" id="previewStudents">--</div>
+            <div class="teacher-preview-label">Students</div>
+          </div>
+          <div class="teacher-preview-item">
+            <div class="teacher-preview-value" id="previewClasses">--</div>
+            <div class="teacher-preview-label">Classes</div>
+          </div>
+          <div class="teacher-preview-item">
+            <div class="teacher-preview-value" id="previewQuizzes">--</div>
+            <div class="teacher-preview-label">Quizzes</div>
+          </div>
+        </div>
+
+        <!-- Login Form -->
+        <form class="teacher-form" id="teacherLoginForm" onsubmit="handleTeacherLogin(event)">
+          
+          <!-- School/Institution (Optional) -->
+          <div class="teacher-field">
+            <label class="teacher-label" for="teacherSchool">
+              School/Institution
+              <span class="teacher-label-hint">Optional</span>
+            </label>
+            <div class="teacher-input-wrap">
+              <span class="teacher-input-icon">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+              </span>
+              <input 
+                type="text" 
+                id="teacherSchool" 
+                class="teacher-input" 
+                placeholder="e.g. Accra Academy"
+                autocomplete="organization"
+              />
+            </div>
+          </div>
+
+          <!-- Email -->
+          <div class="teacher-field">
+            <label class="teacher-label" for="teacherEmail">Email Address</label>
+            <div class="teacher-input-wrap">
+              <span class="teacher-input-icon">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+              </span>
+              <input 
+                type="email" 
+                id="teacherEmail" 
+                class="teacher-input" 
+                placeholder="teacher@school.edu.gh"
+                autocomplete="email"
+                required
+              />
+            </div>
+            <span class="teacher-error" id="errTeacherEmail"></span>
+          </div>
+
+          <!-- Password -->
+          <div class="teacher-field">
+            <label class="teacher-label" for="teacherPassword">
+              Password
+              <a href="#" class="teacher-forgot-link" onclick="showTeacherForgotPassword(); return false;">Forgot?</a>
+            </label>
+            <div class="teacher-input-wrap">
+              <span class="teacher-input-icon">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+              </span>
+              <input 
+                type="password" 
+                id="teacherPassword" 
+                class="teacher-input" 
+                placeholder="••••••••"
+                autocomplete="current-password"
+                required
+              />
+              <button type="button" class="teacher-eye-btn" onclick="toggleTeacherPasswordVisibility('teacherPassword', this)" aria-label="Toggle password">
+                <svg class="eye-open" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                <svg class="eye-closed" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+              </button>
+            </div>
+            <span class="teacher-error" id="errTeacherPassword"></span>
+          </div>
+
+          <!-- Remember Me -->
+          <div class="teacher-checkbox-wrap">
+            <label class="teacher-checkbox-label">
+              <input type="checkbox" id="teacherRememberMe" />
+              <span class="teacher-checkbox-custom"></span>
+              <span>Keep me signed in</span>
+            </label>
+          </div>
+
+          <!-- General Error -->
+          <div class="teacher-error" id="errTeacherGeneral" style="margin-top: 0.5rem;"></div>
+
+          <!-- Submit Button -->
+          <button type="submit" class="teacher-submit-btn" id="teacherSubmitBtn">
+            <span>Sign In to Dashboard</span>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </button>
+        </form>
+
+        <!-- Divider -->
+        <div class="teacher-divider">
+          <span>New to Vision Education?</span>
+        </div>
+
+        <!-- Sign Up / Contact -->
+        <div class="teacher-signup-options">
+          <a href="/login.html?tab=signup&role=teacher" class="teacher-signup-btn">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+            Create Teacher Account
+          </a>
+          <a href="mailto:support@visionedu.site?subject=Teacher Account Request" class="teacher-contact-btn">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            Contact for School Setup
+          </a>
+        </div>
+
+        <!-- Footer Links -->
+        <div class="teacher-footer-links">
+          <a href="/privacy">Privacy Policy</a>
+          <span>•</span>
+          <a href="/terms">Terms of Service</a>
+          <span>•</span>
+          <a href="mailto:support@visionedu.site">Support</a>
+        </div>
+
+      </div>
+    </main>
+
+  </div>
+
+  <!-- Scripts -->
+  <script type="module" src="firebase.js"></script>
+  <script src="auth.js"></script>
+  <script src="teacher-login.js"></script>
+</body>
+</html>

@@ -1,0 +1,728 @@
+/* =====================================================
+   ENTERPRISE WELCOME PAGE STYLES
+   Professional institutional portal landing page
+   ===================================================== */
+
+.enterprise-page {
+  min-height: 100vh;
+  background: var(--bg-primary);
+  font-family: 'Outfit', sans-serif;
+  overflow-x: hidden;
+}
+
+/* ─────────────────────────────────────────────────────
+   ANIMATED BACKGROUND
+   ───────────────────────────────────────────────────── */
+.ent-welcome-bg {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.ent-welcome-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(100px);
+  opacity: 0.1;
+  animation: welcomeFloat 30s ease-in-out infinite;
+}
+
+.ent-welcome-orb-1 {
+  width: 500px;
+  height: 500px;
+  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  top: -150px;
+  left: -150px;
+  animation-delay: 0s;
+}
+
+.ent-welcome-orb-2 {
+  width: 600px;
+  height: 600px;
+  background: linear-gradient(135deg, #10b981, #059669);
+  bottom: -200px;
+  right: -200px;
+  animation-delay: 10s;
+}
+
+.ent-welcome-orb-3 {
+  width: 450px;
+  height: 450px;
+  background: linear-gradient(135deg, #3b82f6, #2563eb);
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  animation-delay: 20s;
+}
+
+@keyframes welcomeFloat {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33% { transform: translate(40px, -40px) scale(1.1); }
+  66% { transform: translate(-30px, 30px) scale(0.9); }
+}
+
+.ent-welcome-grid {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: 
+    linear-gradient(rgba(99, 102, 241, 0.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(99, 102, 241, 0.02) 1px, transparent 1px);
+  background-size: 80px 80px;
+  opacity: 0.5;
+}
+
+/* ─────────────────────────────────────────────────────
+   TOP NAVIGATION
+   ───────────────────────────────────────────────────── */
+.ent-welcome-nav {
+  position: relative;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.5rem 4rem;
+  background: rgba(255, 255, 255, 0.02);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--border);
+}
+
+.ent-welcome-nav-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  text-decoration: none;
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  transition: opacity 0.2s;
+}
+
+.ent-welcome-nav-brand:hover {
+  opacity: 0.8;
+}
+
+.ent-welcome-nav-brand .accent {
+  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.ent-welcome-nav-links {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+}
+
+.ent-welcome-nav-link {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.ent-welcome-nav-link:hover {
+  color: var(--text-primary);
+}
+
+/* ─────────────────────────────────────────────────────
+   MAIN CONTENT
+   ───────────────────────────────────────────────────── */
+.ent-welcome-main {
+  position: relative;
+  z-index: 10;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 4rem 2rem;
+}
+
+/* ─────────────────────────────────────────────────────
+   HERO SECTION
+   ───────────────────────────────────────────────────── */
+.ent-welcome-hero {
+  text-align: center;
+  padding: 4rem 2rem;
+  margin-bottom: 4rem;
+}
+
+.ent-welcome-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1.25rem;
+  background: rgba(99, 102, 241, 0.1);
+  border: 1px solid rgba(99, 102, 241, 0.2);
+  border-radius: 100px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #6366f1;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 2rem;
+}
+
+.ent-welcome-heading {
+  font-size: 4.5rem;
+  font-weight: 900;
+  line-height: 1.1;
+  color: var(--text-primary);
+  margin-bottom: 1.5rem;
+  letter-spacing: -0.03em;
+}
+
+.gradient-text {
+  background: linear-gradient(135deg, #6366f1, #8b5cf6, #10b981);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.ent-welcome-tagline {
+  font-size: 1.25rem;
+  line-height: 1.7;
+  color: var(--text-secondary);
+  max-width: 800px;
+  margin: 0 auto 3rem;
+}
+
+.ent-welcome-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 2rem;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 2rem;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  backdrop-filter: blur(10px);
+}
+
+.ent-welcome-stat {
+  text-align: center;
+}
+
+.ent-welcome-stat-value {
+  font-size: 2.5rem;
+  font-weight: 900;
+  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 0.5rem;
+}
+
+.ent-welcome-stat-label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* ─────────────────────────────────────────────────────
+   ROLE SELECTION CARDS
+   ───────────────────────────────────────────────────── */
+.ent-welcome-roles {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 2rem;
+  margin-bottom: 6rem;
+}
+
+.ent-welcome-role-card {
+  background: var(--bg-card);
+  border: 2px solid var(--border);
+  border-radius: 24px;
+  padding: 3rem;
+  transition: all 0.3s;
+  position: relative;
+  overflow: hidden;
+}
+
+.ent-welcome-role-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background: linear-gradient(90deg, transparent, var(--accent-color), transparent);
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.ent-welcome-role-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+}
+
+.ent-welcome-role-card:hover::before {
+  opacity: 1;
+}
+
+.admin-card {
+  --accent-color: #6366f1;
+}
+
+.teacher-card {
+  --accent-color: #10b981;
+}
+
+.ent-welcome-role-icon {
+  width: 64px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(99, 102, 241, 0.1);
+  border-radius: 16px;
+  color: var(--accent-color);
+  margin-bottom: 2rem;
+}
+
+.teacher-card .ent-welcome-role-icon {
+  background: rgba(16, 185, 129, 0.1);
+}
+
+.ent-welcome-role-title {
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  margin-bottom: 1rem;
+}
+
+.ent-welcome-role-desc {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: var(--text-secondary);
+  margin-bottom: 2rem;
+}
+
+.ent-welcome-role-features {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 2rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.ent-welcome-role-features li {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+}
+
+.ent-welcome-role-features li svg {
+  color: var(--accent-color);
+  flex-shrink: 0;
+}
+
+.ent-welcome-role-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  width: 100%;
+  padding: 1.125rem 2rem;
+  border: none;
+  border-radius: 12px;
+  font-family: 'Outfit', sans-serif;
+  font-size: 1rem;
+  font-weight: 700;
+  color: white;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.admin-btn {
+  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  box-shadow: 0 4px 20px rgba(99, 102, 241, 0.3);
+}
+
+.admin-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 30px rgba(99, 102, 241, 0.4);
+}
+
+.teacher-btn {
+  background: linear-gradient(135deg, #10b981, #059669);
+  box-shadow: 0 4px 20px rgba(16, 185, 129, 0.3);
+}
+
+.teacher-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 30px rgba(16, 185, 129, 0.4);
+}
+
+.ent-welcome-role-note {
+  text-align: center;
+  margin-top: 1rem;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+/* ─────────────────────────────────────────────────────
+   FEATURES OVERVIEW
+   ───────────────────────────────────────────────────── */
+.ent-welcome-features {
+  text-align: center;
+  margin-bottom: 6rem;
+}
+
+.ent-welcome-features-title {
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  margin-bottom: 1rem;
+}
+
+.ent-welcome-features-subtitle {
+  font-size: 1.1rem;
+  color: var(--text-secondary);
+  margin-bottom: 4rem;
+}
+
+.ent-welcome-features-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2rem;
+}
+
+.ent-welcome-feature-item {
+  padding: 2rem;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  transition: all 0.3s;
+}
+
+.ent-welcome-feature-item:hover {
+  background: rgba(99, 102, 241, 0.05);
+  border-color: rgba(99, 102, 241, 0.2);
+  transform: translateY(-4px);
+}
+
+.ent-welcome-feature-icon {
+  width: 56px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(99, 102, 241, 0.1);
+  border-radius: 12px;
+  color: #6366f1;
+  margin: 0 auto 1.5rem;
+}
+
+.ent-welcome-feature-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 0.75rem;
+}
+
+.ent-welcome-feature-desc {
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: var(--text-secondary);
+}
+
+/* ─────────────────────────────────────────────────────
+   TRUSTED BY SECTION
+   ───────────────────────────────────────────────────── */
+.ent-welcome-trust {
+  text-align: center;
+  padding: 3rem 2rem;
+  margin-bottom: 4rem;
+}
+
+.ent-welcome-trust-label {
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+  margin-bottom: 2rem;
+}
+
+.ent-welcome-trust-logos {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.5rem;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.ent-welcome-trust-logo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1.5rem;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  transition: all 0.2s;
+}
+
+.ent-welcome-trust-logo:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(99, 102, 241, 0.3);
+}
+
+.ent-welcome-trust-logo-icon {
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  border-radius: 10px;
+  font-size: 0.9rem;
+  font-weight: 800;
+  color: white;
+}
+
+.ent-welcome-trust-logo span {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-align: center;
+}
+
+/* ─────────────────────────────────────────────────────
+   CTA SECTION
+   ───────────────────────────────────────────────────── */
+.ent-welcome-cta {
+  text-align: center;
+  padding: 4rem 2rem;
+  background: rgba(99, 102, 241, 0.05);
+  border: 1px solid rgba(99, 102, 241, 0.15);
+  border-radius: 24px;
+  margin-bottom: 4rem;
+}
+
+.ent-welcome-cta-title {
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  margin-bottom: 1rem;
+}
+
+.ent-welcome-cta-desc {
+  font-size: 1.1rem;
+  color: var(--text-secondary);
+  margin-bottom: 2.5rem;
+}
+
+.ent-welcome-cta-buttons {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.ent-welcome-cta-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1.125rem 2rem;
+  border-radius: 12px;
+  font-family: 'Outfit', sans-serif;
+  font-size: 1rem;
+  font-weight: 700;
+  text-decoration: none;
+  transition: all 0.2s;
+}
+
+.ent-welcome-cta-btn.primary {
+  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  color: white;
+  box-shadow: 0 4px 20px rgba(99, 102, 241, 0.3);
+}
+
+.ent-welcome-cta-btn.primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 30px rgba(99, 102, 241, 0.4);
+}
+
+.ent-welcome-cta-btn.secondary {
+  background: rgba(255, 255, 255, 0.05);
+  border: 2px solid var(--border);
+  color: var(--text-primary);
+}
+
+.ent-welcome-cta-btn.secondary:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(99, 102, 241, 0.3);
+}
+
+/* ─────────────────────────────────────────────────────
+   FOOTER
+   ───────────────────────────────────────────────────── */
+.ent-welcome-footer {
+  position: relative;
+  z-index: 10;
+  padding: 3rem 4rem;
+  border-top: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.01);
+}
+
+.ent-welcome-footer-content {
+  max-width: 1400px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.ent-welcome-footer-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: var(--text-primary);
+}
+
+.ent-welcome-footer-brand .accent {
+  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.ent-welcome-footer-links {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}
+
+.ent-welcome-footer-links a {
+  color: var(--text-muted);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.ent-welcome-footer-links a:hover {
+  color: var(--text-primary);
+}
+
+.ent-welcome-footer-copy {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+/* ─────────────────────────────────────────────────────
+   RESPONSIVE
+   ───────────────────────────────────────────────────── */
+@media (max-width: 1200px) {
+  .ent-welcome-heading {
+    font-size: 3.5rem;
+  }
+
+  .ent-welcome-features-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .ent-welcome-trust-logos {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .ent-welcome-nav {
+    padding: 1rem 1.5rem;
+  }
+
+  .ent-welcome-nav-links {
+    gap: 1rem;
+  }
+
+  .ent-welcome-nav-link {
+    font-size: 0.85rem;
+  }
+
+  .ent-welcome-main {
+    padding: 2rem 1rem;
+  }
+
+  .ent-welcome-hero {
+    padding: 2rem 1rem;
+  }
+
+  .ent-welcome-heading {
+    font-size: 2.5rem;
+  }
+
+  .ent-welcome-tagline {
+    font-size: 1rem;
+  }
+
+  .ent-welcome-stats {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+    padding: 1.5rem;
+  }
+
+  .ent-welcome-stat-value {
+    font-size: 2rem;
+  }
+
+  .ent-welcome-roles {
+    grid-template-columns: 1fr;
+  }
+
+  .ent-welcome-features-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .ent-welcome-trust-logos {
+    grid-template-columns: 1fr;
+  }
+
+  .ent-welcome-cta-buttons {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .ent-welcome-cta-btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .ent-welcome-footer {
+    padding: 2rem 1.5rem;
+  }
+}
+
+/* ─────────────────────────────────────────────────────
+   DARK MODE ADJUSTMENTS
+   ───────────────────────────────────────────────────── */
+[data-theme="dark"] .ent-welcome-role-card {
+  background: rgba(255, 255, 255, 0.03);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+[data-theme="dark"] .ent-welcome-feature-item {
+  background: rgba(255, 255, 255, 0.03);
+  border-color: rgba(255, 255, 255, 0.1);
+}

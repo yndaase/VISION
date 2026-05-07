@@ -1,255 +1,411 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dark">
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <script>
-      document.documentElement.setAttribute("data-theme", "dark");
-    </script>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Teacher Dashboard | Vision Enterprise</title>
-    <meta name="robots" content="noindex, nofollow" />
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-      tailwind.config = {
-        theme: {
-          extend: {
-            fontFamily: {
-              sans: ['Outfit', 'sans-serif'],
-              mono: ['JetBrains Mono', 'monospace'],
-            },
-            colors: {
-              navy: {
-                DEFAULT: '#05080f',
-                light: '#0a101f',
-              },
-              gold: {
-                DEFAULT: '#fbbf24',
-                light: '#fcd34d',
-                dark: '#f59e0b'
-              }
-            },
-          }
-        }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Teacher Dashboard | Vision Education</title>
+  <meta name="description" content="Teacher dashboard - Manage your classes, track student progress, create quizzes, and deliver personalized learning." />
+  <link rel="icon" type="image/png" href="favicon.png" />
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  
+  <link rel="stylesheet" href="theme.css" />
+  <link rel="stylesheet" href="dashboard.css" />
+  <link rel="stylesheet" href="teacher-dashboard.css" />
+  
+  <script src="theme.js"></script>
+  <script>
+    // Auth guard - redirect if not teacher/enterprise/admin
+    (function() {
+      const session = sessionStorage.getItem('waec_session') || localStorage.getItem('waec_session');
+      if (!session) {
+        window.location.href = '/teacher-login.html';
+        return;
       }
-    </script>
-    <style>
-        .glass { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.1); }
-        .glass-card { background: rgba(255, 255, 255, 0.02); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.08); transition: all 0.4s ease; }
-        
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: rgba(5, 8, 15, 0.1); }
-        ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); border-radius: 10px; }
-        ::-webkit-scrollbar-thumb:hover { background: rgba(251, 191, 36, 0.3); }
-
-        .section { display: none; }
-        .section.active { display: block; animation: fadeIn 0.4s ease; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
-        .ent-input {
-            width: 100%; padding: 12px 16px; background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 12px; color: #fff; outline: none; transition: border-color 0.2s;
+      try {
+        const user = JSON.parse(session);
+        const validRoles = ['teacher', 'enterprise', 'admin'];
+        if (!validRoles.includes(user.role)) {
+          window.location.href = '/teacher-login.html';
         }
-        .ent-input:focus { border-color: #fbbf24; }
-        select.ent-input option { background: #05080f; color: #fff; }
-
-        .nav-item { transition: all 0.3s; }
-        .nav-item.active { background: linear-gradient(90deg, rgba(251, 191, 36, 0.1), transparent); color: #fbbf24; border-left: 3px solid #fbbf24; padding-left: 20px; font-weight: 800; }
-        
-        #toast {
-            position: fixed; bottom: 2rem; right: 2rem; background: #fbbf24; color: #000;
-            padding: 1rem 2rem; border-radius: 12px; font-weight: 800; transform: translateY(100px); opacity: 0;
-            transition: all 0.3s cubic-bezier(0.17, 0.84, 0.44, 1); z-index: 1000; box-shadow: 0 10px 30px rgba(251,191,36,0.3);
-        }
-        #toast.show { transform: translateY(0); opacity: 1; }
-    </style>
+      } catch(e) {
+        window.location.href = '/teacher-login.html';
+      }
+    })();
+  </script>
 </head>
-<body class="bg-navy text-white font-sans min-h-screen grid lg:grid-cols-[280px_1fr] overflow-hidden selection:bg-gold-500/30 relative">
 
-    <div class="fixed inset-0 pointer-events-none z-0">
-       <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/dark-matter.png')] opacity-10"></div>
-       <div class="absolute -top-[200px] -right-[200px] w-[500px] h-[500px] bg-gold-500/10 blur-[120px] rounded-full"></div>
+<body class="teacher-dashboard-page">
+  
+  <!-- Side Navigation -->
+  <aside class="teacher-dash-sidenav">
+    <div class="teacher-dash-logo">
+      <img src="assets/logo.png" alt="Logo" width="40" height="40">
+      <div class="teacher-dash-logo-text">
+        <div class="teacher-dash-logo-name">Vision Education</div>
+        <div class="teacher-dash-logo-subtitle">Teacher Portal</div>
+      </div>
     </div>
 
-    <!-- SIDEBAR -->
-    <aside class="hidden lg:flex flex-col border-r border-white/5 bg-navy-light/50 backdrop-blur-3xl h-screen overflow-y-auto sticky top-0 z-20">
-        <div class="p-10 border-b border-white/5 flex flex-col items-center text-center">
-            <div class="w-16 h-16 bg-gradient-to-br from-gold-500 to-yellow-600 rounded-2xl flex items-center justify-center text-2xl font-black text-navy shadow-[0_10px_25px_rgba(245,158,11,0.2)] mb-4" id="schoolLogo">V</div>
-            <div class="font-black text-lg text-white mb-2" id="schoolName">Vision Institute</div>
-            <div class="px-3 py-1 bg-gold-500/10 border border-gold-500/20 text-[10px] font-black text-gold-500 uppercase tracking-widest rounded-full">Faculty Member</div>
+    <nav class="teacher-dash-nav">
+      <a href="#overview" class="teacher-dash-nav-item active" data-section="overview">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+        <span>Overview</span>
+      </a>
+      
+      <a href="#my-classes" class="teacher-dash-nav-item" data-section="my-classes">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        <span>My Classes</span>
+        <span class="teacher-dash-badge" id="classCount">0</span>
+      </a>
+      
+      <a href="#students" class="teacher-dash-nav-item" data-section="students">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        <span>Students</span>
+        <span class="teacher-dash-badge" id="studentCount">0</span>
+      </a>
+      
+      <a href="#quizzes" class="teacher-dash-nav-item" data-section="quizzes">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        <span>Quizzes</span>
+      </a>
+      
+      <a href="#grades" class="teacher-dash-nav-item" data-section="grades">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 3v18h18"/><path d="M18 17V9M13 17V5M8 17v-3"/></svg>
+        <span>Grades</span>
+      </a>
+      
+      <a href="#resources" class="teacher-dash-nav-item" data-section="resources">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M19 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2z"/><path d="M3 9h18M9 21V9"/></svg>
+        <span>Resources</span>
+      </a>
+      
+      <a href="#settings" class="teacher-dash-nav-item" data-section="settings">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M12 1v6M12 17v6M4.22 4.22l4.24 4.24M15.54 15.54l4.24 4.24M1 12h6M17 12h6M4.22 19.78l4.24-4.24M15.54 8.46l4.24-4.24"/></svg>
+        <span>Settings</span>
+      </a>
+    </nav>
+
+    <div class="teacher-dash-sidenav-footer">
+      <button class="teacher-dash-logout-btn" onclick="handleLogout()">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg>
+        <span>Logout</span>
+      </button>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="teacher-dash-main">
+    
+    <!-- Top Bar -->
+    <header class="teacher-dash-header">
+      <div class="teacher-dash-header-left">
+        <h1 class="teacher-dash-page-title" id="pageTitle">Overview</h1>
+        <div class="teacher-dash-breadcrumb" id="breadcrumb">Dashboard / Overview</div>
+      </div>
+      
+      <div class="teacher-dash-header-right">
+        <button class="theme-toggle-btn" onclick="toggleTheme()" aria-label="Toggle theme">
+          <svg class="theme-icon-dark" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+          <svg class="theme-icon-light" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+        </button>
+        
+        <div class="teacher-dash-user-menu">
+          <div class="teacher-dash-user-avatar" id="userAvatar">T</div>
+          <div class="teacher-dash-user-info">
+            <div class="teacher-dash-user-name" id="userName">Teacher</div>
+            <div class="teacher-dash-user-role" id="userSubject">Subject Teacher</div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Content Sections -->
+    <div class="teacher-dash-content">
+      
+      <!-- OVERVIEW SECTION -->
+      <section class="teacher-dash-section active" id="section-overview">
+        
+        <!-- Welcome Banner -->
+        <div class="teacher-dash-welcome-banner">
+          <div class="teacher-dash-welcome-content">
+            <h2>Welcome back, <span id="welcomeName">Teacher</span>! 👋</h2>
+            <p>Here's what's happening with your classes today</p>
+          </div>
+          <div class="teacher-dash-welcome-date" id="currentDate">Monday, May 7, 2026</div>
         </div>
 
-        <nav class="flex-1 px-6 py-8 space-y-4">
-            <button class="nav-item active w-full flex items-center gap-4 px-4 py-3 rounded-r-xl font-bold text-sm text-gray-400 hover:text-white" onclick="navTo('assignments', this)">
-                <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
-                Core Assignments
-            </button>
-            <button class="nav-item w-full flex items-center gap-4 px-4 py-3 rounded-r-xl font-bold text-sm text-gray-400 hover:text-white" onclick="navTo('create', this)">
-                <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
-                Deploy Protocol
-            </button>
-        </nav>
+        <!-- Stats Cards -->
+        <div class="teacher-dash-stats-grid">
+          <div class="teacher-dash-stat-card green">
+            <div class="teacher-dash-stat-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+            </div>
+            <div class="teacher-dash-stat-content">
+              <div class="teacher-dash-stat-label">My Classes</div>
+              <div class="teacher-dash-stat-value" id="totalClasses">0</div>
+              <div class="teacher-dash-stat-change">Active this term</div>
+            </div>
+          </div>
 
-        <div class="p-6 border-t border-white/5 space-y-2 mt-auto">
-            <button onclick="handleLogout()" class="w-full flex items-center gap-4 px-4 py-3 rounded-xl font-bold text-sm text-red-400 hover:bg-white/5 transition-colors">
-                <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
-                Logout
-            </button>
+          <div class="teacher-dash-stat-card blue">
+            <div class="teacher-dash-stat-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            </div>
+            <div class="teacher-dash-stat-content">
+              <div class="teacher-dash-stat-label">Total Students</div>
+              <div class="teacher-dash-stat-value" id="totalStudents">0</div>
+              <div class="teacher-dash-stat-change">Across all classes</div>
+            </div>
+          </div>
+
+          <div class="teacher-dash-stat-card purple">
+            <div class="teacher-dash-stat-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            </div>
+            <div class="teacher-dash-stat-content">
+              <div class="teacher-dash-stat-label">Quizzes Created</div>
+              <div class="teacher-dash-stat-value" id="totalQuizzes">0</div>
+              <div class="teacher-dash-stat-change">This month</div>
+            </div>
+          </div>
+
+          <div class="teacher-dash-stat-card orange">
+            <div class="teacher-dash-stat-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 3v18h18"/><path d="M18 17V9M13 17V5M8 17v-3"/></svg>
+            </div>
+            <div class="teacher-dash-stat-content">
+              <div class="teacher-dash-stat-label">Avg Performance</div>
+              <div class="teacher-dash-stat-value" id="avgPerformance">0%</div>
+              <div class="teacher-dash-stat-change positive">+3% this week</div>
+            </div>
+          </div>
         </div>
-    </aside>
 
-    <!-- MAIN CONTENT -->
-    <main class="flex-1 p-8 lg:p-14 overflow-y-auto relative z-10">
-        <header class="mb-12">
-            <h2 class="text-4xl font-black text-white tracking-tight mb-2">Faculty Terminal</h2>
-            <p class="text-gray-400 font-medium">Welcome, <span id="teacherNameDisplay" class="text-gold-400 font-bold">Teacher</span>! Enforce institutional curriculum logic.</p>
-        </header>
-
-        <!-- ASSIGNMENTS VIEW -->
-        <section id="sec-assignments" class="section active space-y-8">
-            <div class="glass-card p-10 rounded-[2.5rem] border-white/5 flex flex-col md:flex-row justify-between items-center gap-6 bg-gradient-to-r from-transparent to-gold-500/5 border-r-gold-500/20">
-                <div>
-                   <h3 class="text-2xl font-black mb-2">Active Protocols</h3>
-                   <p class="text-[10px] uppercase tracking-widest text-gray-500 font-black">Institutional Subsystems</p>
-                </div>
-                <button class="px-8 py-4 bg-gradient-to-r from-gold-500 to-yellow-600 text-navy font-black text-sm uppercase tracking-widest rounded-xl hover:scale-105 transition-transform shadow-lg shadow-gold-500/20" onclick="navTo('create', document.querySelectorAll('.nav-item')[1])">+ New Protocol</button>
-            </div>
+        <!-- Quick Actions -->
+        <div class="teacher-dash-quick-actions">
+          <h2 class="teacher-dash-section-title">Quick Actions</h2>
+          <div class="teacher-dash-action-grid">
+            <button class="teacher-dash-action-btn" onclick="showCreateQuizModal()">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+              <span>Create Quiz</span>
+            </button>
             
-            <div id="assignmentList" class="space-y-4">
-                <!-- Dynamically populated -->
-            </div>
-        </section>
-
-        <!-- CREATE ASSIGNMENT -->
-        <section id="sec-create" class="section">
-            <div class="glass-card max-w-3xl p-12 rounded-[3rem] border-white/5 relative overflow-hidden">
-                <div class="absolute -right-20 -top-20 w-48 h-48 bg-gold-500/10 blur-[80px] rounded-full z-0"></div>
-                <div class="relative z-10">
-                    <h3 class="text-3xl font-black mb-8 border-b border-white/5 pb-6 text-white">Initialization Sequence</h3>
-                    
-                    <div class="space-y-6">
-                        <div class="space-y-2">
-                            <label class="text-[10px] font-black uppercase tracking-widest text-gray-500">Subject Core</label>
-                            <select id="hwSubject" class="ent-input bg-black/20 text-white font-bold h-14">
-                                <option value="maths">Core Mathematics</option>
-                                <option value="english">English Language</option>
-                                <option value="science">Integrated Science</option>
-                                <option value="social">Social Studies</option>
-                                <option value="physics">Physics</option>
-                                <option value="chemistry">Chemistry</option>
-                                <option value="biology">Biology</option>
-                                <option value="economics">Economics</option>
-                                <option value="cs">Computer Science</option>
-                            </select>
-                        </div>
-
-                        <div class="space-y-2">
-                            <label class="text-[10px] font-black uppercase tracking-widest text-gray-500">Directive Title</label>
-                            <input id="hwTitle" placeholder="e.g. Logic Circuit Evaluation" class="ent-input bg-black/20 text-white h-14">
-                        </div>
-
-                        <div class="space-y-2">
-                            <label class="text-[10px] font-black uppercase tracking-widest text-gray-500">Mission Parameters (Instructions)</label>
-                            <textarea id="hwBody" rows="5" placeholder="Specify execution constraints and rubric references..." class="ent-input bg-black/20 text-gray-300 py-4"></textarea>
-                        </div>
-
-                        <div class="space-y-2">
-                            <label class="text-[10px] font-black uppercase tracking-widest text-gray-500">Termination Date</label>
-                            <input type="date" id="hwDate" class="ent-input bg-black/20 text-white h-14">
-                        </div>
-
-                        <button class="mt-8 px-10 py-5 bg-white text-navy font-black text-sm uppercase tracking-widest rounded-xl hover:bg-gray-200 w-full shadow-xl transition-all" onclick="createAssignment()">Enforce Directive</button>
-                    </div>
-                </div>
-            </div>
-        </section>
-    </main>
-
-    <div id="toast"></div>
-
-    <script src="auth.js"></script>
-    <script>
-        const session = typeof checkAuth === 'function' ? checkAuth() : JSON.parse(sessionStorage.getItem('waec_session') || '{}');
-        if (!session.email || session.role !== 'teacher') { window.location.href = "/login.html"; }
-
-        function initUI() {
-            document.getElementById("teacherNameDisplay").textContent = session.name || "Teacher";
-            document.getElementById("schoolName").textContent = session.institutionName || "Vision Institution";
-            document.getElementById("schoolLogo").textContent = (session.institutionName || "V").charAt(0).toUpperCase();
-            document.getElementById("hwDate").min = new Date().toISOString().split('T')[0];
-            renderAssignments();
-        }
-
-        function navTo(id, btnElement) {
-            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-            document.getElementById('sec-' + id).classList.add('active');
-            document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
-            if (btnElement) btnElement.classList.add('active');
-        }
-
-        function getAssignments() { return JSON.parse(localStorage.getItem('vision_assignments') || '[]'); }
-        function saveAssignments(a) { localStorage.setItem('vision_assignments', JSON.stringify(a)); }
-
-        function renderAssignments() {
-            const allAssignments = getAssignments();
-            const institutionAssignments = allAssignments.filter(a => a.institutionId === session.institutionId);
-            const listEl = document.getElementById("assignmentList");
+            <button class="teacher-dash-action-btn" onclick="navigateToSection('grades')">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+              <span>Grade Assignments</span>
+            </button>
             
-            if (institutionAssignments.length === 0) {
-                listEl.innerHTML = `<div class="p-16 text-center border border-white/5 rounded-[2rem] bg-white/5"><p class="text-xl font-bold mb-2 text-white">No deployments found</p><p class="text-sm text-gray-500">Initiate a protocol to engage learners.</p></div>`;
-                return;
-            }
+            <button class="teacher-dash-action-btn" onclick="exportGrades()">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+              <span>Export Grades</span>
+            </button>
+            
+            <button class="teacher-dash-action-btn" onclick="navigateToSection('resources')">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M19 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2z"/><path d="M3 9h18M9 21V9"/></svg>
+              <span>Browse Resources</span>
+            </button>
+          </div>
+        </div>
 
-            institutionAssignments.sort((a, b) => b.createdAt - a.createdAt);
+        <!-- Today's Schedule -->
+        <div class="teacher-dash-schedule">
+          <h2 class="teacher-dash-section-title">Today's Schedule</h2>
+          <div class="teacher-dash-schedule-list" id="scheduleList">
+            <div class="teacher-dash-schedule-empty">
+              <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM7 10h5v5H7z"/></svg>
+              <p>No classes scheduled for today</p>
+            </div>
+          </div>
+        </div>
 
-            listEl.innerHTML = institutionAssignments.map(a => `
-                <div class="glass border-white/5 p-8 rounded-3xl flex flex-col md:flex-row justify-between items-start gap-6 hover:bg-white/5 transition-colors group">
-                    <div class="flex-1 min-w-0">
-                        <div class="flex flex-wrap items-center gap-4 mb-4">
-                            <span class="px-3 py-1 bg-gold-500/10 border border-gold-500/20 text-[10px] font-black text-gold-400 uppercase tracking-widest rounded-lg">${a.subject}</span>
-                            <span class="text-xs font-bold text-gray-500">Deadline: ${new Date(a.dueDate).toLocaleDateString()}</span>
-                        </div>
-                        <h4 class="font-black text-xl text-white mb-2 truncate">${esc(a.title)}</h4>
-                        <p class="text-sm text-gray-400 line-clamp-2 leading-relaxed mb-4">${esc(a.body)}</p>
-                        <div class="text-[10px] font-bold text-gray-600 uppercase tracking-widest">Enforced by ${esc(a.teacherName)}</div>
-                    </div>
-                    ${a.teacherEmail === session.email ? `<button class="shrink-0 px-6 py-3 bg-red-400/10 text-red-400 border border-red-500/20 text-xs font-black rounded-xl hover:bg-red-400/20 transition-colors" onclick="deleteAssignment('${a.id}')">Revoke Protocol</button>` : ''}
-                </div>
-            `).join("");
-        }
+      </section>
 
-        function createAssignment() {
-            const subject = document.getElementById("hwSubject").value, title = document.getElementById("hwTitle").value.trim(), body = document.getElementById("hwBody").value.trim(), dueDate = document.getElementById("hwDate").value;
-            if (!title || !body || !dueDate) { showToast("Critical error: Missing parameters."); return; }
+      <!-- MY CLASSES SECTION -->
+      <section class="teacher-dash-section" id="section-my-classes">
+        <div class="teacher-dash-section-header">
+          <h2 class="teacher-dash-section-title">My Classes</h2>
+          <button class="teacher-dash-primary-btn" onclick="showCreateClassModal()">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+            Create Class
+          </button>
+        </div>
 
-            const assignments = getAssignments();
-            assignments.push({
-                id: 'hw_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9),
-                teacherEmail: session.email, teacherName: session.name || "Teacher",
-                institutionId: session.institutionId, institutionName: session.institutionName,
-                subject: subject, title: title, body: body, dueDate: new Date(dueDate).toISOString(), createdAt: Date.now()
-            });
-            saveAssignments(assignments);
+        <div class="teacher-dash-classes-grid" id="classesGrid">
+          <div class="teacher-dash-class-card-empty">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+            <p>No classes yet</p>
+            <button class="teacher-dash-primary-btn" onclick="showCreateClassModal()">Create Your First Class</button>
+          </div>
+        </div>
+      </section>
 
-            showToast("Protocol deployed.");
-            document.getElementById("hwTitle").value = ""; document.getElementById("hwBody").value = ""; document.getElementById("hwDate").value = "";
-            navTo('assignments', document.querySelectorAll('.nav-item')[0]);
-            renderAssignments();
-        }
+      <!-- STUDENTS SECTION -->
+      <section class="teacher-dash-section" id="section-students">
+        <h2 class="teacher-dash-section-title">My Students</h2>
 
-        function deleteAssignment(id) {
-            if (!confirm("Are you sure you want to revoke this protocol?")) return;
-            let assignments = getAssignments();
-            saveAssignments(assignments.filter(a => a.id !== id));
-            showToast("Protocol revoked.");
-            renderAssignments();
-        }
+        <!-- Search and Filters -->
+        <div class="teacher-dash-filters">
+          <div class="teacher-dash-search">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+            <input type="text" placeholder="Search students..." id="studentSearch" onkeyup="filterStudents()">
+          </div>
+          
+          <select class="teacher-dash-filter-select" id="classFilterStudents" onchange="filterStudents()">
+            <option value="">All Classes</option>
+          </select>
+        </div>
 
-        function showToast(msg) { const t = document.getElementById("toast"); t.innerText = msg; t.classList.add("show"); setTimeout(() => t.classList.remove("show"), 3000); }
-        function esc(s) { return String(s || '').replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"); }
-        document.addEventListener("DOMContentLoaded", initUI);
-    </script>
+        <!-- Students Table -->
+        <div class="teacher-dash-table-container">
+          <table class="teacher-dash-table">
+            <thead>
+              <tr>
+                <th>Student</th>
+                <th>Class</th>
+                <th>Performance</th>
+                <th>Last Active</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="studentsTableBody">
+              <tr>
+                <td colspan="5" class="teacher-dash-table-empty">
+                  <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                  <p>No students found</p>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- QUIZZES SECTION -->
+      <section class="teacher-dash-section" id="section-quizzes">
+        <div class="teacher-dash-section-header">
+          <h2 class="teacher-dash-section-title">Quiz Management</h2>
+          <button class="teacher-dash-primary-btn" onclick="showCreateQuizModal()">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+            Create Quiz
+          </button>
+        </div>
+
+        <div class="teacher-dash-placeholder">
+          <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          <p>AI-Powered Quiz Builder</p>
+          <span>Create custom assessments with AI assistance, aligned to WAEC syllabus</span>
+          <button class="teacher-dash-primary-btn" onclick="showCreateQuizModal()" style="margin-top:1.5rem;">Create Your First Quiz</button>
+        </div>
+      </section>
+
+      <!-- GRADES SECTION -->
+      <section class="teacher-dash-section" id="section-grades">
+        <div class="teacher-dash-section-header">
+          <h2 class="teacher-dash-section-title">Grade Management</h2>
+          <button class="teacher-dash-primary-btn" onclick="exportGrades()">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+            Export to Excel
+          </button>
+        </div>
+
+        <div class="teacher-dash-placeholder">
+          <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M3 3v18h18"/><path d="M18 17V9M13 17V5M8 17v-3"/></svg>
+          <p>Grade Book</p>
+          <span>Track student performance, assign grades, and export reports</span>
+        </div>
+      </section>
+
+      <!-- RESOURCES SECTION -->
+      <section class="teacher-dash-section" id="section-resources">
+        <h2 class="teacher-dash-section-title">Teaching Resources</h2>
+
+        <div class="teacher-dash-resources-grid">
+          <div class="teacher-dash-resource-card">
+            <div class="teacher-dash-resource-icon">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+            </div>
+            <h3>WAEC Past Questions</h3>
+            <p>Access past examination questions aligned to the syllabus</p>
+            <a href="/waec-past-questions.html" class="teacher-dash-resource-link">Browse Questions →</a>
+          </div>
+
+          <div class="teacher-dash-resource-card">
+            <div class="teacher-dash-resource-icon">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M19 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2z"/><path d="M3 9h18M9 21V9"/></svg>
+            </div>
+            <h3>Learning Materials</h3>
+            <p>Curated teaching materials and lesson plans</p>
+            <a href="#" class="teacher-dash-resource-link" onclick="alert('Materials library coming soon!'); return false;">View Materials →</a>
+          </div>
+
+          <div class="teacher-dash-resource-card">
+            <div class="teacher-dash-resource-icon">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M19 13l-1.26-2.74L15 9l2.74-1.26L19 5l1.26 2.74L23 9l-2.74 1.26L19 13zM9 13l-2.26-4.74L2 6l4.74-2.26L9 1.5l2.26 4.74L16 8.26l-4.74 2.26L9 13zm10 9.5l-1.26-2.74L15 18.5l2.74-1.26L19 14.5l1.26 2.74L23 18.5l-2.74 1.26L19 22.5z"/></svg>
+            </div>
+            <h3>AI Learning Hub</h3>
+            <p>AI-powered tutoring and personalized learning paths</p>
+            <a href="/ai-learning.html" class="teacher-dash-resource-link">Explore AI Hub →</a>
+          </div>
+        </div>
+      </section>
+
+      <!-- SETTINGS SECTION -->
+      <section class="teacher-dash-section" id="section-settings">
+        <h2 class="teacher-dash-section-title">Teacher Settings</h2>
+        
+        <div class="teacher-dash-settings-grid">
+          <div class="teacher-dash-settings-card">
+            <h3>Profile Information</h3>
+            <div class="teacher-dash-form-group">
+              <label>Full Name</label>
+              <input type="text" id="settingsName" placeholder="Enter your name">
+            </div>
+            <div class="teacher-dash-form-group">
+              <label>Subject</label>
+              <input type="text" id="settingsSubject" placeholder="e.g. Mathematics">
+            </div>
+            <div class="teacher-dash-form-group">
+              <label>School</label>
+              <input type="text" id="settingsSchool" placeholder="Enter school name">
+            </div>
+            <button class="teacher-dash-primary-btn" onclick="saveTeacherSettings()">Save Changes</button>
+          </div>
+
+          <div class="teacher-dash-settings-card">
+            <h3>Preferences</h3>
+            <div class="teacher-dash-form-group">
+              <label>Email Notifications</label>
+              <label class="teacher-dash-toggle">
+                <input type="checkbox" id="emailNotifications" checked>
+                <span class="teacher-dash-toggle-slider"></span>
+              </label>
+            </div>
+            <div class="teacher-dash-form-group">
+              <label>Student Progress Alerts</label>
+              <label class="teacher-dash-toggle">
+                <input type="checkbox" id="progressAlerts" checked>
+                <span class="teacher-dash-toggle-slider"></span>
+              </label>
+            </div>
+            <div class="teacher-dash-form-group">
+              <label>Weekly Summary Report</label>
+              <label class="teacher-dash-toggle">
+                <input type="checkbox" id="weeklySummary">
+                <span class="teacher-dash-toggle-slider"></span>
+              </label>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- Scripts -->
+  <script type="module" src="firebase.js"></script>
+  <script src="auth.js"></script>
+  <script src="teacher-dashboard.js"></script>
 </body>
 </html>

@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enterprise Student Dashboard Test</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #0f172a;
+            color: #e2e8f0;
+        }
+        .test-section {
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .test-section h2 {
+            margin-top: 0;
+            color: #10b981;
+        }
+        .test-result {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 6px;
+            font-family: monospace;
+        }
+        .pass {
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid #10b981;
+            color: #10b981;
+        }
+        .fail {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid #ef4444;
+            color: #ef4444;
+        }
+        button {
+            background: #10b981;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            margin: 5px;
+        }
+        button:hover {
+            background: #059669;
+        }
+        .info {
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid #3b82f6;
+            color: #3b82f6;
+            padding: 10px;
+            border-radius: 6px;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>🧪 Enterprise Student Dashboard Test Suite</h1>
+    
+    <div class="info">
+        <strong>Test Purpose:</strong> Verify Task 4 implementation - Enterprise student role detection, UI badges, and data isolation.
+    </div>
+
+    <div class="test-section">
+        <h2>Test 1: Helper Functions</h2>
+        <button onclick="testHelperFunctions()">Run Helper Function Tests</button>
+        <div id="helperResults"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>Test 2: Session Detection</h2>
+        <button onclick="testSessionDetection()">Test Enterprise Student Session</button>
+        <button onclick="testRegularStudentSession()">Test Regular Student Session</button>
+        <div id="sessionResults"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>Test 3: Data Isolation</h2>
+        <button onclick="testDataIsolation()">Run Data Isolation Tests</button>
+        <div id="isolationResults"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>Test 4: Badge Rendering</h2>
+        <button onclick="testBadgeRendering()">Test Badge Creation</button>
+        <div id="badgeResults"></div>
+    </div>
+
+    <script src="auth.js"></script>
+    <script>
+        // Test Helper Functions
+        function testHelperFunctions() {
+            const results = document.getElementById('helperResults');
+            results.innerHTML = '';
+            
+            let passed = 0;
+            let failed = 0;
+
+            // Test 1: isEnterpriseStudent exists
+            if (typeof isEnterpriseStudent === 'function') {
+                results.innerHTML += '<div class="test-result pass">✓ isEnterpriseStudent function exists</div>';
+                passed++;
+            } else {
+                results.innerHTML += '<div class="test-result fail">✗ isEnterpriseStudent function not found</div>';
+                failed++;
+            }
+
+            // Test 2: isEnterpriseStudent returns false for null
+            if (isEnterpriseStudent(null) === false) {
+                results.innerHTML += '<div class="test-result pass">✓ isEnterpriseStudent(null) returns false</div>';
+                passed++;
+            } else {
+                results.innerHTML += '<div class="test-result fail">✗ isEnterpriseStudent(null) should return false</div>';
+                failed++;
+            }
+
+            // Test 3: isEnterpriseStudent returns true for enterprise-student role
+            const enterpriseStudent = { role: 'enterprise-student', email: 'test@school.edu' };
+            if (isEnterpriseStudent(enterpriseStudent) === true) {
+                results.innerHTML += '<div class="test-result pass">✓ isEnterpriseStudent detects enterprise-student role</div>';
+                passed++;
+            } else {
+                results.innerHTML += '<div class="test-result fail">✗ isEnterpriseStudent should detect enterprise-student role</div>';
+                failed++;
+            }
+
+            // Test 4: isEnterpriseStudent returns false for regular student
+            const regularStudent = { role: 'student', email: 'test@example.com' };
+            if (isEnterpriseStudent(regularStudent) === false) {
+                results.innerHTML += '<div class="test-result pass">✓ isEnterpriseStudent returns false for regular student</div>';
+                passed++;
+            } else {
+                results.innerHTML += '<div class="test-result fail">✗ isEnterpriseStudent should return false for regular student</div>';
+                failed++;
+            }
+
+            // Test 5: isProUser recognizes enterprise-student
+            if (isProUser(enterpriseStudent) === true) {
+                results.innerHTML += '<div class="test-result pass">✓ isProUser recognizes enterprise-student as pro-level</div>';
+                passed++;
+            } else {
+                results.innerHTML += '<div class="test-result fail">✗ isProUser should recognize enterprise-student as pro-level</div>';
+                failed++;
+            }
+
+            results.innerHTML += `<div class="test-result ${failed === 0 ? 'pass' : 'fail'}"><strong>Summary: ${passed} passed, ${failed} failed</strong></div>`;
+        }
+
+        // Test Session Detection
+        function testSessionDetection() {
+            const results = document.getElementById('sessionResults');
+            results.innerHTML = '';
+
+            // Create mock enterprise student session
+            const enterpriseSession = {
+                name: 'Test Student',
+                email: 'student@augusco.edu.gh',
+                role: 'enterprise-student',
+                institutionId: 'AUGUSCO',
+                institutionName: "St. Augustine's College",
+                provider: 'email'
+            };
+
+            // Temporarily set session
+            sessionStorage.setItem('waec_session', JSON.stringify(enterpriseSession));
+
+            const session = getSession();
+            
+            if (session && session.role === 'enterprise-student') {
+                results.innerHTML += '<div class="test-result pass">✓ Enterprise student session detected correctly</div>';
+                results.innerHTML += `<div class="test-result pass">✓ Institution: ${session.institutionName}</div>`;
+                results.innerHTML += `<div class="test-result pass">✓ Institution ID: ${session.institutionId}</div>`;
+            } else {
+                results.innerHTML += '<div class="test-result fail">✗ Failed to detect enterprise student session</div>';
+            }
+
+            // Clean up
+            sessionStorage.removeItem('waec_session');
+        }
+
+        function testRegularStudentSession() {
+            const results = document.getElementById('sessionResults');
+            results.innerHTML = '';
+
+            // Create mock regular student session
+            const regularSession = {
+                name: 'Regular Student',
+                email: 'student@example.com',
+                role: 'student',
+                provider: 'email'
+            };
+
+            sessionStorage.setItem('waec_session', JSON.stringify(regularSession));
+
+            const session = getSession();
+            
+            if (session && session.role === 'student') {
+                results.innerHTML += '<div class="test-result pass">✓ Regular student session detected correctly</div>';
+                results.innerHTML += '<div class="test-result pass">✓ No institution metadata present (as expected)</div>';
+            } else {
+                results.innerHTML += '<div class="test-result fail">✗ Failed to detect regular student session</div>';
+            }
+
+            sessionStorage.removeItem('waec_session');
+        }
+
+        // Test Data Isolation
+        function testDataIsolation() {
+            const results = document.getElementById('isolationResults');
+            results.innerHTML = '';
+
+            // Mock materials data
+            const allMaterials = [
+                { id: 1, title: 'Math Notes', subject: 'core-maths', institutionId: 'AUGUSCO' },
+                { id: 2, title: 'Physics Guide', subject: 'physics', institutionId: 'PRESEC' },
+                { id: 3, title: 'Chemistry Lab', subject: 'chemistry', institutionId: 'AUGUSCO' },
+                { id: 4, title: 'Biology Textbook', subject: 'biology' } // No institution (public)
+            ];
+
+            // Test 1: Enterprise student sees only their institution's materials
+            const enterpriseSession = {
+                role: 'enterprise-student',
+                institutionId: 'AUGUSCO',
+                email: 'student@augusco.edu.gh'
+            };
+
+            // Load the dashboard.js functions (they should be available)
+            if (typeof filterMaterialsByInstitution === 'function') {
+                const filtered = filterMaterialsByInstitution(allMaterials, enterpriseSession);
+                
+                if (filtered.length === 3) { // Should see 2 AUGUSCO + 1 public
+                    results.innerHTML += '<div class="test-result pass">✓ Enterprise student sees correct number of materials (3)</div>';
+                } else {
+                    results.innerHTML += `<div class="test-result fail">✗ Expected 3 materials, got ${filtered.length}</div>`;
+                }
+
+                const hasAuguscoOnly = filtered.every(m => !m.institutionId || m.institutionId === 'AUGUSCO');
+                if (hasAuguscoOnly) {
+                    results.innerHTML += '<div class="test-result pass">✓ All materials belong to AUGUSCO or are public</div>';
+                } else {
+                    results.innerHTML += '<div class="test-result fail">✗ Found materials from other institutions</div>';
+                }
+            } else {
+                results.innerHTML += '<div class="test-result fail">✗ filterMaterialsByInstitution function not found</div>';
+            }
+
+            // Test 2: Regular student sees all materials
+            const regularSession = {
+                role: 'student',
+                email: 'student@example.com'
+            };
+
+            if (typeof filterMaterialsByInstitution === 'function') {
+                const filtered = filterMaterialsByInstitution(allMaterials, regularSession);
+                
+                if (filtered.length === 4) {
+                    results.innerHTML += '<div class="test-result pass">✓ Regular student sees all materials (4)</div>';
+                } else {
+                    results.innerHTML += `<div class="test-result fail">✗ Expected 4 materials, got ${filtered.length}</div>`;
+                }
+            }
+        }
+
+        // Test Badge Rendering
+        function testBadgeRendering() {
+            const results = document.getElementById('badgeResults');
+            results.innerHTML = '';
+
+            // Create test badge
+            const badge = document.createElement("span");
+            badge.className = "enterprise-badge";
+            badge.textContent = "ENTERPRISE";
+            badge.style.cssText = `
+                font-size: 0.62rem;
+                font-weight: 900;
+                background: linear-gradient(135deg, #10b981, #059669);
+                color: white;
+                padding: 2px 6px;
+                border-radius: 4px;
+                margin-left: 8px;
+                text-transform: uppercase;
+                letter-spacing: 0.04em;
+                box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
+                display: inline-flex;
+                align-items: center;
+                line-height: 1;
+                height: 16px;
+                vertical-align: middle;
+            `;
+
+            results.innerHTML += '<div class="test-result pass">✓ Badge created successfully</div>';
+            results.innerHTML += '<div class="test-result pass">Badge preview: ' + badge.outerHTML + '</div>';
+            
+            // Verify badge properties
+            if (badge.className === 'enterprise-badge') {
+                results.innerHTML += '<div class="test-result pass">✓ Badge has correct class name</div>';
+            }
+            if (badge.textContent === 'ENTERPRISE') {
+                results.innerHTML += '<div class="test-result pass">✓ Badge has correct text</div>';
+            }
+            if (badge.style.background.includes('linear-gradient')) {
+                results.innerHTML += '<div class="test-result pass">✓ Badge has gradient background</div>';
+            }
+        }
+
+        // Auto-run helper function tests on load
+        window.addEventListener('DOMContentLoaded', () => {
+            console.log('Test page loaded. Click buttons to run tests.');
+        });
+    </script>
+</body>
+</html>

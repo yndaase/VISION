@@ -15,6 +15,39 @@ service cloud.firestore {
              get(/databases/$(database)/documents/users/$(request.auth.token.email)).data.role == 'admin';
     }
     
+    // Helper function to check if user is enterprise admin
+    function isEnterpriseAdmin() {
+      return isSignedIn() && 
+             exists(/databases/$(database)/documents/users/$(request.auth.token.email)) &&
+             get(/databases/$(database)/documents/users/$(request.auth.token.email)).data.role == 'enterprise';
+    }
+    
+    // Helper function to check if user is enterprise student
+    function isEnterpriseStudent() {
+      return isSignedIn() && 
+             exists(/databases/$(database)/documents/users/$(request.auth.token.email)) &&
+             get(/databases/$(database)/documents/users/$(request.auth.token.email)).data.role == 'enterprise-student';
+    }
+    
+    // Helper function to check if user is teacher
+    function isTeacher() {
+      return isSignedIn() && 
+             exists(/databases/$(database)/documents/users/$(request.auth.token.email)) &&
+             get(/databases/$(database)/documents/users/$(request.auth.token.email)).data.role == 'teacher';
+    }
+    
+    // Helper function to get user's institution ID
+    function getUserInstitutionId() {
+      return get(/databases/$(database)/documents/users/$(request.auth.token.email)).data.institutionId;
+    }
+    
+    // Helper function to check if user belongs to same institution as resource
+    function sameInstitution(resourceInstitutionId) {
+      return isSignedIn() && 
+             exists(/databases/$(database)/documents/users/$(request.auth.token.email)) &&
+             getUserInstitutionId() == resourceInstitutionId;
+    }
+    
     // Users collection
     match /users/{email} {
       // Users can read/write their own document (case-insensitive email match)
@@ -27,6 +60,16 @@ service cloud.firestore {
       
       // Admins can update any user
       allow update: if isAdmin();
+      
+      // Enterprise admins can read users from their institution
+      allow read: if isEnterpriseAdmin() && 
+        exists(/databases/$(database)/documents/users/$(email)) &&
+        sameInstitution(get(/databases/$(database)/documents/users/$(email)).data.institutionId);
+      
+      // Teachers can read students from their institution
+      allow read: if isTeacher() && 
+        exists(/databases/$(database)/documents/users/$(email)) &&
+        sameInstitution(get(/databases/$(database)/documents/users/$(email)).data.institutionId);
       
       // User sessions subcollection
       match /sessions/{sessionId} {
@@ -46,14 +89,46 @@ service cloud.firestore {
     
     // Materials collection (metadata only - files in R2)
     match /materials/{materialId} {
-      allow read: if true;  // Public read - educational content
-      allow create, update, delete: if isAdmin();
+      // Public materials (no institutionId) are readable by all
+      allow read: if !('institutionId' in resource.data) || resource.data.institutionId == null;
+      
+      // Institution-specific materials readable by institution members
+      allow read: if isSignedIn() && 
+        'institutionId' in resource.data && 
+        resource.data.institutionId != null &&
+        sameInstitution(resource.data.institutionId);
+      
+      // Admins can read all materials
+      allow read: if isAdmin();
+      
+      // Admins and enterprise admins can create/update/delete materials
+      allow create, update, delete: if isAdmin() || isEnterpriseAdmin();
+      
+      // Teachers can create materials for their institution
+      allow create: if isTeacher() && 
+        request.resource.data.institutionId == getUserInstitutionId();
     }
     
     // Learning Materials collection (metadata only - files in R2)
     match /learning_materials/{materialId} {
-      allow read: if true;  // Public read - educational content
-      allow create, update, delete: if isAdmin();
+      // Public materials (no institutionId) are readable by all
+      allow read: if !('institutionId' in resource.data) || resource.data.institutionId == null;
+      
+      // Institution-specific materials readable by institution members
+      allow read: if isSignedIn() && 
+        'institutionId' in resource.data && 
+        resource.data.institutionId != null &&
+        sameInstitution(resource.data.institutionId);
+      
+      // Admins can read all materials
+      allow read: if isAdmin();
+      
+      // Admins and enterprise admins can create/update/delete materials
+      allow create, update, delete: if isAdmin() || isEnterpriseAdmin();
+      
+      // Teachers can create materials for their institution
+      allow create: if isTeacher() && 
+        request.resource.data.institutionId == getUserInstitutionId();
     }
     
     // WAEC Past Questions collection (metadata only - files in R2)
@@ -67,12 +142,27 @@ service cloud.firestore {
       allow read: if isSignedIn() && resource.data.userId == request.auth.token.email;
       allow create: if isSignedIn() && request.resource.data.userId == request.auth.token.email;
       allow read: if isAdmin();
+      
+      // Enterprise admins can read analytics from their institution
+      allow read: if isEnterpriseAdmin() && 
+        'institutionId' in resource.data &&
+        sameInstitution(resource.data.institutionId);
+      
+      // Teachers can read analytics from their institution
+      allow read: if isTeacher() && 
+        'institutionId' in resource.data &&
+        sameInstitution(resource.data.institutionId);
     }
     
     // Study planner collection
     match /study_plans/{userId} {
       allow read, write: if isSignedIn() && userId == request.auth.token.email;
       allow read: if isAdmin();
+      
+      // Teachers can read study plans from their institution students
+      allow read: if isTeacher() && 
+        exists(/databases/$(database)/documents/users/$(userId)) &&
+        sameInstitution(get(/databases/$(database)/documents/users/$(userId)).data.institutionId);
     }
     
     // Mock exam results
@@ -80,6 +170,16 @@ service cloud.firestore {
       allow read: if isSignedIn() && resource.data.userId == request.auth.token.email;
       allow create: if isSignedIn() && request.resource.data.userId == request.auth.token.email;
       allow read: if isAdmin();
+      
+      // Enterprise admins can read results from their institution
+      allow read: if isEnterpriseAdmin() && 
+        'institutionId' in resource.data &&
+        sameInstitution(resource.data.institutionId);
+      
+      // Teachers can read results from their institution
+      allow read: if isTeacher() && 
+        'institutionId' in resource.data &&
+        sameInstitution(resource.data.institutionId);
     }
 
     // Student Stats collection
@@ -88,6 +188,16 @@ service cloud.firestore {
         (request.auth.token.email == email || 
          request.auth.token.email.lower() == email.lower());
       allow read: if isAdmin();
+      
+      // Teachers can read stats from their institution students
+      allow read: if isTeacher() && 
+        exists(/databases/$(database)/documents/users/$(email)) &&
+        sameInstitution(get(/databases/$(database)/documents/users/$(email)).data.institutionId);
+      
+      // Enterprise admins can read stats from their institution
+      allow read: if isEnterpriseAdmin() && 
+        exists(/databases/$(database)/documents/users/$(email)) &&
+        sameInstitution(get(/databases/$(database)/documents/users/$(email)).data.institutionId);
     }
 
     // Student Links (Parent Linking)

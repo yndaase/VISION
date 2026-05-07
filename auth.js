@@ -169,9 +169,21 @@ function verifyUserSchema(user) {
   // Calculate Effective Role
   const now = Date.now();
   const isPaidPro = (user.subscriptionExpiry || 0) > now;
+  const isEnterpriseStudent = user.role === 'enterprise-student';
+  const isTeacher = user.role === 'teacher';
 
-  if (isAdmin || isPaidPro || isPermanentPro) {
+  // Preserve enterprise-student role (never downgrade to 'student')
+  // Enterprise students maintain their role even if subscription expires
+  if (isEnterpriseStudent) {
+    // Verify institutionId/schoolCode is present for enterprise-student users
+    if (!user.institutionId && !user.schoolCode) {
+      console.warn('[Auth] enterprise-student missing institution link');
+    }
+    user.role = 'enterprise-student';
+  } else if (isAdmin || isPaidPro || isPermanentPro) {
     user.role = user.role === 'enterprise' ? 'enterprise' : 'pro';
+  } else if (isTeacher) {
+    user.role = 'teacher';
   } else if (user.role !== 'enterprise' && user.role !== 'admin') {
     // Revert role to standard if everything expired (unless it's a fixed role)
     user.role = 'student';
@@ -186,6 +198,7 @@ function verifyUserSchema(user) {
 function isProUser(user = getSession()) {
   if (!user) return false;
   if (user.role === 'enterprise') return true; // Enterprise is implicitly Pro
+  if (user.role === 'enterprise-student') return true; // Enterprise students have pro-level access
   const now = Date.now();
   const isAdmin = user.role === 'admin';
   const isPaidPro = (user.subscriptionExpiry || 0) > now;
@@ -198,6 +211,14 @@ function isProUser(user = getSession()) {
 function isEnterpriseUser(user = getSession()) {
   if (!user) return false;
   return user.role === 'enterprise';
+}
+
+/**
+ * Checks if a user is an Enterprise Student
+ */
+function isEnterpriseStudent(user = getSession()) {
+  if (!user) return false;
+  return user.role === 'enterprise-student';
 }
 
 // Trial Decommissioned: strictly paid or institutional access model now active.
@@ -313,6 +334,9 @@ function goToDashboard() {
     window.location.href = "/teacher-dashboard.html";
   } else if (session && session.role === 'admin') {
     window.location.href = "/admin";
+  } else if (session && session.role === 'enterprise-student') {
+    // Enterprise students go to regular dashboard with enterprise context
+    window.location.href = "/dashboard.html?enterprise=true";
   } else {
     window.location.href = "/dashboard";
   }
@@ -747,15 +771,32 @@ async function handleGoogleCredential(response) {
     // Upsert user in Firestore + local cache (AFTER Firebase Auth)
     await fbSaveUserAndCache(user);
 
-    setSession(user);
-    showAuthSuccess("Welcome, " + user.name + "! ");
-    
     // Pull latest role/subscription/verification from Firestore
     const cloudUser = await fbGetUserWithFallback(user.email);
     // Also merge from local cache to preserve isVerified if Firestore read fails
     const localUser = getUsers().find(u => u.email === user.email) || {};
     const finalUser = verifyUserSchema({ ...localUser, ...user, ...(cloudUser || {}) });
+    
+    // ═══════════════════════════════════════════════════════════════
+    // TASK 5.1 & 5.2: Detect enterprise student accounts (Google Sign-In)
+    // ═══════════════════════════════════════════════════════════════
+    const isEnterpriseStudent = finalUser.role === 'enterprise-student';
+    const hasInstitutionLink = !!(finalUser.institutionId || finalUser.schoolCode);
+    
+    if (isEnterpriseStudent || (hasInstitutionLink && finalUser.role !== 'admin' && finalUser.role !== 'teacher')) {
+      const institutionName = finalUser.institutionName || 'your institution';
+      showAuthSuccess(`Enterprise account detected. Redirecting to institutional portal...`);
+      
+      // Redirect to enterprise portal after brief delay
+      setTimeout(() => {
+        window.location.href = "/enterprise-login.html";
+      }, 1500);
+      
+      return;
+    }
+    
     setSession(finalUser);
+    showAuthSuccess("Welcome, " + finalUser.name + "! ");
     
     setTimeout(goToDashboard, 900);
   } catch (e) {
@@ -804,6 +845,60 @@ async function handleLogin(e) {
     setError("errLoginGeneral", "Invalid email or password. Please try again.");
     const form = document.getElementById("loginForm");
     if (form) { form.classList.add("form-shake"); setTimeout(() => form.classList.remove("form-shake"), 500); }
+    return;
+  }
+
+  // ═══════════════════════════════════════════════════════════════
+  // TASK 5.1: Detect enterprise student accounts
+  // ═══════════════════════════════════════════════════════════════
+  // Check if user attempting regular login has enterprise-student role
+  // or has institutionId/schoolCode field (indicating enterprise affiliation)
+  const isEnterpriseStudent = user.role === 'enterprise-student';
+  const hasInstitutionLink = !!(user.institutionId || user.schoolCode);
+  
+  if (isEnterpriseStudent || (hasInstitutionLink && user.role !== 'admin' && user.role !== 'teacher')) {
+    if (loginBtn) loginBtn.innerHTML = "<span>Sign In</span>";
+    
+    // ═══════════════════════════════════════════════════════════════
+    // TASK 5.2: Redirect logic for enterprise students
+    // ═══════════════════════════════════════════════════════════════
+    // Show friendly error message and redirect to enterprise portal
+    const institutionName = user.institutionName || 'your institution';
+    setError("errLoginGeneral", 
+      `Enterprise students must use the institutional portal. Redirecting...`);
+    
+    // Add a visual indicator
+    const form = document.getElementById("loginForm");
+    if (form) {
+      const redirectMsg = document.createElement('div');
+      redirectMsg.style.cssText = `
+        margin-top: 1rem;
+        padding: 1rem;
+        background: rgba(96, 165, 250, 0.1);
+        border: 1px solid rgba(96, 165, 250, 0.3);
+        border-radius: 8px;
+        text-align: center;
+        font-size: 0.85rem;
+        color: var(--text-secondary);
+      `;
+      redirectMsg.innerHTML = `
+        <strong style="color: var(--primary); display: block; margin-bottom: 0.5rem;">
+          🏫 Enterprise Account Detected
+        </strong>
+        You are registered as an enterprise student at <strong>${institutionName}</strong>.
+        <br><br>
+        <a href="/enterprise-login.html" style="color: var(--primary); text-decoration: underline; font-weight: 600;">
+          Click here to access the Enterprise Portal
+        </a>
+      `;
+      form.appendChild(redirectMsg);
+    }
+    
+    // Auto-redirect after 3 seconds
+    setTimeout(() => {
+      window.location.href = "/enterprise-login.html";
+    }, 3000);
+    
     return;
   }
 

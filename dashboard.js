@@ -26,8 +26,27 @@ document.addEventListener("DOMContentLoaded", () => {
     email: session.email,
     name: session.name,
     provider: session.provider,
-    role: session.role
+    role: session.role,
+    institutionId: session.institutionId,
+    schoolCode: session.schoolCode
   });
+
+  // ═══════════════════════════════════════════════════════════════
+  // SUB-TASK 4.1: Detect enterprise-student role on dashboard load
+  // ═══════════════════════════════════════════════════════════════
+  const isEnterpriseStudent = session.role === 'enterprise-student';
+  const institutionCode = session.institutionId || session.schoolCode || '';
+  const institutionName = session.institutionName || 'Your Institution';
+  
+  if (isEnterpriseStudent) {
+    console.log("[Dashboard] Enterprise student detected:", {
+      institutionCode,
+      institutionName
+    });
+    
+    // Apply institution-specific branding
+    applyInstitutionBranding(institutionName, institutionCode);
+  }
 
   //  Populate user chip
   const navAvatar = document.getElementById("navAvatar");
@@ -36,8 +55,35 @@ document.addEventListener("DOMContentLoaded", () => {
   if (navAvatar) navAvatar.textContent = initial;
   if (navUsername) {
     navUsername.textContent = session.name || "Student";
+    
+    // ═══════════════════════════════════════════════════════════════
+    // SUB-TASK 4.2: Add enterprise student badge to navigation
+    // ═══════════════════════════════════════════════════════════════
+    if (isEnterpriseStudent) {
+      const badge = document.createElement("span");
+      badge.className = "enterprise-badge";
+      badge.textContent = "ENTERPRISE";
+      badge.style.cssText = `
+        font-size: 0.62rem;
+        font-weight: 900;
+        background: linear-gradient(135deg, #10b981, #059669);
+        color: white;
+        padding: 2px 6px;
+        border-radius: 4px;
+        margin-left: 8px;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
+        display: inline-flex;
+        align-items: center;
+        line-height: 1;
+        height: 16px;
+        vertical-align: middle;
+      `;
+      navUsername.after(badge);
+    }
     // If PRO role, add gold badge
-    if (session.role === "pro") {
+    else if (session.role === "pro") {
       const badge = document.createElement("span");
       badge.className = "pro-badge";
       badge.textContent = "PRO";
@@ -78,8 +124,32 @@ document.addEventListener("DOMContentLoaded", () => {
     welcomeName.textContent = firstName;
     console.log("[Dashboard] ✅ Set welcome name to:", firstName);
 
+    // ═══════════════════════════════════════════════════════════════
+    // SUB-TASK 4.2: Add enterprise student badge to hero section
+    // ═══════════════════════════════════════════════════════════════
+    if (isEnterpriseStudent) {
+      const heroBadge = document.createElement("span");
+      heroBadge.className = "enterprise-badge";
+      heroBadge.style.cssText = `
+        margin: 0 0 0 12px;
+        font-size: 0.8rem;
+        height: 22px;
+        font-weight: 900;
+        background: linear-gradient(135deg, #10b981, #059669);
+        color: white;
+        padding: 4px 10px;
+        border-radius: 6px;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+        display: inline-flex;
+        align-items: center;
+      `;
+      heroBadge.textContent = "ENTERPRISE";
+      welcomeName.after(heroBadge);
+    }
     // Add PRO badge to hero if applicable
-    if (session.role === "pro") {
+    else if (session.role === "pro") {
       const heroBadge = document.createElement("span");
       heroBadge.className = "pro-badge";
       heroBadge.style.margin = "0 0 0 12px";
@@ -264,7 +334,17 @@ window.renderDashMaterials = function() {
     const container = document.getElementById("materialsContainer");
     if (!container) return;
 
-    const all = typeof getMaterials === 'function' ? getMaterials() : [];
+    // ═══════════════════════════════════════════════════════════════
+    // SUB-TASK 4.3: Apply data isolation for enterprise students
+    // ═══════════════════════════════════════════════════════════════
+    const session = getSession();
+    let all = typeof getMaterials === 'function' ? getMaterials() : [];
+    
+    // Filter materials by institution for enterprise students
+    if (session && session.role === 'enterprise-student') {
+        all = filterMaterialsByInstitution(all, session);
+    }
+    
     if (!all.length) {
         container.innerHTML = `
         <div style="text-align:center; padding:4rem 2rem; background:rgba(255,255,255,0.02); border-radius:24px; border:1px dashed rgba(255,255,255,0.05);">
@@ -471,4 +551,101 @@ function renderSearchResults(subjects, materials, query) {
 
   resultsBox.innerHTML = html;
   resultsBox.classList.add("visible");
+}
+
+
+// ═══════════════════════════════════════════════════════════════
+// SUB-TASK 4.1: Apply institution-specific branding
+// ═══════════════════════════════════════════════════════════════
+function applyInstitutionBranding(institutionName, institutionCode) {
+  console.log("[Dashboard] Applying institution branding:", institutionName);
+  
+  // Show institution branding row
+  const brandingRow = document.getElementById("schoolBrandingRow");
+  if (brandingRow) {
+    brandingRow.style.display = "flex";
+    
+    // Update institution name
+    const schoolNameEl = document.getElementById("schoolName");
+    if (schoolNameEl) {
+      schoolNameEl.textContent = institutionName;
+    }
+    
+    // Update institution logo (use first letter of institution name)
+    const schoolLogoEl = document.getElementById("schoolLogo");
+    if (schoolLogoEl && institutionName) {
+      schoolLogoEl.textContent = institutionName.charAt(0).toUpperCase();
+    }
+  }
+  
+  // Update welcome badge to show enterprise context
+  const welcomeBadge = document.getElementById("welcomeBadge");
+  if (welcomeBadge) {
+    welcomeBadge.innerHTML = `
+      <span class="badge-dot"></span>
+      Enterprise Student &middot; ${institutionName}
+    `;
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════
+// SUB-TASK 4.3: Implement data isolation checks
+// ═══════════════════════════════════════════════════════════════
+/**
+ * Filter materials by institution for enterprise students
+ * Enterprise students should only see materials from their institution
+ */
+function filterMaterialsByInstitution(materials, session) {
+  // If not an enterprise student, return all materials
+  if (session.role !== 'enterprise-student') {
+    return materials;
+  }
+  
+  const institutionId = session.institutionId || session.schoolCode;
+  
+  if (!institutionId) {
+    console.warn("[Dashboard] Enterprise student missing institutionId");
+    return materials;
+  }
+  
+  // Filter materials to only show those from the student's institution
+  const filtered = materials.filter(m => {
+    // Check if material has institution metadata
+    if (m.institutionId) {
+      return m.institutionId === institutionId;
+    }
+    // If no institution metadata, show to all (backward compatibility)
+    return true;
+  });
+  
+  console.log("[Dashboard] Filtered materials:", {
+    total: materials.length,
+    filtered: filtered.length,
+    institutionId
+  });
+  
+  return filtered;
+}
+
+/**
+ * Add institution context to data queries
+ * This ensures enterprise students only access their institution's content
+ */
+function addInstitutionContext(query, session) {
+  if (session.role !== 'enterprise-student') {
+    return query;
+  }
+  
+  const institutionId = session.institutionId || session.schoolCode;
+  
+  if (!institutionId) {
+    console.warn("[Dashboard] Enterprise student missing institutionId");
+    return query;
+  }
+  
+  // Add institution filter to query
+  return {
+    ...query,
+    institutionId: institutionId
+  };
 }
