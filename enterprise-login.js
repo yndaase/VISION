@@ -179,9 +179,25 @@ window.handleEnterpriseLogin = async function(event) {
       throw new Error('This account is not linked to an institution');
     }
     
-    const userInstitutionCode = (user.institutionId || user.schoolCode || '').toUpperCase();
-    if (userInstitutionCode !== institutionCode) {
-      throw new Error('Invalid institution code');
+    // Check multiple possible institution code fields for flexibility
+    const userInstitutionCode = (user.schoolCode || user.institutionId || '').toString().toUpperCase();
+    const userInstitutionId = (user.institutionId || '').toString().toUpperCase();
+    const userSchoolName = (user.schoolName || '').toString().toUpperCase();
+    
+    // Match against any of these fields
+    const codeMatches = userInstitutionCode === institutionCode || 
+                       userInstitutionId === institutionCode ||
+                       userSchoolName.includes(institutionCode) ||
+                       institutionCode.includes(userInstitutionCode);
+    
+    if (!codeMatches) {
+      console.error('[Enterprise Login] Institution code mismatch:', {
+        provided: institutionCode,
+        userSchoolCode: user.schoolCode,
+        userInstitutionId: user.institutionId,
+        userSchoolName: user.schoolName
+      });
+      throw new Error(`Invalid institution code. Expected: ${userInstitutionCode || userInstitutionId}`);
     }
     
     // Verify user schema and set session
@@ -216,6 +232,13 @@ window.handleEnterpriseLogin = async function(event) {
     
   } catch (error) {
     console.error('[Enterprise Login] Error:', error);
+    console.error('[Enterprise Login] User data:', {
+      email: email,
+      role: user?.role,
+      institutionId: user?.institutionId,
+      schoolCode: user?.schoolCode,
+      schoolName: user?.schoolName
+    });
     
     let errorMessage = 'Authentication failed. Please check your credentials.';
     
@@ -223,10 +246,14 @@ window.handleEnterpriseLogin = async function(event) {
       errorMessage = 'Invalid email or password';
     } else if (error.message.includes('privileges')) {
       errorMessage = 'This account does not have the required permissions';
-    } else if (error.message.includes('institution')) {
-      errorMessage = error.message;
+    } else if (error.message.includes('institution code')) {
+      errorMessage = error.message; // Show the detailed error with expected code
+    } else if (error.message.includes('not linked')) {
+      errorMessage = 'This account is not linked to an institution. Please contact your administrator.';
     } else if (error.message.includes('not found')) {
       errorMessage = 'Account not found. Please contact your institution administrator.';
+    } else if (error.message.includes('Regular student')) {
+      errorMessage = error.message;
     }
     
     showEnterpriseError('errEntGeneral', errorMessage);
