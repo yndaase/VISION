@@ -58,11 +58,21 @@ service cloud.firestore {
       // Admins can read all users
       allow read: if isAdmin();
       
-      // Admins can update any user
-      allow update: if isAdmin();
+      // Admins can create, update, and delete any user
+      allow create, update, delete: if isAdmin();
       
       // Enterprise admins can read users from their institution
       allow read: if isEnterpriseAdmin() && 
+        exists(/databases/$(database)/documents/users/$(email)) &&
+        sameInstitution(get(/databases/$(database)/documents/users/$(email)).data.institutionId);
+      
+      // Enterprise admins can create users for their institution
+      allow create: if isEnterpriseAdmin() && 
+        request.resource.data.institutionId == getUserInstitutionId() &&
+        (request.resource.data.role == 'teacher' || request.resource.data.role == 'enterprise-student');
+      
+      // Enterprise admins can update users from their institution
+      allow update: if isEnterpriseAdmin() && 
         exists(/databases/$(database)/documents/users/$(email)) &&
         sameInstitution(get(/databases/$(database)/documents/users/$(email)).data.institutionId);
       
