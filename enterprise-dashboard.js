@@ -552,17 +552,15 @@ window.showAddStudentModal = async function() {
     renderStudentsTable();
     updateDashboardStats();
 
-    // 6. Wait for Firestore to propagate
-    await new Promise(resolve => setTimeout(resolve, 2000));
-
-    // 7. Update local cache
+    // 6. Update local cache immediately
     const localUsers = JSON.parse(localStorage.getItem('waec_users') || '[]');
     localUsers.push(newStudent);
     localStorage.setItem('waec_users', JSON.stringify(localUsers));
+    console.log('[Enterprise] ✅ Updated localStorage cache');
 
-    // 8. Reload from Firestore in background to ensure sync
-    console.log('[Enterprise] Reloading from Firestore in background...');
-    loadDashboardData(true).catch(err => console.error('[Enterprise] Background reload failed:', err));
+    // 7. DO NOT reload from Firestore - it will overwrite our local changes
+    // The data is already in Firestore (step 3) and in local arrays (step 4)
+    // Next page refresh will load from Firestore naturally
 
     loadingMsg.remove();
     
@@ -693,17 +691,15 @@ window.showAddTeacherModal = async function() {
     renderTeachersTable();
     updateDashboardStats();
 
-    // 6. Wait for Firestore to propagate
-    await new Promise(resolve => setTimeout(resolve, 2000));
-
-    // 7. Update local cache
+    // 6. Update local cache immediately
     const localUsers = JSON.parse(localStorage.getItem('waec_users') || '[]');
     localUsers.push(newTeacher);
     localStorage.setItem('waec_users', JSON.stringify(localUsers));
+    console.log('[Enterprise] ✅ Updated localStorage cache');
 
-    // 8. Reload from Firestore in background to ensure sync
-    console.log('[Enterprise] Reloading from Firestore in background...');
-    loadDashboardData(true).catch(err => console.error('[Enterprise] Background reload failed:', err));
+    // 7. DO NOT reload from Firestore - it will overwrite our local changes
+    // The data is already in Firestore (step 3) and in local arrays (step 4)
+    // Next page refresh will load from Firestore naturally
 
     loadingMsg.remove();
     
