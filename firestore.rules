@@ -67,6 +67,10 @@ service cloud.firestore {
       // Admins can create, update, and delete any user
       allow create, update, delete: if isAdmin();
       
+      // CRITICAL: Allow enterprise admins and teachers to list users collection
+      // This enables getDocs() queries needed for dashboard
+      allow list: if isEnterpriseAdmin() || isTeacher();
+      
       // Enterprise admins can read users from their institution
       allow read: if isEnterpriseAdmin() && 
         exists(/databases/$(database)/documents/users/$(email)) &&
