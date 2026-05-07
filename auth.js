@@ -1529,15 +1529,43 @@ async function adminInit() {
       phoneNumber: "+233267208336",
       requiresPhoneAuth: true 
     },
-    { email: entEmail, name: "Vision Academy Admin", role: "enterprise", hash: expectedEntHash, provider: "email", schoolName: "Vision Academy", schoolLogo: "V", schoolCode: "VISION-2026" },
-    { email: teacherEmail, name: "Senior Faculty", role: "teacher", hash: expectedTeacherHash, provider: "email", institutionId: entEmail },
-    { email: proStudentEmail, name: "Pro Candidate", role: "pro", hash: expectedProHash, provider: "email",
-      subscriptionExpiry: Date.now() + (365 * 24 * 60 * 60 * 1000),
-      institutionId: entEmail, institutionName: "Vision Academy" },
-    { email: bertinaEmail, name: "Bertina", role: "pro", hash: expectedBertinaHash, provider: "email",
+    { 
+      email: entEmail, 
+      name: "Vision Academy Admin", 
+      role: "enterprise", 
+      hash: expectedEntHash, 
+      provider: "email", 
+      schoolName: "Vision Academy", 
+      schoolLogo: "V", 
+      institutionId: "VISION-2026",
+      schoolCode: "VISION-2026"
+    },
+    { 
+      email: teacherEmail, 
+      name: "Senior Faculty", 
+      role: "teacher", 
+      hash: expectedTeacherHash, 
+      provider: "email", 
+      institutionId: "VISION-2026",
+      schoolName: "Vision Academy"
+    },
+    { 
+      email: proStudentEmail, 
+      name: "Pro Candidate", 
+      role: "pro", 
+      hash: expectedProHash, 
+      provider: "email",
+      subscriptionExpiry: Date.now() + (365 * 24 * 60 * 60 * 1000)
+    },
+    { 
+      email: bertinaEmail, 
+      name: "Bertina", 
+      role: "pro", 
+      hash: expectedBertinaHash, 
+      provider: "email",
       permanentPro: true,
-      subscriptionExpiry: Date.now() + (100 * 365 * 24 * 60 * 60 * 1000),
-      institutionId: entEmail, institutionName: "Vision Academy" }
+      subscriptionExpiry: Date.now() + (100 * 365 * 24 * 60 * 60 * 1000)
+    }
   ];
 
   // 1. Seed localStorage cache
