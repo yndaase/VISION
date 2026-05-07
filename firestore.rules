@@ -3,6 +3,10 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
     
+    // ============================================
+    // HELPER FUNCTIONS
+    // ============================================
+    
     // Helper function to check if user is authenticated
     function isSignedIn() {
       return request.auth != null;
@@ -48,7 +52,9 @@ service cloud.firestore {
              getUserInstitutionId() == resourceInstitutionId;
     }
     
-    // Users collection
+    // ============================================
+    // USERS COLLECTION
+    // ============================================
     match /users/{email} {
       // Users can read/write their own document (case-insensitive email match)
       allow read, write: if isSignedIn() && 
@@ -66,7 +72,7 @@ service cloud.firestore {
         exists(/databases/$(database)/documents/users/$(email)) &&
         sameInstitution(get(/databases/$(database)/documents/users/$(email)).data.institutionId);
       
-      // Enterprise admins can create users for their institution
+      // Enterprise admins can create users for their institution (teachers and students only)
       allow create: if isEnterpriseAdmin() && 
         request.resource.data.institutionId == getUserInstitutionId() &&
         (request.resource.data.role == 'teacher' || request.resource.data.role == 'enterprise-student');
@@ -89,13 +95,19 @@ service cloud.firestore {
       }
     }
 
-    // Parent Users collection
+    // ============================================
+    // PARENT USERS COLLECTION
+    // ============================================
     match /parent_users/{email} {
       allow read, write: if isSignedIn() && 
         (request.auth.token.email == email || 
          request.auth.token.email.lower() == email.lower());
       allow read: if isAdmin();
     }
+    
+    // ============================================
+    // MATERIALS COLLECTIONS
+    // ============================================
     
     // Materials collection (metadata only - files in R2)
     match /materials/{materialId} {
@@ -146,6 +158,10 @@ service cloud.firestore {
       allow read: if true;  // Public read - educational content
       allow create, update, delete: if isAdmin();
     }
+    
+    // ============================================
+    // ANALYTICS & TRACKING
+    // ============================================
     
     // Analytics collection
     match /analytics/{docId} {
@@ -210,6 +226,10 @@ service cloud.firestore {
         sameInstitution(get(/databases/$(database)/documents/users/$(email)).data.institutionId);
     }
 
+    // ============================================
+    // PARENT LINKING & SYSTEM
+    // ============================================
+    
     // Student Links (Parent Linking)
     match /student_links/{code} {
       allow read: if isSignedIn();
@@ -237,6 +257,10 @@ service cloud.firestore {
            request.auth.token.email.lower() == email.lower());
       }
     }
+    
+    // ============================================
+    // DEFAULT DENY
+    // ============================================
     
     // Default deny all other collections
     match /{document=**} {
