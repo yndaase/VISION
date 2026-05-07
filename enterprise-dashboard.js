@@ -85,25 +85,32 @@ function getSession() {
 /**
  * Load dashboard data from Firebase/localStorage
  */
-async function loadDashboardData() {
+async function loadDashboardData(forceRefresh = false) {
   const session = getSession();
   if (!session) return;
 
   console.log('[Enterprise Dashboard] Loading data for institution:', session.institutionId);
   console.log('[Enterprise Dashboard] Session schoolCode:', session.schoolCode);
+  console.log('[Enterprise Dashboard] Force refresh:', forceRefresh);
 
   try {
     let allUsers = [];
     
-    // Load all users from Firestore (fetch once)
+    // Always try to load from Firestore first (don't use localStorage cache for user list)
     if (typeof window.fbGetAllUsers === 'function') {
       console.log('[Enterprise Dashboard] Fetching all users from Firestore...');
       allUsers = await window.fbGetAllUsers();
       console.log('[Enterprise Dashboard] Total users fetched:', allUsers.length);
       console.log('[Enterprise Dashboard] Sample users:', allUsers.slice(0, 3).map(u => ({ email: u.email, role: u.role, institutionId: u.institutionId })));
+      
+      // Update localStorage cache with fresh data
+      if (allUsers.length > 0) {
+        localStorage.setItem('waec_users', JSON.stringify(allUsers));
+        console.log('[Enterprise Dashboard] ✅ Updated localStorage cache');
+      }
     } else {
-      console.log('[Enterprise Dashboard] Firebase not available, using localStorage fallback');
-      // Fallback to localStorage
+      console.warn('[Enterprise Dashboard] Firebase not available, using localStorage fallback');
+      // Fallback to localStorage only if Firebase is not available
       allUsers = JSON.parse(localStorage.getItem('waec_users') || '[]');
       console.log('[Enterprise Dashboard] Total users from localStorage:', allUsers.length);
     }
@@ -537,14 +544,19 @@ window.showAddStudentModal = async function() {
       console.log('[Enterprise] ✅ Student saved to Firestore');
     }
 
-    // 4. Update local cache
+    // 4. Wait for Firestore to propagate (increased wait time)
+    await new Promise(resolve => setTimeout(resolve, 2000));
+
+    // 5. Update local cache
     const localUsers = JSON.parse(localStorage.getItem('waec_users') || '[]');
     localUsers.push(newStudent);
     localStorage.setItem('waec_users', JSON.stringify(localUsers));
 
-    // 5. Reload dashboard data to refresh from Firestore
-    console.log('[Enterprise] Reloading dashboard data...');
-    await loadDashboardData();
+    // 6. Force reload from Firestore (not cache)
+    console.log('[Enterprise] Force reloading from Firestore...');
+    
+    // Reload dashboard data with force refresh
+    await loadDashboardData(true);
 
     loadingMsg.remove();
     
@@ -667,14 +679,19 @@ window.showAddTeacherModal = async function() {
       console.log('[Enterprise] ✅ Teacher saved to Firestore');
     }
 
-    // 4. Update local cache
+    // 4. Wait for Firestore to propagate (increased wait time)
+    await new Promise(resolve => setTimeout(resolve, 2000));
+
+    // 5. Update local cache
     const localUsers = JSON.parse(localStorage.getItem('waec_users') || '[]');
     localUsers.push(newTeacher);
     localStorage.setItem('waec_users', JSON.stringify(localUsers));
 
-    // 5. Reload dashboard data to refresh from Firestore
-    console.log('[Enterprise] Reloading dashboard data...');
-    await loadDashboardData();
+    // 6. Force reload from Firestore (not cache)
+    console.log('[Enterprise] Force reloading from Firestore...');
+    
+    // Reload dashboard data with force refresh
+    await loadDashboardData(true);
 
     loadingMsg.remove();
     
