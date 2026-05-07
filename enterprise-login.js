@@ -17,10 +17,14 @@ window.selectRole = function(role) {
     btn.classList.toggle('active', btn.dataset.role === role);
   });
   
-  // Show institution code field for all enterprise roles (admin, teacher, enterprise-student)
+  // Show institution code field ONLY for teachers and students (NOT for admins)
   const institutionCodeField = document.getElementById('institutionCodeField');
   if (institutionCodeField) {
-    institutionCodeField.style.display = 'flex';
+    if (role === 'admin') {
+      institutionCodeField.style.display = 'none';
+    } else {
+      institutionCodeField.style.display = 'flex';
+    }
   }
   
   // Clear errors
@@ -81,13 +85,15 @@ window.handleEnterpriseLogin = async function(event) {
   
   let valid = true;
   
-  // Validate institution code (required for all enterprise roles)
-  if (!institutionCode) {
-    showEnterpriseError('errInstitutionCode', 'Institution code is required');
-    valid = false;
-  } else if (institutionCode.length < 6) {
-    showEnterpriseError('errInstitutionCode', 'Invalid institution code format');
-    valid = false;
+  // Validate institution code (required ONLY for teachers and students, NOT for admins)
+  if (selectedRole !== 'admin') {
+    if (!institutionCode) {
+      showEnterpriseError('errInstitutionCode', 'Institution code is required');
+      valid = false;
+    } else if (institutionCode.length < 6) {
+      showEnterpriseError('errInstitutionCode', 'Invalid institution code format');
+      valid = false;
+    }
   }
   
   // Validate email
@@ -173,31 +179,22 @@ window.handleEnterpriseLogin = async function(event) {
       throw new Error('This account does not have enterprise student privileges');
     }
     
-    // Verify institution code (required for all enterprise roles, including enterprise-student)
+    // Verify institution code (required for teachers and students, NOT for admins)
     // Sub-task 3.1: Ensure enterprise-student accounts have institutionId/schoolCode
-    if (!user.institutionId && !user.schoolCode) {
-      throw new Error('This account is not linked to an institution');
-    }
-    
-    // Check multiple possible institution code fields for flexibility
-    const userInstitutionCode = (user.schoolCode || user.institutionId || '').toString().toUpperCase();
-    const userInstitutionId = (user.institutionId || '').toString().toUpperCase();
-    const userSchoolName = (user.schoolName || '').toString().toUpperCase();
-    
-    // Match against any of these fields
-    const codeMatches = userInstitutionCode === institutionCode || 
-                       userInstitutionId === institutionCode ||
-                       userSchoolName.includes(institutionCode) ||
-                       institutionCode.includes(userInstitutionCode);
-    
-    if (!codeMatches) {
-      console.error('[Enterprise Login] Institution code mismatch:', {
-        provided: institutionCode,
-        userSchoolCode: user.schoolCode,
-        userInstitutionId: user.institutionId,
-        userSchoolName: user.schoolName
-      });
-      throw new Error(`Invalid institution code. Expected: ${userInstitutionCode || userInstitutionId}`);
+    if (selectedRole !== 'admin') {
+      if (!user.institutionId && !user.schoolCode) {
+        throw new Error('This account is not linked to an institution');
+      }
+      
+      const userInstitutionCode = (user.institutionId || user.schoolCode || '').toUpperCase();
+      if (userInstitutionCode !== institutionCode) {
+        throw new Error('Invalid institution code');
+      }
+    } else {
+      // For admins, just verify they have an institutionId (but don't require code input)
+      if (user.role === 'enterprise' && !user.institutionId && !user.schoolCode) {
+        throw new Error('This enterprise account is not properly configured. Please contact support.');
+      }
     }
     
     // Verify user schema and set session
@@ -232,13 +229,6 @@ window.handleEnterpriseLogin = async function(event) {
     
   } catch (error) {
     console.error('[Enterprise Login] Error:', error);
-    console.error('[Enterprise Login] User data:', {
-      email: email,
-      role: user?.role,
-      institutionId: user?.institutionId,
-      schoolCode: user?.schoolCode,
-      schoolName: user?.schoolName
-    });
     
     let errorMessage = 'Authentication failed. Please check your credentials.';
     
@@ -246,14 +236,10 @@ window.handleEnterpriseLogin = async function(event) {
       errorMessage = 'Invalid email or password';
     } else if (error.message.includes('privileges')) {
       errorMessage = 'This account does not have the required permissions';
-    } else if (error.message.includes('institution code')) {
-      errorMessage = error.message; // Show the detailed error with expected code
-    } else if (error.message.includes('not linked')) {
-      errorMessage = 'This account is not linked to an institution. Please contact your administrator.';
+    } else if (error.message.includes('institution')) {
+      errorMessage = error.message;
     } else if (error.message.includes('not found')) {
       errorMessage = 'Account not found. Please contact your institution administrator.';
-    } else if (error.message.includes('Regular student')) {
-      errorMessage = error.message;
     }
     
     showEnterpriseError('errEntGeneral', errorMessage);
