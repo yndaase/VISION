@@ -19,6 +19,15 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 /**
+ * Refresh dashboard data (can be called manually)
+ */
+window.refreshDashboard = async function() {
+  console.log('[Enterprise Dashboard] Manual refresh triggered');
+  await loadDashboardData();
+  console.log('[Enterprise Dashboard] Refresh complete');
+};
+
+/**
  * Load user session and display info
  */
 function loadUserSession() {
@@ -81,51 +90,64 @@ async function loadDashboardData() {
   if (!session) return;
 
   console.log('[Enterprise Dashboard] Loading data for institution:', session.institutionId);
+  console.log('[Enterprise Dashboard] Session schoolCode:', session.schoolCode);
 
   try {
-    // Load students from Firestore
+    let allUsers = [];
+    
+    // Load all users from Firestore (fetch once)
     if (typeof window.fbGetAllUsers === 'function') {
       console.log('[Enterprise Dashboard] Fetching all users from Firestore...');
-      const allUsers = await window.fbGetAllUsers();
+      allUsers = await window.fbGetAllUsers();
       console.log('[Enterprise Dashboard] Total users fetched:', allUsers.length);
-      
-      // Filter enterprise students for this institution
-      students = allUsers.filter(u => {
-        const isEnterpriseStudent = u.role === 'enterprise-student';
-        const matchesInstitution = u.institutionId === session.institutionId || u.schoolCode === session.institutionId;
-        return isEnterpriseStudent && matchesInstitution;
-      });
-      
-      console.log('[Enterprise Dashboard] Enterprise students found:', students.length);
+      console.log('[Enterprise Dashboard] Sample users:', allUsers.slice(0, 3).map(u => ({ email: u.email, role: u.role, institutionId: u.institutionId })));
     } else {
       console.log('[Enterprise Dashboard] Firebase not available, using localStorage fallback');
       // Fallback to localStorage
-      const localUsers = JSON.parse(localStorage.getItem('waec_users') || '[]');
-      students = localUsers.filter(u => 
-        u.role === 'enterprise-student' && 
-        (u.institutionId === session.institutionId || u.schoolCode === session.institutionId)
-      );
+      allUsers = JSON.parse(localStorage.getItem('waec_users') || '[]');
+      console.log('[Enterprise Dashboard] Total users from localStorage:', allUsers.length);
     }
 
-    // Load teachers from Firestore
-    if (typeof window.fbGetAllUsers === 'function') {
-      const allUsers = await window.fbGetAllUsers();
+    // Filter enterprise students for this institution
+    students = allUsers.filter(u => {
+      const isEnterpriseStudent = u.role === 'enterprise-student';
+      const matchesInstitution = u.institutionId === session.institutionId || u.schoolCode === session.institutionId;
       
-      // Filter teachers for this institution
-      teachers = allUsers.filter(u => {
-        const isTeacher = u.role === 'teacher' || u.role === 'enterprise';
-        const matchesInstitution = u.institutionId === session.institutionId || u.schoolCode === session.institutionId;
-        return isTeacher && matchesInstitution;
-      });
+      if (isEnterpriseStudent) {
+        console.log('[Enterprise Dashboard] Student check:', {
+          email: u.email,
+          role: u.role,
+          institutionId: u.institutionId,
+          schoolCode: u.schoolCode,
+          matches: matchesInstitution
+        });
+      }
       
-      console.log('[Enterprise Dashboard] Teachers found:', teachers.length);
-    } else {
-      const localUsers = JSON.parse(localStorage.getItem('waec_users') || '[]');
-      teachers = localUsers.filter(u => 
-        (u.role === 'teacher' || u.role === 'enterprise') && 
-        (u.institutionId === session.institutionId || u.schoolCode === session.institutionId)
-      );
-    }
+      return isEnterpriseStudent && matchesInstitution;
+    });
+    
+    console.log('[Enterprise Dashboard] ✅ Enterprise students found:', students.length);
+
+    // Filter teachers for this institution
+    teachers = allUsers.filter(u => {
+      const isTeacher = u.role === 'teacher';
+      const isEnterpriseAdmin = u.role === 'enterprise';
+      const matchesInstitution = u.institutionId === session.institutionId || u.schoolCode === session.institutionId;
+      
+      if (isTeacher || isEnterpriseAdmin) {
+        console.log('[Enterprise Dashboard] Teacher/Admin check:', {
+          email: u.email,
+          role: u.role,
+          institutionId: u.institutionId,
+          schoolCode: u.schoolCode,
+          matches: matchesInstitution
+        });
+      }
+      
+      return (isTeacher || isEnterpriseAdmin) && matchesInstitution;
+    });
+    
+    console.log('[Enterprise Dashboard] ✅ Teachers found:', teachers.length);
 
     // Load classes from localStorage (will be migrated to Firestore later)
     const institutionClasses = JSON.parse(localStorage.getItem(`classes_${session.institutionId}`) || '[]');
@@ -503,10 +525,9 @@ window.showAddStudentModal = async function() {
     localUsers.push(newStudent);
     localStorage.setItem('waec_users', JSON.stringify(localUsers));
 
-    // 5. Add to students array and refresh UI
-    students.push(newStudent);
-    updateDashboardStats();
-    renderStudentsTable();
+    // 5. Reload dashboard data to refresh from Firestore
+    console.log('[Enterprise] Reloading dashboard data...');
+    await loadDashboardData();
 
     loadingMsg.remove();
     
@@ -634,10 +655,9 @@ window.showAddTeacherModal = async function() {
     localUsers.push(newTeacher);
     localStorage.setItem('waec_users', JSON.stringify(localUsers));
 
-    // 5. Add to teachers array and refresh UI
-    teachers.push(newTeacher);
-    updateDashboardStats();
-    renderTeachersTable();
+    // 5. Reload dashboard data to refresh from Firestore
+    console.log('[Enterprise] Reloading dashboard data...');
+    await loadDashboardData();
 
     loadingMsg.remove();
     
