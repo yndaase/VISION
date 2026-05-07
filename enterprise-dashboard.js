@@ -80,41 +80,57 @@ async function loadDashboardData() {
   const session = getSession();
   if (!session) return;
 
+  console.log('[Enterprise Dashboard] Loading data for institution:', session.institutionId);
+
   try {
-    // Load students
+    // Load students from Firestore
     if (typeof window.fbGetAllUsers === 'function') {
+      console.log('[Enterprise Dashboard] Fetching all users from Firestore...');
       const allUsers = await window.fbGetAllUsers();
-      students = allUsers.filter(u => 
-        u.role === 'student' && 
-        (u.institutionId === session.institutionId || u.schoolCode === session.institutionId)
-      );
+      console.log('[Enterprise Dashboard] Total users fetched:', allUsers.length);
+      
+      // Filter enterprise students for this institution
+      students = allUsers.filter(u => {
+        const isEnterpriseStudent = u.role === 'enterprise-student';
+        const matchesInstitution = u.institutionId === session.institutionId || u.schoolCode === session.institutionId;
+        return isEnterpriseStudent && matchesInstitution;
+      });
+      
+      console.log('[Enterprise Dashboard] Enterprise students found:', students.length);
     } else {
+      console.log('[Enterprise Dashboard] Firebase not available, using localStorage fallback');
       // Fallback to localStorage
       const localUsers = JSON.parse(localStorage.getItem('waec_users') || '[]');
       students = localUsers.filter(u => 
-        u.role === 'student' && 
+        u.role === 'enterprise-student' && 
         (u.institutionId === session.institutionId || u.schoolCode === session.institutionId)
       );
     }
 
-    // Load teachers
+    // Load teachers from Firestore
     if (typeof window.fbGetAllUsers === 'function') {
       const allUsers = await window.fbGetAllUsers();
-      teachers = allUsers.filter(u => 
-        u.role === 'teacher' && 
-        (u.institutionId === session.institutionId || u.schoolCode === session.institutionId)
-      );
+      
+      // Filter teachers for this institution
+      teachers = allUsers.filter(u => {
+        const isTeacher = u.role === 'teacher' || u.role === 'enterprise';
+        const matchesInstitution = u.institutionId === session.institutionId || u.schoolCode === session.institutionId;
+        return isTeacher && matchesInstitution;
+      });
+      
+      console.log('[Enterprise Dashboard] Teachers found:', teachers.length);
     } else {
       const localUsers = JSON.parse(localStorage.getItem('waec_users') || '[]');
       teachers = localUsers.filter(u => 
-        u.role === 'teacher' && 
+        (u.role === 'teacher' || u.role === 'enterprise') && 
         (u.institutionId === session.institutionId || u.schoolCode === session.institutionId)
       );
     }
 
-    // Load classes from localStorage
+    // Load classes from localStorage (will be migrated to Firestore later)
     const institutionClasses = JSON.parse(localStorage.getItem(`classes_${session.institutionId}`) || '[]');
     classes = institutionClasses;
+    console.log('[Enterprise Dashboard] Classes found:', classes.length);
 
     // Update UI
     updateDashboardStats();
@@ -123,7 +139,10 @@ async function loadDashboardData() {
     renderClassesGrid();
 
   } catch (error) {
-    console.error('Error loading dashboard data:', error);
+    console.error('[Enterprise Dashboard] Error loading dashboard data:', error);
+    
+    // Show error message to user
+    showErrorNotification('Failed to load dashboard data. Please refresh the page.');
   }
 }
 
@@ -464,3 +483,34 @@ window.handleLogout = function() {
     window.location.href = '/enterprise-login.html';
   }
 };
+
+/**
+ * Show error notification
+ */
+function showErrorNotification(message) {
+  // Create notification element
+  const notification = document.createElement('div');
+  notification.style.cssText = `
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: rgba(239, 68, 68, 0.95);
+    color: white;
+    padding: 1rem 1.5rem;
+    border-radius: 12px;
+    font-weight: 700;
+    font-size: 0.9rem;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    z-index: 10000;
+    animation: slideIn 0.3s ease-out;
+  `;
+  notification.textContent = message;
+  
+  document.body.appendChild(notification);
+  
+  // Remove after 5 seconds
+  setTimeout(() => {
+    notification.style.animation = 'slideOut 0.3s ease-out';
+    setTimeout(() => notification.remove(), 300);
+  }, 5000);
+}
