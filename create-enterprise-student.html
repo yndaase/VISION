@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Create Enterprise Student Test Account</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .container {
+      background: white;
+      border-radius: 20px;
+      padding: 40px;
+      max-width: 600px;
+      width: 100%;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    }
+    h1 {
+      color: #333;
+      margin-bottom: 10px;
+      font-size: 28px;
+    }
+    .subtitle {
+      color: #666;
+      margin-bottom: 30px;
+      font-size: 14px;
+    }
+    .form-group {
+      margin-bottom: 20px;
+    }
+    label {
+      display: block;
+      margin-bottom: 8px;
+      color: #333;
+      font-weight: 600;
+      font-size: 14px;
+    }
+    input {
+      width: 100%;
+      padding: 12px 16px;
+      border: 2px solid #e0e0e0;
+      border-radius: 10px;
+      font-size: 14px;
+      transition: all 0.3s;
+    }
+    input:focus {
+      outline: none;
+      border-color: #667eea;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+    .btn {
+      width: 100%;
+      padding: 14px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+      margin-top: 10px;
+    }
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+    }
+    .btn:active {
+      transform: translateY(0);
+    }
+    .btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+    .success {
+      background: #10b981;
+      color: white;
+      padding: 16px;
+      border-radius: 10px;
+      margin-top: 20px;
+      display: none;
+    }
+    .error {
+      background: #ef4444;
+      color: white;
+      padding: 16px;
+      border-radius: 10px;
+      margin-top: 20px;
+      display: none;
+    }
+    .info-box {
+      background: #f0f9ff;
+      border: 2px solid #bfdbfe;
+      border-radius: 10px;
+      padding: 16px;
+      margin-bottom: 20px;
+    }
+    .info-box h3 {
+      color: #1e40af;
+      margin-bottom: 8px;
+      font-size: 16px;
+    }
+    .info-box p {
+      color: #1e3a8a;
+      font-size: 13px;
+      line-height: 1.6;
+    }
+    .account-details {
+      background: #f9fafb;
+      border-radius: 10px;
+      padding: 16px;
+      margin-top: 20px;
+      display: none;
+    }
+    .account-details h3 {
+      color: #333;
+      margin-bottom: 12px;
+      font-size: 16px;
+    }
+    .account-details p {
+      color: #666;
+      font-size: 14px;
+      margin-bottom: 8px;
+      font-family: 'Courier New', monospace;
+    }
+    .account-details strong {
+      color: #333;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🎓 Create Enterprise Student</h1>
+    <p class="subtitle">Create a test enterprise student account for Vision Academy</p>
+
+    <div class="info-box">
+      <h3>ℹ️ What This Does</h3>
+      <p>
+        This tool creates an enterprise student test account that can login through the enterprise portal.
+        The account will be linked to Vision Academy (VISION-2026) and can access the student dashboard
+        with enterprise branding.
+      </p>
+    </div>
+
+    <form id="createForm">
+      <div class="form-group">
+        <label for="name">Student Name</label>
+        <input type="text" id="name" value="Enterprise Test Student" required>
+      </div>
+
+      <div class="form-group">
+        <label for="email">Email Address</label>
+        <input type="email" id="email" value="student.enterprise@vision.edu" required>
+      </div>
+
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input type="password" id="password" value="Student@2026" required>
+      </div>
+
+      <div class="form-group">
+        <label for="institutionId">Institution Code</label>
+        <input type="text" id="institutionId" value="VISION-2026" readonly>
+      </div>
+
+      <div class="form-group">
+        <label for="schoolName">School Name</label>
+        <input type="text" id="schoolName" value="Vision Academy" readonly>
+      </div>
+
+      <button type="submit" class="btn" id="createBtn">
+        Create Enterprise Student Account
+      </button>
+    </form>
+
+    <div class="success" id="successMsg">
+      ✅ Enterprise student account created successfully!
+    </div>
+
+    <div class="error" id="errorMsg"></div>
+
+    <div class="account-details" id="accountDetails">
+      <h3>📋 Account Details</h3>
+      <p><strong>Email:</strong> <span id="detailEmail"></span></p>
+      <p><strong>Password:</strong> <span id="detailPassword"></span></p>
+      <p><strong>Role:</strong> enterprise-student</p>
+      <p><strong>Institution:</strong> VISION-2026</p>
+      <p><strong>Login URL:</strong> /enterprise-login.html</p>
+      <p><strong>Dashboard:</strong> /dashboard.html?enterprise=true</p>
+    </div>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import {
+      getFirestore,
+      doc,
+      setDoc
+    } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { 
+      getAuth,
+      createUserWithEmailAndPassword
+    } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyA2EiDZcp3h5l7zZ4Cbc48RwrSr8ARq9GM",
+      authDomain: "vision-education-main.firebaseapp.com",
+      projectId: "vision-education-main",
+      storageBucket: "vision-education-main.firebasestorage.app",
+      messagingSenderId: "1085532052475",
+      appId: "1:1085532052475:web:8ea9dd1f0b28f81868895e",
+      measurementId: "G-Q6SPHR6E2N"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const auth = getAuth(app);
+
+    // SHA-256 hash function
+    async function sha256(str) {
+      const buf = new TextEncoder().encode(str);
+      const hashArray = new Uint8Array(await crypto.subtle.digest('SHA-256', buf));
+      return Array.from(hashArray)
+        .map(b => b.toString(16).padStart(2, '0'))
+        .join('');
+    }
+
+    document.getElementById('createForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const name = document.getElementById('name').value.trim();
+      const email = document.getElementById('email').value.trim().toLowerCase();
+      const password = document.getElementById('password').value;
+      const institutionId = document.getElementById('institutionId').value.trim();
+      const schoolName = document.getElementById('schoolName').value.trim();
+
+      const createBtn = document.getElementById('createBtn');
+      const successMsg = document.getElementById('successMsg');
+      const errorMsg = document.getElementById('errorMsg');
+      const accountDetails = document.getElementById('accountDetails');
+
+      // Hide messages
+      successMsg.style.display = 'none';
+      errorMsg.style.display = 'none';
+      accountDetails.style.display = 'none';
+
+      // Disable button
+      createBtn.disabled = true;
+      createBtn.textContent = 'Creating Account...';
+
+      try {
+        // 1. Create Firebase Auth account
+        console.log('Creating Firebase Auth account...');
+        let authResult;
+        try {
+          authResult = await createUserWithEmailAndPassword(auth, email, password);
+          console.log('✅ Firebase Auth account created');
+        } catch (authError) {
+          if (authError.code === 'auth/email-already-in-use') {
+            console.log('⚠️ Auth account already exists, continuing...');
+          } else {
+            throw authError;
+          }
+        }
+
+        // 2. Create password hash
+        const hash = await sha256(password);
+
+        // 3. Create user document in Firestore
+        const userData = {
+          email: email,
+          emailLower: email.toLowerCase(),
+          name: name,
+          role: 'enterprise-student',
+          institutionId: institutionId,
+          schoolName: schoolName,
+          hash: hash,
+          provider: 'email',
+          createdAt: Date.now(),
+          lastUpdated: new Date().toISOString(),
+          isVerified: true,
+          twoFAEnabled: false
+        };
+
+        console.log('Saving to Firestore...');
+        await setDoc(doc(db, 'users', email), userData);
+        console.log('✅ Firestore document created');
+
+        // 4. Save to localStorage
+        const users = JSON.parse(localStorage.getItem('waec_users') || '[]');
+        const existingIndex = users.findIndex(u => u.email.toLowerCase() === email);
+        
+        if (existingIndex >= 0) {
+          users[existingIndex] = userData;
+        } else {
+          users.push(userData);
+        }
+        
+        localStorage.setItem('waec_users', JSON.stringify(users));
+        console.log('✅ Saved to localStorage');
+
+        // Show success
+        successMsg.style.display = 'block';
+        accountDetails.style.display = 'block';
+        
+        document.getElementById('detailEmail').textContent = email;
+        document.getElementById('detailPassword').textContent = password;
+
+        // Reset button
+        createBtn.disabled = false;
+        createBtn.textContent = 'Account Created! ✅';
+
+        setTimeout(() => {
+          createBtn.textContent = 'Create Another Account';
+        }, 3000);
+
+      } catch (error) {
+        console.error('Error creating account:', error);
+        errorMsg.textContent = `❌ Error: ${error.message}`;
+        errorMsg.style.display = 'block';
+
+        createBtn.disabled = false;
+        createBtn.textContent = 'Try Again';
+      }
+    });
+  </script>
+</body>
+</html>
