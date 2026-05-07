@@ -96,12 +96,10 @@ async function initiatePayment(itemId, amount, itemName, promoCode = "") {
     return;
   }
 
-  // PRICING MODEL LOCKDOWN (30 GHC / Month)
+  // PRICING MODEL: Monthly (30 GHC) or Annual (300 GHC)
   let finalAmount = amount;
-  if (itemId === 'vision_pro_access') {
-      finalAmount = 30.00;
-      // All promo codes (AUGUSCO, STUDENTFREE) removed to enforce premium rate
-  }
+  // Accept the amount passed from the pricing page
+  // Monthly: 30.00, Annual: 300.00
 
   try {
     // 1. Initialize transaction on backend (Consolidated Hub)
