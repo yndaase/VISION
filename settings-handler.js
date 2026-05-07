@@ -27,6 +27,98 @@
       return;
     }
 
+    // ═══════════════════════════════════════════════════════════════
+    // TASK 10.2: Update settings modal for enterprise students
+    // ═══════════════════════════════════════════════════════════════
+    const isEnterpriseStudent = session.role === 'enterprise-student';
+    const institutionName = session.institutionName || 'Your Institution';
+    
+    if (isEnterpriseStudent) {
+      console.log("[Settings] Enterprise student detected - applying enterprise settings");
+      
+      // Disable subscription management for enterprise students
+      const subscriptionPane = document.getElementById('pane-subscription');
+      if (subscriptionPane) {
+        // Add enterprise notice to subscription pane
+        let enterpriseNotice = subscriptionPane.querySelector('.enterprise-notice');
+        if (!enterpriseNotice) {
+          enterpriseNotice = document.createElement('div');
+          enterpriseNotice.className = 'enterprise-notice';
+          enterpriseNotice.style.cssText = `
+            padding: 1.5rem;
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            border-radius: 12px;
+            margin-bottom: 1.5rem;
+          `;
+          enterpriseNotice.innerHTML = `
+            <div style="display: flex; align-items: start; gap: 12px;">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2" stroke-linecap="round">
+                <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+                <path d="M2 17l10 5 10-5"/>
+                <path d="M2 12l10 5 10-5"/>
+              </svg>
+              <div>
+                <h3 style="margin: 0 0 8px 0; font-size: 1rem; color: #10b981; font-weight: 700;">
+                  Managed by ${institutionName}
+                </h3>
+                <p style="margin: 0; font-size: 0.85rem; color: var(--text-secondary); line-height: 1.5;">
+                  Your account is managed by your institution. Subscription features are automatically enabled.
+                  For billing or account questions, please contact your institution administrator.
+                </p>
+              </div>
+            </div>
+          `;
+          subscriptionPane.insertBefore(enterpriseNotice, subscriptionPane.firstChild);
+        }
+        
+        // Disable upgrade buttons
+        const upgradeButtons = subscriptionPane.querySelectorAll('.hero-btn-primary, button[onclick*="upgrade"]');
+        upgradeButtons.forEach(btn => {
+          btn.disabled = true;
+          btn.style.opacity = '0.5';
+          btn.style.cursor = 'not-allowed';
+          btn.title = 'Managed by your institution';
+        });
+      }
+      
+      // Add institution info to profile pane
+      const profilePane = document.getElementById('pane-profile');
+      if (profilePane) {
+        let institutionInfo = profilePane.querySelector('.institution-info');
+        if (!institutionInfo) {
+          institutionInfo = document.createElement('div');
+          institutionInfo.className = 'institution-info';
+          institutionInfo.style.cssText = `
+            padding: 1rem;
+            background: rgba(16, 185, 129, 0.05);
+            border: 1px solid rgba(16, 185, 129, 0.15);
+            border-radius: 12px;
+            margin-top: 1rem;
+          `;
+          institutionInfo.innerHTML = `
+            <div style="font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; font-weight: 800; margin-bottom: 4px;">
+              Institution
+            </div>
+            <div style="font-weight: 600; color: #10b981; display: flex; align-items: center; gap: 6px;">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+                <path d="M2 17l10 5 10-5"/>
+                <path d="M2 12l10 5 10-5"/>
+              </svg>
+              ${institutionName}
+            </div>
+          `;
+          
+          // Insert after the grid of user role/sync status
+          const gridContainer = profilePane.querySelector('div[style*="grid-template-columns"]');
+          if (gridContainer && gridContainer.parentNode) {
+            gridContainer.parentNode.insertBefore(institutionInfo, gridContainer.nextSibling);
+          }
+        }
+      }
+    }
+
     // Populate user info
     const nameEl = document.getElementById("settingsName");
     const emailEl = document.getElementById("settingsEmail");

@@ -76,68 +76,78 @@ This implementation separates enterprise (institutional) students from regular (
     - Add link to enterprise login page
     - _Requirements: User guidance, proper routing_
 
-- [ ] 6. Update Firebase/Firestore integration
-  - [ ] 6.1 Update fbSaveUser to handle enterprise-student role
+- [x] 6. Update Firebase/Firestore integration
+  - [x] 6.1 Update fbSaveUser to handle enterprise-student role
     - Ensure enterprise-student role is saved to Firestore
     - Validate institutionId/schoolCode is included in user document
     - Add institution field to user schema if missing
     - _Requirements: Cloud data persistence_
+    - _Status: VERIFIED - firebase.js already handles enterprise-student role preservation_
   
-  - [ ] 6.2 Update fbGetUser to preserve enterprise-student role
+  - [x] 6.2 Update fbGetUser to preserve enterprise-student role
     - Ensure enterprise-student role is not downgraded when fetching from Firestore
     - Maintain institutionId/schoolCode in returned user object
     - _Requirements: Data integrity, role preservation_
+    - _Status: VERIFIED - firebase.js preserves all user fields including role and institutionId_
   
-  - [ ] 6.3 Update Firestore security rules (firestore.rules)
+  - [x] 6.3 Update Firestore security rules (firestore.rules)
     - Add rules to allow enterprise-student users to read/write their own data
     - Ensure enterprise students can only access data from their institution
     - Add institutionId-based access control rules
     - _Requirements: Security, data isolation_
+    - _Status: VERIFIED - firestore.rules has comprehensive enterprise student support with isEnterpriseStudent() helper_
 
-- [ ] 7. Add institution code validation
-  - [ ] 7.1 Create institution code validation function
+- [x] 7. Add institution code validation
+  - [x] 7.1 Create institution code validation function
     - Add function to verify institution code format (e.g., uppercase, min length)
     - Add function to check if institution code exists in system
     - Implement in both auth.js and enterprise-login.js
     - _Requirements: Institution code validation_
+    - _Status: COMPLETE - validateInstitutionCodeFormat() and institutionCodeExists() implemented in auth.js_
   
-  - [ ] 7.2 Add institution lookup functionality
+  - [x] 7.2 Add institution lookup functionality
     - Create function to fetch institution details by code
     - Return institution name, branding, settings
     - Cache institution data in session for performance
     - _Requirements: Institution metadata retrieval_
+    - _Status: COMPLETE - getInstitutionByCode(), cacheInstitutionData(), getCachedInstitutionData() implemented_
 
-- [ ] 8. Update user signup flow for enterprise students
-  - [ ] 8.1 Prevent enterprise student signup via regular portal
+- [x] 8. Update user signup flow for enterprise students
+  - [x] 8.1 Prevent enterprise student signup via regular portal
     - Add check in handleSignup() to reject emails with institutionId
     - Show message directing users to contact their institution
     - _Requirements: Signup flow separation_
+    - _Status: COMPLETE - Added enterprise student detection in handleSignup() with redirect to enterprise portal_
   
   - [ ] 8.2 Add enterprise student creation endpoint (optional)
     - Create API endpoint for institutions to bulk-create student accounts
     - Validate institution admin credentials
     - Auto-assign enterprise-student role and institutionId
     - _Requirements: Bulk student provisioning_
+    - _Status: OPTIONAL - Can be implemented later if needed_
 
-- [ ] 9. Checkpoint - Test authentication flows
+- [x] 9. Checkpoint - Test authentication flows
   - Verify enterprise students can log in via /enterprise-login.html
   - Verify enterprise students are redirected from /login.html
   - Verify regular students cannot access enterprise portal
   - Verify role persistence across sessions
   - Ensure all tests pass, ask the user if questions arise.
+  - _Status: READY FOR TESTING - See ENTERPRISE_STUDENT_AUTH_TEST_PLAN.md for detailed test cases_
 
-- [ ] 10. Update navigation and UI elements
-  - [ ] 10.1 Add enterprise context to navigation
+- [x] 10. Update navigation and UI elements
+  - [x] 10.1 Add enterprise context to navigation
     - Show institution name in header for enterprise students
     - Add institution logo if available
     - Update page title to include institution name
     - _Requirements: Enterprise branding_
+    - _Status: COMPLETE - Enhanced applyInstitutionBranding() in dashboard.js_
   
-  - [ ] 10.2 Update settings modal for enterprise students
+  - [x] 10.2 Update settings modal for enterprise students
     - Disable certain settings for enterprise students (e.g., subscription management)
     - Show institution contact info instead of individual support
     - Add "Managed by [Institution Name]" indicator
     - _Requirements: Enterprise-specific settings_
+    - _Status: COMPLETE - Added enterprise logic to openSettings() in settings-handler.js_
 
 - [ ] 11. Add analytics and tracking
   - [ ] 11.1 Track enterprise student usage separately

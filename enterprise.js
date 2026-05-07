@@ -18,7 +18,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (user.role === 'enterprise' || user.role === 'admin') {
         window.location.href = '/enterprise-dashboard.html';
       } else if (user.role === 'teacher') {
-        window.location.href = '/teacher-dashboard.html';
+        window.location.href = '/enterprise-dashboard.html';
       } else {
         // Regular student - don't redirect, let them choose
         console.log('[Enterprise] Student session detected, allowing role selection');

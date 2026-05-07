@@ -560,6 +560,13 @@ function renderSearchResults(subjects, materials, query) {
 function applyInstitutionBranding(institutionName, institutionCode) {
   console.log("[Dashboard] Applying institution branding:", institutionName);
   
+  // ═══════════════════════════════════════════════════════════════
+  // TASK 10.1: Add institution context to navigation
+  // ═══════════════════════════════════════════════════════════════
+  
+  // Update page title to include institution name
+  document.title = `Dashboard | ${institutionName} - Vision Education`;
+  
   // Show institution branding row
   const brandingRow = document.getElementById("schoolBrandingRow");
   if (brandingRow) {
@@ -585,6 +592,45 @@ function applyInstitutionBranding(institutionName, institutionCode) {
       <span class="badge-dot"></span>
       Enterprise Student &middot; ${institutionName}
     `;
+  }
+  
+  // Add institution name to header if header element exists
+  const dashHeader = document.querySelector('.dash-header');
+  if (dashHeader) {
+    // Check if institution indicator already exists
+    let institutionIndicator = document.getElementById('institutionIndicator');
+    if (!institutionIndicator) {
+      institutionIndicator = document.createElement('div');
+      institutionIndicator.id = 'institutionIndicator';
+      institutionIndicator.style.cssText = `
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 6px 12px;
+        background: rgba(16, 185, 129, 0.1);
+        border: 1px solid rgba(16, 185, 129, 0.2);
+        border-radius: 8px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: #10b981;
+        margin-left: auto;
+        margin-right: 16px;
+      `;
+      institutionIndicator.innerHTML = `
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+          <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+          <path d="M2 17l10 5 10-5"/>
+          <path d="M2 12l10 5 10-5"/>
+        </svg>
+        <span>${institutionName}</span>
+      `;
+      
+      // Insert before the user chip
+      const navUserChip = document.getElementById('navUserChip');
+      if (navUserChip && navUserChip.parentNode) {
+        navUserChip.parentNode.insertBefore(institutionIndicator, navUserChip);
+      }
+    }
   }
 }
 

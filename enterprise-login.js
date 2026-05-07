@@ -236,7 +236,8 @@ window.handleEnterpriseLogin = async function(event) {
       if (verifiedUser.role === 'enterprise' || verifiedUser.role === 'admin') {
         window.location.href = '/enterprise-dashboard.html';
       } else if (verifiedUser.role === 'teacher') {
-        window.location.href = '/teacher-dashboard.html';
+        // Teachers now use the enterprise dashboard
+        window.location.href = '/enterprise-dashboard.html';
       } else if (verifiedUser.role === 'enterprise-student') {
         // Redirect enterprise students to student dashboard with enterprise context
         window.location.href = '/dashboard.html?enterprise=true';

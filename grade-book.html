@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Grade Book | Vision Education</title>
+  <link rel="icon" type="image/png" href="favicon.png" />
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  
+  <link rel="stylesheet" href="theme.css" />
+  <link rel="stylesheet" href="dashboard.css" />
+  <link rel="stylesheet" href="grade-book.css" />
+  
+  <script src="theme.js"></script>
+  <script>
+    // Auth guard - redirect if not teacher/enterprise admin
+    (function() {
+      const session = sessionStorage.getItem('waec_session') || localStorage.getItem('waec_session');
+      if (!session) {
+        window.location.href = '/enterprise-login.html';
+        return;
+      }
+      try {
+        const user = JSON.parse(session);
+        if (user.role !== 'teacher' && user.role !== 'enterprise') {
+          alert('Access denied. Grade book is for teachers and administrators only.');
+          window.location.href = '/dashboard.html';
+        }
+      } catch(e) {
+        window.location.href = '/enterprise-login.html';
+      }
+    })();
+  </script>
+</head>
+
+<body class="grade-book-page">
+  
+  <!-- Header -->
+  <header class="gb-header">
+    <div class="gb-header-left">
+      <button class="gb-back-btn" onclick="window.history.back()">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+        Back
+      </button>
+      <h1 class="gb-title">Grade Book</h1>
+    </div>
+    
+    <div class="gb-header-right">
+      <button class="theme-toggle-btn" onclick="toggleTheme()" aria-label="Toggle theme">
+        <svg class="theme-icon-dark" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        <svg class="theme-icon-light" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+      </button>
+      
+      <div class="gb-user-info">
+        <div class="gb-user-avatar" id="userAvatar">T</div>
+        <span id="userName">Teacher</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="gb-main">
+    
+    <!-- Class Selector -->
+    <div class="gb-class-selector">
+      <label for="classSelect">Select Class:</label>
+      <select id="classSelect" onchange="loadClassData()">
+        <option value="">Choose a class...</option>
+      </select>
+      
+      <button class="gb-btn-primary" onclick="showCreateClassModal()">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+        New Class
+      </button>
+    </div>
+
+    <!-- Tab Navigation -->
+    <div class="gb-tabs">
+      <button class="gb-tab active" data-tab="assignments" onclick="switchTab('assignments')">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        Assignments
+      </button>
+      <button class="gb-tab" data-tab="grades" onclick="switchTab('grades')">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+        Grade Entry
+      </button>
+      <button class="gb-tab" data-tab="reports" onclick="switchTab('reports')">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 3v18h18"/><path d="M18 17V9M13 17V5M8 17v-3"/></svg>
+        Reports
+      </button>
+      <button class="gb-tab" data-tab="categories" onclick="switchTab('categories')">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+        Categories
+      </button>
+    </div>
+
+    <!-- Tab Content -->
+    <div class="gb-content">
+      
+      <!-- Assignments Tab -->
+      <div class="gb-tab-content active" id="tab-assignments">
+        <div class="gb-section-header">
+          <h2>Assignments</h2>
+          <button class="gb-btn-primary" onclick="showCreateAssignmentModal()">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+            New Assignment
+          </button>
+        </div>
+        
+        <div class="gb-assignments-list" id="assignmentsList">
+          <div class="gb-empty-state">
+            <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            <p>No assignments yet</p>
+            <span>Create your first assignment to start grading</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Grade Entry Tab -->
+      <div class="gb-tab-content" id="tab-grades">
+        <div class="gb-section-header">
+          <h2>Grade Entry</h2>
+          <div class="gb-grade-actions">
+            <button class="gb-btn-secondary" onclick="toggleBulkEntry()">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+              Bulk Entry
+            </button>
+            <button class="gb-btn-secondary" onclick="undoLastChange()">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 7v6h6M21 17v-6h-6"/><path d="M21 3a9 9 0 0 0-9 9 9 9 0 0 1-9 9"/></svg>
+              Undo
+            </button>
+          </div>
+        </div>
+        
+        <div class="gb-grade-selector">
+          <label for="assignmentSelect">Select Assignment:</label>
+          <select id="assignmentSelect" onchange="loadGradeEntry()">
+            <option value="">Choose an assignment...</option>
+          </select>
+        </div>
+        
+        <div class="gb-grade-table-container" id="gradeTableContainer">
+          <div class="gb-empty-state">
+            <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+            <p>Select an assignment to enter grades</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Reports Tab -->
+      <div class="gb-tab-content" id="tab-reports">
+        <div class="gb-section-header">
+          <h2>Reports & Analytics</h2>
+          <div class="gb-report-actions">
+            <button class="gb-btn-secondary" onclick="exportToExcel()">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+              Export to Excel
+            </button>
+            <button class="gb-btn-secondary" onclick="printReports()">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+              Print
+            </button>
+          </div>
+        </div>
+        
+        <div class="gb-reports-grid" id="reportsGrid">
+          <div class="gb-empty-state">
+            <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M3 3v18h18"/><path d="M18 17V9M13 17V5M8 17v-3"/></svg>
+            <p>No data to display</p>
+            <span>Add assignments and grades to see reports</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Categories Tab -->
+      <div class="gb-tab-content" id="tab-categories">
+        <div class="gb-section-header">
+          <h2>Grade Categories</h2>
+          <button class="gb-btn-primary" onclick="showCreateCategoryModal()">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+            New Category
+          </button>
+        </div>
+        
+        <div class="gb-categories-list" id="categoriesList">
+          <div class="gb-empty-state">
+            <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+            <p>No categories defined</p>
+            <span>Create categories to organize assignments by type</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Modals will be dynamically created by JavaScript -->
+
+  <!-- Scripts -->
+  <script type="module" src="firebase.js"></script>
+  <script src="auth.js"></script>
+  <script src="grade-book.js"></script>
+</body>
+</html>

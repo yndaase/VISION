@@ -695,14 +695,200 @@ window.showCreateClassModal = function() {
  * View student details
  */
 window.viewStudent = function(email) {
-  alert(`View student details for: ${email}\n\nFull student profile coming soon!`);
+  const student = students.find(s => s.email === email);
+  if (!student) return;
+  
+  // Calculate student statistics
+  const stats = JSON.parse(localStorage.getItem(`waec_stats_${email}`) || '{"answered":0,"correct":0}');
+  const performance = stats.answered > 0 ? Math.round((stats.correct / stats.answered) * 100) : 0;
+  
+  // Get grade book data if available
+  const session = getSession();
+  let gradeInfo = '';
+  if (session && session.institutionId) {
+    const gradeKey = `grades_${session.email}_*`;
+    gradeInfo = `
+      <div style="margin-top:1.5rem;padding-top:1.5rem;border-top:1px solid var(--border);">
+        <h4 style="margin:0 0 1rem 0;font-size:1rem;font-weight:800;">Academic Performance</h4>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;">
+          <div>
+            <div style="font-size:0.8rem;color:var(--text-muted);margin-bottom:0.25rem;">Overall Grade</div>
+            <div style="font-size:1.5rem;font-weight:800;color:#10b981;">--</div>
+          </div>
+          <div>
+            <div style="font-size:0.8rem;color:var(--text-muted);margin-bottom:0.25rem;">Assignments</div>
+            <div style="font-size:1.5rem;font-weight:800;color:var(--text-primary);">--</div>
+          </div>
+          <div>
+            <div style="font-size:0.8rem;color:var(--text-muted);margin-bottom:0.25rem;">Attendance</div>
+            <div style="font-size:1.5rem;font-weight:800;color:var(--text-primary);">--</div>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+  
+  const modal = document.createElement('div');
+  modal.className = 'gb-modal';
+  modal.innerHTML = `
+    <div class="gb-modal-content" style="max-width:700px;">
+      <div class="gb-modal-header">
+        <h2>Student Profile</h2>
+        <button class="gb-modal-close" onclick="this.closest('.gb-modal').remove()">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+      
+      <div style="display:flex;align-items:center;gap:1.5rem;margin-bottom:2rem;">
+        <div style="width:80px;height:80px;background:linear-gradient(135deg,#3b82f6,#2563eb);border-radius:16px;display:flex;align-items:center;justify-content:center;color:white;font-weight:800;font-size:2rem;">
+          ${(student.name || student.email).charAt(0).toUpperCase()}
+        </div>
+        <div style="flex:1;">
+          <h3 style="margin:0 0 0.5rem 0;font-size:1.5rem;font-weight:800;">${student.name || 'Student'}</h3>
+          <div style="font-size:0.9rem;color:var(--text-muted);">${student.email}</div>
+          <div style="margin-top:0.5rem;">
+            <span style="padding:0.25rem 0.75rem;background:rgba(16,185,129,0.1);color:#10b981;border-radius:6px;font-size:0.8rem;font-weight:700;">Active</span>
+          </div>
+        </div>
+      </div>
+      
+      <div style="display:grid;gap:1.5rem;">
+        <div>
+          <h4 style="margin:0 0 1rem 0;font-size:1rem;font-weight:800;">Basic Information</h4>
+          <div style="display:grid;gap:0.75rem;">
+            <div style="display:flex;justify-content:space-between;">
+              <span style="color:var(--text-muted);">Class:</span>
+              <span style="font-weight:700;">${student.class || 'Not assigned'}</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;">
+              <span style="color:var(--text-muted);">Institution:</span>
+              <span style="font-weight:700;">${student.institutionName || 'N/A'}</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;">
+              <span style="color:var(--text-muted);">Joined:</span>
+              <span style="font-weight:700;">${new Date(student.createdAt).toLocaleDateString()}</span>
+            </div>
+          </div>
+        </div>
+        
+        <div>
+          <h4 style="margin:0 0 1rem 0;font-size:1rem;font-weight:800;">Learning Statistics</h4>
+          <div style="display:grid;gap:0.75rem;">
+            <div style="display:flex;justify-content:space-between;">
+              <span style="color:var(--text-muted);">Questions Answered:</span>
+              <span style="font-weight:700;">${stats.answered}</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;">
+              <span style="color:var(--text-muted);">Correct Answers:</span>
+              <span style="font-weight:700;">${stats.correct}</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;">
+              <span style="color:var(--text-muted);">Performance:</span>
+              <span style="font-weight:700;color:#10b981;">${performance}%</span>
+            </div>
+          </div>
+        </div>
+        
+        ${gradeInfo}
+      </div>
+      
+      <div style="display:flex;gap:1rem;margin-top:2rem;padding-top:1.5rem;border-top:1px solid var(--border);">
+        <button class="gb-btn-secondary" onclick="editStudent('${email}')">Edit Profile</button>
+        <button class="gb-btn-secondary" onclick="resetStudentPassword('${email}')">Reset Password</button>
+        <button class="gb-btn-secondary" style="margin-left:auto;color:#ef4444;" onclick="deleteStudent('${email}')">Delete Student</button>
+      </div>
+    </div>
+  `;
+  
+  modal.addEventListener('click', (e) => {
+    if (e.target === modal) modal.remove();
+  });
+  
+  document.body.appendChild(modal);
 };
 
 /**
  * View teacher details
  */
 window.viewTeacher = function(email) {
-  alert(`View teacher details for: ${email}\n\nFull teacher profile coming soon!`);
+  const teacher = teachers.find(t => t.email === email);
+  if (!teacher) return;
+  
+  const modal = document.createElement('div');
+  modal.className = 'gb-modal';
+  modal.innerHTML = `
+    <div class="gb-modal-content" style="max-width:700px;">
+      <div class="gb-modal-header">
+        <h2>Teacher Profile</h2>
+        <button class="gb-modal-close" onclick="this.closest('.gb-modal').remove()">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+      
+      <div style="display:flex;align-items:center;gap:1.5rem;margin-bottom:2rem;">
+        <div style="width:80px;height:80px;background:linear-gradient(135deg,#10b981,#059669);border-radius:16px;display:flex;align-items:center;justify-content:center;color:white;font-weight:800;font-size:2rem;">
+          ${(teacher.name || teacher.email).charAt(0).toUpperCase()}
+        </div>
+        <div style="flex:1;">
+          <h3 style="margin:0 0 0.5rem 0;font-size:1.5rem;font-weight:800;">${teacher.name || 'Teacher'}</h3>
+          <div style="font-size:0.9rem;color:var(--text-muted);">${teacher.email}</div>
+          <div style="margin-top:0.5rem;">
+            <span style="padding:0.25rem 0.75rem;background:rgba(16,185,129,0.1);color:#10b981;border-radius:6px;font-size:0.8rem;font-weight:700;">Active</span>
+          </div>
+        </div>
+      </div>
+      
+      <div style="display:grid;gap:1.5rem;">
+        <div>
+          <h4 style="margin:0 0 1rem 0;font-size:1rem;font-weight:800;">Basic Information</h4>
+          <div style="display:grid;gap:0.75rem;">
+            <div style="display:flex;justify-content:space-between;">
+              <span style="color:var(--text-muted);">Subject:</span>
+              <span style="font-weight:700;">${teacher.subject || 'Not assigned'}</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;">
+              <span style="color:var(--text-muted);">Institution:</span>
+              <span style="font-weight:700;">${teacher.institutionName || teacher.schoolName || 'N/A'}</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;">
+              <span style="color:var(--text-muted);">Joined:</span>
+              <span style="font-weight:700;">${new Date(teacher.createdAt).toLocaleDateString()}</span>
+            </div>
+          </div>
+        </div>
+        
+        <div>
+          <h4 style="margin:0 0 1rem 0;font-size:1rem;font-weight:800;">Teaching Statistics</h4>
+          <div style="display:grid;gap:0.75rem;">
+            <div style="display:flex;justify-content:space-between;">
+              <span style="color:var(--text-muted);">Classes:</span>
+              <span style="font-weight:700;">${teacher.classes || 0}</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;">
+              <span style="color:var(--text-muted);">Students:</span>
+              <span style="font-weight:700;">--</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;">
+              <span style="color:var(--text-muted);">Assignments Created:</span>
+              <span style="font-weight:700;">--</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div style="display:flex;gap:1rem;margin-top:2rem;padding-top:1.5rem;border-top:1px solid var(--border);">
+        <button class="gb-btn-secondary" onclick="editTeacher('${email}')">Edit Profile</button>
+        <button class="gb-btn-secondary" onclick="resetTeacherPassword('${email}')">Reset Password</button>
+        <button class="gb-btn-secondary" style="margin-left:auto;color:#ef4444;" onclick="deleteTeacher('${email}')">Delete Teacher</button>
+      </div>
+    </div>
+  `;
+  
+  modal.addEventListener('click', (e) => {
+    if (e.target === modal) modal.remove();
+  });
+  
+  document.body.appendChild(modal);
 };
 
 /**
@@ -790,3 +976,610 @@ function showErrorNotification(message) {
     setTimeout(() => notification.remove(), 300);
   }, 5000);
 }
+
+
+// =====================================================
+// ADVANCED USER MANAGEMENT
+// =====================================================
+
+/**
+ * Edit student profile
+ */
+window.editStudent = function(email) {
+  const student = students.find(s => s.email === email);
+  if (!student) return;
+  
+  // Close current modal
+  document.querySelector('.gb-modal')?.remove();
+  
+  const modal = document.createElement('div');
+  modal.className = 'gb-modal';
+  modal.innerHTML = `
+    <div class="gb-modal-content">
+      <div class="gb-modal-header">
+        <h2>Edit Student</h2>
+        <button class="gb-modal-close" onclick="this.closest('.gb-modal').remove()">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+      
+      <div class="gb-form-group">
+        <label>Full Name *</label>
+        <input type="text" id="editStudentName" value="${student.name || ''}" required>
+      </div>
+      
+      <div class="gb-form-group">
+        <label>Email *</label>
+        <input type="email" id="editStudentEmail" value="${student.email}" readonly style="background:var(--bg-secondary);cursor:not-allowed;">
+      </div>
+      
+      <div class="gb-form-group">
+        <label>Class</label>
+        <input type="text" id="editStudentClass" value="${student.class || ''}" placeholder="e.g., Form 3A">
+      </div>
+      
+      <div class="gb-modal-actions">
+        <button class="gb-btn-secondary" onclick="this.closest('.gb-modal').remove()">Cancel</button>
+        <button class="gb-btn-primary" onclick="saveStudentEdit('${email}')">Save Changes</button>
+      </div>
+    </div>
+  `;
+  
+  modal.addEventListener('click', (e) => {
+    if (e.target === modal) modal.remove();
+  });
+  
+  document.body.appendChild(modal);
+};
+
+/**
+ * Save student edits
+ */
+window.saveStudentEdit = async function(email) {
+  const name = document.getElementById('editStudentName').value.trim();
+  const studentClass = document.getElementById('editStudentClass').value.trim();
+  
+  if (!name) {
+    showErrorNotification('Please enter student name');
+    return;
+  }
+  
+  const student = students.find(s => s.email === email);
+  if (!student) return;
+  
+  student.name = name;
+  student.class = studentClass;
+  student.lastUpdated = new Date().toISOString();
+  
+  // Update in Firestore
+  if (typeof window.fbUpdateUser === 'function') {
+    await window.fbUpdateUser(email, { name, class: studentClass, lastUpdated: student.lastUpdated });
+  }
+  
+  // Update local cache
+  const localUsers = JSON.parse(localStorage.getItem('waec_users') || '[]');
+  const index = localUsers.findIndex(u => u.email === email);
+  if (index !== -1) {
+    localUsers[index] = student;
+    localStorage.setItem('waec_users', JSON.stringify(localUsers));
+  }
+  
+  await loadDashboardData();
+  document.querySelector('.gb-modal')?.remove();
+  showSuccessNotification('Student updated successfully');
+};
+
+/**
+ * Edit teacher profile
+ */
+window.editTeacher = function(email) {
+  const teacher = teachers.find(t => t.email === email);
+  if (!teacher) return;
+  
+  // Close current modal
+  document.querySelector('.gb-modal')?.remove();
+  
+  const modal = document.createElement('div');
+  modal.className = 'gb-modal';
+  modal.innerHTML = `
+    <div class="gb-modal-content">
+      <div class="gb-modal-header">
+        <h2>Edit Teacher</h2>
+        <button class="gb-modal-close" onclick="this.closest('.gb-modal').remove()">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+      
+      <div class="gb-form-group">
+        <label>Full Name *</label>
+        <input type="text" id="editTeacherName" value="${teacher.name || ''}" required>
+      </div>
+      
+      <div class="gb-form-group">
+        <label>Email *</label>
+        <input type="email" id="editTeacherEmail" value="${teacher.email}" readonly style="background:var(--bg-secondary);cursor:not-allowed;">
+      </div>
+      
+      <div class="gb-form-group">
+        <label>Subject</label>
+        <input type="text" id="editTeacherSubject" value="${teacher.subject || ''}" placeholder="e.g., Mathematics">
+      </div>
+      
+      <div class="gb-modal-actions">
+        <button class="gb-btn-secondary" onclick="this.closest('.gb-modal').remove()">Cancel</button>
+        <button class="gb-btn-primary" onclick="saveTeacherEdit('${email}')">Save Changes</button>
+      </div>
+    </div>
+  `;
+  
+  modal.addEventListener('click', (e) => {
+    if (e.target === modal) modal.remove();
+  });
+  
+  document.body.appendChild(modal);
+};
+
+/**
+ * Save teacher edits
+ */
+window.saveTeacherEdit = async function(email) {
+  const name = document.getElementById('editTeacherName').value.trim();
+  const subject = document.getElementById('editTeacherSubject').value.trim();
+  
+  if (!name) {
+    showErrorNotification('Please enter teacher name');
+    return;
+  }
+  
+  const teacher = teachers.find(t => t.email === email);
+  if (!teacher) return;
+  
+  teacher.name = name;
+  teacher.subject = subject;
+  teacher.lastUpdated = new Date().toISOString();
+  
+  // Update in Firestore
+  if (typeof window.fbUpdateUser === 'function') {
+    await window.fbUpdateUser(email, { name, subject, lastUpdated: teacher.lastUpdated });
+  }
+  
+  // Update local cache
+  const localUsers = JSON.parse(localStorage.getItem('waec_users') || '[]');
+  const index = localUsers.findIndex(u => u.email === email);
+  if (index !== -1) {
+    localUsers[index] = teacher;
+    localStorage.setItem('waec_users', JSON.stringify(localUsers));
+  }
+  
+  await loadDashboardData();
+  document.querySelector('.gb-modal')?.remove();
+  showSuccessNotification('Teacher updated successfully');
+};
+
+/**
+ * Reset student password
+ */
+window.resetStudentPassword = async function(email) {
+  const newPassword = prompt('Enter new password for student (min 6 characters):');
+  
+  if (!newPassword) return;
+  
+  if (newPassword.length < 6) {
+    showErrorNotification('Password must be at least 6 characters');
+    return;
+  }
+  
+  try {
+    const hash = await sha256(newPassword);
+    
+    // Update in Firestore
+    if (typeof window.fbUpdateUser === 'function') {
+      await window.fbUpdateUser(email, { hash, lastUpdated: new Date().toISOString() });
+    }
+    
+    // Update local cache
+    const localUsers = JSON.parse(localStorage.getItem('waec_users') || '[]');
+    const index = localUsers.findIndex(u => u.email === email);
+    if (index !== -1) {
+      localUsers[index].hash = hash;
+      localUsers[index].lastUpdated = new Date().toISOString();
+      localStorage.setItem('waec_users', JSON.stringify(localUsers));
+    }
+    
+    document.querySelector('.gb-modal')?.remove();
+    alert(`✅ Password reset successfully!\n\nNew password: ${newPassword}\n\n📧 Share this with the student.`);
+    
+  } catch (error) {
+    console.error('Error resetting password:', error);
+    showErrorNotification('Failed to reset password');
+  }
+};
+
+/**
+ * Reset teacher password
+ */
+window.resetTeacherPassword = async function(email) {
+  const newPassword = prompt('Enter new password for teacher (min 6 characters):');
+  
+  if (!newPassword) return;
+  
+  if (newPassword.length < 6) {
+    showErrorNotification('Password must be at least 6 characters');
+    return;
+  }
+  
+  try {
+    const hash = await sha256(newPassword);
+    
+    // Update in Firestore
+    if (typeof window.fbUpdateUser === 'function') {
+      await window.fbUpdateUser(email, { hash, lastUpdated: new Date().toISOString() });
+    }
+    
+    // Update local cache
+    const localUsers = JSON.parse(localStorage.getItem('waec_users') || '[]');
+    const index = localUsers.findIndex(u => u.email === email);
+    if (index !== -1) {
+      localUsers[index].hash = hash;
+      localUsers[index].lastUpdated = new Date().toISOString();
+      localStorage.setItem('waec_users', JSON.stringify(localUsers));
+    }
+    
+    document.querySelector('.gb-modal')?.remove();
+    alert(`✅ Password reset successfully!\n\nNew password: ${newPassword}\n\n📧 Share this with the teacher.`);
+    
+  } catch (error) {
+    console.error('Error resetting password:', error);
+    showErrorNotification('Failed to reset password');
+  }
+};
+
+/**
+ * Delete student
+ */
+window.deleteStudent = async function(email) {
+  if (!confirm(`Are you sure you want to delete this student account?\n\nEmail: ${email}\n\nThis action cannot be undone.`)) {
+    return;
+  }
+  
+  try {
+    // Delete from Firestore
+    if (typeof window.fbDeleteUser === 'function') {
+      await window.fbDeleteUser(email);
+    }
+    
+    // Delete from local cache
+    const localUsers = JSON.parse(localStorage.getItem('waec_users') || '[]');
+    const filtered = localUsers.filter(u => u.email !== email);
+    localStorage.setItem('waec_users', JSON.stringify(filtered));
+    
+    await loadDashboardData();
+    document.querySelector('.gb-modal')?.remove();
+    showSuccessNotification('Student deleted successfully');
+    
+  } catch (error) {
+    console.error('Error deleting student:', error);
+    showErrorNotification('Failed to delete student');
+  }
+};
+
+/**
+ * Delete teacher
+ */
+window.deleteTeacher = async function(email) {
+  if (!confirm(`Are you sure you want to delete this teacher account?\n\nEmail: ${email}\n\nThis action cannot be undone.`)) {
+    return;
+  }
+  
+  try {
+    // Delete from Firestore
+    if (typeof window.fbDeleteUser === 'function') {
+      await window.fbDeleteUser(email);
+    }
+    
+    // Delete from local cache
+    const localUsers = JSON.parse(localStorage.getItem('waec_users') || '[]');
+    const filtered = localUsers.filter(u => u.email !== email);
+    localStorage.setItem('waec_users', JSON.stringify(filtered));
+    
+    await loadDashboardData();
+    document.querySelector('.gb-modal')?.remove();
+    showSuccessNotification('Teacher deleted successfully');
+    
+  } catch (error) {
+    console.error('Error deleting teacher:', error);
+    showErrorNotification('Failed to delete teacher');
+  }
+};
+
+/**
+ * Show success notification
+ */
+function showSuccessNotification(message) {
+  const notification = document.createElement('div');
+  notification.style.cssText = `
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: rgba(16, 185, 129, 0.95);
+    color: white;
+    padding: 1rem 1.5rem;
+    border-radius: 12px;
+    font-weight: 700;
+    font-size: 0.9rem;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    z-index: 10000;
+    animation: slideIn 0.3s ease-out;
+  `;
+  notification.textContent = message;
+  
+  document.body.appendChild(notification);
+  
+  setTimeout(() => {
+    notification.style.animation = 'slideOut 0.3s ease-out';
+    setTimeout(() => notification.remove(), 300);
+  }, 3000);
+}
+
+
+// =====================================================
+// ANALYTICS DASHBOARD
+// =====================================================
+
+/**
+ * Render analytics dashboard
+ */
+function renderAnalytics() {
+  const grid = document.getElementById('analyticsGrid');
+  if (!grid) return;
+  
+  if (students.length === 0) {
+    grid.innerHTML = `
+      <div class="ent-dash-analytics-placeholder">
+        <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M3 3v18h18"/><path d="M18 17V9M13 17V5M8 17v-3"/></svg>
+        <p>No data available</p>
+        <span>Add students to see analytics</span>
+      </div>
+    `;
+    return;
+  }
+  
+  // Calculate analytics
+  const analytics = calculateInstitutionAnalytics();
+  
+  grid.innerHTML = `
+    <!-- Performance Overview -->
+    <div class="ent-dash-report-card">
+      <h3>Performance Overview</h3>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:1.5rem;margin-top:1rem;">
+        <div class="ent-dash-stat">
+          <div class="ent-dash-stat-label">Average Performance</div>
+          <div class="ent-dash-stat-value" style="color:#10b981;">${analytics.avgPerformance}%</div>
+        </div>
+        <div class="ent-dash-stat">
+          <div class="ent-dash-stat-label">Total Questions</div>
+          <div class="ent-dash-stat-value">${analytics.totalQuestions}</div>
+        </div>
+        <div class="ent-dash-stat">
+          <div class="ent-dash-stat-label">Correct Answers</div>
+          <div class="ent-dash-stat-value">${analytics.totalCorrect}</div>
+        </div>
+        <div class="ent-dash-stat">
+          <div class="ent-dash-stat-label">Active Students</div>
+          <div class="ent-dash-stat-value">${analytics.activeStudents}</div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Performance Distribution -->
+    <div class="ent-dash-report-card">
+      <h3>Performance Distribution</h3>
+      <div style="margin-top:1rem;">
+        ${renderPerformanceDistribution(analytics.distribution)}
+      </div>
+    </div>
+    
+    <!-- Top Performers -->
+    <div class="ent-dash-report-card">
+      <h3>Top Performers</h3>
+      <div style="margin-top:1rem;">
+        ${renderTopPerformers(analytics.topPerformers)}
+      </div>
+    </div>
+    
+    <!-- Students Needing Support -->
+    <div class="ent-dash-report-card">
+      <h3>Students Needing Support</h3>
+      <div style="margin-top:1rem;">
+        ${renderAtRiskStudents(analytics.atRiskStudents)}
+      </div>
+    </div>
+    
+    <!-- Activity Timeline -->
+    <div class="ent-dash-report-card" style="grid-column:1/-1;">
+      <h3>Recent Activity</h3>
+      <div style="margin-top:1rem;">
+        ${renderRecentActivity()}
+      </div>
+    </div>
+  `;
+}
+
+/**
+ * Calculate institution analytics
+ */
+function calculateInstitutionAnalytics() {
+  let totalQuestions = 0;
+  let totalCorrect = 0;
+  let activeStudents = 0;
+  const performances = [];
+  const topPerformers = [];
+  const atRiskStudents = [];
+  
+  students.forEach(student => {
+    const stats = JSON.parse(localStorage.getItem(`waec_stats_${student.email}`) || '{"answered":0,"correct":0}');
+    
+    if (stats.answered > 0) {
+      activeStudents++;
+      totalQuestions += stats.answered;
+      totalCorrect += stats.correct;
+      
+      const performance = Math.round((stats.correct / stats.answered) * 100);
+      performances.push(performance);
+      
+      const studentData = {
+        name: student.name || student.email,
+        email: student.email,
+        performance,
+        answered: stats.answered,
+        correct: stats.correct
+      };
+      
+      if (performance >= 80) {
+        topPerformers.push(studentData);
+      } else if (performance < 60) {
+        atRiskStudents.push(studentData);
+      }
+    }
+  });
+  
+  // Sort top performers
+  topPerformers.sort((a, b) => b.performance - a.performance);
+  
+  // Sort at-risk students
+  atRiskStudents.sort((a, b) => a.performance - b.performance);
+  
+  // Calculate distribution
+  const distribution = {
+    excellent: performances.filter(p => p >= 90).length,
+    good: performances.filter(p => p >= 70 && p < 90).length,
+    average: performances.filter(p => p >= 50 && p < 70).length,
+    poor: performances.filter(p => p < 50).length
+  };
+  
+  const avgPerformance = performances.length > 0 
+    ? Math.round(performances.reduce((sum, p) => sum + p, 0) / performances.length)
+    : 0;
+  
+  return {
+    avgPerformance,
+    totalQuestions,
+    totalCorrect,
+    activeStudents,
+    distribution,
+    topPerformers: topPerformers.slice(0, 5),
+    atRiskStudents: atRiskStudents.slice(0, 5)
+  };
+}
+
+/**
+ * Render performance distribution chart
+ */
+function renderPerformanceDistribution(distribution) {
+  const total = Object.values(distribution).reduce((sum, count) => sum + count, 0);
+  
+  if (total === 0) {
+    return '<p style="color:var(--text-muted);text-align:center;">No data available</p>';
+  }
+  
+  const categories = [
+    { label: 'Excellent (90-100%)', key: 'excellent', color: '#10b981' },
+    { label: 'Good (70-89%)', key: 'good', color: '#3b82f6' },
+    { label: 'Average (50-69%)', key: 'average', color: '#f59e0b' },
+    { label: 'Needs Improvement (<50%)', key: 'poor', color: '#ef4444' }
+  ];
+  
+  return categories.map(cat => {
+    const count = distribution[cat.key];
+    const percentage = Math.round((count / total) * 100);
+    
+    return `
+      <div style="margin-bottom:1rem;">
+        <div style="display:flex;justify-content:space-between;margin-bottom:0.5rem;">
+          <span style="font-weight:600;color:var(--text-primary);">${cat.label}</span>
+          <span style="font-weight:700;color:var(--text-secondary);">${count} (${percentage}%)</span>
+        </div>
+        <div style="height:12px;background:rgba(0,0,0,0.1);border-radius:6px;overflow:hidden;">
+          <div style="width:${percentage}%;height:100%;background:${cat.color};transition:width 0.3s;"></div>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+/**
+ * Render top performers list
+ */
+function renderTopPerformers(topPerformers) {
+  if (topPerformers.length === 0) {
+    return '<p style="color:var(--text-muted);text-align:center;">No top performers yet</p>';
+  }
+  
+  return `
+    <div style="display:grid;gap:0.75rem;">
+      ${topPerformers.map((student, index) => `
+        <div style="display:flex;align-items:center;gap:1rem;padding:0.75rem;background:var(--bg-secondary);border-radius:8px;">
+          <div style="width:32px;height:32px;background:linear-gradient(135deg,#10b981,#059669);border-radius:8px;display:flex;align-items:center;justify-content:center;color:white;font-weight:800;font-size:0.9rem;">
+            ${index + 1}
+          </div>
+          <div style="flex:1;">
+            <div style="font-weight:700;color:var(--text-primary);">${student.name}</div>
+            <div style="font-size:0.85rem;color:var(--text-muted);">${student.answered} questions answered</div>
+          </div>
+          <div style="font-size:1.25rem;font-weight:800;color:#10b981;">${student.performance}%</div>
+        </div>
+      `).join('')}
+    </div>
+  `;
+}
+
+/**
+ * Render at-risk students list
+ */
+function renderAtRiskStudents(atRiskStudents) {
+  if (atRiskStudents.length === 0) {
+    return '<p style="color:var(--text-muted);text-align:center;">All students performing well! 🎉</p>';
+  }
+  
+  return `
+    <div style="display:grid;gap:0.75rem;">
+      ${atRiskStudents.map(student => `
+        <div style="display:flex;align-items:center;gap:1rem;padding:0.75rem;background:rgba(239,68,68,0.05);border:1px solid rgba(239,68,68,0.2);border-radius:8px;">
+          <div style="width:32px;height:32px;background:linear-gradient(135deg,#ef4444,#dc2626);border-radius:8px;display:flex;align-items:center;justify-content:center;color:white;font-weight:800;font-size:0.9rem;">
+            ⚠
+          </div>
+          <div style="flex:1;">
+            <div style="font-weight:700;color:var(--text-primary);">${student.name}</div>
+            <div style="font-size:0.85rem;color:var(--text-muted);">${student.answered} questions answered</div>
+          </div>
+          <div style="font-size:1.25rem;font-weight:800;color:#ef4444;">${student.performance}%</div>
+        </div>
+      `).join('')}
+    </div>
+  `;
+}
+
+/**
+ * Render recent activity
+ */
+function renderRecentActivity() {
+  // This would ideally come from a real activity log
+  // For now, we'll show a placeholder
+  return `
+    <div style="text-align:center;padding:2rem;color:var(--text-muted);">
+      <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" style="margin-bottom:1rem;"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      <p>Activity tracking coming soon</p>
+      <span style="font-size:0.85rem;">Real-time student activity will be displayed here</span>
+    </div>
+  `;
+}
+
+// Update navigation to render analytics when clicked
+document.addEventListener('DOMContentLoaded', () => {
+  const analyticsNav = document.querySelector('[data-section="analytics"]');
+  if (analyticsNav) {
+    analyticsNav.addEventListener('click', () => {
+      setTimeout(renderAnalytics, 100);
+    });
+  }
+});

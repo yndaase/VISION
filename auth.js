@@ -331,7 +331,7 @@ function goToDashboard() {
   const session = getSession();
 
   if (session && session.role === 'teacher') {
-    window.location.href = "/teacher-dashboard.html";
+    window.location.href = "/enterprise-dashboard.html";
   } else if (session && session.role === 'admin') {
     window.location.href = "/admin";
   } else if (session && session.role === 'enterprise-student') {
@@ -1110,6 +1110,20 @@ async function handleSignup(e) {
   }
   
   if (existingCloud) {
+    // Check if this is an enterprise student trying to sign up via regular portal
+    if (existingCloud.role === 'enterprise-student' || existingCloud.institutionId || existingCloud.schoolCode) {
+      markInputError(
+        "signupEmail", 
+        "errSignupEmail", 
+        "This email is registered as an enterprise student. Please use the Enterprise Portal to log in."
+      );
+      // Show link to enterprise portal
+      const errorEl = document.getElementById("errSignupEmail");
+      if (errorEl) {
+        errorEl.innerHTML = 'This email is registered as an enterprise student. <a href="/enterprise-login.html" style="color: var(--primary); text-decoration: underline;">Use Enterprise Portal</a>';
+      }
+      return;
+    }
     markInputError("signupEmail", "errSignupEmail", "An account with this email already exists.");
     return;
   }
@@ -1686,3 +1700,163 @@ document.addEventListener("DOMContentLoaded", () => {
 // Bootstrap Firebase Engine (user DB + stats sync)
 // Removed redundant dynamic import as firebase.js is loaded via script tag in HTML.
 
+
+
+// =====================================================
+// INSTITUTION CODE VALIDATION (Task 7)
+// =====================================================
+
+/**
+ * Validate institution code format
+ * @param {string} code - Institution code to validate
+ * @returns {boolean} - True if valid format
+ */
+function validateInstitutionCodeFormat(code) {
+  if (!code || typeof code !== 'string') return false;
+  
+  const trimmed = code.trim().toUpperCase();
+  
+  // Must be at least 6 characters
+  if (trimmed.length < 6) return false;
+  
+  // Must contain only alphanumeric characters and hyphens
+  if (!/^[A-Z0-9-]+$/.test(trimmed)) return false;
+  
+  return true;
+}
+
+/**
+ * Check if institution code exists in the system
+ * @param {string} code - Institution code to check
+ * @returns {Promise<boolean>} - True if exists
+ */
+async function institutionCodeExists(code) {
+  if (!code) return false;
+  
+  const trimmed = code.trim().toUpperCase();
+  
+  try {
+    // Check in Firestore if available
+    if (typeof window.fbGetAllUsers === 'function') {
+      const users = await window.fbGetAllUsers();
+      const found = users.some(u => 
+        (u.institutionId && u.institutionId.toUpperCase() === trimmed) ||
+        (u.schoolCode && u.schoolCode.toUpperCase() === trimmed)
+      );
+      if (found) return true;
+    }
+    
+    // Fallback to localStorage
+    const localUsers = JSON.parse(localStorage.getItem('waec_users') || '[]');
+    return localUsers.some(u => 
+      (u.institutionId && u.institutionId.toUpperCase() === trimmed) ||
+      (u.schoolCode && u.schoolCode.toUpperCase() === trimmed)
+    );
+  } catch (error) {
+    console.error('[Auth] Error checking institution code:', error);
+    return false;
+  }
+}
+
+/**
+ * Fetch institution details by code
+ * @param {string} code - Institution code
+ * @returns {Promise<object|null>} - Institution details or null
+ */
+async function getInstitutionByCode(code) {
+  if (!code) return null;
+  
+  const trimmed = code.trim().toUpperCase();
+  
+  try {
+    // Check in Firestore if available
+    if (typeof window.fbGetAllUsers === 'function') {
+      const users = await window.fbGetAllUsers();
+      const institutionUser = users.find(u => 
+        (u.role === 'enterprise' || u.role === 'admin') &&
+        ((u.institutionId && u.institutionId.toUpperCase() === trimmed) ||
+         (u.schoolCode && u.schoolCode.toUpperCase() === trimmed))
+      );
+      
+      if (institutionUser) {
+        return {
+          code: institutionUser.institutionId || institutionUser.schoolCode,
+          name: institutionUser.schoolName || institutionUser.institutionName || 'Institution',
+          logo: institutionUser.schoolLogo || null,
+          adminEmail: institutionUser.email
+        };
+      }
+    }
+    
+    // Fallback to localStorage
+    const localUsers = JSON.parse(localStorage.getItem('waec_users') || '[]');
+    const institutionUser = localUsers.find(u => 
+      (u.role === 'enterprise' || u.role === 'admin') &&
+      ((u.institutionId && u.institutionId.toUpperCase() === trimmed) ||
+       (u.schoolCode && u.schoolCode.toUpperCase() === trimmed))
+    );
+    
+    if (institutionUser) {
+      return {
+        code: institutionUser.institutionId || institutionUser.schoolCode,
+        name: institutionUser.schoolName || institutionUser.institutionName || 'Institution',
+        logo: institutionUser.schoolLogo || null,
+        adminEmail: institutionUser.email
+      };
+    }
+    
+    return null;
+  } catch (error) {
+    console.error('[Auth] Error fetching institution:', error);
+    return null;
+  }
+}
+
+/**
+ * Cache institution data in session
+ * @param {object} institutionData - Institution details to cache
+ */
+function cacheInstitutionData(institutionData) {
+  if (!institutionData) return;
+  
+  try {
+    sessionStorage.setItem('institution_cache', JSON.stringify({
+      ...institutionData,
+      cachedAt: Date.now()
+    }));
+  } catch (error) {
+    console.error('[Auth] Error caching institution data:', error);
+  }
+}
+
+/**
+ * Get cached institution data
+ * @param {number} maxAge - Maximum age in milliseconds (default: 1 hour)
+ * @returns {object|null} - Cached institution data or null
+ */
+function getCachedInstitutionData(maxAge = 3600000) {
+  try {
+    const cached = sessionStorage.getItem('institution_cache');
+    if (!cached) return null;
+    
+    const data = JSON.parse(cached);
+    const age = Date.now() - (data.cachedAt || 0);
+    
+    if (age > maxAge) {
+      sessionStorage.removeItem('institution_cache');
+      return null;
+    }
+    
+    return data;
+  } catch (error) {
+    console.error('[Auth] Error reading cached institution data:', error);
+    return null;
+  }
+}
+
+// Export functions for use in other modules
+window.validateInstitutionCodeFormat = validateInstitutionCodeFormat;
+window.institutionCodeExists = institutionCodeExists;
+window.getInstitutionByCode = getInstitutionByCode;
+window.cacheInstitutionData = cacheInstitutionData;
+window.getCachedInstitutionData = getCachedInstitutionData;
