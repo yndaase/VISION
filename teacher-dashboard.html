@@ -26,6 +26,16 @@
       }
       try {
         const user = JSON.parse(session);
+        
+        // CRITICAL: Block regular students from teacher dashboard
+        if (user.role === 'student' || user.role === 'pro' || user.role === 'enterprise-student') {
+          alert('Student accounts cannot access the teacher dashboard. Redirecting to student portal...');
+          sessionStorage.removeItem('waec_session');
+          localStorage.removeItem('waec_session');
+          window.location.href = '/login.html';
+          return;
+        }
+        
         const validRoles = ['teacher', 'enterprise', 'admin'];
         if (!validRoles.includes(user.role)) {
           window.location.href = '/teacher-login.html';

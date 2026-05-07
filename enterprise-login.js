@@ -153,7 +153,13 @@ window.handleEnterpriseLogin = async function(event) {
       }
     }
     
-    // Verify role (Sub-task 3.1: Add enterprise-student role handling)
+    // CRITICAL: Block regular students from enterprise portal
+    // Regular students (role='student' or 'pro') should NEVER access enterprise portal
+    if (user.role === 'student' || user.role === 'pro') {
+      throw new Error('Regular student accounts cannot access the enterprise portal. Please use the main login page at /login.html');
+    }
+    
+    // Verify role matches selected role
     if (selectedRole === 'admin' && user.role !== 'enterprise' && user.role !== 'admin') {
       throw new Error('This account does not have admin privileges');
     }

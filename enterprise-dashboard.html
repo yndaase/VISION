@@ -26,7 +26,19 @@
       }
       try {
         const user = JSON.parse(session);
+        
+        // CRITICAL: Block regular students from enterprise dashboard
+        if (user.role === 'student' || user.role === 'pro') {
+          alert('Regular student accounts cannot access the enterprise dashboard. Redirecting to student portal...');
+          sessionStorage.removeItem('waec_session');
+          localStorage.removeItem('waec_session');
+          window.location.href = '/login.html';
+          return;
+        }
+        
+        // Only allow enterprise admins and system admins
         if (user.role !== 'enterprise' && user.role !== 'admin') {
+          alert('Access denied. This dashboard is for enterprise administrators only.');
           window.location.href = '/enterprise-login.html';
         }
       } catch(e) {
