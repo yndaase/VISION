@@ -649,8 +649,15 @@
         let userCount = 0;
         let activeCount = 0;
         
+        // Wait for Firebase Auth to be ready
+        if (typeof window.fbAuth !== 'undefined' && window.fbAuth) {
+          await new Promise(resolve => setTimeout(resolve, 1000));
+        }
+        
         if (typeof window.fbGetAllUsers === 'function') {
+          console.log('[Admin] Fetching users from Firestore...');
           const allUsers = await window.fbGetAllUsers('users');
+          console.log('[Admin] Fetched', allUsers.length, 'users from Firestore');
           userCount = allUsers.length;
           
           // Count active users (logged in today)
@@ -663,6 +670,7 @@
             return false;
           }).length;
         } else {
+          console.log('[Admin] Firebase not available, using localStorage fallback');
           // Fallback to localStorage
           const localUsers = getUsers();
           userCount = localUsers.length;
@@ -672,10 +680,15 @@
         const activeEl = document.getElementById('statActive');
         if (learnersEl) learnersEl.textContent = userCount;
         if (activeEl) activeEl.textContent = activeCount;
+        
+        console.log('[Admin] Stats updated - Total:', userCount, 'Active:', activeCount);
       } catch (error) {
         console.error('[Admin] Error loading stats:', error);
+        // Fallback to localStorage on error
+        const localUsers = getUsers();
         const learnersEl = document.getElementById('statLearners');
-        if (learnersEl) learnersEl.textContent = getUsers().length;
+        if (learnersEl) learnersEl.textContent = localUsers.length;
+        console.log('[Admin] Using localStorage fallback:', localUsers.length, 'users');
       }
     }
 
@@ -811,23 +824,108 @@
         const cloud = await window.fbGetUser(email);
         if (cloud) alreadyExists = true;
       }
-      if (alreadyExists) { if (btn) btn.textContent = "Authorize Account"; return showToast("Identity conflict: Email registry exists"); }
+      if (alreadyExists) { if (btn) btn.textContent = "Create Account"; return showToast("Identity conflict: Email registry exists"); }
 
       const hash = await sha256(pass);
-      const newUser = { name, email, hash, role, uid: uid || null, provider: "email", createdAt: Date.now(), status: "active" };
+      const newUser = { 
+        name, 
+        email, 
+        emailLower: email.toLowerCase(),
+        hash, 
+        role, 
+        uid: uid || null, 
+        provider: "email", 
+        createdAt: Date.now(), 
+        status: "active",
+        isVerified: false,
+        twoFAEnabled: false,
+        lastUpdated: new Date().toISOString()
+      };
       
-      // Save to Firestore
-      if (typeof window.fbSaveUser === 'function') await window.fbSaveUser(newUser);
+      // If creating an enterprise admin, generate institution details
+      if (role === 'enterprise') {
+        const schoolName = prompt("Enter School/Institution Name:", "");
+        if (!schoolName) {
+          if (btn) btn.textContent = "Create Account";
+          return showToast("Institution name required for enterprise accounts");
+        }
+        
+        // Generate unique institution ID and school code
+        const institutionId = email; // Use email as unique institution ID
+        const schoolCode = schoolName.toUpperCase().replace(/[^A-Z0-9]/g, '').substring(0, 10) + '-' + Date.now().toString().substring(-4);
+        
+        newUser.schoolName = schoolName;
+        newUser.institutionId = institutionId;
+        newUser.schoolCode = schoolCode;
+        newUser.schoolLogo = schoolName.charAt(0).toUpperCase();
+        
+        console.log(`[Admin] Creating enterprise account with:`, {
+          schoolName,
+          institutionId,
+          schoolCode
+        });
+      }
       
-      // Also update local cache
-      const users = getUsers();
-      users.push(newUser);
-      localStorage.setItem('waec_users', JSON.stringify(users));
+      try {
+        // 1. Create Firebase Auth account first
+        if (typeof window.fbSignUp === 'function') {
+          console.log('[Admin] Creating Firebase Auth account...');
+          const authResult = await window.fbSignUp(email, pass);
+          if (!authResult || !authResult.success) {
+            console.warn('[Admin] Firebase Auth creation failed:', authResult?.error);
+            // Continue anyway - we'll use local storage
+          } else {
+            console.log('[Admin] ✅ Firebase Auth account created');
+          }
+        }
+        
+        // 2. Wait for auth state to propagate
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        
+        // 3. Save to Firestore
+        if (typeof window.fbSaveUser === 'function') {
+          console.log('[Admin] Saving user to Firestore...');
+          await window.fbSaveUser(newUser);
+          console.log('[Admin] ✅ User saved to Firestore');
+        }
+        
+        // 4. Update local cache
+        const users = getUsers();
+        users.push(newUser);
+        localStorage.setItem('waec_users', JSON.stringify(users));
 
-      if (btn) btn.textContent = "Authorize Account";
-      logAction("USER_CREATED: " + email);
-      renderUsers(); showToast("User account created successfully");
-      ["newUserName", "newUserEmail", "newUserPass", "newUserUid"].forEach(id => document.getElementById(id).value = "");
+        if (btn) btn.textContent = "Create Account";
+        logAction("USER_CREATED: " + email + " (Role: " + role + ")");
+        
+        // Show success message with institution details for enterprise accounts
+        if (role === 'enterprise') {
+          showToast(`✅ Enterprise account created!\n\nSchool Code: ${newUser.schoolCode}\n\nShare this code with teachers and students to join.`);
+          
+          // Show modal with institution details
+          setTimeout(() => {
+            alert(`🏫 ENTERPRISE ACCOUNT CREATED\n\n` +
+                  `School: ${newUser.schoolName}\n` +
+                  `Admin Email: ${email}\n` +
+                  `School Code: ${newUser.schoolCode}\n\n` +
+                  `📋 NEXT STEPS:\n` +
+                  `1. Share the school code with teachers and students\n` +
+                  `2. They can use it to join your institution\n` +
+                  `3. Login at /enterprise-login.html to manage your school`);
+          }, 500);
+        } else {
+          showToast("✅ User account created successfully");
+        }
+        
+        renderUsers();
+        ["newUserName", "newUserEmail", "newUserPass", "newUserUid"].forEach(id => {
+          const el = document.getElementById(id);
+          if (el) el.value = "";
+        });
+      } catch (error) {
+        console.error('[Admin] User creation failed:', error);
+        if (btn) btn.textContent = "Create Account";
+        showToast("❌ Error: " + error.message);
+      }
     };
 
     // Cache of Firestore users for the admin panel

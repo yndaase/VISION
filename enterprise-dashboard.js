@@ -397,16 +397,272 @@ window.exportData = function() {
 /**
  * Show add student modal
  */
-window.showAddStudentModal = function() {
-  alert('Add student modal coming soon! You will be able to add students individually or bulk import from Excel.');
+window.showAddStudentModal = async function() {
+  const session = getSession();
+  if (!session || !session.institutionId) {
+    alert('Error: Institution information not found. Please log out and log back in.');
+    return;
+  }
+
+  const name = prompt('Enter student full name:');
+  if (!name || name.trim().length < 2) {
+    if (name !== null) alert('Please enter a valid name (at least 2 characters)');
+    return;
+  }
+
+  const email = prompt('Enter student email address:');
+  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    if (email !== null) alert('Please enter a valid email address');
+    return;
+  }
+
+  const password = prompt('Enter temporary password for student (min 6 characters):');
+  if (!password || password.length < 6) {
+    if (password !== null) alert('Password must be at least 6 characters');
+    return;
+  }
+
+  const studentClass = prompt('Enter student class (e.g., Form 3A):') || 'Not assigned';
+
+  // Show loading
+  const loadingMsg = document.createElement('div');
+  loadingMsg.style.cssText = `
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: var(--bg-card);
+    padding: 2rem 3rem;
+    border-radius: 16px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+    z-index: 10000;
+    text-align: center;
+    font-weight: 700;
+    color: var(--text-primary);
+  `;
+  loadingMsg.innerHTML = `
+    <div style="margin-bottom:1rem;">Creating student account...</div>
+    <div style="width:40px;height:40px;border:4px solid rgba(99,102,241,0.2);border-top-color:#6366f1;border-radius:50%;margin:0 auto;animation:spin 1s linear infinite;"></div>
+  `;
+  document.body.appendChild(loadingMsg);
+
+  try {
+    // Check if user already exists
+    if (typeof window.fbGetUser === 'function') {
+      const existing = await window.fbGetUser(email.toLowerCase());
+      if (existing) {
+        loadingMsg.remove();
+        alert('Error: A user with this email already exists.');
+        return;
+      }
+    }
+
+    // Hash password
+    const hash = await sha256(password);
+
+    // Create student object
+    const newStudent = {
+      name: name.trim(),
+      email: email.toLowerCase(),
+      emailLower: email.toLowerCase(),
+      hash: hash,
+      role: 'enterprise-student',
+      institutionId: session.institutionId,
+      institutionName: session.schoolName || 'Institution',
+      schoolCode: session.schoolCode || session.institutionId,
+      class: studentClass,
+      provider: 'email',
+      createdAt: Date.now(),
+      status: 'active',
+      isVerified: false,
+      twoFAEnabled: false,
+      lastUpdated: new Date().toISOString()
+    };
+
+    console.log('[Enterprise] Creating student:', newStudent);
+
+    // 1. Create Firebase Auth account
+    if (typeof window.fbSignUp === 'function') {
+      const authResult = await window.fbSignUp(email.toLowerCase(), password);
+      if (!authResult || !authResult.success) {
+        console.warn('[Enterprise] Firebase Auth creation failed:', authResult?.error);
+      }
+    }
+
+    // 2. Wait for auth state to propagate
+    await new Promise(resolve => setTimeout(resolve, 1000));
+
+    // 3. Save to Firestore
+    if (typeof window.fbSaveUser === 'function') {
+      await window.fbSaveUser(newStudent);
+      console.log('[Enterprise] ✅ Student saved to Firestore');
+    }
+
+    // 4. Update local cache
+    const localUsers = JSON.parse(localStorage.getItem('waec_users') || '[]');
+    localUsers.push(newStudent);
+    localStorage.setItem('waec_users', JSON.stringify(localUsers));
+
+    // 5. Add to students array and refresh UI
+    students.push(newStudent);
+    updateDashboardStats();
+    renderStudentsTable();
+
+    loadingMsg.remove();
+    
+    alert(`✅ Student account created successfully!\n\n` +
+          `Name: ${newStudent.name}\n` +
+          `Email: ${newStudent.email}\n` +
+          `Class: ${newStudent.class}\n` +
+          `Password: ${password}\n\n` +
+          `📧 Share these credentials with the student.`);
+
+  } catch (error) {
+    loadingMsg.remove();
+    console.error('[Enterprise] Error creating student:', error);
+    alert('Error creating student account: ' + error.message);
+  }
 };
 
 /**
  * Show add teacher modal
  */
-window.showAddTeacherModal = function() {
-  alert('Add teacher modal coming soon! You will be able to invite teachers via email.');
+window.showAddTeacherModal = async function() {
+  const session = getSession();
+  if (!session || !session.institutionId) {
+    alert('Error: Institution information not found. Please log out and log back in.');
+    return;
+  }
+
+  const name = prompt('Enter teacher full name:');
+  if (!name || name.trim().length < 2) {
+    if (name !== null) alert('Please enter a valid name (at least 2 characters)');
+    return;
+  }
+
+  const email = prompt('Enter teacher email address:');
+  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    if (email !== null) alert('Please enter a valid email address');
+    return;
+  }
+
+  const password = prompt('Enter temporary password for teacher (min 6 characters):');
+  if (!password || password.length < 6) {
+    if (password !== null) alert('Password must be at least 6 characters');
+    return;
+  }
+
+  const subject = prompt('Enter teacher subject (e.g., Mathematics):') || 'Not assigned';
+
+  // Show loading
+  const loadingMsg = document.createElement('div');
+  loadingMsg.style.cssText = `
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: var(--bg-card);
+    padding: 2rem 3rem;
+    border-radius: 16px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+    z-index: 10000;
+    text-align: center;
+    font-weight: 700;
+    color: var(--text-primary);
+  `;
+  loadingMsg.innerHTML = `
+    <div style="margin-bottom:1rem;">Creating teacher account...</div>
+    <div style="width:40px;height:40px;border:4px solid rgba(16,185,129,0.2);border-top-color:#10b981;border-radius:50%;margin:0 auto;animation:spin 1s linear infinite;"></div>
+  `;
+  document.body.appendChild(loadingMsg);
+
+  try {
+    // Check if user already exists
+    if (typeof window.fbGetUser === 'function') {
+      const existing = await window.fbGetUser(email.toLowerCase());
+      if (existing) {
+        loadingMsg.remove();
+        alert('Error: A user with this email already exists.');
+        return;
+      }
+    }
+
+    // Hash password
+    const hash = await sha256(password);
+
+    // Create teacher object
+    const newTeacher = {
+      name: name.trim(),
+      email: email.toLowerCase(),
+      emailLower: email.toLowerCase(),
+      hash: hash,
+      role: 'teacher',
+      institutionId: session.institutionId,
+      institutionName: session.schoolName || 'Institution',
+      schoolName: session.schoolName || 'Institution',
+      schoolCode: session.schoolCode || session.institutionId,
+      subject: subject,
+      provider: 'email',
+      createdAt: Date.now(),
+      status: 'active',
+      isVerified: false,
+      twoFAEnabled: false,
+      lastUpdated: new Date().toISOString()
+    };
+
+    console.log('[Enterprise] Creating teacher:', newTeacher);
+
+    // 1. Create Firebase Auth account
+    if (typeof window.fbSignUp === 'function') {
+      const authResult = await window.fbSignUp(email.toLowerCase(), password);
+      if (!authResult || !authResult.success) {
+        console.warn('[Enterprise] Firebase Auth creation failed:', authResult?.error);
+      }
+    }
+
+    // 2. Wait for auth state to propagate
+    await new Promise(resolve => setTimeout(resolve, 1000));
+
+    // 3. Save to Firestore
+    if (typeof window.fbSaveUser === 'function') {
+      await window.fbSaveUser(newTeacher);
+      console.log('[Enterprise] ✅ Teacher saved to Firestore');
+    }
+
+    // 4. Update local cache
+    const localUsers = JSON.parse(localStorage.getItem('waec_users') || '[]');
+    localUsers.push(newTeacher);
+    localStorage.setItem('waec_users', JSON.stringify(localUsers));
+
+    // 5. Add to teachers array and refresh UI
+    teachers.push(newTeacher);
+    updateDashboardStats();
+    renderTeachersTable();
+
+    loadingMsg.remove();
+    
+    alert(`✅ Teacher account created successfully!\n\n` +
+          `Name: ${newTeacher.name}\n` +
+          `Email: ${newTeacher.email}\n` +
+          `Subject: ${newTeacher.subject}\n` +
+          `Password: ${password}\n\n` +
+          `📧 Share these credentials with the teacher.`);
+
+  } catch (error) {
+    loadingMsg.remove();
+    console.error('[Enterprise] Error creating teacher:', error);
+    alert('Error creating teacher account: ' + error.message);
+  }
 };
+
+// Helper function for SHA-256 hashing
+async function sha256(str) {
+  const buf = new TextEncoder().encode(str);
+  const hashArray = new Uint8Array(await crypto.subtle.digest("SHA-256", buf));
+  return Array.from(hashArray)
+    .map((b) => b.toString(16).padStart(2, "0"))
+    .join("");
+}
 
 /**
  * Show create class modal

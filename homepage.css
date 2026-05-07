@@ -250,6 +250,71 @@
   border-color: rgba(255,255,255,0.5);
 }
 
+/* Enterprise Portal Link */
+.hp-enterprise-link {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 2rem;
+  padding: 16px 24px;
+  background: rgba(16, 185, 129, 0.08);
+  border: 1px solid rgba(16, 185, 129, 0.2);
+  border-radius: 12px;
+  backdrop-filter: blur(10px);
+  max-width: fit-content;
+}
+
+.hp-enterprise-link svg {
+  color: #10b981;
+  flex-shrink: 0;
+}
+
+.hp-enterprise-link span {
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.hp-enterprise-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: white;
+  font-weight: 700;
+  font-size: 0.85rem;
+  padding: 8px 18px;
+  border-radius: 6px;
+  text-decoration: none;
+  transition: all 0.25s;
+  box-shadow: 0 2px 12px rgba(16, 185, 129, 0.3);
+  margin-left: auto;
+}
+
+.hp-enterprise-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 20px rgba(16, 185, 129, 0.5);
+  background: linear-gradient(135deg, #059669, #047857);
+}
+
+.hp-enterprise-btn svg {
+  color: white;
+}
+
+@media (max-width: 768px) {
+  .hp-enterprise-link {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  
+  .hp-enterprise-btn {
+    margin-left: 0;
+    width: 100%;
+    justify-content: center;
+  }
+}
+
 /* Slider dots */
 .hp-slider-arrows {
   position: absolute; bottom: 50%; transform: translateY(50%);
