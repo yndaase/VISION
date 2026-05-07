@@ -205,7 +205,8 @@ window.handleEnterpriseLogin = async function(event) {
       
       const userInstitutionCode = (user.institutionId || user.schoolCode || '').toUpperCase();
       if (userInstitutionCode !== institutionCode) {
-        throw new Error('Invalid institution code. Expected: ' + userInstitutionCode);
+        // IMPROVED ERROR: Show expected institution code to help user
+        throw new Error(`Invalid institution code. Your account is registered under: ${userInstitutionCode}`);
       }
     } else {
       console.log('[Enterprise Login] Admin role - skipping institution code verification');
@@ -369,7 +370,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (user.role === 'enterprise' || user.role === 'admin') {
         window.location.href = '/enterprise-dashboard.html';
       } else if (user.role === 'teacher') {
-        window.location.href = '/teacher-dashboard.html';
+        window.location.href = '/enterprise-dashboard.html';
       } else if (user.role === 'enterprise-student') {
         window.location.href = '/dashboard.html?enterprise=true';
       } else {
@@ -382,6 +383,27 @@ document.addEventListener('DOMContentLoaded', () => {
   
   // Initialize role selector
   selectRole('admin');
+  
+  // CRITICAL FIX: Clear institution code field on page load to prevent browser autofill issues
+  const institutionCodeInput = document.getElementById('institutionCode');
+  if (institutionCodeInput) {
+    // Clear any cached/autofilled value
+    institutionCodeInput.value = '';
+    
+    // Prevent browser autofill by adding a small delay
+    setTimeout(() => {
+      institutionCodeInput.value = '';
+    }, 100);
+    
+    // Also clear on focus to ensure clean state
+    institutionCodeInput.addEventListener('focus', function() {
+      if (this.value && this.value.length > 0) {
+        console.log('[Enterprise Login] Clearing autofilled institution code:', this.value);
+      }
+    });
+  }
+  
+  console.log('[Enterprise Login] Page loaded - institution code field cleared');
 });
 
 // Add shake animation

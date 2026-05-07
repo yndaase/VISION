@@ -36,9 +36,9 @@
           return;
         }
         
-        // Only allow enterprise admins and system admins
-        if (user.role !== 'enterprise' && user.role !== 'admin') {
-          alert('Access denied. This dashboard is for enterprise administrators only.');
+        // Allow enterprise admins, system admins, and teachers
+        if (user.role !== 'enterprise' && user.role !== 'admin' && user.role !== 'teacher') {
+          alert('Access denied. This dashboard is for enterprise administrators and teachers only.');
           window.location.href = '/enterprise-login.html';
         }
       } catch(e) {
