@@ -544,19 +544,25 @@ window.showAddStudentModal = async function() {
       console.log('[Enterprise] ✅ Student saved to Firestore');
     }
 
-    // 4. Wait for Firestore to propagate (increased wait time)
+    // 4. Immediately add to local arrays for instant UI update
+    students.push(newStudent);
+    console.log('[Enterprise] Added student to local array, total:', students.length);
+
+    // 5. Update UI immediately
+    renderStudentsTable();
+    updateDashboardStats();
+
+    // 6. Wait for Firestore to propagate
     await new Promise(resolve => setTimeout(resolve, 2000));
 
-    // 5. Update local cache
+    // 7. Update local cache
     const localUsers = JSON.parse(localStorage.getItem('waec_users') || '[]');
     localUsers.push(newStudent);
     localStorage.setItem('waec_users', JSON.stringify(localUsers));
 
-    // 6. Force reload from Firestore (not cache)
-    console.log('[Enterprise] Force reloading from Firestore...');
-    
-    // Reload dashboard data with force refresh
-    await loadDashboardData(true);
+    // 8. Reload from Firestore in background to ensure sync
+    console.log('[Enterprise] Reloading from Firestore in background...');
+    loadDashboardData(true).catch(err => console.error('[Enterprise] Background reload failed:', err));
 
     loadingMsg.remove();
     
@@ -679,19 +685,25 @@ window.showAddTeacherModal = async function() {
       console.log('[Enterprise] ✅ Teacher saved to Firestore');
     }
 
-    // 4. Wait for Firestore to propagate (increased wait time)
+    // 4. Immediately add to local arrays for instant UI update
+    teachers.push(newTeacher);
+    console.log('[Enterprise] Added teacher to local array, total:', teachers.length);
+
+    // 5. Update UI immediately
+    renderTeachersTable();
+    updateDashboardStats();
+
+    // 6. Wait for Firestore to propagate
     await new Promise(resolve => setTimeout(resolve, 2000));
 
-    // 5. Update local cache
+    // 7. Update local cache
     const localUsers = JSON.parse(localStorage.getItem('waec_users') || '[]');
     localUsers.push(newTeacher);
     localStorage.setItem('waec_users', JSON.stringify(localUsers));
 
-    // 6. Force reload from Firestore (not cache)
-    console.log('[Enterprise] Force reloading from Firestore...');
-    
-    // Reload dashboard data with force refresh
-    await loadDashboardData(true);
+    // 8. Reload from Firestore in background to ensure sync
+    console.log('[Enterprise] Reloading from Firestore in background...');
+    loadDashboardData(true).catch(err => console.error('[Enterprise] Background reload failed:', err));
 
     loadingMsg.remove();
     
