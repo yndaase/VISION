@@ -9,7 +9,7 @@
   },
   "redirects": [
     { 
-      "source": "/((?!api).*)\.html", 
+      "source": "/((?!api).*).html", 
       "destination": "/$1", 
       "permanent": true 
     }
