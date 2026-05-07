@@ -259,6 +259,53 @@ service cloud.firestore {
     }
     
     // ============================================
+    // QUIZ SYSTEM
+    // ============================================
+    
+    // Quizzes collection (teacher-owned)
+    match /quizzes/{teacherEmail} {
+      // Teachers can read/write their own quizzes
+      allow read, write: if isSignedIn() && 
+        (request.auth.token.email == teacherEmail || 
+         request.auth.token.email.lower() == teacherEmail.lower());
+      
+      // Admins can read all quizzes
+      allow read: if isAdmin();
+      
+      // Enterprise admins can read quizzes from their institution teachers
+      allow read: if isEnterpriseAdmin() && 
+        exists(/databases/$(database)/documents/users/$(teacherEmail)) &&
+        sameInstitution(get(/databases/$(database)/documents/users/$(teacherEmail)).data.institutionId);
+      
+      // Students can read published quizzes from their institution
+      allow read: if isSignedIn() && 
+        exists(/databases/$(database)/documents/users/$(teacherEmail)) &&
+        sameInstitution(get(/databases/$(database)/documents/users/$(teacherEmail)).data.institutionId);
+    }
+    
+    // Quiz attempts collection
+    match /quiz_attempts/{attemptId} {
+      // Students can read their own attempts
+      allow read: if isSignedIn() && resource.data.studentEmail == request.auth.token.email;
+      
+      // Students can create their own attempts
+      allow create: if isSignedIn() && request.resource.data.studentEmail == request.auth.token.email;
+      
+      // Admins can read all attempts
+      allow read: if isAdmin();
+      
+      // Teachers can read attempts from their institution students
+      allow read: if isTeacher() && 
+        exists(/databases/$(database)/documents/users/$(resource.data.studentEmail)) &&
+        sameInstitution(get(/databases/$(database)/documents/users/$(resource.data.studentEmail)).data.institutionId);
+      
+      // Enterprise admins can read attempts from their institution
+      allow read: if isEnterpriseAdmin() && 
+        exists(/databases/$(database)/documents/users/$(resource.data.studentEmail)) &&
+        sameInstitution(get(/databases/$(database)/documents/users/$(resource.data.studentEmail)).data.institutionId);
+    }
+    
+    // ============================================
     // DEFAULT DENY
     // ============================================
     

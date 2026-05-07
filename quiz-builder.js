@@ -48,12 +48,33 @@ function getSession() {
 }
 
 /**
- * Load quizzes
+ * Load quizzes from Firestore
  */
-function loadQuizzes() {
-  const storageKey = `quizzes_${currentUser.email}`;
-  quizzes = JSON.parse(localStorage.getItem(storageKey) || '[]');
-  renderQuizzes();
+async function loadQuizzes() {
+  console.log('[Quiz Builder] Loading quizzes for:', currentUser.email);
+  
+  try {
+    // Try loading from Firestore first
+    if (typeof window.fbGetQuizzes === 'function') {
+      const firestoreQuizzes = await window.fbGetQuizzes(currentUser.email, currentUser.institutionId);
+      if (firestoreQuizzes && firestoreQuizzes.length > 0) {
+        quizzes = firestoreQuizzes;
+        console.log('[Quiz Builder] ✅ Loaded', quizzes.length, 'quizzes from Firestore');
+        renderQuizzes();
+        return;
+      }
+    }
+    
+    // Fallback to localStorage
+    const storageKey = `quizzes_${currentUser.email}`;
+    quizzes = JSON.parse(localStorage.getItem(storageKey) || '[]');
+    console.log('[Quiz Builder] Loaded', quizzes.length, 'quizzes from localStorage');
+    renderQuizzes();
+    
+  } catch (error) {
+    console.error('[Quiz Builder] Error loading quizzes:', error);
+    showNotification('Failed to load quizzes', 'error');
+  }
 }
 
 /**
@@ -174,7 +195,7 @@ window.showCreateQuizModal = function() {
 /**
  * Create quiz
  */
-function createQuiz() {
+async function createQuiz() {
   const title = document.getElementById('quizTitle').value.trim();
   const description = document.getElementById('quizDesc').value.trim();
   const duration = parseInt(document.getElementById('quizDuration').value);
@@ -195,12 +216,13 @@ function createQuiz() {
     status: 'draft',
     createdAt: Date.now(),
     createdBy: currentUser.email,
+    institutionId: currentUser.institutionId || null,
     attempts: 0,
     avgScore: 0
   };
   
   quizzes.push(quiz);
-  saveQuizzes();
+  await saveQuizzes();
   renderQuizzes();
   
   closeModal();
@@ -482,16 +504,289 @@ window.viewResults = function(quizId) {
 /**
  * Generate AI quiz
  */
-window.generateAIQuiz = function() {
-  showNotification('AI quiz generation coming soon!', 'info');
+window.generateAIQuiz = async function() {
+  const modal = createModal('Generate Quiz with AI', `
+    <div class="gb-form-group">
+      <label>Topic *</label>
+      <input type="text" id="aiTopic" placeholder="e.g., Photosynthesis, Quadratic Equations" required>
+    </div>
+    
+    <div class="gb-form-group">
+      <label>Number of Questions *</label>
+      <input type="number" id="aiQuestionCount" min="5" max="20" value="10" required>
+    </div>
+    
+    <div class="gb-form-group">
+      <label>Difficulty Level</label>
+      <select id="aiDifficulty">
+        <option value="easy">Easy</option>
+        <option value="medium">Medium</option>
+        <option value="hard">Hard</option>
+      </select>
+    </div>
+    
+    <div class="gb-form-group">
+      <label>Subject</label>
+      <select id="aiSubject">
+        <option value="mathematics">Mathematics</option>
+        <option value="english">English</option>
+        <option value="science">Science</option>
+        <option value="social_studies">Social Studies</option>
+        <option value="other">Other</option>
+      </select>
+    </div>
+    
+    <div style="padding:1rem;background:rgba(59,130,246,0.1);border:1px solid rgba(59,130,246,0.2);border-radius:8px;margin-top:1rem;">
+      <div style="display:flex;align-items:start;gap:0.75rem;">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+        <div style="font-size:0.85rem;color:var(--text-secondary);">
+          AI will generate multiple-choice questions based on your topic. Review and edit questions before publishing.
+        </div>
+      </div>
+    </div>
+  `, async () => {
+    await generateQuizWithAI();
+  });
+  
+  document.body.appendChild(modal);
 };
 
 /**
- * Import quiz
+ * Generate quiz with AI
+ */
+async function generateQuizWithAI() {
+  const topic = document.getElementById('aiTopic').value.trim();
+  const questionCount = parseInt(document.getElementById('aiQuestionCount').value);
+  const difficulty = document.getElementById('aiDifficulty').value;
+  const subject = document.getElementById('aiSubject').value;
+  
+  if (!topic) {
+    showNotification('Please enter a topic', 'error');
+    return;
+  }
+  
+  // Show loading
+  const saveBtn = document.getElementById('modalSaveBtn');
+  if (saveBtn) {
+    saveBtn.disabled = true;
+    saveBtn.innerHTML = '<span>Generating...</span>';
+  }
+  
+  try {
+    console.log('[Quiz Builder] Generating AI quiz:', { topic, questionCount, difficulty, subject });
+    
+    // Call AI generation API
+    const response = await fetch('/api/ai-quiz-generator', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        topic,
+        questionCount,
+        difficulty,
+        subject
+      })
+    });
+    
+    if (!response.ok) {
+      throw new Error('Failed to generate quiz');
+    }
+    
+    const data = await response.json();
+    
+    if (!data.success || !data.questions) {
+      throw new Error(data.error || 'Failed to generate questions');
+    }
+    
+    // Create quiz with AI-generated questions
+    const quiz = {
+      id: generateId(),
+      title: `${topic} - ${difficulty.charAt(0).toUpperCase() + difficulty.slice(1)} Quiz`,
+      description: `AI-generated quiz on ${topic}`,
+      duration: questionCount * 2, // 2 minutes per question
+      subject,
+      questions: data.questions,
+      status: 'draft',
+      createdAt: Date.now(),
+      createdBy: currentUser.email,
+      institutionId: currentUser.institutionId || null,
+      attempts: 0,
+      avgScore: 0,
+      aiGenerated: true
+    };
+    
+    quizzes.push(quiz);
+    await saveQuizzes();
+    renderQuizzes();
+    
+    closeModal();
+    showNotification(`✅ Generated ${data.questions.length} questions successfully!`, 'success');
+    
+    // Open quiz editor
+    setTimeout(() => editQuiz(quiz.id), 500);
+    
+  } catch (error) {
+    console.error('[Quiz Builder] AI generation error:', error);
+    showNotification('Failed to generate quiz: ' + error.message, 'error');
+    
+    if (saveBtn) {
+      saveBtn.disabled = false;
+      saveBtn.innerHTML = '<span>Generate</span>';
+    }
+  }
+}
+
+/**
+ * Import quiz from CSV
  */
 window.importQuiz = function() {
-  showNotification('Quiz import coming soon!', 'info');
+  const modal = createModal('Import Quiz from CSV', `
+    <div class="gb-form-group">
+      <label>Quiz Title *</label>
+      <input type="text" id="importTitle" placeholder="e.g., Imported Quiz" required>
+    </div>
+    
+    <div class="gb-form-group">
+      <label>CSV File *</label>
+      <input type="file" id="csvFile" accept=".csv" required style="padding:0.75rem;background:var(--bg-secondary);border:1px solid var(--border);border-radius:8px;width:100%;">
+    </div>
+    
+    <div style="padding:1rem;background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.2);border-radius:8px;margin-top:1rem;">
+      <div style="font-weight:700;margin-bottom:0.5rem;color:#f59e0b;">CSV Format:</div>
+      <div style="font-size:0.85rem;color:var(--text-secondary);font-family:monospace;">
+        question,optionA,optionB,optionC,optionD,correctAnswer,points<br>
+        "What is 2+2?","2","3","4","5",2,1<br>
+        "Capital of Ghana?","Accra","Lagos","Nairobi","Cairo",0,1
+      </div>
+      <div style="font-size:0.85rem;color:var(--text-muted);margin-top:0.5rem;">
+        • correctAnswer is 0-based index (0=A, 1=B, 2=C, 3=D)<br>
+        • Use quotes for text with commas
+      </div>
+    </div>
+  `, () => {
+    importQuizFromCSV();
+  });
+  
+  document.body.appendChild(modal);
 };
+
+/**
+ * Import quiz from CSV file
+ */
+async function importQuizFromCSV() {
+  const title = document.getElementById('importTitle').value.trim();
+  const fileInput = document.getElementById('csvFile');
+  
+  if (!title) {
+    showNotification('Please enter quiz title', 'error');
+    return;
+  }
+  
+  if (!fileInput.files || fileInput.files.length === 0) {
+    showNotification('Please select a CSV file', 'error');
+    return;
+  }
+  
+  const file = fileInput.files[0];
+  
+  try {
+    const text = await file.text();
+    const lines = text.split('\n').filter(line => line.trim());
+    
+    if (lines.length < 2) {
+      throw new Error('CSV file must have at least a header and one question');
+    }
+    
+    // Skip header row
+    const questions = [];
+    
+    for (let i = 1; i < lines.length; i++) {
+      const line = lines[i].trim();
+      if (!line) continue;
+      
+      // Parse CSV line (handle quoted values)
+      const values = parseCSVLine(line);
+      
+      if (values.length < 7) {
+        console.warn(`Skipping line ${i + 1}: insufficient columns`);
+        continue;
+      }
+      
+      const [question, optionA, optionB, optionC, optionD, correctAnswer, points] = values;
+      
+      questions.push({
+        question: question.trim(),
+        type: 'multiple_choice',
+        options: [
+          optionA.trim(),
+          optionB.trim(),
+          optionC.trim(),
+          optionD.trim()
+        ].filter(opt => opt),
+        correctAnswer: parseInt(correctAnswer),
+        points: parseInt(points) || 1
+      });
+    }
+    
+    if (questions.length === 0) {
+      throw new Error('No valid questions found in CSV');
+    }
+    
+    // Create quiz
+    const quiz = {
+      id: generateId(),
+      title,
+      description: `Imported from CSV (${questions.length} questions)`,
+      duration: questions.length * 2,
+      subject: 'other',
+      questions,
+      status: 'draft',
+      createdAt: Date.now(),
+      createdBy: currentUser.email,
+      institutionId: currentUser.institutionId || null,
+      attempts: 0,
+      avgScore: 0
+    };
+    
+    quizzes.push(quiz);
+    await saveQuizzes();
+    renderQuizzes();
+    
+    closeModal();
+    showNotification(`✅ Imported ${questions.length} questions successfully!`, 'success');
+    
+    // Open quiz editor
+    setTimeout(() => editQuiz(quiz.id), 500);
+    
+  } catch (error) {
+    console.error('[Quiz Builder] Import error:', error);
+    showNotification('Failed to import CSV: ' + error.message, 'error');
+  }
+}
+
+/**
+ * Parse CSV line handling quoted values
+ */
+function parseCSVLine(line) {
+  const values = [];
+  let current = '';
+  let inQuotes = false;
+  
+  for (let i = 0; i < line.length; i++) {
+    const char = line[i];
+    
+    if (char === '"') {
+      inQuotes = !inQuotes;
+    } else if (char === ',' && !inQuotes) {
+      values.push(current);
+      current = '';
+    } else {
+      current += char;
+    }
+  }
+  
+  values.push(current);
+  return values;
+}
 
 /**
  * Filter quizzes
@@ -501,11 +796,28 @@ window.filterQuizzes = function() {
 };
 
 /**
- * Save quizzes
+ * Save quizzes to Firestore and localStorage
  */
-function saveQuizzes() {
-  const storageKey = `quizzes_${currentUser.email}`;
-  localStorage.setItem(storageKey, JSON.stringify(quizzes));
+async function saveQuizzes() {
+  try {
+    // Save to Firestore
+    if (typeof window.fbSaveQuizzes === 'function') {
+      await window.fbSaveQuizzes(currentUser.email, quizzes);
+      console.log('[Quiz Builder] ✅ Saved to Firestore');
+    }
+    
+    // Also save to localStorage as backup
+    const storageKey = `quizzes_${currentUser.email}`;
+    localStorage.setItem(storageKey, JSON.stringify(quizzes));
+    console.log('[Quiz Builder] ✅ Saved to localStorage');
+    
+  } catch (error) {
+    console.error('[Quiz Builder] Error saving quizzes:', error);
+    
+    // Fallback to localStorage only
+    const storageKey = `quizzes_${currentUser.email}`;
+    localStorage.setItem(storageKey, JSON.stringify(quizzes));
+  }
 }
 
 /**

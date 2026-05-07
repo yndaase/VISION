@@ -1100,3 +1100,117 @@ if (typeof window !== 'undefined' && window.location.pathname !== '/parent-porta
 
 
 
+
+
+// ============================================
+// QUIZ MANAGEMENT FUNCTIONS
+// ============================================
+
+/**
+ * Save quizzes for a teacher
+ */
+window.fbSaveQuizzes = async function(teacherEmail, quizzes) {
+  try {
+    const email = resolveEmailKey(teacherEmail);
+    const quizzesRef = doc(db, "quizzes", email);
+    
+    await setDoc(quizzesRef, {
+      teacherEmail: email,
+      quizzes: quizzes,
+      lastUpdated: new Date().toISOString()
+    }, { merge: true });
+    
+    console.log("[Firebase] ✅ Quizzes saved for:", email);
+    return { success: true };
+  } catch (error) {
+    console.error("[Firebase] Error saving quizzes:", error);
+    return { success: false, error: error.message };
+  }
+};
+
+/**
+ * Get quizzes for a teacher
+ */
+window.fbGetQuizzes = async function(teacherEmail, institutionId = null) {
+  try {
+    const email = resolveEmailKey(teacherEmail);
+    const quizzesRef = doc(db, "quizzes", email);
+    const quizzesSnap = await getDoc(quizzesRef);
+    
+    if (quizzesSnap.exists()) {
+      const data = quizzesSnap.data();
+      let quizzes = data.quizzes || [];
+      
+      // Filter by institution if provided
+      if (institutionId) {
+        quizzes = quizzes.filter(q => q.institutionId === institutionId || !q.institutionId);
+      }
+      
+      console.log("[Firebase] ✅ Loaded", quizzes.length, "quizzes for:", email);
+      return quizzes;
+    }
+    
+    console.log("[Firebase] No quizzes found for:", email);
+    return [];
+  } catch (error) {
+    console.error("[Firebase] Error getting quizzes:", error);
+    return [];
+  }
+};
+
+/**
+ * Get all published quizzes for an institution
+ */
+window.fbGetPublishedQuizzes = async function(institutionId) {
+  try {
+    const quizzesCollection = collection(db, "quizzes");
+    const quizzesSnapshot = await getDocs(quizzesCollection);
+    
+    const publishedQuizzes = [];
+    
+    quizzesSnapshot.forEach((doc) => {
+      const data = doc.data();
+      if (data.quizzes) {
+        const published = data.quizzes.filter(q => 
+          q.status === 'published' && 
+          (q.institutionId === institutionId || !q.institutionId)
+        );
+        publishedQuizzes.push(...published);
+      }
+    });
+    
+    console.log("[Firebase] ✅ Found", publishedQuizzes.length, "published quizzes");
+    return publishedQuizzes;
+  } catch (error) {
+    console.error("[Firebase] Error getting published quizzes:", error);
+    return [];
+  }
+};
+
+/**
+ * Save quiz attempt/result
+ */
+window.fbSaveQuizAttempt = async function(studentEmail, quizId, attempt) {
+  try {
+    const email = resolveEmailKey(studentEmail);
+    const attemptRef = doc(collection(db, "quiz_attempts"));
+    
+    await setDoc(attemptRef, {
+      studentEmail: email,
+      quizId: quizId,
+      score: attempt.score,
+      totalPoints: attempt.totalPoints,
+      answers: attempt.answers,
+      completedAt: new Date().toISOString(),
+      duration: attempt.duration
+    });
+    
+    console.log("[Firebase] ✅ Quiz attempt saved");
+    return { success: true };
+  } catch (error) {
+    console.error("[Firebase] Error saving quiz attempt:", error);
+    return { success: false, error: error.message };
+  }
+};
+
+console.log("[Firebase] Quiz management functions loaded");
