@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Yaw Ndaase Mensuoh | Systems Architect & Technologist</title>
+  
+  <meta name="description" content="Personal portfolio of Yaw Ndaase Mensuoh, Founder & Systems Architect of Vision Education." />
+  <link rel="icon" type="image/png" href="favicon.png" />
+  <link rel="canonical" href="https://yaw.visionedu.online/" />
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+
+  <!-- Styles & Theme -->
+  <script src="theme.js"></script>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- ── NAVIGATION ── -->
+  <nav class="nav" id="mainNav">
+    <a href="/" class="nav-brand">
+      <div class="nav-brand-dot">Y</div>
+      Yaw <span>Ndaase</span>
+    </a>
+    <div class="nav-links">
+      <a href="#about" class="nav-link">About</a>
+      <a href="#projects" class="nav-link">Projects</a>
+      <a href="#skills" class="nav-link">Skills</a>
+      <a href="#contact" class="nav-link">Contact</a>
+    </div>
+    <div class="nav-actions">
+      <button class="theme-toggle-btn" onclick="toggleTheme()" aria-label="Toggle theme">
+        <svg class="theme-icon-dark" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        <svg class="theme-icon-light" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+      </button>
+    </div>
+  </nav>
+
+  <!-- ── HERO SECTION ── -->
+  <header class="hero" id="top">
+    <div class="animate-in">
+      <div class="hero-photo-wrapper">
+        <!--
+          TO ADD YOUR PHOTO:
+          1. Place your photo file (e.g. yaw.jpg) inside an 'assets' folder in this project.
+          2. Replace the <div> below with:
+             <img src="assets/yaw.jpg" alt="Yaw Ndaase Mensuoh" class="hero-photo" />
+        -->
+        <div class="hero-photo" id="photoPlaceholder" style="background:linear-gradient(135deg,#6366f1,#4f46e5);display:flex;align-items:center;justify-content:center;font-size:3.5rem;font-weight:900;color:#fff;letter-spacing:-2px;">YN</div>
+      </div>
+      
+      <div class="hero-badge">
+        <span class="hero-badge-dot"></span>
+        Systems Architect & Developer
+      </div>
+      
+      <h1>
+        Yaw Ndaase Mensuoh<br />
+        <span class="gradient-text">Building the Future of Tech</span>
+      </h1>
+      
+      <p class="hero-sub">
+        I am a technologist and the founder of Vision Education. I build robust, high-performance systems and AI-powered platforms that solve real-world problems.
+      </p>
+
+      <div class="hero-socials">
+        <a href="#projects" class="social-btn primary-btn">
+          View Projects
+        </a>
+        <a href="https://www.linkedin.com/in/yaw-ndaase-mensuoh" target="_blank" rel="noopener" class="social-btn">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
+          LinkedIn
+        </a>
+        <a href="https://x.com/yndaase" target="_blank" rel="noopener" class="social-btn">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.747l7.73-8.835L1.254 2.25H8.08l4.253 5.622 5.911-5.622zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+          Twitter / X
+        </a>
+        <a href="https://www.instagram.com/y.ndaase/" target="_blank" rel="noopener" class="social-btn">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+          Instagram
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- ── STATS BAR ── -->
+  <div class="stats-bar">
+    <div class="stat-item">
+      <div class="stat-num">3+</div>
+      <div class="stat-label">Years Experience</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">5+</div>
+      <div class="stat-label">Major Projects</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">2</div>
+      <div class="stat-label">Enterprises Built</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">100%</div>
+      <div class="stat-label">Commitment</div>
+    </div>
+  </div>
+
+  <!-- ── ABOUT ── -->
+  <section id="about" class="section">
+    <div class="section-label">01 // Profile</div>
+    <h2 class="section-title">About Me</h2>
+    <p class="section-sub">A brief look into my background and what drives my work in technology.</p>
+    
+    <div class="about-card">
+      <p>I am <strong>Yaw Ndaase Mensuoh</strong>, a passionate systems architect and technologist from Ghana. My mission is to build robust, scalable platforms that create meaningful impact, particularly in the education sector.</p>
+      <p>As the founder of <strong>Vision Education</strong>, I have spearheaded the development of Ghana's premier WASSCE preparation platform, integrating AI to provide real-time, examiner-level feedback to students. I thrive on solving complex technical challenges, designing elegant architectures, and leading projects from conception to global deployment.</p>
+      <p>Whether it's deploying secure Firebase rules, crafting beautiful UI designs, or architecting AI engines, I am dedicated to pushing the boundaries of what's possible on the web.</p>
+    </div>
+  </section>
+
+  <hr class="divider" />
+
+  <!-- ── PROJECTS ── -->
+  <section id="projects" class="section">
+    <div class="section-label">02 // Portfolio</div>
+    <h2 class="section-title">Featured Projects</h2>
+    <p class="section-sub">A selection of my recent work, showcasing full-stack development and platform architecture.</p>
+
+    <div class="projects-grid">
+      <!-- Project 1 -->
+      <div class="project-card">
+        <div class="project-card-tag">Flagship Platform</div>
+        <h3 class="project-card-title">Vision Education</h3>
+        <p class="project-card-desc">The premier WASSCE preparation platform in Ghana. Features a massive database of past questions, real-time analytics, an enterprise dashboard for schools, and a seamless student portal.</p>
+        <div class="project-card-tech">
+          <span class="tech-tag">HTML/CSS/JS</span>
+          <span class="tech-tag">Firebase</span>
+          <span class="tech-tag">Firestore</span>
+        </div>
+        <a href="https://visionedu.online" target="_blank" class="project-card-link">
+          Visit Project 
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </a>
+      </div>
+
+      <!-- Project 2 -->
+      <div class="project-card">
+        <div class="project-card-tag">AI Integration</div>
+        <h3 class="project-card-title">Vision AI Engine</h3>
+        <p class="project-card-desc">An advanced educational AI engine that simulates a WAEC Chief Examiner. It provides step-by-step marking, explanations, and dynamic tutoring for complex STEM subjects.</p>
+        <div class="project-card-tech">
+          <span class="tech-tag">Node.js</span>
+          <span class="tech-tag">LLMs (GPT-4/Gemini)</span>
+          <span class="tech-tag">Vercel</span>
+        </div>
+        <a href="https://ai.visionedu.online" target="_blank" class="project-card-link">
+          Visit Project 
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </a>
+      </div>
+
+      <!-- Project 3 -->
+      <div class="project-card">
+        <div class="project-card-tag">B2B Portal</div>
+        <h3 class="project-card-title">Enterprise Dashboard</h3>
+        <p class="project-card-desc">A secure, multi-tenant administrative portal built for educational institutions to manage student cohorts, assign mock exams, track teacher performance, and monitor individual student academic progress.</p>
+        <div class="project-card-tech">
+          <span class="tech-tag">Firestore Rules</span>
+          <span class="tech-tag">Role-based Auth</span>
+          <span class="tech-tag">Dashboard UI</span>
+        </div>
+        <a href="https://visionedu.online/enterprise-dashboard.html" target="_blank" class="project-card-link">
+          Visit Project
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </a>
+      </div>
+
+      <!-- Project 4 -->
+      <div class="project-card">
+        <div class="project-card-tag">Content Hub</div>
+        <h3 class="project-card-title">Vision Blog</h3>
+        <p class="project-card-desc">A specialized editorial subdomain for technical articles, educational insights, and platform updates. Engineered for top-tier SEO, fast load times, and a premium reading experience.</p>
+        <div class="project-card-tech">
+          <span class="tech-tag">Web Performance</span>
+          <span class="tech-tag">SEO</span>
+          <span class="tech-tag">Modern CSS</span>
+        </div>
+        <a href="https://visionedu.site" target="_blank" class="project-card-link">
+          Visit Project
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </a>
+      </div>
+
+      <!-- Project 5 -->
+      <div class="project-card">
+        <div class="project-card-tag">Scholar Program</div>
+        <h3 class="project-card-title">Vision 15 Fellowship</h3>
+        <p class="project-card-desc">An exclusive institutional email provisioning system for 15 hand-selected Ghanaian scholars. Features automated Lark workspace onboarding, custom PDF generation, and a verified @edu.visionedu.online identity.</p>
+        <div class="project-card-tech">
+          <span class="tech-tag">Lark API</span>
+          <span class="tech-tag">jsPDF</span>
+          <span class="tech-tag">Serverless</span>
+        </div>
+        <a href="https://visionedu.online/scholars.html" target="_blank" class="project-card-link">
+          Visit Project
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <hr class="divider" />
+
+  <!-- ── SKILLS ── -->
+  <section id="skills" class="section">
+    <div class="section-label">03 // Expertise</div>
+    <h2 class="section-title">Technical Skills</h2>
+    <p class="section-sub">A diverse skill set ranging from front-end design to secure backend architecture.</p>
+
+    <div class="skills-grid">
+      <div class="skill-card">
+        <div class="skill-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
+        </div>
+        <h3 class="skill-title">Frontend Engineering</h3>
+        <p class="skill-desc">Expertise in crafting premium, responsive interfaces using modern HTML, highly customized Vanilla CSS, and JavaScript.</p>
+      </div>
+      <div class="skill-card">
+        <div class="skill-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+        </div>
+        <h3 class="skill-title">Backend & Cloud</h3>
+        <p class="skill-desc">Proficient in Firebase (Auth, Firestore, Storage), security rule design, and serverless functions deployment via Vercel.</p>
+      </div>
+      <div class="skill-card">
+        <div class="skill-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm0 0v10l4.5 4.5"></path></svg>
+        </div>
+        <h3 class="skill-title">AI Integration</h3>
+        <p class="skill-desc">Experience in integrating advanced LLMs to create interactive, dynamic web applications that enhance user experience.</p>
+      </div>
+    </div>
+  </section>
+
+  <hr class="divider" />
+
+  <!-- ── CONTACT ── -->
+  <section id="contact" class="section">
+    <div class="section-label">04 // Connect</div>
+    <h2 class="section-title">Get in Touch</h2>
+    <p class="section-sub">Let's build something extraordinary together. Feel free to reach out via email or social platforms.</p>
+
+    <div class="contact-grid">
+      <a href="mailto:support@visionedu.online" class="contact-card">
+        <div class="contact-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1-.9-2-2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+        </div>
+        <div>
+          <div class="contact-label">Email</div>
+          <div class="contact-value">support@visionedu.online</div>
+        </div>
+      </a>
+      <a href="https://x.com/yndaase" target="_blank" rel="noopener" class="contact-card">
+        <div class="contact-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.747l7.73-8.835L1.254 2.25H8.08l4.253 5.622 5.911-5.622zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+        </div>
+        <div>
+          <div class="contact-label">Twitter / X</div>
+          <div class="contact-value">@yndaase</div>
+        </div>
+      </a>
+      <a href="https://www.linkedin.com/in/yaw-ndaase-mensuoh" target="_blank" rel="noopener" class="contact-card">
+        <div class="contact-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
+        </div>
+        <div>
+          <div class="contact-label">LinkedIn</div>
+          <div class="contact-value">in/yawndaase</div>
+        </div>
+      </a>
+      <a href="https://www.instagram.com/y.ndaase/" target="_blank" rel="noopener" class="contact-card">
+        <div class="contact-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+        </div>
+        <div>
+          <div class="contact-label">Instagram</div>
+          <div class="contact-value">@y.ndaase</div>
+        </div>
+      </a>
+    </div>
+
+    <div style="margin-top: 3rem;">
+      <div class="cta-banner">
+        <h3>Ready to scale your next idea?</h3>
+        <p>I am always open to discussing new projects, creative ideas, or opportunities to be part of your visions.</p>
+        <a href="mailto:support@visionedu.online" class="cta-btn">
+          Start a Conversation
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── FOOTER ── -->
+  <footer class="footer">
+    <p>
+      &copy; 2026 Yaw Ndaase Mensuoh. All Rights Reserved.<br />
+      Built with precision and passion in Ghana. Part of the <a href="https://visionedu.online" target="_blank" rel="noopener">Vision Education</a> ecosystem.
+    </p>
+  </footer>
+
+  <script>
+    // Sticky Nav
+    const nav = document.getElementById('mainNav');
+    window.addEventListener('scroll', () => {
+      nav.classList.toggle('scrolled', window.scrollY > 20);
+    }, { passive: true });
+  </script>
+</body>
+</html>
