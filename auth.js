@@ -330,13 +330,15 @@ async function validateRevocationStatus(session) {
 function goToDashboard() {
   const session = getSession();
 
-  if (session && session.role === 'teacher') {
+  if (session && session.role === 'enterprise') {
+    window.location.href = "/enterprise-dashboard.html";
+  } else if (session && session.role === 'teacher') {
     window.location.href = "/enterprise-dashboard.html";
   } else if (session && session.role === 'admin') {
     window.location.href = "/admin";
   } else if (session && session.role === 'enterprise-student') {
-    // Enterprise students go to regular dashboard with enterprise context
-    window.location.href = "/dashboard.html?enterprise=true";
+    // Enterprise students go to enterprise student dashboard
+    window.location.href = "/enterprise-student-dashboard.html";
   } else {
     window.location.href = "/dashboard";
   }

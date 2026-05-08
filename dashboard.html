@@ -62,6 +62,18 @@
         localStorage.getItem(SESSION_KEY);
       if (!session) {
         window.location.href = "/login";
+        return;
+      }
+      
+      // Redirect enterprise students to their dashboard
+      try {
+        const user = JSON.parse(session);
+        if (user.role === 'enterprise-student') {
+          window.location.href = "/enterprise-student-dashboard.html";
+          return;
+        }
+      } catch(e) {
+        // If parsing fails, continue to regular dashboard
       }
     })();
   </script>

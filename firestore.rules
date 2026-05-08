@@ -3,317 +3,293 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
     
-    // ============================================
+    // ═══════════════════════════════════════════════════════════════
     // HELPER FUNCTIONS
-    // ============================================
+    // ═══════════════════════════════════════════════════════════════
     
-    // Helper function to check if user is authenticated
+    // Check if user is authenticated
     function isSignedIn() {
       return request.auth != null;
     }
     
-    // Helper function to check if user is admin
+    // Check if user is accessing their own document
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+    
+    // Check if user email matches
+    function isOwnerByEmail(email) {
+      return isSignedIn() && request.auth.token.email == email;
+    }
+    
+    // Check if user is admin
     function isAdmin() {
       return isSignedIn() && 
-             exists(/databases/$(database)/documents/users/$(request.auth.token.email)) &&
-             get(/databases/$(database)/documents/users/$(request.auth.token.email)).data.role == 'admin';
+             get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
     }
     
-    // Helper function to check if user is enterprise admin
+    // Check if user is enterprise admin
     function isEnterpriseAdmin() {
       return isSignedIn() && 
-             exists(/databases/$(database)/documents/users/$(request.auth.token.email)) &&
-             get(/databases/$(database)/documents/users/$(request.auth.token.email)).data.role == 'enterprise';
+             get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'enterprise';
     }
     
-    // Helper function to check if user is enterprise student
-    function isEnterpriseStudent() {
-      return isSignedIn() && 
-             exists(/databases/$(database)/documents/users/$(request.auth.token.email)) &&
-             get(/databases/$(database)/documents/users/$(request.auth.token.email)).data.role == 'enterprise-student';
-    }
-    
-    // Helper function to check if user is teacher
+    // Check if user is teacher
     function isTeacher() {
       return isSignedIn() && 
-             exists(/databases/$(database)/documents/users/$(request.auth.token.email)) &&
-             get(/databases/$(database)/documents/users/$(request.auth.token.email)).data.role == 'teacher';
+             get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'teacher';
     }
     
-    // Helper function to get user's institution ID
-    function getUserInstitutionId() {
-      return get(/databases/$(database)/documents/users/$(request.auth.token.email)).data.institutionId;
-    }
-    
-    // Helper function to check if user belongs to same institution as resource
-    function sameInstitution(resourceInstitutionId) {
+    // Check if user is enterprise student
+    function isEnterpriseStudent() {
       return isSignedIn() && 
-             exists(/databases/$(database)/documents/users/$(request.auth.token.email)) &&
-             getUserInstitutionId() == resourceInstitutionId;
+             get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'enterprise-student';
     }
     
-    // ============================================
+    // Check if user belongs to the same institution
+    function sameInstitution(institutionId) {
+      return isSignedIn() && 
+             get(/databases/$(database)/documents/users/$(request.auth.uid)).data.institutionId == institutionId;
+    }
+    
+    // Check if user has any enterprise role (admin, teacher, or student)
+    function hasEnterpriseRole() {
+      return isEnterpriseAdmin() || isTeacher() || isEnterpriseStudent();
+    }
+    
+    // ═══════════════════════════════════════════════════════════════
     // USERS COLLECTION
-    // ============================================
-    match /users/{email} {
-      // Users can read/write their own document (case-insensitive email match)
-      allow read, write: if isSignedIn() && 
-        (request.auth.token.email == email || 
-         request.auth.token.email.lower() == email.lower());
+    // ═══════════════════════════════════════════════════════════════
+    
+    match /users/{userId} {
+      // Anyone can read their own user document
+      allow read: if isOwner(userId);
       
-      // Admins can read all users
-      allow read: if isAdmin();
+      // Users can update their own document (except role changes)
+      allow update: if isOwner(userId) && 
+                       (!request.resource.data.diff(resource.data).affectedKeys().hasAny(['role']));
       
-      // Admins can create, update, and delete any user
-      allow create, update, delete: if isAdmin();
-      
-      // CRITICAL: Allow enterprise admins and teachers to list users collection
-      // This enables getDocs() queries needed for dashboard
-      allow list: if isEnterpriseAdmin() || isTeacher();
+      // Admins can read and write all users
+      allow read, write: if isAdmin();
       
       // Enterprise admins can read users from their institution
       allow read: if isEnterpriseAdmin() && 
-        exists(/databases/$(database)/documents/users/$(email)) &&
-        sameInstitution(get(/databases/$(database)/documents/users/$(email)).data.institutionId);
+                     sameInstitution(resource.data.institutionId);
       
-      // Enterprise admins can create users for their institution (teachers and students only)
+      // Enterprise admins can create users in their institution
       allow create: if isEnterpriseAdmin() && 
-        request.resource.data.institutionId == getUserInstitutionId() &&
-        (request.resource.data.role == 'teacher' || request.resource.data.role == 'enterprise-student');
+                       request.resource.data.institutionId == 
+                       get(/databases/$(database)/documents/users/$(request.auth.uid)).data.institutionId;
       
-      // Enterprise admins can update users from their institution
+      // Enterprise admins can update users in their institution (except role changes to admin)
       allow update: if isEnterpriseAdmin() && 
-        exists(/databases/$(database)/documents/users/$(email)) &&
-        sameInstitution(get(/databases/$(database)/documents/users/$(email)).data.institutionId);
+                       sameInstitution(resource.data.institutionId) &&
+                       request.resource.data.institutionId == resource.data.institutionId &&
+                       request.resource.data.role != 'admin';
       
       // Teachers can read students from their institution
       allow read: if isTeacher() && 
-        exists(/databases/$(database)/documents/users/$(email)) &&
-        sameInstitution(get(/databases/$(database)/documents/users/$(email)).data.institutionId);
-      
-      // User sessions subcollection
-      match /sessions/{sessionId} {
-        allow read, write: if isSignedIn() && 
-          (request.auth.token.email == email || 
-           request.auth.token.email.lower() == email.lower());
-      }
-    }
-
-    // ============================================
-    // PARENT USERS COLLECTION
-    // ============================================
-    match /parent_users/{email} {
-      allow read, write: if isSignedIn() && 
-        (request.auth.token.email == email || 
-         request.auth.token.email.lower() == email.lower());
-      allow read: if isAdmin();
+                     sameInstitution(resource.data.institutionId) &&
+                     resource.data.role == 'enterprise-student';
     }
     
-    // ============================================
-    // MATERIALS COLLECTIONS
-    // ============================================
+    // ═══════════════════════════════════════════════════════════════
+    // MATERIALS COLLECTION
+    // ═══════════════════════════════════════════════════════════════
     
-    // Materials collection (metadata only - files in R2)
     match /materials/{materialId} {
-      // Public materials (no institutionId) are readable by all
-      allow read: if !('institutionId' in resource.data) || resource.data.institutionId == null;
+      // Anyone authenticated can read public materials (no institutionId)
+      allow read: if isSignedIn() && !('institutionId' in resource.data);
       
-      // Institution-specific materials readable by institution members
-      allow read: if isSignedIn() && 
-        'institutionId' in resource.data && 
-        resource.data.institutionId != null &&
-        sameInstitution(resource.data.institutionId);
+      // Enterprise students can read materials from their institution
+      allow read: if isEnterpriseStudent() && 
+                     sameInstitution(resource.data.institutionId);
       
-      // Admins can read all materials
-      allow read: if isAdmin();
+      // Teachers can read materials from their institution
+      allow read: if isTeacher() && 
+                     sameInstitution(resource.data.institutionId);
       
-      // Admins and enterprise admins can create/update/delete materials
-      allow create, update, delete: if isAdmin() || isEnterpriseAdmin();
+      // Enterprise admins can read/write materials for their institution
+      allow read, write: if isEnterpriseAdmin() && 
+                            sameInstitution(resource.data.institutionId);
+      
+      // System admins can read/write all materials
+      allow read, write: if isAdmin();
       
       // Teachers can create materials for their institution
       allow create: if isTeacher() && 
-        request.resource.data.institutionId == getUserInstitutionId();
+                       request.resource.data.institutionId == 
+                       get(/databases/$(database)/documents/users/$(request.auth.uid)).data.institutionId;
+      
+      // Teachers can update/delete materials they created
+      allow update, delete: if isTeacher() && 
+                               resource.data.uploadedBy == request.auth.token.email &&
+                               sameInstitution(resource.data.institutionId);
     }
     
-    // Learning Materials collection (metadata only - files in R2)
-    match /learning_materials/{materialId} {
-      // Public materials (no institutionId) are readable by all
-      allow read: if !('institutionId' in resource.data) || resource.data.institutionId == null;
+    // ═══════════════════════════════════════════════════════════════
+    // QUIZZES COLLECTION
+    // ═══════════════════════════════════════════════════════════════
+    
+    match /quizzes/{quizId} {
+      // Anyone authenticated can read public quizzes
+      allow read: if isSignedIn() && !('institutionId' in resource.data);
       
-      // Institution-specific materials readable by institution members
+      // Enterprise students can read quizzes from their institution
+      allow read: if isEnterpriseStudent() && 
+                     sameInstitution(resource.data.institutionId);
+      
+      // Teachers can read/write quizzes for their institution
+      allow read, write: if isTeacher() && 
+                            sameInstitution(resource.data.institutionId);
+      
+      // Enterprise admins can read/write quizzes for their institution
+      allow read, write: if isEnterpriseAdmin() && 
+                            sameInstitution(resource.data.institutionId);
+      
+      // System admins can read/write all quizzes
+      allow read, write: if isAdmin();
+    }
+    
+    // ═══════════════════════════════════════════════════════════════
+    // GRADES COLLECTION
+    // ═══════════════════════════════════════════════════════════════
+    
+    match /grades/{gradeId} {
+      // Students can read their own grades
       allow read: if isSignedIn() && 
-        'institutionId' in resource.data && 
-        resource.data.institutionId != null &&
-        sameInstitution(resource.data.institutionId);
+                     resource.data.studentEmail == request.auth.token.email;
       
-      // Admins can read all materials
-      allow read: if isAdmin();
+      // Teachers can read/write grades for students in their institution
+      allow read, write: if isTeacher() && 
+                            sameInstitution(resource.data.institutionId);
       
-      // Admins and enterprise admins can create/update/delete materials
-      allow create, update, delete: if isAdmin() || isEnterpriseAdmin();
+      // Enterprise admins can read/write grades for their institution
+      allow read, write: if isEnterpriseAdmin() && 
+                            sameInstitution(resource.data.institutionId);
       
-      // Teachers can create materials for their institution
+      // System admins can read/write all grades
+      allow read, write: if isAdmin();
+    }
+    
+    // ═══════════════════════════════════════════════════════════════
+    // CLASSES COLLECTION
+    // ═══════════════════════════════════════════════════════════════
+    
+    match /classes/{classId} {
+      // Enterprise students can read classes they belong to
+      allow read: if isEnterpriseStudent() && 
+                     request.auth.token.email in resource.data.students;
+      
+      // Teachers can read/write classes in their institution
+      allow read, write: if isTeacher() && 
+                            sameInstitution(resource.data.institutionId);
+      
+      // Enterprise admins can read/write classes for their institution
+      allow read, write: if isEnterpriseAdmin() && 
+                            sameInstitution(resource.data.institutionId);
+      
+      // System admins can read/write all classes
+      allow read, write: if isAdmin();
+    }
+    
+    // ═══════════════════════════════════════════════════════════════
+    // ASSIGNMENTS COLLECTION
+    // ═══════════════════════════════════════════════════════════════
+    
+    match /assignments/{assignmentId} {
+      // Students can read assignments assigned to them
+      allow read: if isEnterpriseStudent() && 
+                     request.auth.token.email in resource.data.assignedTo;
+      
+      // Students can create submissions for their assignments
+      allow create: if isEnterpriseStudent() && 
+                       request.auth.token.email in 
+                       get(/databases/$(database)/documents/assignments/$(assignmentId)).data.assignedTo;
+      
+      // Teachers can read/write assignments for their institution
+      allow read, write: if isTeacher() && 
+                            sameInstitution(resource.data.institutionId);
+      
+      // Enterprise admins can read/write assignments for their institution
+      allow read, write: if isEnterpriseAdmin() && 
+                            sameInstitution(resource.data.institutionId);
+      
+      // System admins can read/write all assignments
+      allow read, write: if isAdmin();
+    }
+    
+    // ═══════════════════════════════════════════════════════════════
+    // ANNOUNCEMENTS COLLECTION
+    // ═══════════════════════════════════════════════════════════════
+    
+    match /announcements/{announcementId} {
+      // Anyone authenticated can read public announcements
+      allow read: if isSignedIn() && !('institutionId' in resource.data);
+      
+      // Enterprise users can read announcements for their institution
+      allow read: if hasEnterpriseRole() && 
+                     sameInstitution(resource.data.institutionId);
+      
+      // Teachers can create announcements for their institution
       allow create: if isTeacher() && 
-        request.resource.data.institutionId == getUserInstitutionId();
+                       request.resource.data.institutionId == 
+                       get(/databases/$(database)/documents/users/$(request.auth.uid)).data.institutionId;
+      
+      // Enterprise admins can read/write announcements for their institution
+      allow read, write: if isEnterpriseAdmin() && 
+                            sameInstitution(resource.data.institutionId);
+      
+      // System admins can read/write all announcements
+      allow read, write: if isAdmin();
     }
     
-    // WAEC Past Questions collection (metadata only - files in R2)
-    match /waec_questions/{questionId} {
-      allow read: if true;  // Public read - educational content
-      allow create, update, delete: if isAdmin();
-    }
+    // ═══════════════════════════════════════════════════════════════
+    // STATS COLLECTION (User Progress)
+    // ═══════════════════════════════════════════════════════════════
     
-    // ============================================
-    // ANALYTICS & TRACKING
-    // ============================================
-    
-    // Analytics collection
-    match /analytics/{docId} {
-      allow read: if isSignedIn() && resource.data.userId == request.auth.token.email;
-      allow create: if isSignedIn() && request.resource.data.userId == request.auth.token.email;
-      allow read: if isAdmin();
+    match /stats/{userId} {
+      // Users can read/write their own stats
+      allow read, write: if isOwner(userId);
       
-      // Enterprise admins can read analytics from their institution
-      allow read: if isEnterpriseAdmin() && 
-        'institutionId' in resource.data &&
-        sameInstitution(resource.data.institutionId);
-      
-      // Teachers can read analytics from their institution
+      // Teachers can read stats for students in their institution
       allow read: if isTeacher() && 
-        'institutionId' in resource.data &&
-        sameInstitution(resource.data.institutionId);
-    }
-    
-    // Study planner collection
-    match /study_plans/{userId} {
-      allow read, write: if isSignedIn() && userId == request.auth.token.email;
-      allow read: if isAdmin();
+                     sameInstitution(
+                       get(/databases/$(database)/documents/users/$(userId)).data.institutionId
+                     );
       
-      // Teachers can read study plans from their institution students
-      allow read: if isTeacher() && 
-        exists(/databases/$(database)/documents/users/$(userId)) &&
-        sameInstitution(get(/databases/$(database)/documents/users/$(userId)).data.institutionId);
-    }
-    
-    // Mock exam results
-    match /mock_results/{resultId} {
-      allow read: if isSignedIn() && resource.data.userId == request.auth.token.email;
-      allow create: if isSignedIn() && request.resource.data.userId == request.auth.token.email;
-      allow read: if isAdmin();
-      
-      // Enterprise admins can read results from their institution
+      // Enterprise admins can read stats for their institution
       allow read: if isEnterpriseAdmin() && 
-        'institutionId' in resource.data &&
-        sameInstitution(resource.data.institutionId);
+                     sameInstitution(
+                       get(/databases/$(database)/documents/users/$(userId)).data.institutionId
+                     );
       
-      // Teachers can read results from their institution
-      allow read: if isTeacher() && 
-        'institutionId' in resource.data &&
-        sameInstitution(resource.data.institutionId);
-    }
-
-    // Student Stats collection
-    match /student_stats/{email} {
-      allow read, write: if isSignedIn() && 
-        (request.auth.token.email == email || 
-         request.auth.token.email.lower() == email.lower());
+      // System admins can read all stats
       allow read: if isAdmin();
-      
-      // Teachers can read stats from their institution students
-      allow read: if isTeacher() && 
-        exists(/databases/$(database)/documents/users/$(email)) &&
-        sameInstitution(get(/databases/$(database)/documents/users/$(email)).data.institutionId);
-      
-      // Enterprise admins can read stats from their institution
-      allow read: if isEnterpriseAdmin() && 
-        exists(/databases/$(database)/documents/users/$(email)) &&
-        sameInstitution(get(/databases/$(database)/documents/users/$(email)).data.institutionId);
-    }
-
-    // ============================================
-    // PARENT LINKING & SYSTEM
-    // ============================================
-    
-    // Student Links (Parent Linking)
-    match /student_links/{code} {
-      allow read: if isSignedIn();
-      allow create: if isSignedIn() && 
-        (request.resource.data.email == request.auth.token.email ||
-         request.resource.data.email.lower() == request.auth.token.email.lower());
-      allow delete: if isAdmin();
     }
     
-    // System broadcasts
-    match /broadcasts/{broadcastId} {
-      allow read: if isSignedIn();
-      allow create, update, delete: if isAdmin();
+    // ═══════════════════════════════════════════════════════════════
+    // INSTITUTIONS COLLECTION
+    // ═══════════════════════════════════════════════════════════════
+    
+    match /institutions/{institutionId} {
+      // Enterprise users can read their own institution
+      allow read: if hasEnterpriseRole() && 
+                     sameInstitution(institutionId);
+      
+      // Enterprise admins can update their institution
+      allow update: if isEnterpriseAdmin() && 
+                       sameInstitution(institutionId);
+      
+      // System admins can read/write all institutions
+      allow read, write: if isAdmin();
     }
     
-    // Vision AI Chat History
-    match /vision_ai_chats/{email}/sessions/{sessionId} {
-      allow read, write: if isSignedIn() && 
-        (request.auth.token.email == email || 
-         request.auth.token.email.lower() == email.lower());
-      
-      match /messages/{messageId} {
-        allow read, write: if isSignedIn() && 
-          (request.auth.token.email == email || 
-           request.auth.token.email.lower() == email.lower());
-      }
-    }
-    
-    // ============================================
-    // QUIZ SYSTEM
-    // ============================================
-    
-    // Quizzes collection (teacher-owned)
-    match /quizzes/{teacherEmail} {
-      // Teachers can read/write their own quizzes
-      allow read, write: if isSignedIn() && 
-        (request.auth.token.email == teacherEmail || 
-         request.auth.token.email.lower() == teacherEmail.lower());
-      
-      // Admins can read all quizzes
-      allow read: if isAdmin();
-      
-      // Enterprise admins can read quizzes from their institution teachers
-      allow read: if isEnterpriseAdmin() && 
-        exists(/databases/$(database)/documents/users/$(teacherEmail)) &&
-        sameInstitution(get(/databases/$(database)/documents/users/$(teacherEmail)).data.institutionId);
-      
-      // Students can read published quizzes from their institution
-      allow read: if isSignedIn() && 
-        exists(/databases/$(database)/documents/users/$(teacherEmail)) &&
-        sameInstitution(get(/databases/$(database)/documents/users/$(teacherEmail)).data.institutionId);
-    }
-    
-    // Quiz attempts collection
-    match /quiz_attempts/{attemptId} {
-      // Students can read their own attempts
-      allow read: if isSignedIn() && resource.data.studentEmail == request.auth.token.email;
-      
-      // Students can create their own attempts
-      allow create: if isSignedIn() && request.resource.data.studentEmail == request.auth.token.email;
-      
-      // Admins can read all attempts
-      allow read: if isAdmin();
-      
-      // Teachers can read attempts from their institution students
-      allow read: if isTeacher() && 
-        exists(/databases/$(database)/documents/users/$(resource.data.studentEmail)) &&
-        sameInstitution(get(/databases/$(database)/documents/users/$(resource.data.studentEmail)).data.institutionId);
-      
-      // Enterprise admins can read attempts from their institution
-      allow read: if isEnterpriseAdmin() && 
-        exists(/databases/$(database)/documents/users/$(resource.data.studentEmail)) &&
-        sameInstitution(get(/databases/$(database)/documents/users/$(resource.data.studentEmail)).data.institutionId);
-    }
-    
-    // ============================================
+    // ═══════════════════════════════════════════════════════════════
     // DEFAULT DENY
-    // ============================================
+    // ═══════════════════════════════════════════════════════════════
     
-    // Default deny all other collections
+    // Deny all other access by default
     match /{document=**} {
       allow read, write: if false;
     }
