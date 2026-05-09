@@ -6,6 +6,7 @@ Allow: /privacy
 Allow: /terms
 Allow: /login
 Allow: /mocks
+Allow: /ads.txt
 
 # Block admin and private pages from crawlers
 Disallow: /admin
@@ -13,6 +14,13 @@ Disallow: /robotics-login
 Disallow: /robotics-dashboard
 Disallow: /mock-hall
 Disallow: /api/
+
+# Explicitly allow Google AdSense crawlers
+User-agent: Mediapartners-Google
+Allow: /
+
+User-agent: AdsBot-Google
+Allow: /
 
 Sitemap: https://visionedu.online/sitemap.xml
 
