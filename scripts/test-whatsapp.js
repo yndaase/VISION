@@ -167,13 +167,13 @@ async function runTests() {
                 type: 'EXAM_ALERT', 
                 phone: '233987654321', 
                 name: 'Ama Serwaa',
-                templateName: 'wassce_countdown_2026'
+                templateName: 'wassce_countdown_2027'
             } 
         };
         const res = new MockResponse();
         await handler(req, res);
 
-        const hasCorrectTemplate = capturedPayload.template.name === 'wassce_countdown_2026';
+        const hasCorrectTemplate = capturedPayload.template.name === 'wassce_countdown_2027';
         logger.log('Exam Alert Flow', res.statusCode === 200 && hasCorrectTemplate, 'Handles exam-specific alerts with custom template names', null, Date.now() - start);
     })();
 
@@ -269,7 +269,7 @@ async function runTests() {
         let logCaptured = false;
         console.log = (msg) => { if (msg.includes('Scheduling message')) logCaptured = true; originalLog(msg); };
         
-        const req = { method: 'POST', body: { type: 'REMINDER', phone: '233', name: 'X', scheduledTime: '2026-05-01T10:00:00Z' } };
+        const req = { method: 'POST', body: { type: 'REMINDER', phone: '233', name: 'X', scheduledTime: '2027-05-01T10:00:00Z' } };
         const res = new MockResponse();
         await handler(req, res);
         

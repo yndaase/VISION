@@ -148,7 +148,7 @@ Then y = 2(10/7) + 1 = 27/7`,
    Accra, Ghana
    
 2. **Date** (below your address)
-   2nd May, 2026
+   2nd May, 2027
 
 3. **Recipient's Address** (left side)
    The Principal

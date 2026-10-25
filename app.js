@@ -733,7 +733,7 @@ document.addEventListener("DOMContentLoaded", () => {
             <h2 style="
               font-size: clamp(1.6rem, 4vw, 2.2rem); font-weight: 900;
               color: #f1f5f9; letter-spacing: -0.03em; margin-bottom: 0.75rem;
-            ">Ready to begin your 2026 WASSCE prep?</h2>
+            ">Ready to begin your 2027 WASSCE prep?</h2>
             <p style="
               font-size: 0.96rem; color: #64748b; max-width: 480px;
               margin: 0 auto 2rem; line-height: 1.7;

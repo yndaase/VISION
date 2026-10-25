@@ -39,7 +39,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 // ── Countdown ──────────────────────────────────────────────────
 function startCountdown() {
-  const target = new Date("August 1, 2026 09:00:00").getTime();
+  const target = new Date("August 1, 2027 09:00:00").getTime();
   const update = () => {
     const diff = target - Date.now();
     if (diff <= 0) return;
@@ -166,7 +166,7 @@ function showTimetable(plan, session) {
   const studentName = session?.name || session?.email?.split('@')[0] || 'Student';
 
   safeSet("weekOf",         weekOf);
-  safeSet("ttFocus",        plan.weekFocus || "WASSCE 2026 Preparation");
+  safeSet("ttFocus",        plan.weekFocus || "WASSCE 2027 Preparation");
   safeSet("ttStudentName",  studentName);
   safeSet("printStudentLine", `${studentName} · Generated: ${weekOf}`);
 

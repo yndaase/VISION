@@ -1,5 +1,5 @@
 /* =====================================================
-   WAEC 2026  Dashboard Logic
+   WAEC 2027  Dashboard Logic
    Populates welcome section, stats, user chip
    ===================================================== */
 
@@ -542,7 +542,7 @@ function renderSearchResults(subjects, materials, query) {
           <div class="search-result-icon">${subj.icon}</div>
           <div class="search-result-info">
             <span class="search-result-title">${m.title}</span>
-            <span class="search-result-meta">${m.type} · ${m.uploadedAt || "2026"}</span>
+            <span class="search-result-meta">${m.type} · ${m.uploadedAt || "2027"}</span>
           </div>
         </a>
       `;

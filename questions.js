@@ -1,5 +1,5 @@
 // ============================================================
-// WAEC 2026 CORE MATHEMATICS  15 Verified MCQs
+// WAEC 2027 CORE MATHEMATICS  15 Verified MCQs
 // Senior Curriculum Specialist, WAEC Ghana
 // All workings double-checked for mathematical accuracy
 // ============================================================
@@ -3891,7 +3891,7 @@ const MOCK_EXAMS = {
     subject: "maths",
     title: "Core Mathematics Mock A",
     description:
-      "Full-length 50-question simulation focusing on the 2026 WASSCE syllabus core topics, including AI-marked theory questions.",
+      "Full-length 50-question simulation focusing on the 2027 WASSCE syllabus core topics, including AI-marked theory questions.",
     timeLimit: 150, // 2.5 hours in minutes
     questionCount: 50,
     questions: [
@@ -3905,7 +3905,7 @@ const MOCK_EXAMS = {
     id: "mock_english_b",
     subject: "english",
     title: "English Language Mock B",
-    description: "Full-length 100-question English simulation for 2026 WASSCE standards covering Lexis, Structure, and Oral English.",
+    description: "Full-length 100-question English simulation for 2027 WASSCE standards covering Lexis, Structure, and Oral English.",
     timeLimit: 120, // 2 Hours
     questionCount: 100,
     questions: Array.from({ length: 100 }, (_, i) => 601 + i),

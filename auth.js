@@ -1,5 +1,5 @@
 /* =====================================================
-   WAEC 2026  Shared Auth Module
+   WAEC 2027  Shared Auth Module
    Handles: localStorage accounts, session management,
             Google Sign-In callback, login/signup logic,
             page-level auth guard (checkAuth)
@@ -1202,7 +1202,7 @@ function switchTab(tab) {
     sub.textContent = "Sign in to continue your WASSCE prep journey.";
   } else if (tab === "signup") {
     title.textContent = "Create your account";
-    sub.textContent = "Join thousands of Ghana SHS students preparing for 2026.";
+    sub.textContent = "Join thousands of Ghana SHS students preparing for 2027.";
   } else if (tab === "forgot") {
     title.textContent = "Reset Password";
     sub.textContent = "Don't worry, we'll get you back on track.";
@@ -1523,13 +1523,13 @@ async function adminInit() {
   const expectedAdminHash = await sha256("Ndaase@2009");
 
   const entEmail = "school@visionedu.online";
-  const expectedEntHash = await sha256("Vision@2026");
+  const expectedEntHash = await sha256("Vision@2027");
 
   const teacherEmail = "teacher@visionedu.online";
-  const expectedTeacherHash = await sha256("Vision@2026");
+  const expectedTeacherHash = await sha256("Vision@2027");
 
   const proStudentEmail = "student@visionedu.online";
-  const expectedProHash = await sha256("Vision@2026");
+  const expectedProHash = await sha256("Vision@2027");
   const bertinaEmail = "bertina@vision.edu";
   const expectedBertinaHash = await sha256("BERTINA123");
   const bertinaParentEmail = "bertina.parent@vision.edu";
@@ -1553,8 +1553,8 @@ async function adminInit() {
       provider: "email", 
       schoolName: "Vision Academy", 
       schoolLogo: "V", 
-      institutionId: "VISION-2026",
-      schoolCode: "VISION-2026"
+      institutionId: "VISION-2027",
+      schoolCode: "VISION-2027"
     },
     { 
       email: teacherEmail, 
@@ -1562,7 +1562,7 @@ async function adminInit() {
       role: "teacher", 
       hash: expectedTeacherHash, 
       provider: "email", 
-      institutionId: "VISION-2026",
+      institutionId: "VISION-2027",
       schoolName: "Vision Academy"
     },
     { 

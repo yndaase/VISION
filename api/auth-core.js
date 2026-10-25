@@ -66,7 +66,7 @@ async function handleSendCode(data, res) {
             <div style="font-size:38px; font-weight:900; letter-spacing:10px; background:rgba(99,102,241,0.1); padding:1.2rem; border-radius:12px; text-align:center; color:#818cf8; border:1px solid rgba(99,102,241,0.25); margin-bottom:1.5rem;">${code}</div>
             <p style="color:#64748b;font-size:0.85rem;margin:0;">This code expires in <strong style="color:#f8fafc;">10 minutes</strong>. If you didn't request this, you can safely ignore this email.</p>
             <hr style="border:none;border-top:1px solid #334155;margin:1.5rem 0;">
-            <p style="color:#475569;font-size:0.75rem;margin:0;">Vision Education · 2026 WASSCE Preparation Platform · visionedu.online</p>
+            <p style="color:#475569;font-size:0.75rem;margin:0;">Vision Education · 2027 WASSCE Preparation Platform · visionedu.online</p>
           </div>
         </body></html>`
       }),
@@ -197,7 +197,7 @@ async function handleRiscReceiver(req, res) {
 
 async function handleRiscGet(req, res) {
   res.setHeader('Content-Type', 'text/html');
-  return res.status(200).send('<html><body style="background:#0f172a; color:#38bdf8; font-family:sans-serif; padding:4rem; text-align:center;"><h1>Vision Shield Activated</h1><p>Monitoring security events for 2026 WASSCE candidates.</p></body></html>');
+  return res.status(200).send('<html><body style="background:#0f172a; color:#38bdf8; font-family:sans-serif; padding:4rem; text-align:center;"><h1>Vision Shield Activated</h1><p>Monitoring security events for 2027 WASSCE candidates.</p></body></html>');
 }
 
 async function getBlacklist() {

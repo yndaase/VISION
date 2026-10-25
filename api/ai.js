@@ -178,9 +178,9 @@ async function handlePlanner(data, res) {
 
   const weakest = subject || subjects[0] || "Core Mathematics";
 
-  const systemPrompt = `You are an expert WASSCE 2026 study planner. Return ONLY valid JSON — no prose, no markdown fences, no text outside the JSON object.`;
+  const systemPrompt = `You are an expert WASSCE 2027 study planner. Return ONLY valid JSON — no prose, no markdown fences, no text outside the JSON object.`;
 
-  const prompt = `Create a personalised weekly study timetable for ${name}, a WASSCE 2026 candidate.
+  const prompt = `Create a personalised weekly study timetable for ${name}, a WASSCE 2027 candidate.
 
 Context:
 - Subjects to cover: ${subjectsList}

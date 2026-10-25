@@ -128,7 +128,7 @@ export default async function handler(req, res) {
       </td></tr>
       <!-- Footer -->
       <tr><td style="background:#1a1a2e;padding:20px 40px;text-align:center">
-        <p style="color:#6b7280;font-size:11px;margin:0">&copy; 2026 Vision Education &bull; Scholar Fellowship &bull; Accra, Ghana</p>
+        <p style="color:#6b7280;font-size:11px;margin:0">&copy; 2027 Vision Education &bull; Scholar Fellowship &bull; Accra, Ghana</p>
       </td></tr>
     </table>
   </td></tr>
