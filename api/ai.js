@@ -1,32 +1,16 @@
-import { AzureOpenAI } from "openai";
-
 // ============================================================
-// Azure OpenAI Configuration
-// Endpoint: https://admin-mnoibqvk-eastus2.cognitiveservices.azure.com/
+// AI Model Configuration — Groq (openai/gpt-oss-120b)
+// Same model as Vision AI Chat (ai.visionedu.online)
 // ============================================================
-const azureKey      = process.env.AZURE_OPENAI_KEY || process.env.GITHUB_TOKEN;
-const azureEndpoint = process.env.AZURE_OPENAI_ENDPOINT || "https://models.inference.ai.azure.com";
-const azureDeployment = process.env.AZURE_OPENAI_DEPLOYMENT || "gpt-4o";
-const azureVersion  = "2024-12-01-preview";
-
-let azureClient = null;
-if (azureKey) {
-  azureClient = new AzureOpenAI({
-    endpoint:   azureEndpoint,
-    apiKey:     azureKey,
-    apiVersion: azureVersion,
-    deployment: azureDeployment,
-  });
-}
+const GROQ_API_KEY = process.env.GROQ_API_KEY;
+const GROQ_MODEL = "openai/gpt-oss-120b";
 
 // ============================================================
 // Core AI Content Generator
 // ============================================================
 async function safeGenerateContent(messages, systemPrompt) {
-  if (!azureClient) {
-    throw new Error(
-      "Azure OpenAI API key is missing. Please set AZURE_OPENAI_KEY in your environment variables."
-    );
+  if (!GROQ_API_KEY) {
+    throw new Error("GROQ_API_KEY is not configured in Vercel environment variables.");
   }
 
   const allMessages = [
@@ -34,25 +18,50 @@ async function safeGenerateContent(messages, systemPrompt) {
     ...messages,
   ];
 
-  const response = await azureClient.chat.completions.create({
-    model:       azureDeployment,
-    messages:    allMessages,
-    temperature: 0.5,
-    max_tokens:  4096,
+  // Flatten any array-format content (vision messages) to text
+  const formattedMessages = allMessages.map(m => {
+    if (Array.isArray(m.content)) {
+      const textPart = m.content.find(c => c.type === "text")?.text || "";
+      return { role: m.role, content: textPart };
+    }
+    return m;
   });
 
-  const text = response.choices?.[0]?.message?.content || "";
+  const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+    method: "POST",
+    headers: {
+      "Authorization": `Bearer ${GROQ_API_KEY}`,
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      model: GROQ_MODEL,
+      messages: formattedMessages,
+      temperature: 0.5,
+      max_tokens: 4096,
+    })
+  });
+
+  if (!response.ok) {
+    const errData = await response.json().catch(() => ({}));
+    throw new Error(`Groq API error: ${response.status} - ${errData.error?.message || 'Unknown error'}`);
+  }
+
+  const data = await response.json();
+  const msg = data.choices?.[0]?.message;
+  const text = (msg?.content || msg?.reasoning || "").trim();
+  if (!text) throw new Error("Groq returned empty response");
   return { text };
 }
 
 // ============================================================
 // Robust JSON Extractor
 // Strips markdown fences and extracts valid JSON.
+// Handles reasoning model output (may have leading prose).
 // ============================================================
 function extractJSON(response) {
   let text = (response.text || "").trim();
 
-  // Strip markdown code fences (GPT-4o often wraps output)
+  // Strip markdown code fences
   text = text
     .replace(/^```json\s*/i, "")
     .replace(/^```\s*/i, "")
@@ -62,7 +71,7 @@ function extractJSON(response) {
   try {
     return JSON.parse(text);
   } catch (_) {
-    // Fallback: find the largest JSON block
+    // Fallback: find the first JSON object or array (handles leading prose from reasoning models)
     const jsonMatch = text.match(/(\{[\s\S]*\}|\[[\s\S]*\])/);
     if (jsonMatch) {
       try {
@@ -106,14 +115,6 @@ export default async function handler(req, res) {
 
     let cleanMsg = error.message || "AI System Error";
 
-    // Parse Azure SDK error objects that embed JSON
-    if (cleanMsg.includes("{") && cleanMsg.includes("}")) {
-      try {
-        const parsed = JSON.parse(cleanMsg.substring(cleanMsg.indexOf("{")));
-        if (parsed?.error?.message) cleanMsg = parsed.error.message;
-      } catch (_) { /* ignore */ }
-    }
-
     // Friendly quota message
     if (
       cleanMsg.toLowerCase().includes("429") ||
@@ -131,7 +132,7 @@ export default async function handler(req, res) {
       cleanMsg.toLowerCase().includes("authentication")
     ) {
       cleanMsg =
-        "Azure authentication failed. Please check your API key and endpoint.";
+        "AI authentication failed. Please check your GROQ_API_KEY in Vercel environment variables.";
     }
 
     return res.status(500).json({ error: cleanMsg });

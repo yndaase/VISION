@@ -1,7 +1,11 @@
 /**
  * AI Quiz Generator API
- * Generates quiz questions using Azure OpenAI GPT-4
+ * Generates quiz questions using Groq (openai/gpt-oss-120b)
+ * Same model as Vision AI Chat (ai.visionedu.online)
  */
+
+const GROQ_API_KEY_QG = process.env.GROQ_API_KEY;
+const GROQ_MODEL_QG = "openai/gpt-oss-120b";
 
 export default async function handler(req, res) {
   // CORS headers
@@ -24,17 +28,12 @@ export default async function handler(req, res) {
       return res.status(400).json({ success: false, error: 'Topic is required' });
     }
 
-    console.log('[AI Quiz Generator] Generating quiz:', { topic, questionCount, difficulty, subject });
-
-    // Azure OpenAI configuration
-    const AZURE_OPENAI_KEY = process.env.AZURE_OPENAI_KEY;
-    const AZURE_OPENAI_ENDPOINT = process.env.AZURE_OPENAI_ENDPOINT;
-    const AZURE_OPENAI_DEPLOYMENT = process.env.AZURE_OPENAI_DEPLOYMENT || 'gpt-4o';
-
-    if (!AZURE_OPENAI_KEY || !AZURE_OPENAI_ENDPOINT) {
-      console.error('[AI Quiz Generator] Missing Azure OpenAI credentials');
-      return res.status(500).json({ success: false, error: 'AI service not configured' });
+    if (!GROQ_API_KEY_QG) {
+      console.error('[AI Quiz Generator] Missing GROQ_API_KEY');
+      return res.status(500).json({ success: false, error: 'AI service not configured. Please set GROQ_API_KEY in Vercel environment variables.' });
     }
+
+    console.log('[AI Quiz Generator] Generating quiz:', { topic, questionCount, difficulty, subject });
 
     // Create prompt for quiz generation
     const prompt = `You are an expert educator creating a ${difficulty} level quiz on "${topic}" for ${subject} students.
@@ -63,16 +62,15 @@ Important:
 - Do not include any markdown, explanations, or text outside the JSON array
 - Ensure valid JSON syntax`;
 
-    // Call Azure OpenAI API
-    const apiUrl = `${AZURE_OPENAI_ENDPOINT}openai/deployments/${AZURE_OPENAI_DEPLOYMENT}/chat/completions?api-version=2024-02-15-preview`;
-
-    const response = await fetch(apiUrl, {
+    // Call Groq API
+    const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'api-key': AZURE_OPENAI_KEY
+        'Authorization': `Bearer ${GROQ_API_KEY_QG}`
       },
       body: JSON.stringify({
+        model: GROQ_MODEL_QG,
         messages: [
           {
             role: 'system',
@@ -85,36 +83,47 @@ Important:
         ],
         temperature: 0.7,
         max_tokens: 4000,
-        top_p: 0.95
       })
     });
 
     if (!response.ok) {
       const errorText = await response.text();
-      console.error('[AI Quiz Generator] Azure OpenAI error:', errorText);
-      throw new Error(`Azure OpenAI API error: ${response.status}`);
+      console.error('[AI Quiz Generator] Groq API error:', errorText);
+      throw new Error(`Groq API error: ${response.status}`);
     }
 
     const data = await response.json();
-    
+
     if (!data.choices || !data.choices[0] || !data.choices[0].message) {
-      throw new Error('Invalid response from Azure OpenAI');
+      throw new Error('Invalid response from Groq');
     }
 
-    const content = data.choices[0].message.content.trim();
-    console.log('[AI Quiz Generator] Raw response:', content.substring(0, 200));
+    // Handle reasoning model: content may be in reasoning field
+    const msg = data.choices[0].message;
+    const rawContent = (msg.content || msg.reasoning || '').trim();
+
+    console.log('[AI Quiz Generator] Raw response:', rawContent.substring(0, 200));
 
     // Parse JSON response
     let questions;
     try {
       // Remove markdown code blocks if present
-      const jsonMatch = content.match(/```json\s*([\s\S]*?)\s*```/) || content.match(/```\s*([\s\S]*?)\s*```/);
-      const jsonString = jsonMatch ? jsonMatch[1] : content;
-      
+      let jsonString = rawContent
+        .replace(/^```json\s*/i, '')
+        .replace(/^```\s*/i, '')
+        .replace(/\s*```$/i, '')
+        .trim();
+
+      // Fallback: extract JSON array from text (handles reasoning model prose)
+      if (!jsonString.startsWith('[')) {
+        const arrMatch = jsonString.match(/(\[[\s\S]*\])/);
+        if (arrMatch) jsonString = arrMatch[1];
+      }
+
       questions = JSON.parse(jsonString);
     } catch (parseError) {
       console.error('[AI Quiz Generator] JSON parse error:', parseError);
-      console.error('[AI Quiz Generator] Content:', content);
+      console.error('[AI Quiz Generator] Content:', rawContent);
       throw new Error('Failed to parse AI response as JSON');
     }
 
