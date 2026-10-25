@@ -1,6 +1,5 @@
 /**
- * Diagnostic endpoint to check environment variables
- * DELETE THIS FILE after verifying environment setup
+ * Diagnostic endpoint to check environment variables and test Groq API
  */
 
 export default async function handler(req, res) {
@@ -30,12 +29,55 @@ export default async function handler(req, res) {
     VERCEL_URL: process.env.VERCEL_URL || 'not set'
   };
 
+  // Test Groq directly with both models
+  let groqVersatile = null;
+  let groqSpecdec = null;
+
+  if (process.env.GROQ_API_KEY) {
+    try {
+      const resp = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${process.env.GROQ_API_KEY}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          model: 'llama-3.3-70b-versatile',
+          messages: [{ role: 'user', content: 'Say OK' }],
+          max_tokens: 10
+        })
+      });
+      const data = await resp.json();
+      groqVersatile = { status: resp.status, ok: resp.ok, data };
+    } catch (err) {
+      groqVersatile = { error: err.message };
+    }
+
+    try {
+      const resp2 = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${process.env.GROQ_API_KEY}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          model: 'llama-3.3-70b-specdec',
+          messages: [{ role: 'user', content: 'Say OK' }],
+          max_tokens: 10
+        })
+      });
+      const data2 = await resp2.json();
+      groqSpecdec = { status: resp2.status, ok: resp2.ok, data: data2 };
+    } catch (err) {
+      groqSpecdec = { error: err.message };
+    }
+  }
+
   return res.status(200).json({
-    status: 'Environment check',
+    status: 'Environment and Groq Check',
     timestamp: new Date().toISOString(),
     environment: envCheck,
-    message: envCheck.GROQ_API_KEY.exists 
-      ? '✅ GROQ_API_KEY is configured' 
-      : '❌ GROQ_API_KEY is NOT configured - Add it in Vercel project settings'
+    groqVersatile,
+    groqSpecdec
   });
 }
