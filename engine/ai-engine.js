@@ -127,7 +127,7 @@ ${context}
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          model: 'llama-3.1-8b-instant',
+          model: 'llama-3.3-70b-specdec', // Updated: llama-3.1-8b-instant was decommissioned
           messages: messages,
           temperature: 0.7,
           max_tokens: 1024
