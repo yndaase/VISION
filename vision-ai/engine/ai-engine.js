@@ -10,7 +10,7 @@ export class VisionAI {
   constructor(options = {}) {
     this.sessions = new Map(); // Store conversation history
     this.groqApiKey = options.groqApiKey || process.env.GROQ_API_KEY;
-    this.groqModel = options.groqModel || 'llama-3.3-70b-specdec'; // Updated: llama-3.3-70b-versatile was decommissioned
+    this.groqModel = options.groqModel || 'openai/gpt-oss-120b'; // Updated: llama-3.3-70b-versatile was decommissioned
     this.useGroq = !!this.groqApiKey;
     
     // Log initialization
@@ -327,8 +327,11 @@ Always be helpful, accurate, and educational. Use scientific terminology correct
         throw new Error('Invalid response from Groq API');
       }
 
-      console.log('[Groq] Success! Response length:', data.choices[0].message.content.length);
-      return data.choices[0].message.content;
+      const msg = data.choices[0].message;
+      const text = (msg.content || msg.reasoning || '').trim();
+      if (!text) throw new Error('Groq returned empty text');
+      console.log('[Groq] Success! Response length:', text.length);
+      return text;
     } catch (error) {
       console.error('[Groq] Request failed:', error.message);
       throw error;
@@ -715,3 +718,4 @@ ${suggestions}
     this.sessions.delete(sessionId);
   }
 }
+

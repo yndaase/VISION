@@ -127,7 +127,7 @@ ${context}
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          model: 'llama-3.3-70b-specdec', // Updated: llama-3.1-8b-instant was decommissioned
+          model: 'openai/gpt-oss-120b', // Updated: llama-3.1-8b-instant was decommissioned
           messages: messages,
           temperature: 0.7,
           max_tokens: 1024
@@ -139,7 +139,7 @@ ${context}
       }
 
       const data = await response.json();
-      return data.choices[0].message.content;
+      const msg = data.choices[0].message; return (msg.content || msg.reasoning || '').trim();
     } catch (err) {
       console.error('[Groq] Failed:', err);
       return `I found this information:\n\n${context}\n\n*(Note: AI synthesis is temporarily down, but here are the raw facts!)*`;
@@ -197,3 +197,4 @@ ${context}
 }
 
 export { VisionAI };
+
