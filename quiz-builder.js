@@ -666,8 +666,344 @@ window.previewQuiz = function(quizId) {
 /**
  * View results
  */
-window.viewResults = function(quizId) {
-  showNotification('Results view coming soon!', 'info');
+/**
+ * View results â€” full results dashboard with student submissions, stats, and breakdown
+ */
+window.viewResults = async function(quizId) {
+  const quiz = quizzes.find(q => q.id === quizId);
+  if (!quiz) { showNotification('Quiz not found', 'error'); return; }
+
+  // Show loading indicator
+  showNotification('Loading quiz results...', 'info');
+
+  // 1. Collect all attempts from Firestore & localStorage
+  let attempts = [];
+
+  // Try Firestore first
+  if (typeof window.fbGetQuizAttempts === 'function') {
+    try {
+      const fbAttempts = await window.fbGetQuizAttempts(quizId);
+      if (fbAttempts && fbAttempts.length > 0) {
+        attempts.push(...fbAttempts);
+      }
+    } catch (e) {
+      console.warn('[Quiz Builder] fbGetQuizAttempts error:', e);
+    }
+  }
+
+  // Check localStorage quiz_results_<quizId>
+  try {
+    const localQuizResults = JSON.parse(localStorage.getItem(`quiz_results_${quizId}`) || '[]');
+    attempts.push(...localQuizResults);
+  } catch (e) {}
+
+  // Also scan all localStorage quiz_attempts_* keys
+  try {
+    for (let i = 0; i < localStorage.length; i++) {
+      const k = localStorage.key(i);
+      if (k && k.startsWith('quiz_attempts_')) {
+        const studentAttempts = JSON.parse(localStorage.getItem(k) || '[]');
+        const matches = studentAttempts.filter(a => a.quizId === quizId);
+        attempts.push(...matches);
+      }
+    }
+  } catch (e) {}
+
+  // Deduplicate attempts by studentEmail + completedAt/submittedAt
+  const seen = new Set();
+  attempts = attempts.filter(a => {
+    const key = `${a.studentEmail || a.email}_${a.completedAt || a.submittedAt || ''}`;
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+
+  // Sort descending by completion time (newest first)
+  attempts.sort((a, b) => new Date(b.completedAt || b.submittedAt || 0) - new Date(a.completedAt || a.submittedAt || 0));
+
+  // Compute stats
+  const totalSubmissions = attempts.length;
+  let avgPercentage = 0;
+  let topPercentage = 0;
+  let passCount = 0;
+
+  if (totalSubmissions > 0) {
+    const sumPct = attempts.reduce((acc, a) => acc + (a.percentage || 0), 0);
+    avgPercentage = Math.round(sumPct / totalSubmissions);
+    topPercentage = Math.max(...attempts.map(a => a.percentage || 0));
+    passCount = attempts.filter(a => (a.percentage || 0) >= 50).length;
+    
+    // Update quiz object stats if changed
+    if (quiz.attempts !== totalSubmissions || quiz.avgScore !== avgPercentage) {
+      quiz.attempts = totalSubmissions;
+      quiz.avgScore = avgPercentage;
+      saveQuizzes();
+      renderQuizzes();
+    }
+  }
+  const passRate = totalSubmissions > 0 ? Math.round((passCount / totalSubmissions) * 100) : 0;
+
+  function formatTime(seconds) {
+    if (!seconds && seconds !== 0) return 'â€”';
+    const m = Math.floor(seconds / 60);
+    const s = seconds % 60;
+    return `${m}m ${s}s`;
+  }
+
+  function formatDate(isoStr) {
+    if (!isoStr) return 'â€”';
+    try {
+      const d = new Date(isoStr);
+      return d.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' }) + ' ' +
+             d.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' });
+    } catch (e) {
+      return isoStr;
+    }
+  }
+
+  function getGradeBadge(pct) {
+    if (pct >= 80) return `<span style="padding:0.3rem 0.75rem;background:rgba(16,185,129,0.15);color:#10b981;border-radius:8px;font-weight:800;font-size:0.8rem;">${pct}% Â· Excellent</span>`;
+    if (pct >= 65) return `<span style="padding:0.3rem 0.75rem;background:rgba(59,130,246,0.15);color:#3b82f6;border-radius:8px;font-weight:800;font-size:0.8rem;">${pct}% Â· Good</span>`;
+    if (pct >= 50) return `<span style="padding:0.3rem 0.75rem;background:rgba(245,158,11,0.15);color:#f59e0b;border-radius:8px;font-weight:800;font-size:0.8rem;">${pct}% Â· Average</span>`;
+    return `<span style="padding:0.3rem 0.75rem;background:rgba(239,68,68,0.15);color:#ef4444;border-radius:8px;font-weight:800;font-size:0.8rem;">${pct}% Â· Needs Improvement</span>`;
+  }
+
+  // Remove existing modal if any
+  const existingOverlay = document.getElementById('quizResultsOverlay');
+  if (existingOverlay) existingOverlay.remove();
+
+  // Create overlay
+  const overlay = document.createElement('div');
+  overlay.id = 'quizResultsOverlay';
+  overlay.style.cssText = `
+    position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.65);backdrop-filter:blur(6px);
+    display:flex;align-items:flex-start;justify-content:center;padding:2rem 1rem;overflow-y:auto;
+  `;
+
+  overlay.innerHTML = `
+    <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:20px;width:100%;max-width:960px;overflow:hidden;box-shadow:0 25px 60px rgba(0,0,0,0.4);margin:auto;">
+      <!-- Header -->
+      <div style="padding:1.5rem 2rem;border-bottom:1px solid var(--border);background:linear-gradient(135deg,rgba(99,102,241,0.08),rgba(139,92,246,0.05));display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap;">
+        <div style="display:flex;align-items:center;gap:1rem;min-width:0;">
+          <div style="width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,#10b981,#059669);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><path d="M9 15l2 2 4-4"/></svg>
+          </div>
+          <div style="min-width:0;">
+            <div style="display:flex;align-items:center;gap:0.5rem;flex-wrap:wrap;">
+              <span style="font-size:0.72rem;font-weight:700;color:#10b981;text-transform:uppercase;letter-spacing:0.08em;">Results & Submissions</span>
+              <span style="font-size:0.72rem;padding:0.15rem 0.5rem;background:rgba(99,102,241,0.12);color:#6366f1;border-radius:4px;font-weight:700;">${(quiz.subject||'general').replace('_',' ')}</span>
+            </div>
+            <div style="font-size:1.2rem;font-weight:800;color:var(--text-primary);">${quiz.title}</div>
+            <div style="font-size:0.8rem;color:var(--text-muted);">${quiz.questions.length} questions Â· ${quiz.duration || 30} mins duration</div>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:0.75rem;">
+          ${totalSubmissions > 0 ? `
+            <button onclick="downloadQuizResultsCSV()" style="display:flex;align-items:center;gap:0.5rem;padding:0.6rem 1rem;background:var(--bg-secondary);border:1px solid var(--border);border-radius:10px;color:var(--text-primary);font-size:0.85rem;font-weight:700;cursor:pointer;">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+              Export CSV
+            </button>
+          ` : ''}
+          <button onclick="closeResultsModal()" style="width:36px;height:36px;border-radius:8px;border:1px solid var(--border);background:var(--bg-secondary);color:var(--text-secondary);cursor:pointer;display:flex;align-items:center;justify-content:center;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- KPI Summary Cards -->
+      <div style="padding:1.5rem 2rem;display:grid;grid-template-columns:repeat(auto-fit, minmax(180px, 1fr));gap:1rem;background:var(--bg-secondary);border-bottom:1px solid var(--border);">
+        <div style="padding:1rem 1.25rem;background:var(--bg-card);border:1px solid var(--border);border-radius:12px;">
+          <div style="font-size:0.78rem;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.05em;">Total Submissions</div>
+          <div style="font-size:1.8rem;font-weight:900;color:var(--text-primary);margin-top:0.25rem;">${totalSubmissions}</div>
+        </div>
+        <div style="padding:1rem 1.25rem;background:var(--bg-card);border:1px solid var(--border);border-radius:12px;">
+          <div style="font-size:0.78rem;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.05em;">Average Score</div>
+          <div style="font-size:1.8rem;font-weight:900;color:#6366f1;margin-top:0.25rem;">${avgPercentage}%</div>
+        </div>
+        <div style="padding:1rem 1.25rem;background:var(--bg-card);border:1px solid var(--border);border-radius:12px;">
+          <div style="font-size:0.78rem;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.05em;">Highest Score</div>
+          <div style="font-size:1.8rem;font-weight:900;color:#10b981;margin-top:0.25rem;">${topPercentage}%</div>
+        </div>
+        <div style="padding:1rem 1.25rem;background:var(--bg-card);border:1px solid var(--border);border-radius:12px;">
+          <div style="font-size:0.78rem;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.05em;">Pass Rate (â‰¥50%)</div>
+          <div style="font-size:1.8rem;font-weight:900;color:#f59e0b;margin-top:0.25rem;">${passRate}%</div>
+        </div>
+      </div>
+
+      <!-- Main Content Area: Submissions Table or Detail View -->
+      <div id="resultsContentArea" style="padding:2rem;">
+        ${totalSubmissions === 0 ? `
+          <div style="text-align:center;padding:3rem 1rem;">
+            <div style="width:64px;height:64px;border-radius:50%;background:rgba(99,102,241,0.1);color:#6366f1;display:flex;align-items:center;justify-content:center;margin:0 auto 1.5rem;">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            </div>
+            <h3 style="margin:0 0 0.5rem;font-size:1.2rem;font-weight:800;color:var(--text-primary);">No Student Submissions Yet</h3>
+            <p style="margin:0;font-size:0.95rem;color:var(--text-muted);max-width:480px;margin:0 auto;line-height:1.5;">
+              When enterprise students take this quiz from their portal, their scores, time taken, and question breakdowns will automatically appear here in real-time.
+            </p>
+          </div>
+        ` : `
+          <div style="overflow-x:auto;">
+            <table style="width:100%;border-collapse:collapse;text-align:left;">
+              <thead>
+                <tr style="border-bottom:2px solid var(--border);color:var(--text-muted);font-size:0.8rem;text-transform:uppercase;letter-spacing:0.05em;">
+                  <th style="padding:0.75rem 1rem;">Student</th>
+                  <th style="padding:0.75rem 1rem;">Score</th>
+                  <th style="padding:0.75rem 1rem;">Grade</th>
+                  <th style="padding:0.75rem 1rem;">Time Taken</th>
+                  <th style="padding:0.75rem 1rem;">Date</th>
+                  <th style="padding:0.75rem 1rem;text-align:right;">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${attempts.map((att, idx) => {
+                  const studentName = att.studentName || att.studentEmail?.split('@')[0] || 'Student';
+                  const initial = studentName.charAt(0).toUpperCase();
+                  const scoreStr = `${att.score ?? 0} / ${att.totalPoints ?? quiz.questions.length}`;
+                  return `
+                    <tr style="border-bottom:1px solid var(--border);transition:background 0.15s;" onmouseover="this.style.background='var(--bg-secondary)'" onmouseout="this.style.background='transparent'">
+                      <td style="padding:1rem;">
+                        <div style="display:flex;align-items:center;gap:0.75rem;">
+                          <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#6366f1,#8b5cf6);color:#fff;font-weight:800;display:flex;align-items:center;justify-content:center;font-size:0.85rem;flex-shrink:0;">
+                            ${initial}
+                          </div>
+                          <div>
+                            <div style="font-weight:700;color:var(--text-primary);font-size:0.95rem;">${studentName}</div>
+                            <div style="font-size:0.8rem;color:var(--text-muted);">${att.studentEmail || 'â€”'}</div>
+                          </div>
+                        </div>
+                      </td>
+                      <td style="padding:1rem;font-weight:800;color:var(--text-primary);font-family:monospace;font-size:1rem;">
+                        ${scoreStr}
+                      </td>
+                      <td style="padding:1rem;">
+                        ${getGradeBadge(att.percentage || 0)}
+                      </td>
+                      <td style="padding:1rem;color:var(--text-secondary);font-size:0.9rem;">
+                        ${formatTime(att.timeTaken ?? att.duration)}
+                      </td>
+                      <td style="padding:1rem;color:var(--text-muted);font-size:0.85rem;">
+                        ${formatDate(att.completedAt || att.submittedAt)}
+                      </td>
+                      <td style="padding:1rem;text-align:right;">
+                        <button onclick="viewAttemptDetails(${idx})" style="padding:0.45rem 0.85rem;background:rgba(99,102,241,0.1);color:#6366f1;border:1px solid rgba(99,102,241,0.3);border-radius:8px;font-weight:700;font-size:0.82rem;cursor:pointer;">
+                          Review Answers
+                        </button>
+                      </td>
+                    </tr>
+                  `;
+                }).join('')}
+              </tbody>
+            </table>
+          </div>
+        `}
+      </div>
+    </div>
+  `;
+
+  document.body.appendChild(overlay);
+
+  // Close handlers
+  window.closeResultsModal = function() {
+    const el = document.getElementById('quizResultsOverlay');
+    if (el) el.remove();
+  };
+
+  overlay.addEventListener('click', (e) => {
+    if (e.target === overlay) window.closeResultsModal();
+  });
+
+  const resEscHandler = (e) => {
+    if (e.key === 'Escape') { window.closeResultsModal(); document.removeEventListener('keydown', resEscHandler); }
+  };
+  document.addEventListener('keydown', resEscHandler);
+
+  // CSV Export handler
+  window.downloadQuizResultsCSV = function() {
+    if (attempts.length === 0) return;
+    const headers = ['Student Name', 'Student Email', 'Score', 'Total Points', 'Percentage', 'Status', 'Time Taken', 'Submitted At'];
+    const rows = attempts.map(a => [
+      `"${(a.studentName || a.studentEmail || 'Student').replace(/"/g, '""')}"`,
+      `"${(a.studentEmail || '').replace(/"/g, '""')}"`,
+      a.score ?? 0,
+      a.totalPoints ?? quiz.questions.length,
+      `"${a.percentage ?? 0}%"`,
+      (a.percentage || 0) >= 50 ? 'Passed' : 'Failed',
+      `"${formatTime(a.timeTaken ?? a.duration)}"`,
+      `"${formatDate(a.completedAt || a.submittedAt)}"`
+    ]);
+    const csvStr = 'data:text/csv;charset=utf-8,' + [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
+    const encoded = encodeURI(csvStr);
+    const link = document.createElement('a');
+    link.setAttribute('href', encoded);
+    link.setAttribute('download', `${(quiz.title || 'quiz').replace(/[^a-zA-Z0-9_-]/g, '_')}_results.csv`);
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+  };
+
+  // Detailed student review handler
+  window.viewAttemptDetails = function(attemptIndex) {
+    const att = attempts[attemptIndex];
+    if (!att) return;
+
+    const area = document.getElementById('resultsContentArea');
+    if (!area) return;
+
+    const studentName = att.studentName || att.studentEmail?.split('@')[0] || 'Student';
+    const details = att.details || [];
+
+    area.innerHTML = `
+      <div style="margin-bottom:1.5rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;">
+        <button onclick="returnToSubmissionsList()" style="display:flex;align-items:center;gap:0.5rem;padding:0.5rem 1rem;background:var(--bg-secondary);border:1px solid var(--border);border-radius:8px;color:var(--text-secondary);font-weight:700;cursor:pointer;">
+          â† Back to All Submissions
+        </button>
+        <div style="display:flex;align-items:center;gap:0.75rem;">
+          <span style="font-weight:800;font-size:1.05rem;color:var(--text-primary);">${studentName}</span>
+          ${getGradeBadge(att.percentage || 0)}
+          <span style="font-weight:800;color:var(--text-primary);font-family:monospace;">${att.score ?? 0} / ${att.totalPoints ?? quiz.questions.length} pts</span>
+        </div>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:1rem;">
+        ${quiz.questions.map((q, qIdx) => {
+          const detail = details[qIdx] || {};
+          const isCorrect = detail.isCorrect;
+          const userAnsDisplay = detail.selected !== undefined && detail.selected !== null ? detail.selected : (att.answers && att.answers[qIdx] !== undefined ? (q.options ? q.options[att.answers[qIdx]] : att.answers[qIdx]) : 'No answer');
+          const correctAnsDisplay = q.options && q.options[q.correctAnswer] !== undefined ? q.options[q.correctAnswer] : (q.correctAnswer ?? 'â€”');
+
+          return `
+            <div style="padding:1.25rem 1.5rem;background:var(--bg-secondary);border:1px solid ${isCorrect ? 'rgba(16,185,129,0.3)' : 'rgba(239,68,68,0.3)'};border-radius:12px;">
+              <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:0.75rem;gap:1rem;">
+                <div style="font-weight:700;color:var(--text-primary);font-size:1rem;">
+                  <span style="color:var(--text-muted);margin-right:0.5rem;">#${qIdx + 1}</span>
+                  ${q.question}
+                </div>
+                <span style="padding:0.25rem 0.65rem;background:${isCorrect ? 'rgba(16,185,129,0.15)' : 'rgba(239,68,68,0.15)'};color:${isCorrect ? '#10b981' : '#ef4444'};border-radius:6px;font-weight:800;font-size:0.78rem;flex-shrink:0;">
+                  ${isCorrect ? 'âœ“ Correct (' + (q.points || 1) + ' pts)' : 'âœ— Incorrect (0 pts)'}
+                </span>
+              </div>
+
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-top:0.75rem;font-size:0.9rem;">
+                <div style="padding:0.75rem 1rem;background:var(--bg-card);border-radius:8px;border:1px solid var(--border);">
+                  <div style="font-size:0.75rem;font-weight:700;color:var(--text-muted);text-transform:uppercase;margin-bottom:0.25rem;">Student's Answer</div>
+                  <div style="font-weight:600;color:${isCorrect ? '#10b981' : '#ef4444'};">${userAnsDisplay}</div>
+                </div>
+                <div style="padding:0.75rem 1rem;background:var(--bg-card);border-radius:8px;border:1px solid var(--border);">
+                  <div style="font-size:0.75rem;font-weight:700;color:var(--text-muted);text-transform:uppercase;margin-bottom:0.25rem;">Expected Correct Answer</div>
+                  <div style="font-weight:600;color:#10b981;">${correctAnsDisplay}</div>
+                </div>
+              </div>
+            </div>
+          `;
+        }).join('')}
+      </div>
+    `;
+  };
+
+  window.returnToSubmissionsList = function() {
+    window.viewResults(quizId);
+  };
 };
 
 /**

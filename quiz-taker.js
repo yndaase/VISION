@@ -1,4 +1,4 @@
-/* =====================================================
+﻿/* =====================================================
    QUIZ TAKER SYSTEM
    Enterprise student quiz-taking logic
    ===================================================== */
@@ -453,7 +453,9 @@ async function submitQuiz() {
   const percentage = totalPoints > 0 ? Math.round((score / totalPoints) * 100) : 0;
   const timeTaken = ((quiz.duration || 30) * 60) - timeRemaining;
 
-  const attempt = {
+    const attempt = {
+    studentEmail: session.email,
+    studentName: session.name || session.email,
     quizId: quiz.id,
     quizTitle: quiz.title,
     subject: quiz.subject || '',

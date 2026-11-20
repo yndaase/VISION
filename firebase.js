@@ -1,4 +1,4 @@
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+﻿import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
 import {
   getFirestore,
   doc,
@@ -1201,19 +1201,48 @@ window.fbSaveQuizAttempt = async function(studentEmail, quizId, attempt) {
     
     await setDoc(attemptRef, {
       studentEmail: email,
+      studentName: attempt.studentName || email,
       quizId: quizId,
+      quizTitle: attempt.quizTitle || '',
       score: attempt.score,
       totalPoints: attempt.totalPoints,
-      answers: attempt.answers,
-      completedAt: new Date().toISOString(),
-      duration: attempt.duration
+      percentage: attempt.percentage,
+      correct: attempt.correct,
+      total: attempt.total,
+      answers: attempt.answers || [],
+      details: attempt.details || [],
+      completedAt: attempt.submittedAt || new Date().toISOString(),
+      duration: attempt.timeTaken || attempt.duration || 0
     });
     
-    console.log("[Firebase] ✅ Quiz attempt saved");
+    console.log("[Firebase] âœ… Quiz attempt saved");
     return { success: true };
   } catch (error) {
     console.error("[Firebase] Error saving quiz attempt:", error);
     return { success: false, error: error.message };
+  }
+};
+
+/**
+ * Get all quiz attempts for a quiz
+ */
+window.fbGetQuizAttempts = async function(quizId) {
+  try {
+    const attemptsCollection = collection(db, "quiz_attempts");
+    const snapshot = await getDocs(attemptsCollection);
+    const attempts = [];
+    snapshot.forEach(docSnap => {
+      const data = docSnap.data();
+      if (data.quizId === quizId) {
+        attempts.push({ id: docSnap.id, ...data });
+      }
+    });
+    attempts.sort((a, b) => new Date(b.completedAt || 0) - new Date(a.completedAt || 0));
+    console.log("[Firebase] âœ… Loaded", attempts.length, "attempts for quiz:", quizId);
+    return attempts;
+  } catch (error) {
+    console.warn("[Firebase] Error getting quiz attempts:", error);
+    return [];
   }
 };
 
