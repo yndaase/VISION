@@ -1,0 +1,959 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Take Quiz | Vision Education</title>
+  <meta name="description" content="Take a quiz assigned by your institution on Vision Education" />
+  <link rel="icon" type="image/png" href="favicon.png" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="theme.css" />
+  <link rel="stylesheet" href="dashboard.css" />
+
+  <script src="theme.js"></script>
+
+  <!-- Auth Guard: Enterprise Students Only -->
+  <script>
+    (function() {
+      const SESSION_KEY = 'waec_session';
+      const session = sessionStorage.getItem(SESSION_KEY) || localStorage.getItem(SESSION_KEY);
+      if (!session) {
+        window.location.href = '/enterprise-login.html';
+        return;
+      }
+      try {
+        const user = JSON.parse(session);
+        if (user.role !== 'enterprise-student') {
+          if (user.role === 'teacher' || user.role === 'enterprise' || user.role === 'admin') {
+            window.location.href = '/enterprise-dashboard.html';
+          } else if (user.role === 'student') {
+            window.location.href = '/dashboard.html';
+          } else {
+            window.location.href = '/enterprise-login.html';
+          }
+        }
+      } catch (e) {
+        window.location.href = '/enterprise-login.html';
+      }
+    })();
+  </script>
+
+  <style>
+    /* =====================================================
+       QUIZ TAKER PAGE STYLES
+       ===================================================== */
+
+    *, *::before, *::after { box-sizing: border-box; }
+
+    .qt-page {
+      min-height: 100vh;
+      background: var(--bg-primary);
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ─── Top Bar ─── */
+    .qt-topbar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: var(--bg-card);
+      border-bottom: 1px solid var(--border);
+      backdrop-filter: blur(12px);
+    }
+
+    .qt-topbar-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 1.5rem;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .qt-topbar-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      color: var(--text-primary);
+      font-weight: 800;
+      font-size: 1rem;
+    }
+
+    .qt-topbar-logo img {
+      height: 32px;
+      width: 32px;
+      object-fit: contain;
+    }
+
+    .qt-topbar-back {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 16px;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 0.85rem;
+      font-weight: 600;
+      transition: all 0.2s;
+      font-family: 'Outfit', sans-serif;
+      cursor: pointer;
+    }
+
+    .qt-topbar-back:hover {
+      background: var(--primary-dim);
+      color: var(--primary);
+      border-color: var(--border-accent);
+    }
+
+    /* ─── Main Container ─── */
+    .qt-main {
+      flex: 1;
+      max-width: 1200px;
+      margin: 0 auto;
+      width: 100%;
+      padding: 2rem 1.5rem 4rem;
+    }
+
+    /* ─── Quiz Header ─── */
+    .qt-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 1.5rem;
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+    }
+
+    .qt-title-wrap {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 6px;
+    }
+
+    .qt-title {
+      font-size: 1.75rem;
+      font-weight: 900;
+      color: var(--text-primary);
+      margin: 0;
+      letter-spacing: -0.03em;
+    }
+
+    .qt-subject-badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 4px 12px;
+      background: rgba(99, 102, 241, 0.12);
+      color: var(--primary);
+      border: 1px solid rgba(99, 102, 241, 0.2);
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      white-space: nowrap;
+    }
+
+    .qt-desc {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      margin: 0;
+      max-width: 600px;
+    }
+
+    .qt-timer-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+
+    .qt-timer {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 20px;
+      background: var(--bg-card);
+      border: 2px solid var(--border);
+      border-radius: 14px;
+      font-size: 1.5rem;
+      font-weight: 900;
+      color: var(--text-primary);
+      font-family: 'JetBrains Mono', monospace;
+      transition: all 0.3s;
+    }
+
+    .qt-timer.warning {
+      border-color: #f59e0b;
+      background: rgba(245, 158, 11, 0.08);
+      color: #f59e0b;
+    }
+
+    .qt-timer.danger {
+      border-color: #ef4444;
+      background: rgba(239, 68, 68, 0.08);
+      color: #ef4444;
+      animation: timerPulse 1s ease-in-out infinite;
+    }
+
+    @keyframes timerPulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.03); }
+    }
+
+    .qt-progress-text {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    /* ─── Progress Bar ─── */
+    .qt-progress-bar-wrap {
+      height: 6px;
+      background: var(--bg-secondary);
+      border-radius: 999px;
+      margin-bottom: 2rem;
+      overflow: hidden;
+    }
+
+    .qt-progress-bar {
+      height: 100%;
+      background: linear-gradient(90deg, var(--primary), #8b5cf6);
+      border-radius: 999px;
+      transition: width 0.4s ease;
+    }
+
+    /* ─── Body Layout ─── */
+    .qt-body {
+      display: grid;
+      grid-template-columns: 220px 1fr;
+      gap: 1.5rem;
+      align-items: start;
+    }
+
+    @media (max-width: 768px) {
+      .qt-body {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* ─── Navigator ─── */
+    .qt-navigator {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 1.25rem;
+      position: sticky;
+      top: 76px;
+    }
+
+    .qt-nav-label {
+      font-size: 0.7rem;
+      font-weight: 800;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 1rem;
+    }
+
+    .qt-nav-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 6px;
+      margin-bottom: 1rem;
+    }
+
+    .qt-nav-btn {
+      aspect-ratio: 1;
+      border-radius: 8px;
+      border: 1.5px solid var(--border);
+      background: var(--bg-secondary);
+      color: var(--text-secondary);
+      font-size: 0.75rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-family: 'Outfit', sans-serif;
+      padding: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .qt-nav-btn:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    .qt-nav-btn.active {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: white;
+      box-shadow: 0 4px 12px rgba(99, 102, 241, 0.35);
+    }
+
+    .qt-nav-btn.answered:not(.active) {
+      background: rgba(16, 185, 129, 0.12);
+      border-color: rgba(16, 185, 129, 0.4);
+      color: #10b981;
+    }
+
+    .qt-nav-legend {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-bottom: 1.25rem;
+    }
+
+    .qt-legend-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+
+    .qt-legend-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 3px;
+      border: 1.5px solid var(--border);
+      background: var(--bg-secondary);
+      flex-shrink: 0;
+    }
+
+    .qt-legend-dot.answered {
+      background: rgba(16, 185, 129, 0.12);
+      border-color: rgba(16, 185, 129, 0.4);
+    }
+
+    .qt-legend-dot.current {
+      background: var(--primary);
+      border-color: var(--primary);
+    }
+
+    .qt-submit-btn {
+      width: 100%;
+      padding: 12px;
+      background: linear-gradient(135deg, #6366f1, #8b5cf6);
+      color: white;
+      border: none;
+      border-radius: 12px;
+      font-size: 0.85rem;
+      font-weight: 800;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all 0.3s;
+      font-family: 'Outfit', sans-serif;
+      box-shadow: 0 4px 16px rgba(99, 102, 241, 0.3);
+    }
+
+    .qt-submit-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(99, 102, 241, 0.4);
+    }
+
+    /* ─── Question Card ─── */
+    .qt-question-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+
+    .qt-question-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 2rem;
+      min-height: 300px;
+    }
+
+    .qt-question-num {
+      font-size: 0.75rem;
+      font-weight: 800;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .qt-points {
+      background: rgba(99, 102, 241, 0.1);
+      color: var(--primary);
+      border: 1px solid rgba(99, 102, 241, 0.2);
+      padding: 2px 10px;
+      border-radius: 20px;
+      font-size: 0.7rem;
+      font-weight: 700;
+    }
+
+    .qt-question-text {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      line-height: 1.6;
+      margin-bottom: 1.75rem;
+    }
+
+    .qt-options {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .qt-option {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 14px 18px;
+      background: var(--bg-secondary);
+      border: 2px solid var(--border);
+      border-radius: 14px;
+      cursor: pointer;
+      text-align: left;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      font-family: 'Outfit', sans-serif;
+      width: 100%;
+    }
+
+    .qt-option:hover {
+      border-color: var(--primary);
+      background: rgba(99, 102, 241, 0.05);
+    }
+
+    .qt-option.selected {
+      border-color: var(--primary);
+      background: rgba(99, 102, 241, 0.08);
+    }
+
+    .qt-option-label {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      background: var(--bg-card);
+      border: 1.5px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.8rem;
+      font-weight: 800;
+      color: var(--text-secondary);
+      flex-shrink: 0;
+      transition: all 0.2s;
+    }
+
+    .qt-option.selected .qt-option-label {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: white;
+    }
+
+    .qt-option-text {
+      flex: 1;
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      line-height: 1.4;
+    }
+
+    .qt-option-check {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      border: 1.5px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: transparent;
+      flex-shrink: 0;
+      transition: all 0.2s;
+    }
+
+    .qt-option.selected .qt-option-check {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: white;
+    }
+
+    /* ─── Nav Controls ─── */
+    .qt-nav-controls {
+      display: flex;
+      gap: 1rem;
+      justify-content: space-between;
+    }
+
+    .qt-btn-primary,
+    .qt-btn-secondary {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 24px;
+      border-radius: 12px;
+      font-size: 0.9rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-family: 'Outfit', sans-serif;
+      border: none;
+      text-decoration: none;
+    }
+
+    .qt-btn-primary {
+      background: linear-gradient(135deg, #6366f1, #8b5cf6);
+      color: white;
+      box-shadow: 0 4px 14px rgba(99, 102, 241, 0.3);
+    }
+
+    .qt-btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(99, 102, 241, 0.4);
+    }
+
+    .qt-btn-secondary {
+      background: var(--bg-secondary);
+      color: var(--text-secondary);
+      border: 1.5px solid var(--border);
+    }
+
+    .qt-btn-secondary:hover:not(:disabled) {
+      background: var(--bg-card);
+      color: var(--text-primary);
+      border-color: var(--text-secondary);
+    }
+
+    .qt-btn-secondary:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    /* ─── Loading State ─── */
+    .qt-loading {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 6rem 2rem;
+      gap: 1.5rem;
+      color: var(--text-muted);
+      font-size: 1rem;
+      font-weight: 600;
+    }
+
+    .qt-spinner {
+      width: 48px;
+      height: 48px;
+      border: 4px solid var(--border);
+      border-top-color: var(--primary);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* ─── Error State ─── */
+    .qt-error-state {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 5rem 2rem;
+      gap: 1.25rem;
+      text-align: center;
+      background: var(--bg-card);
+      border: 1px dashed var(--border);
+      border-radius: 24px;
+    }
+
+    .qt-error-state svg {
+      color: var(--text-muted);
+      opacity: 0.4;
+    }
+
+    .qt-error-state h2 {
+      font-size: 1.5rem;
+      font-weight: 900;
+      color: var(--text-primary);
+      margin: 0;
+    }
+
+    .qt-error-state p {
+      font-size: 0.95rem;
+      color: var(--text-muted);
+      margin: 0;
+      max-width: 420px;
+    }
+
+    /* ─── Confirm Modal ─── */
+    .qt-modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(4px);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+    }
+
+    .qt-modal-overlay.open {
+      display: flex;
+    }
+
+    .qt-modal-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 2.5rem;
+      max-width: 440px;
+      width: 100%;
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.3);
+      animation: modalIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    @keyframes modalIn {
+      from { transform: scale(0.9); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+
+    .qt-modal-icon {
+      width: 56px;
+      height: 56px;
+      border-radius: 16px;
+      background: rgba(245, 158, 11, 0.12);
+      color: #f59e0b;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 1.25rem;
+    }
+
+    .qt-modal-title {
+      font-size: 1.3rem;
+      font-weight: 900;
+      color: var(--text-primary);
+      margin: 0 0 0.5rem 0;
+      letter-spacing: -0.02em;
+    }
+
+    .qt-modal-msg {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+      margin: 0 0 1.75rem 0;
+    }
+
+    .qt-modal-actions {
+      display: flex;
+      gap: 12px;
+    }
+
+    .qt-modal-actions > * {
+      flex: 1;
+    }
+
+    /* ─── Results Overlay ─── */
+    .qt-results-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(6px);
+      z-index: 2000;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+      overflow-y: auto;
+    }
+
+    .qt-results-overlay.open {
+      display: flex;
+    }
+
+    .qt-results-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 28px;
+      max-width: 520px;
+      width: 100%;
+      overflow: hidden;
+      box-shadow: 0 32px 80px rgba(0, 0, 0, 0.35);
+      animation: modalIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .qt-results-header {
+      padding: 2.5rem 2rem 2rem;
+      text-align: center;
+      position: relative;
+    }
+
+    .qt-results-header.grade-excellent { background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(5, 150, 105, 0.05)); }
+    .qt-results-header.grade-good { background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(139, 92, 246, 0.05)); }
+    .qt-results-header.grade-average { background: linear-gradient(135deg, rgba(245, 158, 11, 0.1), rgba(234, 179, 8, 0.05)); }
+    .qt-results-header.grade-fail { background: linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(220, 38, 38, 0.05)); }
+
+    .qt-results-icon {
+      width: 72px;
+      height: 72px;
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 1.25rem;
+    }
+
+    .grade-excellent .qt-results-icon { background: rgba(16, 185, 129, 0.15); color: #10b981; }
+    .grade-good .qt-results-icon { background: rgba(99, 102, 241, 0.15); color: #6366f1; }
+    .grade-average .qt-results-icon { background: rgba(245, 158, 11, 0.15); color: #f59e0b; }
+    .grade-fail .qt-results-icon { background: rgba(239, 68, 68, 0.15); color: #ef4444; }
+
+    .qt-results-title {
+      font-size: 1.5rem;
+      font-weight: 900;
+      color: var(--text-primary);
+      margin: 0 0 4px 0;
+      letter-spacing: -0.02em;
+    }
+
+    .qt-results-quiz-name {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin: 0;
+    }
+
+    .qt-results-score-wrap {
+      display: flex;
+      justify-content: center;
+      padding: 2rem 2rem 1rem;
+    }
+
+    .qt-score-circle {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      border: 6px solid;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 2px;
+    }
+
+    .grade-excellent .qt-score-circle { border-color: #10b981; color: #10b981; }
+    .grade-good .qt-score-circle { border-color: #6366f1; color: #6366f1; }
+    .grade-average .qt-score-circle { border-color: #f59e0b; color: #f59e0b; }
+    .grade-fail .qt-score-circle { border-color: #ef4444; color: #ef4444; }
+
+    .qt-score-pct {
+      font-size: 2rem;
+      font-weight: 900;
+      letter-spacing: -0.03em;
+      line-height: 1;
+    }
+
+    .qt-score-label {
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      opacity: 0.8;
+    }
+
+    .qt-results-stats {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1px;
+      background: var(--border);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      margin: 0 0 1.5rem 0;
+    }
+
+    .qt-result-stat {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      padding: 1rem 0.5rem;
+      background: var(--bg-card);
+    }
+
+    .qt-result-stat-num {
+      font-size: 1.25rem;
+      font-weight: 900;
+      color: var(--text-primary);
+      letter-spacing: -0.02em;
+    }
+
+    .qt-result-stat-lbl {
+      font-size: 0.65rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .qt-results-grade-wrap {
+      text-align: center;
+      padding: 0 2rem 1.5rem;
+    }
+
+    .qt-grade-badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 6px 18px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.75rem;
+    }
+
+    .grade-excellent .qt-grade-badge { background: rgba(16, 185, 129, 0.12); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.25); }
+    .grade-good .qt-grade-badge { background: rgba(99, 102, 241, 0.12); color: #6366f1; border: 1px solid rgba(99, 102, 241, 0.25); }
+    .grade-average .qt-grade-badge { background: rgba(245, 158, 11, 0.12); color: #f59e0b; border: 1px solid rgba(245, 158, 11, 0.25); }
+    .grade-fail .qt-grade-badge { background: rgba(239, 68, 68, 0.12); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.25); }
+
+    .qt-results-message {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      margin: 0;
+      line-height: 1.5;
+    }
+
+    .qt-results-actions {
+      padding: 0 2rem 2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .qt-results-actions .qt-btn-primary {
+      justify-content: center;
+      text-align: center;
+      width: 100%;
+    }
+
+    /* ─── Toast ─── */
+    .qt-toast {
+      position: fixed;
+      bottom: 2rem;
+      left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      padding: 12px 24px;
+      border-radius: 12px;
+      font-size: 0.9rem;
+      font-weight: 700;
+      font-family: 'Outfit', sans-serif;
+      z-index: 9999;
+      opacity: 0;
+      transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+      white-space: nowrap;
+      pointer-events: none;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+    }
+
+    .qt-toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    .qt-toast-info { background: var(--primary); color: white; }
+    .qt-toast-warning { background: #f59e0b; color: white; }
+    .qt-toast-error { background: #ef4444; color: white; }
+
+    /* ─── Responsive ─── */
+    @media (max-width: 768px) {
+      .qt-main { padding: 1.5rem 1rem 4rem; }
+      .qt-title { font-size: 1.35rem; }
+      .qt-timer { font-size: 1.2rem; padding: 8px 14px; }
+      .qt-question-card { padding: 1.5rem; }
+      .qt-nav-grid { grid-template-columns: repeat(5, 1fr); }
+      .qt-results-stats { grid-template-columns: repeat(2, 1fr); }
+      .qt-score-circle { width: 100px; height: 100px; }
+      .qt-score-pct { font-size: 1.75rem; }
+    }
+  </style>
+</head>
+<body class="qt-page">
+
+  <!-- Top Bar -->
+  <header class="qt-topbar">
+    <div class="qt-topbar-inner">
+      <a class="qt-topbar-logo" href="/enterprise-student-dashboard.html">
+        <img src="assets/logo.png" alt="Vision Education Logo">
+        <span>Vision <span style="color: var(--primary);">Education</span></span>
+      </a>
+      <a href="/enterprise-student-dashboard.html" class="qt-topbar-back">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <polyline points="15 18 9 12 15 6"/>
+        </svg>
+        Back to Dashboard
+      </a>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="qt-main">
+    <div id="quizContainer">
+      <!-- Quiz rendered here by quiz-taker.js -->
+    </div>
+  </main>
+
+  <!-- Confirm Submit Modal -->
+  <div class="qt-modal-overlay" id="confirmModal" onclick="if(event.target===this) closeConfirmModal()">
+    <div class="qt-modal-card">
+      <div class="qt-modal-icon">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+          <line x1="12" y1="9" x2="12" y2="13"/>
+          <line x1="12" y1="17" x2="12.01" y2="17"/>
+        </svg>
+      </div>
+      <h3 class="qt-modal-title">Submit Quiz?</h3>
+      <p class="qt-modal-msg" id="confirmMsg">Are you sure you want to submit your quiz? You cannot change your answers after submission.</p>
+      <div class="qt-modal-actions">
+        <button class="qt-btn-secondary" onclick="closeConfirmModal()">Keep Reviewing</button>
+        <button class="qt-btn-primary" onclick="proceedSubmit()">Submit Now</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Results Overlay -->
+  <div class="qt-results-overlay" id="resultsOverlay">
+    <!-- Results rendered dynamically by quiz-taker.js -->
+  </div>
+
+  <!-- Scripts -->
+  <script type="module" src="firebase.js"></script>
+  <script src="auth.js"></script>
+  <script src="quiz-taker.js"></script>
+
+</body>
+</html>

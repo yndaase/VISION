@@ -102,6 +102,13 @@
         </span>
         <span>Study Planner</span>
       </a>
+
+      <a href="#quizzes-section" class="nav-item" onclick="document.getElementById('quizzes-section')?.scrollIntoView({behavior:'smooth'}); return false;">
+        <span class="nav-item-icon">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6zm16-4H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-1 9H9V9h10v2zm-4 4H9v-2h6v2zm4-8H9V5h10v2z"/></svg>
+        </span>
+        <span>Quizzes</span>
+      </a>
     </nav>
     
     <div class="side-nav-footer">
@@ -133,6 +140,12 @@
         <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>
       </span>
       <span>Mocks</span>
+    </a>
+    <a href="#quizzes-section" class="bottom-nav-item" onclick="document.getElementById('quizzes-section')?.scrollIntoView({behavior:'smooth'}); return false;">
+      <span class="bottom-icon">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6zm16-4H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-1 9H9V9h10v2zm-4 4H9v-2h6v2zm4-8H9V5h10v2z"/></svg>
+      </span>
+      <span>Quizzes</span>
     </a>
     <a href="/ai-learning" class="bottom-nav-item">
       <span class="bottom-icon">
@@ -324,6 +337,19 @@
 
         <div class="subjects-grid" id="subjectsGrid">
           <!-- Subjects will be loaded dynamically -->
+        </div>
+      </div>
+    </section>
+
+    <!-- My Quizzes Section -->
+    <section class="quizzes-section" id="quizzes-section">
+      <div class="quizzes-container">
+        <div class="section-header">
+          <h2 class="section-title">My Quizzes</h2>
+          <p class="section-sub">Assessments assigned by your institution</p>
+        </div>
+        <div id="quizzesContainer" class="quizzes-grid">
+          <!-- Quizzes loaded dynamically -->
         </div>
       </div>
     </section>

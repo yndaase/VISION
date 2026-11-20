@@ -25,6 +25,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   // Load data
   loadStats(session);
   loadSubjects();
+  loadQuizzes(session);
   loadInstitutionMaterials(session);
   
   // Setup event listeners
@@ -546,3 +547,153 @@ window.openSettings = function() {
   // Redirect to settings page or open modal
   alert('Settings functionality coming soon for enterprise students!');
 };
+
+
+/* =====================================================
+   QUIZ SECTION — Load published quizzes for this student
+   ===================================================== */
+
+/**
+ * Load published quizzes for the student's institution
+ */
+async function loadQuizzes(session) {
+  const container = document.getElementById('quizzesContainer');
+  if (!container) return;
+
+  const institutionId = session.institutionId || session.schoolCode;
+
+  // Show loading skeleton
+  container.innerHTML = `
+    <div class="quizzes-loading">
+      <div class="quiz-skeleton"></div>
+      <div class="quiz-skeleton"></div>
+      <div class="quiz-skeleton"></div>
+    </div>
+  `;
+
+  let quizzes = [];
+
+  // 1. Try Firestore fbGetPublishedQuizzes
+  if (typeof window.fbGetPublishedQuizzes === 'function' && institutionId) {
+    try {
+      const firestoreQuizzes = await window.fbGetPublishedQuizzes(institutionId);
+      if (firestoreQuizzes && firestoreQuizzes.length > 0) {
+        quizzes = firestoreQuizzes;
+        console.log('[Enterprise Student] Loaded', quizzes.length, 'quizzes from Firestore');
+      }
+    } catch (e) {
+      console.warn('[Enterprise Student] fbGetPublishedQuizzes error:', e);
+    }
+  }
+
+  // 2. Fallback: scan localStorage for all quizzes_* keys
+  if (quizzes.length === 0) {
+    try {
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key && key.startsWith('quizzes_')) {
+          const teacherEmail = key.replace('quizzes_', '');
+          const stored = JSON.parse(localStorage.getItem(key) || '[]');
+          stored.forEach(q => {
+            if (q.status === 'published') {
+              // Include if institution matches or quiz has no institutionId
+              if (!q.institutionId || q.institutionId === institutionId) {
+                quizzes.push({ ...q, createdBy: q.createdBy || teacherEmail });
+              }
+            }
+          });
+        }
+      }
+      console.log('[Enterprise Student] Loaded', quizzes.length, 'quizzes from localStorage fallback');
+    } catch (e) {
+      console.warn('[Enterprise Student] localStorage scan error:', e);
+    }
+  }
+
+  if (quizzes.length === 0) {
+    container.innerHTML = `
+      <div class="quizzes-empty">
+        <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+          <polyline points="14 2 14 8 20 8"/>
+          <line x1="16" y1="13" x2="8" y2="13"/>
+          <line x1="16" y1="17" x2="8" y2="17"/>
+          <polyline points="10 9 9 9 8 9"/>
+        </svg>
+        <h3>No Quizzes Available</h3>
+        <p>Your institution hasn't published any quizzes yet. Check back soon!</p>
+      </div>
+    `;
+    return;
+  }
+
+  // Load student's existing attempts to check completed status
+  let attemptedQuizIds = new Set();
+  try {
+    const attempts = JSON.parse(localStorage.getItem(`quiz_attempts_${session.email}`) || '[]');
+    attempts.forEach(a => attemptedQuizIds.add(a.quizId));
+  } catch (e) { /* ignore */ }
+
+  container.innerHTML = quizzes.map(quiz => renderQuizCard(quiz, attemptedQuizIds)).join('');
+}
+
+/**
+ * Render a single quiz card
+ */
+function renderQuizCard(quiz, attemptedQuizIds) {
+  const isCompleted = attemptedQuizIds.has(quiz.id);
+  const duration = (quiz.duration && quiz.duration > 0) ? quiz.duration : 30;
+  const questionCount = (quiz.questions || []).length;
+  const teacherEmail = quiz.createdBy || '';
+  const takeUrl = `/quiz-taker.html?quizId=${encodeURIComponent(quiz.id)}&teacherEmail=${encodeURIComponent(teacherEmail)}`;
+
+  const subjectColors = {
+    'maths': '#6366f1', 'math': '#6366f1', 'mathematics': '#6366f1',
+    'english': '#60a5fa', 'physics': '#f87171', 'chemistry': '#fb923c',
+    'biology': '#4ade80', 'economics': '#38bdf8', 'social': '#a78bfa',
+    'science': '#34d399', 'cs': '#8b5cf6', 'computer': '#8b5cf6'
+  };
+  const subjectKey = (quiz.subject || '').toLowerCase().split(' ')[0];
+  const subjectColor = subjectColors[subjectKey] || '#6366f1';
+
+  return `
+    <div class="quiz-card${isCompleted ? ' completed' : ''}">
+      ${isCompleted ? '<div class="quiz-completed-badge"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg> Completed</div>' : ''}
+      <div class="quiz-card-header">
+        ${quiz.subject ? `<span class="quiz-subject-tag" style="background:${subjectColor}18;color:${subjectColor};border-color:${subjectColor}30">${quiz.subject}</span>` : ''}
+      </div>
+      <div class="quiz-card-body">
+        <h3 class="quiz-card-title">${escapeHtmlSimple(quiz.title)}</h3>
+        ${quiz.description ? `<p class="quiz-card-desc">${escapeHtmlSimple(quiz.description)}</p>` : ''}
+        <div class="quiz-card-meta">
+          <span class="quiz-meta-item">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            ${duration} min
+          </span>
+          <span class="quiz-meta-item">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+            ${questionCount} question${questionCount !== 1 ? 's' : ''}
+          </span>
+        </div>
+      </div>
+      <div class="quiz-card-footer">
+        ${isCompleted
+          ? `<span class="quiz-done-label"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Quiz Done</span>`
+          : `<a href="${takeUrl}" class="quiz-take-btn">
+               Take Quiz
+               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+             </a>`
+        }
+      </div>
+    </div>
+  `;
+}
+
+function escapeHtmlSimple(str) {
+  if (!str) return '';
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
