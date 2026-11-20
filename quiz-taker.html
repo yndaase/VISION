@@ -437,6 +437,12 @@
       transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
       font-family: 'Outfit', sans-serif;
       width: 100%;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    .qt-option * {
+      pointer-events: none;
     }
 
     .qt-option:hover {

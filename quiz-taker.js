@@ -179,27 +179,64 @@ function renderQuestion(index) {
   const selectedAnswer = answers[index];
   const optionLabels = ['A', 'B', 'C', 'D', 'E', 'F'];
 
+  let optionsHTML = '';
+  if (q.type === 'short_answer') {
+    optionsHTML = `
+      <div class="qt-short-answer-wrap" style="margin-top:1.25rem;">
+        <textarea
+          class="qt-short-answer-input"
+          id="shortAnswerInput"
+          placeholder="Type your answer here..."
+          rows="3"
+          oninput="selectShortAnswer(this.value)"
+          style="width:100%;padding:1rem;background:var(--bg-secondary);border:2px solid var(--border);border-radius:12px;color:var(--text-primary);font-family:inherit;font-size:1rem;resize:vertical;box-sizing:border-box;"
+        >${escapeHtml(answers[index] || '')}</textarea>
+      </div>
+    `;
+  } else {
+    const opts = (q.options && q.options.length > 0) ? q.options : ['True', 'False'];
+    optionsHTML = `
+      <div class="qt-options" id="optionsList">
+        ${opts.map((opt, i) => {
+          const isSelected = selectedAnswer === i || selectedAnswer === opt;
+          return `
+            <button
+              type="button"
+              class="qt-option${isSelected ? ' selected' : ''}"
+              id="opt_${i}"
+              data-index="${i}"
+              onclick="selectOption(${i})"
+            >
+              <span class="qt-option-label">${optionLabels[i] || i + 1}</span>
+              <span class="qt-option-text">${escapeHtml(opt)}</span>
+              <span class="qt-option-check">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                  <polyline points="20 6 9 17 4 12"/>
+                </svg>
+              </span>
+            </button>
+          `;
+        }).join('')}
+      </div>
+    `;
+  }
+
   card.innerHTML = `
     <div class="qt-question-num">Question ${index + 1} <span class="qt-points">${q.points || 1} pt${(q.points || 1) !== 1 ? 's' : ''}</span></div>
     <div class="qt-question-text">${escapeHtml(q.question)}</div>
-    <div class="qt-options" id="optionsList">
-      ${(q.options || []).map((opt, i) => `
-        <button
-          class="qt-option${selectedAnswer === opt ? ' selected' : ''}"
-          id="opt_${i}"
-          onclick="selectAnswer(${JSON.stringify(opt)})"
-        >
-          <span class="qt-option-label">${optionLabels[i] || i + 1}</span>
-          <span class="qt-option-text">${escapeHtml(opt)}</span>
-          <span class="qt-option-check">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
-              <polyline points="20 6 9 17 4 12"/>
-            </svg>
-          </span>
-        </button>
-      `).join('')}
-    </div>
+    ${optionsHTML}
   `;
+
+  // Attach direct event listener to each option for guaranteed click responsiveness
+  card.querySelectorAll('.qt-option').forEach(btn => {
+    btn.addEventListener('click', function(e) {
+      e.preventDefault();
+      const idx = parseInt(this.getAttribute('data-index'), 10);
+      if (!isNaN(idx)) {
+        selectOption(idx);
+      }
+    });
+  });
 
   // Update nav controls
   document.getElementById('prevBtn').disabled = (index === 0);
@@ -222,22 +259,29 @@ function renderQuestion(index) {
   updateNavButtons();
 }
 
-/* ─── Select Answer ─── */
-function selectAnswer(value) {
-  answers[currentQuestion] = value;
+/* ─── Select Option ─── */
+function selectOption(index) {
+  answers[currentQuestion] = index;
   updateNavButtons();
 
   // Visual update: highlight selected
-  document.querySelectorAll('.qt-option').forEach(btn => {
-    const optText = btn.querySelector('.qt-option-text')?.textContent;
-    if (optText === value) {
+  const buttons = document.querySelectorAll('.qt-option');
+  buttons.forEach((btn, i) => {
+    if (i === index) {
       btn.classList.add('selected');
     } else {
       btn.classList.remove('selected');
     }
   });
 }
-window.selectAnswer = selectAnswer;
+window.selectOption = selectOption;
+window.selectAnswer = selectOption;
+
+function selectShortAnswer(val) {
+  answers[currentQuestion] = val;
+  updateNavButtons();
+}
+window.selectShortAnswer = selectShortAnswer;
 
 /* ─── Navigation ─── */
 function goToQuestion(index) {
@@ -358,12 +402,49 @@ async function submitQuiz() {
   const details = quiz.questions.map((q, i) => {
     const pts = q.points || 1;
     totalPoints += pts;
-    const isCorrect = answers[i] === q.correctAnswer;
+
+    const userAns = answers[i];
+    let isCorrect = false;
+
+    if (userAns !== undefined && userAns !== null && userAns !== '') {
+      if (q.type === 'short_answer') {
+        const userText = String(userAns).trim().toLowerCase();
+        const correctText = String(q.correctAnswer || '').trim().toLowerCase();
+        isCorrect = userText === correctText;
+      } else {
+        const opts = q.options || ['True', 'False'];
+        const selectedText = opts[userAns] ? String(opts[userAns]).trim().toLowerCase() : '';
+        const correctRaw = q.correctAnswer;
+        const correctText = (opts[correctRaw] !== undefined)
+          ? String(opts[correctRaw]).trim().toLowerCase()
+          : String(correctRaw || '').trim().toLowerCase();
+
+        // Match index (0 === 0 or 0 === "0")
+        if (userAns === correctRaw || String(userAns) === String(correctRaw)) {
+          isCorrect = true;
+        }
+        // Match option text ("Accra" === "Accra")
+        else if (selectedText && (selectedText === correctText || selectedText === String(correctRaw).trim().toLowerCase())) {
+          isCorrect = true;
+        }
+      }
+    }
+
     if (isCorrect) score += pts;
+
+    const selectedDisplay = (q.type === 'short_answer')
+      ? (userAns || null)
+      : (q.options && q.options[userAns] !== undefined ? q.options[userAns] : (userAns ?? null));
+
+    const correctDisplay = (q.options && q.options[q.correctAnswer] !== undefined)
+      ? q.options[q.correctAnswer]
+      : q.correctAnswer;
+
     return {
       question: q.question,
-      selected: answers[i] || null,
-      correct: q.correctAnswer,
+      selected: selectedDisplay,
+      selectedIndex: userAns,
+      correct: correctDisplay,
       isCorrect,
       points: pts
     };
