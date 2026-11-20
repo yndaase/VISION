@@ -1246,4 +1246,69 @@ window.fbGetQuizAttempts = async function(quizId) {
   }
 };
 
+/**
+ * Delete a specific quiz attempt by ID
+ */
+window.fbDeleteQuizAttempt = async function(attemptId) {
+  try {
+    const attemptRef = doc(db, "quiz_attempts", attemptId);
+    await deleteDoc(attemptRef);
+    console.log("[Firebase] âœ… Deleted quiz attempt:", attemptId);
+    return { success: true };
+  } catch (error) {
+    console.error("[Firebase] Error deleting quiz attempt:", error);
+    return { success: false, error: error.message };
+  }
+};
+
+/**
+ * Reset quiz attempts (either for a specific student or all students for this quiz)
+ */
+window.fbResetQuizAttempts = async function(quizId, studentEmail = null) {
+  try {
+    const attemptsCollection = collection(db, "quiz_attempts");
+    const snapshot = await getDocs(attemptsCollection);
+    const deletePromises = [];
+    const targetEmail = studentEmail ? resolveEmailKey(studentEmail) : null;
+
+    snapshot.forEach(docSnap => {
+      const data = docSnap.data();
+      if (data.quizId === quizId) {
+        if (!targetEmail || data.studentEmail === targetEmail) {
+          deletePromises.push(deleteDoc(doc(db, "quiz_attempts", docSnap.id)));
+        }
+      }
+    });
+
+    await Promise.all(deletePromises);
+    console.log(`[Firebase] âœ… Reset ${deletePromises.length} attempts for quiz ${quizId}`);
+    return { success: true, count: deletePromises.length };
+  } catch (error) {
+    console.error("[Firebase] Error resetting quiz attempts:", error);
+    return { success: false, error: error.message };
+  }
+};
+
+/**
+ * Get all quiz attempts for a student
+ */
+window.fbGetStudentQuizAttempts = async function(studentEmail) {
+  try {
+    const email = resolveEmailKey(studentEmail);
+    const attemptsCollection = collection(db, "quiz_attempts");
+    const snapshot = await getDocs(attemptsCollection);
+    const attempts = [];
+    snapshot.forEach(docSnap => {
+      const data = docSnap.data();
+      if (data.studentEmail === email) {
+        attempts.push({ id: docSnap.id, ...data });
+      }
+    });
+    return attempts;
+  } catch (error) {
+    console.warn("[Firebase] Error getting student quiz attempts:", error);
+    return [];
+  }
+};
+
 console.log("[Firebase] Quiz management functions loaded");

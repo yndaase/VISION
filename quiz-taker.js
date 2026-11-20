@@ -1,4 +1,4 @@
-﻿/* =====================================================
+/* =====================================================
    QUIZ TAKER SYSTEM
    Enterprise student quiz-taking logic
    ===================================================== */
@@ -470,16 +470,26 @@ async function submitQuiz() {
     details
   };
 
-  // Save to localStorage
+  // Save to student attempts (replace previous attempt for same quiz on retake)
   try {
     const key = `quiz_attempts_${session.email}`;
-    const existing = JSON.parse(localStorage.getItem(key) || '[]');
+    let existing = JSON.parse(localStorage.getItem(key) || '[]');
+    existing = existing.filter(a => a.quizId !== quiz.id);
     existing.push(attempt);
     localStorage.setItem(key, JSON.stringify(existing));
     console.log('[Quiz Taker] Saved attempt to localStorage');
   } catch (e) {
     console.warn('[Quiz Taker] Failed to save to localStorage:', e);
   }
+
+  // Also save to quiz_results_<quizId> for instant teacher/admin lookup (replace previous attempt for same student)
+  try {
+    const quizKey = `quiz_results_${quiz.id}`;
+    let quizExisting = JSON.parse(localStorage.getItem(quizKey) || '[]');
+    quizExisting = quizExisting.filter(a => (a.studentEmail || a.email) !== session.email);
+    quizExisting.push(attempt);
+    localStorage.setItem(quizKey, JSON.stringify(quizExisting));
+  } catch (e) {}
 
   // Save to Firestore if available
   if (typeof window.fbSaveQuizAttempt === 'function') {

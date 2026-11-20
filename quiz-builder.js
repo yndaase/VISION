@@ -799,6 +799,10 @@ window.viewResults = async function(quizId) {
         </div>
         <div style="display:flex;align-items:center;gap:0.75rem;">
           ${totalSubmissions > 0 ? `
+            <button onclick="resetAllQuizAttempts('${quiz.id}', true)" style="display:flex;align-items:center;gap:0.4rem;padding:0.6rem 1rem;background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.3);border-radius:10px;color:#ef4444;font-size:0.85rem;font-weight:700;cursor:pointer;">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></svg>
+              Reset All
+            </button>
             <button onclick="downloadQuizResultsCSV()" style="display:flex;align-items:center;gap:0.5rem;padding:0.6rem 1rem;background:var(--bg-secondary);border:1px solid var(--border);border-radius:10px;color:var(--text-primary);font-size:0.85rem;font-weight:700;cursor:pointer;">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
               Export CSV
@@ -886,9 +890,15 @@ window.viewResults = async function(quizId) {
                         ${formatDate(att.completedAt || att.submittedAt)}
                       </td>
                       <td style="padding:1rem;text-align:right;">
-                        <button onclick="viewAttemptDetails(${idx})" style="padding:0.45rem 0.85rem;background:rgba(99,102,241,0.1);color:#6366f1;border:1px solid rgba(99,102,241,0.3);border-radius:8px;font-weight:700;font-size:0.82rem;cursor:pointer;">
-                          Review Answers
-                        </button>
+                        <div style="display:flex;align-items:center;justify-content:flex-end;gap:0.5rem;">
+                          <button onclick="viewAttemptDetails(${idx})" style="padding:0.45rem 0.85rem;background:rgba(99,102,241,0.1);color:#6366f1;border:1px solid rgba(99,102,241,0.3);border-radius:8px;font-weight:700;font-size:0.82rem;cursor:pointer;">
+                            Review Answers
+                          </button>
+                          <button onclick="resetStudentAttempt('${quiz.id}', '${att.studentEmail || ''}', '${att.id || ''}', '${studentName.replace(/'/g, "\\'")}')" title="Reset this student's attempt so they can retake the quiz" style="display:flex;align-items:center;gap:0.35rem;padding:0.45rem 0.75rem;background:rgba(239,68,68,0.1);color:#ef4444;border:1px solid rgba(239,68,68,0.25);border-radius:8px;font-weight:700;font-size:0.82rem;cursor:pointer;">
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></svg>
+                            Reset
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   `;
@@ -962,6 +972,10 @@ window.viewResults = async function(quizId) {
           <span style="font-weight:800;font-size:1.05rem;color:var(--text-primary);">${studentName}</span>
           ${getGradeBadge(att.percentage || 0)}
           <span style="font-weight:800;color:var(--text-primary);font-family:monospace;">${att.score ?? 0} / ${att.totalPoints ?? quiz.questions.length} pts</span>
+          <button onclick="resetStudentAttempt('${quiz.id}', '${att.studentEmail || ''}', '${att.id || ''}', '${studentName.replace(/'/g, "\\'")}'); returnToSubmissionsList();" style="display:flex;align-items:center;gap:0.35rem;padding:0.4rem 0.8rem;background:rgba(239,68,68,0.12);border:1px solid rgba(239,68,68,0.3);border-radius:8px;color:#ef4444;font-size:0.8rem;font-weight:700;cursor:pointer;">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></svg>
+            Reset Attempt
+          </button>
         </div>
       </div>
 
@@ -1402,3 +1416,129 @@ function showNotification(message, type = 'info') {
     setTimeout(() => notification.remove(), 300);
   }, 3000);
 }
+
+
+
+/**
+ * Reset a specific student's attempt on a quiz
+ */
+window.resetStudentAttempt = async function(quizId, studentEmail, attemptId, studentName) {
+  if (!confirm(`Reset quiz attempt for ${studentName || studentEmail}?\n\nThis will clear their submission and allow the student to retake the quiz.`)) {
+    return;
+  }
+
+  showNotification('Resetting student attempt...', 'info');
+
+  // 1. Delete from Firestore
+  if (typeof window.fbResetQuizAttempts === 'function') {
+    try {
+      await window.fbResetQuizAttempts(quizId, studentEmail);
+    } catch (e) {
+      console.warn('[Quiz Builder] Firestore reset error:', e);
+    }
+  } else if (attemptId && typeof window.fbDeleteQuizAttempt === 'function') {
+    try {
+      await window.fbDeleteQuizAttempt(attemptId);
+    } catch (e) {
+      console.warn('[Quiz Builder] Firestore delete error:', e);
+    }
+  }
+
+  // 2. Clear from quiz_results_<quizId> in localStorage
+  try {
+    const quizKey = `quiz_results_${quizId}`;
+    const list = JSON.parse(localStorage.getItem(quizKey) || '[]');
+    const updated = list.filter(a => (a.studentEmail || a.email) !== studentEmail);
+    localStorage.setItem(quizKey, JSON.stringify(updated));
+  } catch (e) {}
+
+  // 3. Clear from quiz_attempts_<studentEmail> in localStorage
+  try {
+    const studentKey = `quiz_attempts_${studentEmail}`;
+    const list = JSON.parse(localStorage.getItem(studentKey) || '[]');
+    const updated = list.filter(a => a.quizId !== quizId);
+    localStorage.setItem(studentKey, JSON.stringify(updated));
+  } catch (e) {}
+
+  // 4. Also scan all localStorage keys for quiz_attempts_*
+  try {
+    for (let i = 0; i < localStorage.length; i++) {
+      const k = localStorage.key(i);
+      if (k && k.startsWith('quiz_attempts_')) {
+        const list = JSON.parse(localStorage.getItem(k) || '[]');
+        const updated = list.filter(a => !(a.quizId === quizId && (a.studentEmail === studentEmail || k === `quiz_attempts_${studentEmail}`)));
+        localStorage.setItem(k, JSON.stringify(updated));
+      }
+    }
+  } catch (e) {}
+
+  // 5. Update quiz object stats in memory & local storage
+  const quiz = quizzes.find(q => q.id === quizId);
+  if (quiz) {
+    const remainingList = JSON.parse(localStorage.getItem(`quiz_results_${quizId}`) || '[]');
+    quiz.attempts = remainingList.length;
+    quiz.avgScore = remainingList.length > 0 ? Math.round(remainingList.reduce((acc, a) => acc + (a.percentage || 0), 0) / remainingList.length) : 0;
+    saveQuizzes();
+    renderQuizzes();
+  }
+
+  showNotification(`Attempt reset for ${studentName || studentEmail}! The student can now retake this quiz.`, 'success');
+
+  // 6. Refresh the results modal
+  if (typeof window.viewResults === 'function') {
+    window.viewResults(quizId);
+  }
+};
+
+/**
+ * Reset all student attempts for a quiz
+ */
+window.resetAllQuizAttempts = async function(quizId, insideModal = false) {
+  const quiz = quizzes.find(q => q.id === quizId);
+  const quizTitle = quiz ? quiz.title : 'this quiz';
+
+  if (!confirm(`Reset ALL student attempts for "${quizTitle}"?\n\nThis will clear all submissions and allow all students to retake the quiz.`)) {
+    return;
+  }
+
+  showNotification('Resetting all quiz attempts...', 'info');
+
+  // 1. Delete all attempts from Firestore
+  if (typeof window.fbResetQuizAttempts === 'function') {
+    try {
+      await window.fbResetQuizAttempts(quizId);
+    } catch (e) {
+      console.warn('[Quiz Builder] Firestore reset error:', e);
+    }
+  }
+
+  // 2. Clear quiz_results_<quizId> from localStorage
+  localStorage.removeItem(`quiz_results_${quizId}`);
+
+  // 3. Clear from all student attempts in localStorage
+  try {
+    for (let i = 0; i < localStorage.length; i++) {
+      const k = localStorage.key(i);
+      if (k && k.startsWith('quiz_attempts_')) {
+        const list = JSON.parse(localStorage.getItem(k) || '[]');
+        const updated = list.filter(a => a.quizId !== quizId);
+        localStorage.setItem(k, JSON.stringify(updated));
+      }
+    }
+  } catch (e) {}
+
+  // 4. Reset quiz attempts count and avgScore
+  if (quiz) {
+    quiz.attempts = 0;
+    quiz.avgScore = 0;
+    saveQuizzes();
+    renderQuizzes();
+  }
+
+  showNotification(`All attempts for "${quizTitle}" have been reset! Students can now retake the quiz.`, 'success');
+
+  // 5. If inside modal, reload modal with empty state
+  if (insideModal && typeof window.viewResults === 'function') {
+    window.viewResults(quizId);
+  }
+};

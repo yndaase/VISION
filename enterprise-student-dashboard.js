@@ -629,10 +629,27 @@ async function loadQuizzes(session) {
 
   // Load student's existing attempts to check completed status
   let attemptedQuizIds = new Set();
-  try {
-    const attempts = JSON.parse(localStorage.getItem(`quiz_attempts_${session.email}`) || '[]');
-    attempts.forEach(a => attemptedQuizIds.add(a.quizId));
-  } catch (e) { /* ignore */ }
+
+  // 1. Sync from Firestore so admin resets are immediately recognized across devices
+  if (typeof window.fbGetStudentQuizAttempts === 'function' && session.email) {
+    try {
+      const cloudAttempts = await window.fbGetStudentQuizAttempts(session.email);
+      if (Array.isArray(cloudAttempts)) {
+        localStorage.setItem(`quiz_attempts_${session.email}`, JSON.stringify(cloudAttempts));
+        cloudAttempts.forEach(a => attemptedQuizIds.add(a.quizId));
+      }
+    } catch (e) {
+      console.warn('[Enterprise Student] Could not sync cloud quiz attempts:', e);
+    }
+  }
+
+  // 2. Fallback to localStorage if no cloud attempts found
+  if (attemptedQuizIds.size === 0) {
+    try {
+      const attempts = JSON.parse(localStorage.getItem(`quiz_attempts_${session.email}`) || '[]');
+      attempts.forEach(a => attemptedQuizIds.add(a.quizId));
+    } catch (e) { /* ignore */ }
+  }
 
   container.innerHTML = quizzes.map(quiz => renderQuizCard(quiz, attemptedQuizIds)).join('');
 }
