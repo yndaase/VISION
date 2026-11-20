@@ -1,4 +1,4 @@
-/* =====================================================
+﻿/* =====================================================
    QUIZ BUILDER SYSTEM
    Create and manage quizzes with AI assistance
    ===================================================== */
@@ -488,10 +488,179 @@ window.deleteQuiz = function(quizId) {
 };
 
 /**
- * Preview quiz
+ * Preview quiz â€” full in-modal walkthrough (admin/teacher view, correct answers highlighted)
  */
 window.previewQuiz = function(quizId) {
-  showNotification('Quiz preview coming soon!', 'info');
+  const quiz = quizzes.find(q => q.id === quizId);
+  if (!quiz) { showNotification('Quiz not found', 'error'); return; }
+  if (!quiz.questions || quiz.questions.length === 0) {
+    showNotification('This quiz has no questions to preview', 'warning');
+    return;
+  }
+
+  let currentQ = 0;
+  const answers = new Array(quiz.questions.length).fill(null);
+
+  function optionLetter(i) { return ['A','B','C','D','E'][i] || i; }
+
+  function subjectColor(s) {
+    const map = { mathematics:'#6366f1', english:'#10b981', science:'#3b82f6',
+                  social_studies:'#f59e0b', other:'#8b5cf6' };
+    return map[s] || '#6366f1';
+  }
+
+  function renderNav() {
+    return quiz.questions.map((_, i) => `
+      <button
+        onclick="previewGoTo(${i})"
+        style="
+          width:36px;height:36px;border-radius:8px;border:2px solid;
+          font-weight:800;font-size:0.85rem;cursor:pointer;transition:all 0.2s;
+          ${i === currentQ
+            ? 'background:#6366f1;border-color:#6366f1;color:#fff;'
+            : answers[i] !== null
+              ? 'background:rgba(16,185,129,0.15);border-color:#10b981;color:#10b981;'
+              : 'background:var(--bg-secondary);border-color:var(--border);color:var(--text-muted);'}
+        "
+      >${i + 1}</button>
+    `).join('');
+  }
+
+  function renderQuestion() {
+    const q = quiz.questions[currentQ];
+    const isLast = currentQ === quiz.questions.length - 1;
+
+    let optionsHTML = '';
+    if (q.type === 'short_answer') {
+      optionsHTML = `
+        <div style="margin-top:1.5rem;">
+          <textarea placeholder="Short answer (preview only)"
+            style="width:100%;padding:1rem;background:var(--bg-secondary);border:1px solid var(--border);
+                   border-radius:10px;color:var(--text-primary);font-family:inherit;font-size:0.95rem;
+                   resize:vertical;min-height:100px;box-sizing:border-box;" disabled></textarea>
+          <div style="margin-top:0.75rem;padding:0.75rem 1rem;background:rgba(16,185,129,0.1);
+                      border:1px solid rgba(16,185,129,0.3);border-radius:8px;font-size:0.85rem;color:#10b981;font-weight:600;">
+            âœ“ Expected answer: ${q.correctAnswer ?? '(not set)'}
+          </div>
+        </div>`;
+    } else {
+      optionsHTML = '<div style="display:flex;flex-direction:column;gap:0.75rem;margin-top:1.5rem;">'
+        + (q.options || []).map((opt, oi) => {
+          const isCorrect = oi === q.correctAnswer;
+          const isSelected = answers[currentQ] === oi;
+          return `<button onclick="previewSelectOption(${oi})" style="
+            display:flex;align-items:center;gap:1rem;padding:1rem 1.25rem;border-radius:12px;
+            border:2px solid;text-align:left;cursor:pointer;font-family:inherit;font-size:0.95rem;
+            font-weight:600;transition:all 0.15s;width:100%;
+            ${isSelected
+              ? 'background:rgba(99,102,241,0.15);border-color:#6366f1;color:var(--text-primary);'
+              : isCorrect
+                ? 'background:rgba(16,185,129,0.08);border-color:rgba(16,185,129,0.4);color:var(--text-primary);'
+                : 'background:var(--bg-secondary);border-color:var(--border);color:var(--text-primary);'}
+          ">
+            <span style="
+              width:32px;height:32px;border-radius:8px;display:flex;align-items:center;
+              justify-content:center;font-weight:900;font-size:0.85rem;flex-shrink:0;
+              ${isSelected ? 'background:#6366f1;color:#fff;' : isCorrect ? 'background:#10b981;color:#fff;' : 'background:var(--bg-card);color:var(--text-muted);'}
+            ">${optionLetter(oi)}</span>
+            <span style="flex:1;">${opt}</span>
+            ${isCorrect ? '<span style="margin-left:auto;font-size:0.75rem;padding:0.25rem 0.6rem;background:rgba(16,185,129,0.15);color:#10b981;border-radius:6px;font-weight:700;white-space:nowrap;">âœ“ Correct</span>' : ''}
+          </button>`;
+        }).join('')
+        + '</div>';
+    }
+
+    return `
+      <div style="height:4px;background:var(--bg-secondary);border-radius:4px;margin-bottom:1.5rem;">
+        <div style="height:100%;width:${((currentQ+1)/quiz.questions.length)*100}%;background:linear-gradient(90deg,#6366f1,#8b5cf6);border-radius:4px;transition:width 0.3s;"></div>
+      </div>
+
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.25rem;flex-wrap:wrap;gap:0.5rem;">
+        <div style="display:flex;gap:0.5rem;align-items:center;flex-wrap:wrap;">
+          <span style="font-size:0.8rem;padding:0.3rem 0.75rem;background:rgba(99,102,241,0.12);color:#6366f1;border-radius:6px;font-weight:700;">Q ${currentQ + 1} / ${quiz.questions.length}</span>
+          <span style="font-size:0.8rem;padding:0.3rem 0.75rem;background:var(--bg-secondary);color:var(--text-muted);border-radius:6px;font-weight:600;">${q.points || 1} pt${(q.points||1)!==1?'s':''}</span>
+        </div>
+        <span style="font-size:0.8rem;color:var(--text-muted);font-weight:600;">${q.type === 'multiple_choice' ? 'Multiple Choice' : q.type === 'true_false' ? 'True / False' : 'Short Answer'}</span>
+      </div>
+
+      <div style="font-size:1.05rem;font-weight:700;line-height:1.65;color:var(--text-primary);">${q.question}</div>
+
+      ${optionsHTML}
+
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-top:2rem;padding-top:1.5rem;border-top:1px solid var(--border);flex-wrap:wrap;gap:0.75rem;">
+        <button onclick="previewGoTo(${currentQ - 1})" ${currentQ === 0 ? 'disabled' : ''} style="
+          display:flex;align-items:center;gap:0.5rem;padding:0.75rem 1.25rem;border-radius:10px;
+          border:1px solid var(--border);background:var(--bg-secondary);color:var(--text-secondary);
+          font-weight:700;cursor:pointer;font-family:inherit;opacity:${currentQ===0?'0.4':'1'};">â† Prev</button>
+
+        <div style="display:flex;gap:0.4rem;flex-wrap:wrap;justify-content:center;max-width:300px;">
+          ${renderNav()}
+        </div>
+
+        ${isLast
+          ? '<button onclick="closePreview()" style="display:flex;align-items:center;gap:0.5rem;padding:0.75rem 1.25rem;border-radius:10px;border:none;background:#10b981;color:#fff;font-weight:700;cursor:pointer;font-family:inherit;">Done âœ“</button>'
+          : `<button onclick="previewGoTo(${currentQ + 1})" style="display:flex;align-items:center;gap:0.5rem;padding:0.75rem 1.25rem;border-radius:10px;border:none;background:#6366f1;color:#fff;font-weight:700;cursor:pointer;font-family:inherit;">Next â†’</button>`}
+      </div>
+    `;
+  }
+
+  // Build overlay
+  const overlay = document.createElement('div');
+  overlay.id = 'quizPreviewOverlay';
+  overlay.style.cssText = 'position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.65);backdrop-filter:blur(6px);display:flex;align-items:flex-start;justify-content:center;padding:2rem 1rem;overflow-y:auto;';
+
+  overlay.innerHTML = `
+    <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:20px;width:100%;max-width:760px;overflow:hidden;box-shadow:0 25px 60px rgba(0,0,0,0.4);margin:auto;">
+      <div style="padding:1.5rem 2rem;border-bottom:1px solid var(--border);background:linear-gradient(135deg,rgba(99,102,241,0.08),rgba(139,92,246,0.05));display:flex;align-items:center;justify-content:space-between;gap:1rem;">
+        <div style="display:flex;align-items:center;gap:1rem;min-width:0;">
+          <div style="width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,#6366f1,#8b5cf6);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+          </div>
+          <div style="min-width:0;">
+            <div style="font-size:0.72rem;font-weight:700;color:#6366f1;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:0.15rem;">Admin Preview</div>
+            <div style="font-size:1.05rem;font-weight:800;color:var(--text-primary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${quiz.title}</div>
+            <div style="font-size:0.78rem;color:var(--text-muted);margin-top:0.1rem;">${quiz.questions.length} questions Â· ${quiz.duration || 30} min Â· ${(quiz.subject||'').replace('_',' ')}</div>
+          </div>
+        </div>
+        <button onclick="closePreview()" style="width:36px;height:36px;border-radius:8px;border:1px solid var(--border);background:var(--bg-secondary);color:var(--text-secondary);cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+
+      <div id="previewQuestionArea" style="padding:2rem;"></div>
+
+      <div style="padding:0.9rem 2rem;border-top:1px solid var(--border);background:rgba(245,158,11,0.06);display:flex;align-items:center;gap:0.75rem;">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+        <span style="font-size:0.78rem;color:#f59e0b;font-weight:600;">Preview mode â€” correct answers are highlighted. Students will not see them during the actual quiz.</span>
+      </div>
+    </div>
+  `;
+
+  document.body.appendChild(overlay);
+  document.getElementById('previewQuestionArea').innerHTML = renderQuestion();
+
+  window.previewGoTo = function(index) {
+    if (index < 0 || index >= quiz.questions.length) return;
+    currentQ = index;
+    document.getElementById('previewQuestionArea').innerHTML = renderQuestion();
+  };
+
+  window.previewSelectOption = function(optionIndex) {
+    answers[currentQ] = optionIndex;
+    document.getElementById('previewQuestionArea').innerHTML = renderQuestion();
+  };
+
+  window.closePreview = function() {
+    const el = document.getElementById('quizPreviewOverlay');
+    if (el) el.remove();
+  };
+
+  overlay.addEventListener('click', function(e) { if (e.target === overlay) window.closePreview(); });
+
+  const escHandler = function(e) {
+    if (e.key === 'Escape') { window.closePreview(); document.removeEventListener('keydown', escHandler); }
+  };
+  document.addEventListener('keydown', escHandler);
 };
 
 /**
